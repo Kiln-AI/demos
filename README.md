@@ -6,7 +6,7 @@
     </a>
 </p>
 <h3 align="center">
-    Demos of [Kiln AI](https://getkiln.ai) Projects
+    Demos of <a href="https://getkiln.ai">Kiln AI</a> Projects
 </h3>
 
 <p align="center">
@@ -17,9 +17,11 @@
   <a href="https://docs.getkiln.ai"><strong>Docs</strong></a>
 </p>
 
-# Demos Project
+# Demo Project
 
-This repositiory is for demos of Kiln AI projects. 
+This repositiory is for demos of Kiln AI projects. You can download it, import the `demo_project/project.kiln` file into the [Kiln app](https://getkiln.ai/download), and explore the data/evals/etc.
 
-Currently we have one demo, our [end-to-end AI project demo](/demo_project/tasks/README.md).
+## Demo 1: End-to-end AI Demo - Building an AI system with evals, synthetic data, and fine-tuning
+
+In this project we create an AI tool which helps generate ffmpeg commands. See the [project README for details](/demo_project/tasks/README.md).
 
