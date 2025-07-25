@@ -1,0 +1,52 @@
+{
+  "v": 1,
+  "id": "144951320726",
+  "created_at": "2025-07-23T11:39:34.707578",
+  "created_by": "scosman",
+  "input": "I want to merge three video files (part1.mp4, part2.mp4, part3.mp4) into one continuous video file.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "claude_sonnet_4",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "185764534340",
+    "path": null,
+    "created_at": "2025-07-23T11:39:34.707535",
+    "created_by": "scosman",
+    "output": "To merge multiple video files into one continuous output, you can use ffmpeg's concat filter. This method re-encodes the videos to ensure they have compatible formats and can be seamlessly joined together.\n\nThe concat filter takes multiple inputs and concatenates them in the order specified. The `n=3` parameter tells ffmpeg we're concatenating 3 inputs, and `v=1:a=1` specifies we want 1 video stream and 1 audio stream in the output.\n\n```bash\nffmpeg -i part1.mp4 -i part2.mp4 -i part3.mp4 -filter_complex \"[0:v][0:a][1:v][1:a][2:v][2:a]concat=n=3:v=1:a=1[outv][outa]\" -map \"[outv]\" -map \"[outa]\" -c:v libx265 -c:a aac output.mp4\n```\n\nThis command will re-encode all three parts and merge them into a single continuous video file with H.265 video compression and AAC audio.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "claude_sonnet_4",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "function_calling",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_690983396887",
+    "eval_correctness"
+  ],
+  "usage": {
+    "input_tokens": 1004,
+    "output_tokens": 253,
+    "total_tokens": 1257,
+    "cost": 0.0068070000000000006
+  },
+  "model_type": "task_run"
+}

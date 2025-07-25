@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "193996521600",
+  "created_at": "2025-07-23T12:09:23.841749",
+  "created_by": "scosman",
+  "dataset_id": "229522787665",
+  "task_run_config_id": "233610573558",
+  "eval_config_eval": false,
+  "input": "I have a multi-track video file and I want to map video stream 6 and audio stream 9 to create output.mp4",
+  "output": "To map a specific video (stream 6) and audio stream (stream 9) from a multi-track source file, we can use the `map` filter in `ffmpeg` to selectively extract these streams and create the `output.mp4` file. The `-c:v libx264` and `-c:a aac` parameters will ensure that the video and audio are encoded with H.264 and AAC codecs, respectively, which are common formats for media playback.\n\nAssuming that you don't need to change the encoding settings, and wish to maintain the default settings for temporal (x264), and that your input multi-track file has distinct visual and audio streams, the command would be:\n\n```bash\nffmpeg -i input.mkv -map 0:v:6 -map 0:a:9 -c:v libx264 -c:a aac -map_metadata 0 -vsync vfr output.mp4\n```\n\nThis command does the following:\n- `-i input.mkv` specifies the input file. You can replace this with your actual filename and format.\n- `-map 0:v:6` maps the 6th video stream from the 0 input stream (multi-track container typically contains multiple video streams that can be indexed).\n- `-map 0:a:9` maps the 9th audio stream from the 0 input stream (again, considering multi-track containers that can contain multiple audio tracks).\n- `-c:v libx264` encodes the selected video stream with the libx264 H.264 codec.\n- `-c:a aac` encodes the selected audio stream with the AAC codec.\n- `-map_metadata 0` preserves metadata from the original input.\n- `-vsync vfr` sets the variable frame rate to the incoming input stream, which is typical when dealing with non-constant frame rate (CFR) content.\n\nMake sure the video and audio streams you want to map are available in the file you are working with. If stream 6 is indeed the video stream and stream 9 is the audio stream, then this command will suit your needs. To check the available streams in your multi-track container, you need to analyze or list them using `ffmpeg -list_streams <input_file>`.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does not contain the issue described. The command it generated correctly maps the specified video and audio streams from the input file and encodes them using appropriate codecs, which aligns with the user's request.\n\n2) The output is not similar to the mentioned failure example. The command properly uses existing parameters and does not include any invalid options that would lead to failure. It follows the expected structure of `ffmpeg` commands.\n\n3) The command does not break any requirements dictated in the `ffmpeg` man page. It adheres to the general rules provided for `ffmpeg` usage, appropriately specifies input and output options, and uses valid parameters for mapping, encoding, and metadata.\n\n4) Therefore, the model's output should be considered successful as it meets the requirements specified by the user without issues observed in the command or structure."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 432,
+    "output_tokens": 471,
+    "total_tokens": 903,
+    "cost": 0.0000687
+  },
+  "model_type": "eval_run"
+}

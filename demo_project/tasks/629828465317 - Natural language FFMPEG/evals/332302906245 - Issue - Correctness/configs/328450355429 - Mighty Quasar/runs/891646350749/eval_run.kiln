@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "891646350749",
+  "created_at": "2025-07-23T12:10:36.727798",
+  "created_by": "scosman",
+  "dataset_id": "219122294515",
+  "task_run_config_id": "233610573558",
+  "eval_config_eval": false,
+  "input": "I need to select stream 15 for video and stream 22 for audio from my input file with many tracks called source.mkv",
+  "output": "To select a specific video and audio stream from a multi-stream source, you will use the `-map` option to specify which streams to include on output, along with specifying the video and audio codecs suitable for high-quality output. Assuming that the desired streams are correctly identified by their numerical order, the following command can be used:\n\nWe'll keep the video quality high (e.g., H.264, high CRF), and since MKV files can have a high number of audio tracks, we'll choose one of them by specifying the video and audio streams by their number.\n\nHere is an example:\n\n```bash\nffmpeg -i source.mkk -map 0:v:15 -map 0:a:22 -c:v libx264 -preset slow -crf 22 -c:a aac -b:a 192k -c:a aac -b:a 192k -map 0:v:15 -map 0:a:22 -movflags progressive output.mp4\n```\n\nExplanation:\n- `-map 0:v:15`: Maps the 15th video stream from the MKV file.\n- `-map 0:a:22`: Maps the 22nd audio stream.\n- `-c:v libx264`: Sets the video codec to H.264.\n- `-preset slow`: Uses the slow encoding preset for quality; however, `fast` is typically better for newer versions of ffmpeg because it balances quality with encoding speed.\n- `-crf 22`: Sets the Constant Rate Factor, which controls the quality level of the output; lower values mean better quality (CRF scale 0-51, 18-21 are good for Blu-ray quality).\n- `-c:a aac -b:a 192k`: Sets both the audio tracks to AAC with a bitrate of 192kbps, which should provide good audio quality.\n- `-map 0:v:15 -map 0:a:22`: Includes only the video and audio that were mapped.\n- `-movflags progressive`: Writes the output container in a progressive format (consider switching to `-movflags +faststart` if you need to focus on streaming).\n\nPlease replace `-crf 22` and `-b:a 192k` with values that match your desired quality based on your content and distribution needs.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) Yes, the model's output contains issues. The command includes `-map 0:v:15` and `-map 0:a:22`, but these mappings may not actually correspond to the intended video and audio streams depending on the specific track configuration of the MKV file. The user requested the selection of streams based on user enumeration (the 15th video and 22nd audio), but unless the input file has those streams, the command will not work as intended. Additionally, there is a repetitive inclusion of `-map 0:v:15 -map 0:a:22` in the command, which is unnecessary and could cause confusion.\n\n2) The model's output is not similar to the failure example. While it does generate a command that may not work correctly, it doesn't produce a syntax error like the `extra_fast` preset in the failure example. However, the output contains redundancy without syntax errors.\n\n3) There are some issues with the command concerning properly identifying the input streams. The mappings used in the command should correspond to zero-based indexing of the streams. It needs to ensure that it actually selects the correct streams from the source file; using an out-of-bounds index would cause the command to fail. \n\n4) Considering the issues highlighted in this command's mappings and possible misidentification of the input tracks, the output does contain the issue described. It fails because it generates a command that may not perform correctly for the user's request, and it does not satisfy a correct command formation as per FFmpeg rules. Therefore, this evaluates as a failure."
+  },
+  "scores": {
+    "correctness": 0.0
+  },
+  "task_run_usage": {
+    "input_tokens": 432,
+    "output_tokens": 481,
+    "total_tokens": 913,
+    "cost": 0.0000697
+  },
+  "model_type": "eval_run"
+}

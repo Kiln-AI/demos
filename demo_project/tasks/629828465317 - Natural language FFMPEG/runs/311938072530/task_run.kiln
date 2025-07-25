@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "311938072530",
+  "created_at": "2025-07-24T18:10:14.497133",
+  "created_by": "scosman",
+  "input": "Please convert a 2K video to a resolution of 2560x1440. I want it encoded using x265 with a constant rate factor of 28.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "269250801692",
+    "path": null,
+    "created_at": "2025-07-24T18:10:14.497080",
+    "created_by": "scosman",
+    "output": "To convert a 2K video to 2560x1440 (which is also sometimes referred to as 2K QHD), you should set the output resolution explicitly and use the x265 encoder with the requested CRF (Constant Rate Factor) value for balanced quality and compression.\n\nBest practices:\n- -vf \"scale=2560:1440\" ensures the output resolution is exactly 2560x1440.\n- -c:v libx265 selects the HEVC (x265) encoder.\n- -crf 28 controls perceived quality. Lower CRF means higher quality (28 is reasonable for moderate quality/size trade-off).\n- Always specify -c:a to avoid incompatible audio defaults (let's use AAC as an example).\n- Many players require -tag:v hvc1 for proper HEVC MP4 playback; include it for broad compatibility.\n- Set -pix_fmt yuv420p unless you have a reason to use higher chroma subsampling.\n\nAssumption: You want the output as an MP4 file with commonly supported audio.\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=2560:1440\" -c:v libx265 -crf 28 -preset medium -c:a aac -b:a 128k -pix_fmt yuv420p -tag:v hvc1 output_2560x1440.mp4\n```\n\n- Replace input.mp4 with your source filename.\n- The -preset medium is a default; you can adjust for speed/size trade-offs.\n",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 610,
+    "output_tokens": 314,
+    "total_tokens": 924,
+    "cost": 0.003732
+  },
+  "model_type": "task_run"
+}

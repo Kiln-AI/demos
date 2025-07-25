@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "309851266653",
+  "created_at": "2025-07-24T18:09:29.926428",
+  "created_by": "scosman",
+  "input": "Turn a VR video into a non-VR version that is stream-ready and reduced in file size.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Streamlining Video Files for Web Streaming"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "184685004782",
+    "path": null,
+    "created_at": "2025-07-24T18:09:29.926300",
+    "created_by": "scosman",
+    "output": "To convert a VR (360-degree equirectangular) video into a standard \"flat\" non-VR video for web streaming, you'll want to \"extract\" a forward-facing view from the equirectangular projection. You can do this with FFmpeg’s `v360` filter. Additionally, use H.264 and AAC codecs, set reasonable resolution (e.g., 1920x1080 for Full HD), apply some compression for reduced file size, and enable faststart for streaming.\n\nAssumptions:\n- The VR input is a standard equirectangular 360 video (common for VR).\n- You want a flat, “forward-facing” section (defaults to yaw=0°, pitch=0°).\n- Output is 1080p, which is widely compatible for streaming.\n- Reduce bitrate for smaller file size.\n- You want browser compatibility.\n\nHere’s how to do it:\n\n**Explanation:**\n- `-vf \"v360=input=equirect:output=flat:ih_fov=90:iv_fov=65,scale=1920:1080\"`: Converts 360-degree equirectangular to a 90x65 degree rectilinear (standard) view, then resizes to 1080p.\n- `-c:v libx264 -preset fast -crf 26`: H.264 for video, fast preset, and a slightly higher CRF for smaller size (higher CRF = more compression). Adjust CRF for desired quality/size.\n- `-c:a aac -b:a 128k`: AAC audio at 128 kbps.\n- `-pix_fmt yuv420p`: Maximizes compatibility.\n- `-movflags +faststart`: Enables streaming.\n\n```bash\nffmpeg -i input_vr.mp4 -vf \"v360=input=equirect:output=flat:ih_fov=90:iv_fov=65,scale=1920:1080\" -c:v libx264 -preset fast -crf 26 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output_nonvr_stream.mp4\n```\n\nThis will yield a streamable, non-VR video with a forward-facing perspective and reduced file size.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 470,
+    "total_tokens": 1067,
+    "cost": 0.004954
+  },
+  "model_type": "task_run"
+}

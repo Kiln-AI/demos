@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "220846384751",
+  "created_at": "2025-07-24T18:09:53.355637",
+  "created_by": "scosman",
+  "input": "Please assist in transforming 5k footage to 4k while ensuring the frame rate remains at 25fps.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "218630470178",
+    "path": null,
+    "created_at": "2025-07-24T18:09:53.355583",
+    "created_by": "scosman",
+    "output": "To downscale 5K footage to 4K while making sure the output frame rate is exactly 25fps, you should:\n\n- Use the -vf scale=3840:2160 filter. This resizes the video to true UHD (4K) dimensions (3840x2160).\n- Use -r 25 to enforce a 25fps frame rate.\n- Specify codecs for high-quality and compatibility; typically libx264 for video and aac for audio.\n- Use -crf to set quality; 18–23 is a good range for high-quality visually lossless output.\n- Use -pix_fmt yuv420p for compatibility.\n\nAssumptions: \n- Input file is input_5k.mp4 and output is output_4k.mp4.\n- You want H.264 video and AAC audio (common for web and editing).\n\n```bash\nffmpeg -i input_5k.mp4 -vf scale=3840:2160 -r 25 -c:v libx264 -crf 20 -preset slow -c:a aac -b:a 192k -pix_fmt yuv420p output_4k.mp4\n```\n\nThis command will produce a 4K (3840x2160), 25fps mp4 output from your 5K footage, with good quality and broad compatibility. Adjust -crf if you want smaller files (higher value) or higher quality (lower value).",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 298,
+    "total_tokens": 897,
+    "cost": 0.003582
+  },
+  "model_type": "task_run"
+}

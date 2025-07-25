@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "338134342193",
+  "created_at": "2025-07-24T18:08:31.821283",
+  "created_by": "scosman",
+  "input": "Help me convert a 360p video in WebM format to 720p in MP4 format for uploading to YouTube.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Common Video Codecs and Their Uses"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "296111858423",
+    "path": null,
+    "created_at": "2025-07-24T18:08:31.821259",
+    "created_by": "scosman",
+    "output": "To prepare your 360p WebM video for YouTube upload in 720p MP4 format, you should:\n\n- Upscale the video to 1280x720 (16:9 aspect ratio for 720p) using high-quality scaling (here, lanczos).\n- Encode the video with H.264 (libx264), the standard video codec for YouTube uploads.\n- Encode audio as AAC for compatibility.\n- Use -movflags +faststart for better YouTube processing/playback.\n- YouTube recommends yuv420p pixel format for compatibility.\n- Set a reasonable CRF (18–23) for quality-to-filesize balance.\n\nAssumptions:\n- Your source aspect is 16:9; otherwise, video will be pillarboxed/letterboxed to fit 1280x720.\n- Your source filename is input.webm.\n\nCommand:\n\n```bash\nffmpeg -i input.webm -vf \"scale=1280:720:flags=lanczos\" -c:v libx264 -preset slow -crf 21 -c:a aac -b:a 192k -pix_fmt yuv420p -movflags +faststart output_720p.mp4\n```\n\nThis command upscales your video to 720p with optimal quality settings, encodes with H.264/AAC, and creates an MP4 file suitable for fast uploading and processing by YouTube.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 289,
+    "total_tokens": 892,
+    "cost": 0.003518
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "261310157897",
+  "created_at": "2025-07-24T20:27:15.666129",
+  "created_by": "scosman",
+  "input": "How do I batch convert all .mkv videos to mp4, copying video and audio streams if possible?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "309385082753",
+    "path": null,
+    "created_at": "2025-07-24T20:27:15.666097",
+    "created_by": "scosman",
+    "output": "For batch converting all `.mkv` files to `.mp4` by copying video and audio streams (stream copy), the goal is to avoid re-encoding, making the process much faster while preserving quality. This works only if the codecs inside MKV files are compatible with MP4 containers (like H.264 video and AAC audio).\n\nYou can automate this with a shell loop (assuming a Unix-like shell such as Bash). The command uses:\n\n- `-c:v copy` and `-c:a copy` to directly copy streams without re-encoding.\n- `-map 0` to select all streams from the input.\n- The output filename changes extension from `.mkv` to `.mp4`.\n\nIf any file has incompatible codecs, this will fail or produce unusable MP4 files. In that case, you would need to re-encode.\n\nExample Bash script:\n\n```bash\nfor f in *.mkv; do\n  ffmpeg -i \"$f\" -c:v copy -c:a copy -map 0 \"${f%.mkv}.mp4\"\ndone\n```\n\nExplanation:\n\n- The loop iterates over each `.mkv` file in the current directory.\n- `\"${f%.mkv}.mp4\"` strips the `.mkv` extension and appends `.mp4`.\n- Quoting `$f` handles filenames with spaces.\n\nThis approach exemplifies batch processing and automation by leveraging shell scripting and ffmpeg’s stream copy feature.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 298,
+    "total_tokens": 894,
+    "cost": 0.0007152
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "726400646194",
+  "created_at": "2025-07-24T20:35:52.035644",
+  "created_by": "scosman",
+  "input": "Please show me how to scale a video to 1280 width and 720 height, cropping any overflow to keep the center.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "573848093137",
+    "path": null,
+    "created_at": "2025-07-24T20:35:52.035619",
+    "created_by": "scosman",
+    "output": "To scale a video to exactly 1280x720 while cropping any overflow to keep the center, you can first scale the video preserving its aspect ratio to fill at least one dimension (width or height), then crop the excess from the center. This is typically done by scaling the video so that it covers the entire 1280x720 area without letterboxing, then cropping the parts that overflow.\n\nHere's how you can do it with ffmpeg using the `scale` and `crop` filters chained together:\n\n- First, use `scale` with `force_original_aspect_ratio=decrease` to scale the video so it fits within 1280x720 without exceeding either dimension.\n- Then, use `scale` again with the `force_original_aspect_ratio=increase` option to scale up to cover 1280x720 exactly, possibly exceeding one dimension.\n- Finally, use `crop` to take a 1280x720 region from the scaled video centered.\n\nA simpler common approach is:\n\n```bash\n-vf \"scale='if(gt(a,1280/720),1280,-1)':'if(gt(a,1280/720),-1,720)',crop=1280:720\"\n```\n\nExplanation:\n- `a` is the input aspect ratio (width/height).\n- If the input aspect ratio is wider than 1280/720 (16:9), scale width to 1280 and height automatically.\n- If narrower, scale height to 720 and width automatically.\n- The result fills at least one dimension of 1280x720.\n- The crop filter then cuts to exactly 1280x720 centered.\n\nHere's the complete command example, assuming the input is `input.mp4` and output is `output.mp4`:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale='if(gt(a,1280/720),1280,-1)':'if(gt(a,1280/720),-1,720)',crop=1280:720\" -c:a copy output.mp4\n```\n\n- `-c:a copy` copies the audio without re-encoding.\n- You can add encoding options if you want to re-encode video or audio.\n\nThis method ensures the output is exactly 1280x720 with the central region of the video retained and overflow cropped.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 478,
+    "total_tokens": 1078,
+    "cost": 0.0010048
+  },
+  "model_type": "task_run"
+}

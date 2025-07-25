@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "103401387353",
+  "created_at": "2025-07-24T20:36:09.613790",
+  "created_by": "scosman",
+  "input": "Can you convert a 4K video to 2K resolution with minimal loss in perceived quality?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "268603780987",
+    "path": null,
+    "created_at": "2025-07-24T20:36:09.613761",
+    "created_by": "scosman",
+    "output": "To convert a 4K video (typically 3840x2160) to 2K resolution (usually 2048x1080), you want to scale down the video while maintaining its aspect ratio and use an efficient codec with a good quality setting to minimize perceptible quality loss.\n\nKey points:\n- Scale to 2048x1080 (2K DCI resolution).\n- Use libx264 video codec with a constant rate factor (CRF) around 18-20 to preserve quality.\n- Use preset 'slow' or 'medium' to balance encoding time and quality.\n- Keep audio as-is or re-encode with a common codec like AAC at a reasonable bitrate.\n- Pixel format yuv420p for compatibility.\n\nAssuming the input file is `input_4k.mp4` and output is `output_2k.mp4`.\n\n```bash\nffmpeg -i input_4k.mp4 -vf scale=2048:1080 -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k -pix_fmt yuv420p -movflags +faststart output_2k.mp4\n```\n\nExplanation:\n- `-vf scale=2048:1080` resizes video directly to 2K resolution.\n- `-c:v libx264` uses the widely supported H.264 codec.\n- `-preset slow` optimizes for quality over speed.\n- `-crf 18` delivers high quality with minimal artifacts.\n- `-c:a aac -b:a 192k` encodes audio at good quality.\n- `-pix_fmt yuv420p` ensures wide compatibility.\n- `-movflags +faststart` allows the video to start playing before fully downloaded for streaming scenarios.\n\nThis command balances quality and file size while converting the resolution accurately.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 384,
+    "total_tokens": 978,
+    "cost": 0.000852
+  },
+  "model_type": "task_run"
+}

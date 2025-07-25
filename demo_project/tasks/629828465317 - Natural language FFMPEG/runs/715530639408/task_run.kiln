@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "715530639408",
+  "created_at": "2025-07-24T18:11:17.089923",
+  "created_by": "scosman",
+  "input": "Can you help me change the frame rate of my animation.gif from 15fps to 30fps?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Advanced FFmpeg Video Filters"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "199191503754",
+    "path": null,
+    "created_at": "2025-07-24T18:11:17.089867",
+    "created_by": "scosman",
+    "output": "To convert animation.gif from 15 fps to 30 fps, you can use ffmpeg's fps filter. This filter duplicates/interpolates frames to reach the desired frame rate. For GIF output, it's best to use palette generation and paletteuse to maintain color quality and reduce file size.\n\nAssumptions:\n- The input GIF is 15 fps and you want a smoother animation at 30 fps.\n- You want to keep the output as a GIF with optimal colors.\n\nHere's how you can do it:\n\n1. Generate a palette for better color handling.\n2. Use the fps filter to change the frame rate.\n3. Use paletteuse to create the final 30 fps GIF.\n\n```bash\nffmpeg -i animation.gif -vf \"fps=30,palettegen\" -y palette.png\nffmpeg -i animation.gif -i palette.png -filter_complex \"fps=30[p];[p][1:v]paletteuse\" animation_30fps.gif\n```\n\nExplanation:\n\n- The first command generates a color palette from the GIF after applying fps=30, ensuring the palette matches the output frame rate.\n- The second command applies the same fps filter and uses the generated palette to produce a high-quality 30 fps GIF.\n\nThis keeps your GIF smooth and color-optimized at the new frame rate.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 265,
+    "total_tokens": 861,
+    "cost": 0.003312
+  },
+  "model_type": "task_run"
+}

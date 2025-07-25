@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "115438184323",
+  "created_at": "2025-07-24T20:39:47.944672",
+  "created_by": "scosman",
+  "input": "I want to combine multiple .ts video parts (from HLS stream) into a single MP4 in order. However, some fragments are missing or corrupt.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "306380608639",
+    "path": null,
+    "created_at": "2025-07-24T20:39:47.944643",
+    "created_by": "scosman",
+    "output": "To combine multiple .ts fragments from an HLS stream into a single MP4 while handling missing or corrupt segments, the best practice is:\n\n- Use the concat demuxer with a prepared text file listing the files to be concatenated in order. This method is more reliable and efficient than simply concatenating the .ts files as binary.\n- When some segments might be missing or corrupt, you can use error-resilient flags and try to ignore errors during processing with `-err_detect ignore_err` and potentially `-fflags +discardcorrupt`.\n- Re-encode the video and audio to ensure MP4 compatibility and mitigate corruption impact.\n- Use `-movflags +faststart` to make the MP4 streamable.\n\n**Steps:**\n\n1. Create a text file `inputs.txt` that lists the .ts segments you do have, in order, for example:\n\n```\nfile 'segment1.ts'\nfile 'segment2.ts'\nfile 'segment3.ts'\n# skip the missing/corrupt files\nfile 'segment5.ts'\n```\n\n2. Run ffmpeg using the concat demuxer as input, enabling err_detect and discard corruptness:\n\n```bash\nffmpeg -err_detect ignore_err -fflags +discardcorrupt -f concat -safe 0 -i inputs.txt -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nExplanation:\n- `-f concat -safe 0`: Reads the input list file with absolute or relative paths.\n- `-err_detect ignore_err`: Ignores decoding errors instead of terminating.\n- `-fflags +discardcorrupt`: Drops corrupted packets.\n- Re-encoding video (`libx264`) and audio (`aac`) ensures a clean, standard MP4 file.\n- `-preset medium` is a good balance between speed and compression.\n- `-crf 23` for good quality.\n- `-movflags +faststart` to enable progressive streaming.\n\nThis approach gracefully handles missing or corrupt fragments by skipping failed packets but keeps the segments you have intact and merged in order.\n\n```bash\n# Create inputs.txt manually with the segment filenames you have, e.g.:\n\necho \"file 'segment1.ts'\" > inputs.txt\necho \"file 'segment2.ts'\" >> inputs.txt\necho \"file 'segment3.ts'\" >> inputs.txt\n# skip corrupt/missing\necho \"file 'segment5.ts'\" >> inputs.txt\n\n# Then run ffmpeg:\nffmpeg -err_detect ignore_err -fflags +discardcorrupt -f concat -safe 0 -i inputs.txt -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nAssumptions:\n- You have access to the .ts files that are not missing or corrupt and can create the list file.\n- You want a re-encoded, clean MP4 output optimized for compatibility and streaming.\n- The audio and video codecs chosen are widely compatible for playback.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 606,
+    "output_tokens": 642,
+    "total_tokens": 1248,
+    "cost": 0.0012696
+  },
+  "model_type": "task_run"
+}

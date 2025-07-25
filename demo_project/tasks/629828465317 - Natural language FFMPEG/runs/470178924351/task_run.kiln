@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "470178924351",
+  "created_at": "2025-07-24T20:35:16.008292",
+  "created_by": "scosman",
+  "input": "My GoPro recorded a .mov with incorrect rotation. Output a rotated, corrected .mp4 file.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "306399184075",
+    "path": null,
+    "created_at": "2025-07-24T20:35:16.008239",
+    "created_by": "scosman",
+    "output": "To correct the rotation in a GoPro .mov and output a rotated .mp4, you can apply a video filter (`transpose`) to rotate the video to the proper orientation. Common GoPro rotation issues are 90°, 180°, or 270° off.\n\nThe `transpose` filter handles clockwise rotations of 90° and 270° (by using different parameter values), and if you need 180°, you can use `transpose` twice or the `rotate` filter with π radians.\n\nAssuming your GoPro video is rotated 90° clockwise and you want to rotate it back counter-clockwise 90° (or vice versa), here is an example command. If you know the exact needed rotation please adjust `transpose` accordingly:\n\n- `transpose=1` rotates 90° clockwise\n- `transpose=2` rotates 90° counterclockwise\n- For 180°, use `transpose=1,transpose=1` or `transpose=2,transpose=2`\n\nAdditionally, using H.264 video codec and AAC audio codec ensures the MP4 file is broadly compatible. The `-movflags +faststart` enables progressive streaming in players.\n\nExample command assuming you want to rotate 90° counterclockwise (fix typical GoPro upside-down issue):\n\n```bash\nffmpeg -i input.mov -vf \"transpose=2\" -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nExplanation:\n- `-vf \"transpose=2\"` rotates the video 90° counterclockwise.\n- `libx264` codec with `crf 18` gives high quality output.\n- `aac` audio with 128k bitrate for good compatibility.\n- `-preset slow` balances encoding speed and quality.\n- `-movflags +faststart` optimizes the file for streaming.\n\nAdjust `transpose` value for your specific rotation issue if needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 408,
+    "total_tokens": 1002,
+    "cost": 0.0008904
+  },
+  "model_type": "task_run"
+}

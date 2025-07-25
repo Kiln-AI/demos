@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "804517392472",
+  "created_at": "2025-07-24T20:36:34.507495",
+  "created_by": "scosman",
+  "input": "I have a .mkv file encoded with DivX. I need it as an MP4 with x264 video and 192 kbps AAC audio.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "150805015976",
+    "path": null,
+    "created_at": "2025-07-24T20:36:34.507472",
+    "created_by": "scosman",
+    "output": "To convert a DivX-encoded MKV file to an MP4 container with H.264 (x264) video and AAC audio at 192 kbps, you need to:\n\n- Re-encode the video stream to H.264 using libx264.\n- Re-encode the audio to AAC with the specified bitrate (192 kbps).\n- Use the MP4 container format.\n- Use parameters ensuring good balance between quality and compression (preset, crf).\n- Set pixel format to yuv420p for broad compatibility.\n- Use -movflags +faststart to enable progressive streaming (metadata moved to the file start).\n\nHere is an example command assuming the input filename is input.mkv and output is output.mp4:\n\n```bash\nffmpeg -i input.mkv -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 192k -movflags +faststart -pix_fmt yuv420p output.mp4\n```\n\nExplanation of options:\n- `-c:v libx264`: use the H.264 encoder.\n- `-preset medium`: balanced encoding speed/quality.\n- `-crf 23`: controls video quality (lower is better); 23 is a good default.\n- `-c:a aac -b:a 192k`: re-encode audio to AAC at 192 kbps.\n- `-movflags +faststart`: optimize MP4 for streaming.\n- `-pix_fmt yuv420p`: sets pixel format for compatibility with most players.\n\nThis command will re-encode both streams for maximum compatibility in MP4 format with your desired audio bitrate.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 605,
+    "output_tokens": 337,
+    "total_tokens": 942,
+    "cost": 0.0007812
+  },
+  "model_type": "task_run"
+}

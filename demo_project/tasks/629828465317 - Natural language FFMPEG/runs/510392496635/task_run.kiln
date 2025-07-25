@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "510392496635",
+  "created_at": "2025-07-24T18:12:40.905557",
+  "created_by": "scosman",
+  "input": "Extracting every nth frame to create a photo slideshow from a video seems to miss frames randomly. What's causing this and how can it be corrected?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "268443670979",
+    "path": null,
+    "created_at": "2025-07-24T18:12:40.905516",
+    "created_by": "scosman",
+    "output": "When extracting every nth frame from a video using ffmpeg's select filter (e.g., `select='not(mod(n\\,10))'`), \"randomly missing\" frames can occur if the source video has a variable frame rate (VFR) or if seeking/indexing isn't accurate. This is common with videos from smartphones or screen recordings, where the frame timestamps aren't evenly spaced.\n\nCause:\n- With **VFR**, the frame \"number\" (`n`) in the filter doesn't correspond to a consistent time interval. As a result, frames may be skipped or duplicated unpredictably.\n- When you use ffmpeg without specifying an accurate frame rate or ask for frames based on \"number\" rather than \"time,\" the result can seem random if input is not constant frame rate (CFR).\n\nCorrection:\n- To get evenly spaced frames for a slideshow, extract frames at regular time intervals (e.g., 1 frame per second). This uses the `fps` video filter, which selects frames at uniform time positions according to the specified frame rate, regardless of underlying VFR/CFR.\n\nFor example, to extract 1 frame every 2 seconds from a source video and output them as sequential images:\n\n```bash\nffmpeg -i input.mp4 -vf fps=1/2 slideshow_frame_%04d.jpg\n```\nExplanation:\n- `-vf fps=1/2` extracts 1 frame every 2 seconds, guaranteeing consistent spacing.\n- Output file names: `slideshow_frame_0001.jpg`, `slideshow_frame_0002.jpg`, etc.\n\n**Assumption:** You want to avoid uneven frame extraction from VFR sources and ensure accurately timed slideshow images. Adjust the `fps` parameter (`1/2` for every 2 seconds, or e.g., `0.5` for every 2 seconds) as required for your project.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 378,
+    "total_tokens": 981,
+    "cost": 0.00423
+  },
+  "model_type": "task_run"
+}

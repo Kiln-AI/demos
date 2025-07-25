@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "229994412030",
+  "created_at": "2025-07-24T20:25:44.150512",
+  "created_by": "scosman",
+  "input": "Convert PGS subtitles in input.mkv to SRT and burn them into the video.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "285636279033",
+    "path": null,
+    "created_at": "2025-07-24T20:25:44.150484",
+    "created_by": "scosman",
+    "output": "To convert PGS subtitles in `input.mkv` to SRT and burn them into the video, you need two steps: first extract and convert PGS subtitles to SRT, then burn the SRT subtitles into the video. However, directly converting PGS to SRT with ffmpeg alone is not straightforward because PGS subtitles are image-based and require OCR for text conversion.\n\nAssuming you want to automate the burn-in of PGS subtitles without converting to SRT text (because true conversion to SRT requires OCR tools outside ffmpeg), the best ffmpeg-only approach is to burn the original PGS subtitles into the video directly (rendering the image subtitles onto the video). If you need SRT text files, you'd have to use tools like `SubtitleEdit` or `BDSup2Sub` with OCR capabilities or a specialized subtitle OCR software.\n\nFor the purpose of this request, I'll provide a command to burn the PGS subtitles into the video, which visually overlays them without converting to text.\n\n- `-vf subtitles=input.mkv` burns in subtitles from the input file.\n- Re-encode video is necessary because burning subtitles is a video filter (filtergraph).\n- Use libx264 codec with suitable presets and CRF for good quality.\n- Audio is copied without re-encoding for efficiency unless you want to change it.\n\n```bash\nffmpeg -i input.mkv -vf \"subtitles=input.mkv\" -c:v libx264 -preset slow -crf 18 -c:a copy output_burned.mp4\n```\n\nIf you truly need SRT subtitles extracted from PGS, use specialized OCR tools first, then burn the SRT file with `-vf subtitles=converted.srt`.\n\nSummary:\n- PGS to SRT conversion requires OCR, not directly possible by ffmpeg.\n- You can burn PGS subtitles visually by using the subtitles filter.\n- If you have an SRT file from another OCR process, replace the input in subtitles filter with the SRT filename.\n\nThis command assumes the default subtitle stream in input.mkv is PGS. If multiple subtitle streams exist, specify the correct stream by modifying the filter:\n\n```bash\n-vf \"subtitles=input.mkv:si=0\"\n```\nwhere `si=0` selects the first subtitle stream. Adjust as needed.\n\n---\n\nFinal command burning PGS subtitles from input.mkv into the video:\n\n```bash\nffmpeg -i input.mkv -vf \"subtitles=input.mkv\" -c:v libx264 -preset slow -crf 18 -c:a copy output_burned.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 534,
+    "total_tokens": 1125,
+    "cost": 0.0010908
+  },
+  "model_type": "task_run"
+}

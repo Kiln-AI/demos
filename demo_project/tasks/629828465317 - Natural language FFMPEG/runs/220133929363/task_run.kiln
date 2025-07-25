@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "220133929363",
+  "created_at": "2025-07-24T20:40:06.425396",
+  "created_by": "scosman",
+  "input": "Input file is 120fps slow-motion, but I want to output a 24fps video with motion blur for a filmic effect.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "495545664337",
+    "path": null,
+    "created_at": "2025-07-24T20:40:06.425371",
+    "created_by": "scosman",
+    "output": "To convert a 120fps slow-motion input to a 24fps video with a filmic motion blur effect, you can use the minterpolate filter in ffmpeg. This filter generates intermediate frames via motion interpolation, which can be used to simulate motion blur when reducing frame rate.\n\nHere's the approach:\n- Use `minterpolate` with `fps=24` to lower the frame rate by interpolating frames.\n- The `mi_mode=mci` (motion-compensated interpolation) option ensures motion vectors are used for smoother motion blur effect.\n- Optionally, tweak `mc_mode` and `me_mode` for quality and performance balance.\n- Use `-r 24` output frame rate to ensure container metadata reflects 24fps.\n- Use a commonly supported codec, here libx264, to maintain compatibility.\n\nAssumption: The input file is named `input.mov` and you want `output.mp4`.\n\n```bash\nffmpeg -i input.mov -vf \"minterpolate='fps=24:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1'\" -r 24 -c:v libx264 -preset slow -crf 18 -c:a copy output.mp4\n```\n\nExplanation of parameters:\n- `minterpolate`: motion-interpolates frames to simulate motion blur effect at 24fps.\n- `mc_mode=aobmc`: adaptive overlapped block motion compensation for smoother output.\n- `me_mode=bidir`: bidirectional motion estimation for accuracy.\n- `vsbmc=1`: variable-size block motion compensation enabled.\n- `-r 24`: set output framerate metadata.\n- `-c:v libx264 -preset slow -crf 18`: high quality encoding.\n- `-c:a copy`: copy original audio without re-encoding.\n\nThis command creates a smooth 24fps video with a filmic motion blur appearance derived from the 120fps slow-motion footage.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 404,
+    "total_tokens": 1006,
+    "cost": 0.0008872
+  },
+  "model_type": "task_run"
+}

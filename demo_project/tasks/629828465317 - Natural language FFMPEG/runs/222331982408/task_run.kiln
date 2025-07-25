@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "222331982408",
+  "created_at": "2025-07-24T20:27:30.795746",
+  "created_by": "scosman",
+  "input": "How do I join together (concatenate) several mp4 files with different resolutions into one video?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "177584245535",
+    "path": null,
+    "created_at": "2025-07-24T20:27:30.795723",
+    "created_by": "scosman",
+    "output": "When concatenating MP4 files that have different resolutions, codecs, or other parameters, a direct stream copy concatenation won't work, as the files must have exactly matching formats. In this case, you need to re-encode all videos to a common resolution, codec, pixel format, and framerate before concatenating.\n\nA best practice is to:\n\n1. Re-encode each input video to the same codec (e.g., H.264), pixel format (yuv420p), resolution (choose one resolution or scale all to the same), and framerate.\n2. Either concatenate them syntactically with the concat filter (complex filter), or encode them into intermediate files with the same specs and then concatenate by file.\n\nHere, I'll show how to do it in one command using the concat filter:\n\n- Use `-filter_complex` with `[0:v]scale=width:height,setpts=PTS-STARTPTS[v0]; ...` to scale and prepare each input stream.\n- Choose a target resolution you want all videos to be scaled to (e.g., 1280x720).\n- Apply `setsar=1` to set the sample aspect ratio to 1:1 to avoid weird aspect ratios.\n- Use `concat=n=X:v=1:a=1` where X = number of inputs.\n- For audio, resample or re-encode to a common codec and sample rate.\n\nExample assumes 3 input files input1.mp4, input2.mp4, input3.mp4 and scales all to 1280x720:\n\n```bash\nffmpeg -i input1.mp4 -i input2.mp4 -i input3.mp4 -filter_complex \\\n\"[0:v]scale=1280:720,setsar=1[v0]; \\\n [1:v]scale=1280:720,setsar=1[v1]; \\\n [2:v]scale=1280:720,setsar=1[v2]; \\\n [0:a]aresample=48000,asetpts=PTS-STARTPTS[a0]; \\\n [1:a]aresample=48000,asetpts=PTS-STARTPTS[a1]; \\\n [2:a]aresample=48000,asetpts=PTS-STARTPTS[a2]; \\\n [v0][a0][v1][a1][v2][a2]concat=n=3:v=1:a=1[outv][outa]\" \\\n-map \"[outv]\" -map \"[outa]\" -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k -movflags +faststart output.mp4\n```\n\nExplanation:\n\n- Each video is scaled to 1280x720 with aspect ratio set to 1 to standardize.\n- Audio streams are resampled to 48 kHz and timestamps normalized.\n- concat filter merges all three video and audio streams sequentially.\n- Video is encoded with libx264 at CRF 18 for good quality.\n- Audio is encoded with AAC at 192 kbps.\n- `-movflags +faststart` allows playback to start before file is completely downloaded (useful for streaming).\n\nYou can adjust resolution and number of inputs as needed.\n\nIf you have a list of many files, it’s more practical to write a script to generate such ffmpeg commands or use an intermediate transcoding step per file to ensure consistent format before concatenation via the concat demuxer. But the above is the direct single command solution for files with different resolutions.\n\n---\n\n### Summary:\n\nTo join MP4 files with different resolutions, re-encode them to a uniform resolution and format, then concatenate with the concat filter as shown above.\n\n```bash\nffmpeg -i input1.mp4 -i input2.mp4 -i input3.mp4 -filter_complex \\\n\"[0:v]scale=1280:720,setsar=1[v0]; \\\n [1:v]scale=1280:720,setsar=1[v1]; \\\n [2:v]scale=1280:720,setsar=1[v2]; \\\n [0:a]aresample=48000,asetpts=PTS-STARTPTS[a0]; \\\n [1:a]aresample=48000,asetpts=PTS-STARTPTS[a1]; \\\n [2:a]aresample=48000,asetpts=PTS-STARTPTS[a2]; \\\n [v0][a0][v1][a1][v2][a2]concat=n=3:v=1:a=1[outv][outa]\" \\\n-map \"[outv]\" -map \"[outa]\" -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k -movflags +faststart output.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 987,
+    "total_tokens": 1581,
+    "cost": 0.0018168
+  },
+  "model_type": "task_run"
+}

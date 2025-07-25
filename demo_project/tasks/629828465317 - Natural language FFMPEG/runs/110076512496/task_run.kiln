@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "110076512496",
+  "created_at": "2025-07-24T20:25:16.983437",
+  "created_by": "scosman",
+  "input": "I have an .mp4 where the audio is out of sync. Can I remux just the audio stream with an offset?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "198511271145",
+    "path": null,
+    "created_at": "2025-07-24T20:25:16.983403",
+    "created_by": "scosman",
+    "output": "Yes, you can remux the audio stream with an offset to correct sync issues without re-encoding the streams, which is faster and preserves quality. This is done using stream copying (`-c copy`) and the audio delay option `-itsoffset`.\n\n- `-itsoffset` specifies the time offset to apply to the input stream (in seconds). Pass a positive value to delay audio or a negative value to advance it.\n- Use `-map` to select the video and audio streams explicitly.\n- Use `-c copy` to avoid re-encoding both audio and video.\n- Make sure to apply the offset only to the audio stream.\n\nAssuming that the audio needs to be delayed by 0.5 seconds, here is the command to remux with audio delayed:\n\n```bash\nffmpeg -i input.mp4 -itsoffset 0.5 -i input.mp4 -map 0:v -map 1:a -c copy output.mp4\n```\n\nExplanation:\n\n- The first input (`-i input.mp4`) delivers the video stream as-is (`-map 0:v`).\n- The second input (`-itsoffset 0.5 -i input.mp4`) loads the audio stream delayed by 0.5 seconds (`-map 1:a`).\n- `-c copy` copies both streams without re-encoding.\n- The resulting file will contain video and audio in sync, with audio shifted accordingly.\n\nIf the audio needs to be advanced instead (audio comes too late), use a negative offset, e.g., `-itsoffset -0.5`.\n\n**Note:** Some players might have issues with the resulting timestamps; if problems persist, re-encoding or more advanced editing with filters might be necessary.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 355,
+    "total_tokens": 958,
+    "cost": 0.0008092
+  },
+  "model_type": "task_run"
+}

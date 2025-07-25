@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "135748081690",
+  "created_at": "2025-07-24T20:23:25.239910",
+  "created_by": "scosman",
+  "input": "Split a long concert.mp3 into individual songs using a cuesheet (concert.cue).",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "153757008874",
+    "path": null,
+    "created_at": "2025-07-24T20:23:25.239885",
+    "created_by": "scosman",
+    "output": "To split a long audio file (concert.mp3) into individual songs using a cuesheet (concert.cue), you can use `ffmpeg` in combination with the cuesheet to extract each track defined by the cuesheet.\n\nKey points:\n- The `-i concert.cue` input tells ffmpeg to read the cuesheet for track metadata and split points.\n- `-i concert.mp3` is the long audio file.\n- `-map 0` uses the cuesheet input to get track info.\n- `-map 1:a` uses the audio stream from the mp3 file.\n- The output pattern `output_%02d.mp3` will name the tracks sequentially.\n- `-c copy` copies audio streams without re-encoding, preserving quality.\n- This requires an ffmpeg version that supports reading cuesheets as inputs (most modern versions do).\n\nExample command:\n\n```bash\nffmpeg -i concert.cue -i concert.mp3 -map 0 -map 1:a -c copy output_%02d.mp3\n```\n\nIf your ffmpeg does not support reading cuesheet as input in that manner, a common alternative is to use specialized tools like `shntool` or `cuetools` or to generate ffmpeg commands from the cuesheet manually. But in modern ffmpeg, the above method is the recommended straightforward approach.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 281,
+    "total_tokens": 874,
+    "cost": 0.0006868
+  },
+  "model_type": "task_run"
+}

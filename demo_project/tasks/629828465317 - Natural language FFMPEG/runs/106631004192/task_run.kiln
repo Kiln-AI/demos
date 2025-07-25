@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "106631004192",
+  "created_at": "2025-07-24T20:37:46.388273",
+  "created_by": "scosman",
+  "input": "Add forced subtitles (subs-forced.srt) into a movie and mark them as default.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "166853630168",
+    "path": null,
+    "created_at": "2025-07-24T20:37:46.388140",
+    "created_by": "scosman",
+    "output": "To add forced subtitles to a movie and mark them as the default subtitle track, you can use FFmpeg to embed the external subtitle file as a subtitle stream with the appropriate disposition flags.\n\nKey points:\n- Use `-i subs-forced.srt` to input the subtitle file.\n- Use `-c:v copy -c:a copy` to copy the original video and audio streams without re-encoding.\n- Use `-c:s mov_text` for MP4 container compatibility (or `-c:s srt` for MKV). Adjust based on container.\n- Use `-disposition:s:0 default` to mark the subtitle stream as the default track.\n- Use `-disposition:s:0 forced` to mark the subtitle stream as forced subtitles.\n  \nAssuming the output container is MP4, which supports `mov_text` subtitles. For MKV output, use `-c:s srt`.\n\nExample for MP4 container:\n\n```bash\nffmpeg -i input.mp4 -i subs-forced.srt -map 0 -map 1 -c:v copy -c:a copy -c:s mov_text -disposition:s:0 default -disposition:s:0 forced output_with_forced_subs.mp4\n```\n\nExplanation:\n- `-map 0` maps all streams from the input video.\n- `-map 1` maps the subtitle stream from the `.srt` file.\n- `-disposition:s:0` applies to the first subtitle stream (`s:0` corresponds to the first subtitle added by `-map 1`).\n- This embeds the forced subtitle track and marks it as default so players will automatically display it.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 344,
+    "total_tokens": 936,
+    "cost": 0.0007872
+  },
+  "model_type": "task_run"
+}

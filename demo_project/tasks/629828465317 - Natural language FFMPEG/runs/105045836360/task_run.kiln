@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "105045836360",
+  "created_at": "2025-07-24T20:26:42.717514",
+  "created_by": "scosman",
+  "input": "Is there a one-liner to change the frame rate of all videos in a directory to 25 fps?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "203593116307",
+    "path": null,
+    "created_at": "2025-07-24T20:26:42.717462",
+    "created_by": "scosman",
+    "output": "To change the frame rate of all videos in a directory to 25 fps in one line, you can use a shell loop combined with ffmpeg. This approach assumes you want to overwrite or create new files with the adjusted frame rate, maintaining the original encoding settings to keep quality mostly unchanged.\n\n- `for f in *.ext` loops over all videos with a given extension (replace `.ext` with your video file extension, e.g., `.mp4`).\n- `-r 25` sets the output frame rate to 25 frames per second.\n- `-c:v libx264 -crf 18` re-encodes video with high quality (CRF 18 is visually indistinguishable from original but reduces file size).\n- `-preset fast` balances encoding speed and compression.\n- `-c:a copy` copies audio streams without modification.\n- Output filenames are appended with `_25fps` to avoid overwriting originals.\n\nMake sure you replace `.mp4` with the correct extension(s) or use a pattern that matches your videos. You can adjust the naming as needed.\n\n```bash\nfor f in *.mp4; do ffmpeg -i \"$f\" -r 25 -c:v libx264 -crf 18 -preset fast -c:a copy \"${f%.mp4}_25fps.mp4\"; done\n```\n\nIf your directory has mixed video formats or you want to process all videos regardless of extension, you can use a more general loop with `find` or with a pattern like `*.*`, but be cautious to not include non-video files.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 326,
+    "total_tokens": 922,
+    "cost": 0.00076
+  },
+  "model_type": "task_run"
+}

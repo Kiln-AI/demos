@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "212147098682",
+  "created_at": "2025-07-24T18:10:59.313255",
+  "created_by": "scosman",
+  "input": "Can you remove the audio track from a video file and replace it with music from another file?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Advanced FFmpeg Video Filters"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "259536710791",
+    "path": null,
+    "created_at": "2025-07-24T18:10:59.313228",
+    "created_by": "scosman",
+    "output": "Yes, you can remove the original audio track from a video file and add a new audio stream (such as music) using FFmpeg’s stream mapping. This is done by selecting the video from the original file, skipping the original audio, and adding the new audio track.\n\n- -i input.mp4 specifies your original video file.\n- -i music.mp3 specifies your replacement audio (music).\n- -map 0:v:0 selects the first video stream from the first input (video).\n- -map 1:a:0 selects the first audio stream from the second input (music).\n- -c:v copy copies the video without re-encoding for speed/quality.\n- -c:a aac -b:a 192k encodes the music as AAC (compatible with most players; adjust the bitrate if needed).\n- -shortest ensures output duration matches the shortest input (so video or music won’t outlast the other).\n\nAssumption: \n- Original file is input.mp4, music is music.mp3, and output will be output.mp4.\n- If music duration is shorter than video, the output will cut to music length. If longer, music will be truncated to match video length.\n\n```bash\nffmpeg -i input.mp4 -i music.mp3 -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 192k -shortest output.mp4\n```\nThis command completely replaces the video’s original audio track with the music from music.mp3.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 316,
+    "total_tokens": 910,
+    "cost": 0.003716
+  },
+  "model_type": "task_run"
+}

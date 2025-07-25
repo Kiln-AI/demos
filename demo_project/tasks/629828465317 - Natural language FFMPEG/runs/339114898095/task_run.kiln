@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "339114898095",
+  "created_at": "2025-07-24T20:26:29.977724",
+  "created_by": "scosman",
+  "input": "Is there a way to batch normalize the audio levels of a group of .mp3s to the same loudness target using ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "243564816213",
+    "path": null,
+    "created_at": "2025-07-24T20:26:29.977676",
+    "created_by": "scosman",
+    "output": "Yes, you can batch normalize audio levels of multiple .mp3 files to a consistent loudness target using `ffmpeg`'s `loudnorm` filter, which implements EBU R128 loudness normalization. This provides accurate normalization to a specified integrated loudness level, commonly -23 LUFS (loudness units relative to full scale), but for music, -16 or -14 LUFS is often preferred depending on your use case.\n\n### Key points:\n- `loudnorm` filter normalizes audio to a loudness target with integrated loudness, loudness range, and true peak considerations.\n- Two-pass normalization is recommended for precise results: first pass to analyze loudness, second pass to apply compensations.\n- For batch processing, a shell loop can run the command on all `.mp3` files in a directory.\n- Output filenames should be distinct to avoid overwriting originals; commonly adding a suffix like `_norm` or writing to a separate directory.\n\n### Example batch script (bash) with one-pass normalization for efficiency (good for many files, still effective but slightly less precise):\n\n```bash\nfor f in *.mp3; do\n  ffmpeg -i \"$f\" -af loudnorm=I=-16:TP=-1.5:LRA=11 -ar 44100 -ac 2 -b:a 192k \"normalized/${f%.mp3}_norm.mp3\"\ndone\n```\n\n### Explanation:\n- `loudnorm=I=-16:TP=-1.5:LRA=11`: sets target loudness at -16 LUFS integrated (I), -1.5 dB true peak (TP), and loudness range (LRA) 11 LU.\n- `-ar 44100` and `-ac 2`: sets standard sample rate and stereo channels for consistent output audio specs.\n- `-b:a 192k`: sets audio bitrate to 192 kbps for good MP3 quality.\n- Output files saved in a subfolder `normalized/` to keep originals intact with `_norm` suffix.\n\n### If you want the most accurate normalization, use the two-pass method as follows per file (but slower):\n\n```bash\nfor f in *.mp3; do\n  # First pass: analyze loudness and save info to JSON file\n  ffmpeg -i \"$f\" -af loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json -f null - 2> \"${f%.mp3}_stats.log\"\n  \n  # Extract measured values from the stats file (this requires some additional shell scripting or manual parsing)\n  # For simplicity assume you parse the JSON output and set measured_I, measured_TP, and measured_LRA variables accordingly\n  \n  # Second pass: apply correction with measured values\n  ffmpeg -i \"$f\" -af loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=XXX:measured_TP=YYY:measured_LRA=ZZZ:offset=OOO:linear=true:print_format=summary -ar 44100 -ac 2 -b:a 192k \"normalized/${f%.mp3}_norm.mp3\"\ndone\n```\n\n### Assumptions:\n- You have a `normalized/` directory created beforehand (`mkdir -p normalized`).\n- Bash shell environment.\n- Target loudness is -16 LUFS suitable for music; adjust as needed.\n- You prefer MP3 output; codecs and parameters adjusted accordingly.\n\nThis approach provides an automated, batch-friendly way with best practices for loudness normalization using `ffmpeg`.\n\n```bash\nmkdir -p normalized\nfor f in *.mp3; do\n  ffmpeg -i \"$f\" -af loudnorm=I=-16:TP=-1.5:LRA=11 -ar 44100 -ac 2 -b:a 192k \"normalized/${f%.mp3}_norm.mp3\"\ndone\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 821,
+    "total_tokens": 1423,
+    "cost": 0.0015544
+  },
+  "model_type": "task_run"
+}

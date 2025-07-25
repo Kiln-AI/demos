@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "248143109746",
+  "created_at": "2025-07-24T20:35:50.162259",
+  "created_by": "scosman",
+  "input": "I want to resize a video to exactly 640x360, even if it adds black bars. What should I do?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "235055119594",
+    "path": null,
+    "created_at": "2025-07-24T20:35:50.162236",
+    "created_by": "scosman",
+    "output": "To resize a video to exactly 640x360 while preserving the aspect ratio and adding black bars (letterboxing/pillarboxing) as needed, you should use the `scale` filter combined with the `pad` filter in ffmpeg. This approach first scales the video to fit within 640x360 without distortion, then pads the remaining space with black bars to reach exactly 640x360 resolution.\n\n- The `scale=w:h:force_original_aspect_ratio=decrease` option scales the video down/up to fit inside 640x360 while maintaining the aspect ratio.\n- The `pad=640:360:(ow-iw)/2:(oh-ih)/2` filter then adds black padding to center the video in the 640x360 frame.\n- Padding color defaults to black, but can be changed by adding `:color=black` explicitly if desired.\n\nHere is the command assuming your input is `input.mp4` and output is `output.mp4`:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=640:360:force_original_aspect_ratio=decrease,pad=640:360:(ow-iw)/2:(oh-ih)/2\" -c:a copy output.mp4\n```\n\nExplanation:\n- `-vf` applies the video filters in sequence.\n- `-c:a copy` copies the audio stream without re-encoding.\n- You can add `-c:v libx264 -crf 23 -preset medium` before output.mp4 if re-encoding video to H.264 is desired. Otherwise, ffmpeg will encode in default codec or may require you to specify codec explicitly depending on input format.\n\nThis method ensures the final video resolution is exactly 640x360 with no aspect ratio distortion.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 362,
+    "total_tokens": 961,
+    "cost": 0.0008188
+  },
+  "model_type": "task_run"
+}

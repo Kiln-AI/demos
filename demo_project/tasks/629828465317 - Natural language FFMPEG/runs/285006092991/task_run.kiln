@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "285006092991",
+  "created_at": "2025-07-24T20:24:03.577152",
+  "created_by": "scosman",
+  "input": "I need to convert a 720p video to 4K (3840x2160) for testing upscaling.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "632646618117",
+    "path": null,
+    "created_at": "2025-07-24T20:24:03.577126",
+    "created_by": "scosman",
+    "output": "To upscale a 720p video to 4K resolution (3840x2160), you can use the `scale` video filter in ffmpeg. This will resize the video frame exactly to 3840x2160. Since upscaling can introduce artifacts, using a high-quality scaler like the default `lanczos` is recommended for better sharpness and detail preservation.\n\nKey points in the command:\n- `-vf scale=3840:2160` sets the output resolution explicitly.\n- `-c:v libx264` encodes the video in H.264, a widely compatible codec.\n- `-preset slow` prioritizes encoding quality over speed.\n- `-crf 18` gives visually lossless quality for testing (lower CRF means better).\n- `-c:a copy` copies the original audio stream without re-encoding.\n\nThis command assumes your source input has audio. If not, you can omit the `-c:a copy` option.\n\n```bash\nffmpeg -i input_720p.mp4 -vf scale=3840:2160 -c:v libx264 -preset slow -crf 18 -c:a copy output_4k.mp4\n```\n\nThis will give you a high-quality 4K upscale suitable for testing purposes.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 266,
+    "total_tokens": 866,
+    "cost": 0.0006656
+  },
+  "model_type": "task_run"
+}

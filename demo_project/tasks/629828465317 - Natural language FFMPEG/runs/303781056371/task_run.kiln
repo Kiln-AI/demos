@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "303781056371",
+  "created_at": "2025-07-24T20:23:52.585133",
+  "created_by": "scosman",
+  "input": "I need to reduce the size of lecture.mkv to 540p but keep the audio untouched.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "134809032562",
+    "path": null,
+    "created_at": "2025-07-24T20:23:52.585108",
+    "created_by": "scosman",
+    "output": "To reduce the resolution of lecture.mkv to 540p while keeping the audio stream unchanged, you can use the scale video filter to resize the height to 540 pixels and automatically adjust the width to maintain the aspect ratio. We use scale=-2:540, where -2 instructs ffmpeg to calculate the width automatically and make it divisible by 2 (a requirement for many codecs).\n\nCopying the audio stream without re-encoding is achieved with the `-c:a copy` option, which preserves the original audio quality and avoids processing time.\n\nHere's the command:\n\n```bash\nffmpeg -i lecture.mkv -vf scale=-2:540 -c:v libx264 -preset fast -crf 23 -c:a copy output_540p.mkv\n```\n\nExplanation:  \n- `-vf scale=-2:540`: resize video height to 540 pixels, width auto-calculated with aspect ratio preserved and divisible by 2.  \n- `-c:v libx264`: encode video with H.264 codec for efficient compression and compatibility.  \n- `-preset fast`: balances encoding speed and compression efficiency; adjust to `slow` for better compression or `veryfast` for faster encoding.  \n- `-crf 23`: constant quality rate factor controlling video quality (lower is better). 23 is a good default.  \n- `-c:a copy`: copies audio stream without re-encoding to preserve original quality and speed up processing.  \n\nThis outputs a smaller video file at 540p resolution with the original audio intact.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 318,
+    "total_tokens": 912,
+    "cost": 0.0007464
+  },
+  "model_type": "task_run"
+}

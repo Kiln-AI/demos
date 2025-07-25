@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "190545765382",
+  "created_at": "2025-07-24T18:08:42.540285",
+  "created_by": "scosman",
+  "input": "Please convert my .mp4 video to .webm format with a maximum file size of 50MB, using VP8.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Common Video Codecs and Their Uses"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "136749271496",
+    "path": null,
+    "created_at": "2025-07-24T18:08:42.540259",
+    "created_by": "scosman",
+    "output": "To convert an .mp4 video to .webm using the VP8 codec and ensure the output file is under 50MB, you should use the VP8 codec for video and Vorbis for audio (both commonly supported in .webm containers). Achieving a target file size requires adjusting the output bitrate. \n\nHere's how you calculate the required bitrate:\n- Let’s assume your video is 3 minutes (180 seconds) long.\n- 50MB = 50 × 1024 × 1024 = 52,428,800 bytes ≈ 419,430,400 bits.\n- Allow 10% for audio + muxing overhead: Video budget = 0.9 × 419,430,400 ≈ 377,487,360 bits.\n- Video bitrate = 377,487,360 / 180 ≈ 2,097,152 bps ≈ 2100k.\n\nIf your video is longer/shorter, adjust accordingly.\n\nBest practice:\n- Use two-pass encoding for better quality at a set bitrate.\n- Use -b:v for video bitrate, -b:a for audio bitrate.\n\nHere’s a general command for a 3-minute video (adjust -b:v if your video is longer/shorter):\n\nFirst pass:\n```bash\nffmpeg -i input.mp4 -c:v libvpx -b:v 2100k -pass 1 -an -f webm -y /dev/null\n```\n\nSecond pass:\n```bash\nffmpeg -i input.mp4 -c:v libvpx -b:v 2100k -pass 2 -c:a libvorbis -b:a 128k output.webm\n```\n\nExplanation:\n- -c:v libvpx: VP8 encoder.\n- -b:v 2100k: Set video bitrate (adjust if your video duration is different).\n- -pass 1 / -pass 2: Two-pass encoding for optimal quality.\n- -c:a libvorbis -b:a 128k: Vorbis audio codec at 128kbps.\n- You can fine-tune -b:v for your particular video's duration and content.\n\nAssumption: Your video is around 3 minutes. For other durations, recalculate bitrate as described above.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 464,
+    "total_tokens": 1067,
+    "cost": 0.004918
+  },
+  "model_type": "task_run"
+}

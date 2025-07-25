@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "336835728476",
+  "created_at": "2025-07-24T20:39:32.443916",
+  "created_by": "scosman",
+  "input": "Is there a way to batch merge video and audio files from two folders, matching by basename, using ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "176504502091",
+    "path": null,
+    "created_at": "2025-07-24T20:39:32.443852",
+    "created_by": "scosman",
+    "output": "Yes, you can batch merge video and audio files from two folders by matching their basenames using a shell script combined with ffmpeg. The key idea is to:\n\n- List all video files in the video folder.\n- For each video file, find the corresponding audio file in the audio folder with the same basename.\n- Use ffmpeg to merge the video and audio streams without re-encoding (if compatible) or with re-encoding if needed.\n- Save the merged file to an output folder.\n\nAssumptions:\n- Video files and audio files have exactly the same basename but reside in different directories.\n- The output format is MP4.\n- The audio and video codecs are compatible for stream copy; otherwise, you can re-encode.\n- The system has bash shell available for scripting.\n\nBelow is a sample bash script demonstrating this approach:\n\n```bash\n#!/bin/bash\n\nvideo_dir=\"./videos\"\naudio_dir=\"./audios\"\noutput_dir=\"./merged\"\n\nmkdir -p \"$output_dir\"\n\nfor video_path in \"$video_dir\"/*; do\n  filename=$(basename -- \"$video_path\")\n  base=\"${filename%.*}\"\n  \n  audio_path=\"$audio_dir/$base\".* # match any extension\n  \n  # Find audio file with matching basename\n  audio_file=$(ls $audio_dir/$base.* 2>/dev/null | head -n 1)\n  \n  if [[ -z \"$audio_file\" ]]; then\n    echo \"No audio file found for $filename, skipping.\"\n    continue\n  fi\n  \n  output_file=\"$output_dir/$base.mp4\"\n  \n  # Merge video and audio, re-encoding audio to AAC for compatibility\n  ffmpeg -i \"$video_path\" -i \"$audio_file\" -c:v copy -c:a aac -b:a 192k -map 0:v:0 -map 1:a:0 -shortest \"$output_file\"\n  \n  echo \"Merged $filename and $(basename -- \"$audio_file\") into $output_file\"\ndone\n```\n\nExplanation:\n- `-c:v copy` copies the video stream without re-encoding for speed and quality preservation.\n- `-c:a aac -b:a 192k` re-encodes audio to AAC at 192 kbps, ensuring compatibility.\n- `-map` selects video from input 0 (video file) and audio from input 1 (audio file).\n- `-shortest` stops the output at the shortest input duration to avoid excess.\n  \nThis script can be modified to suit your folder names, file extensions, or requirements.\n\nIf you want a pure one-liner for simpler cases (assuming .mp4 video and .m4a audio with exact basenames):\n\n```bash\nfor v in ./videos/*.mp4; do b=$(basename \"$v\" .mp4); ffmpeg -i \"$v\" -i \"./audios/$b.m4a\" -c:v copy -c:a aac -b:a 192k -map 0:v:0 -map 1:a:0 -shortest \"./merged/$b.mp4\"; done\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 635,
+    "total_tokens": 1232,
+    "cost": 0.0012548
+  },
+  "model_type": "task_run"
+}

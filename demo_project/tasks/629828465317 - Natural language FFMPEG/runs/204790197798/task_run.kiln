@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "204790197798",
+  "created_at": "2025-07-24T18:09:52.999985",
+  "created_by": "scosman",
+  "input": "My current video is in 720p at 30fps. Convert it to 1080p at the highest possible frame rate.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "215537040254",
+    "path": null,
+    "created_at": "2025-07-24T18:09:52.999932",
+    "created_by": "scosman",
+    "output": "To upscale a 720p 30fps video to 1080p and increase the frame rate to the highest possible, you need to:\n\n1. Use the scale filter to set the resolution to 1920x1080.\n2. Use the minterpolate filter to increase frame rate, e.g., up to 60fps (commonly supported as \"high frame rate\"), since most consumer displays/video processing will cap at 60fps. If you want higher (e.g., 120fps), specify that rate, but ensure your playback environment supports it.\n3. Keep video quality high by choosing an appropriate crf (for H.264: 18–23, lower is better) and a \"slow\" preset for better compression efficiency.\n\nAssumptions:\n\n- Your input is input.mp4 and output will be output_1080p60.mp4.\n- You want to target 60fps as the “highest practical” frame rate.\n\nHere's how you can do it:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=1920:1080,minterpolate='fps=60'\" -c:v libx264 -preset slow -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart output_1080p60.mp4\n```\n\n- scale=1920:1080 upscales to 1080p.\n- minterpolate='fps=60' uses motion interpolation for smooth frame rate conversion.\n- pix_fmt yuv420p ensures wide compatibility.\n- -movflags +faststart helps streaming.\n- Adjust crf and preset for quality/speed tradeoff as needed.\n\nIf you want a different output filename or a different frame rate (e.g., higher than 60 and your hardware supports it), change fps=60 accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 381,
+    "total_tokens": 984,
+    "cost": 0.004254
+  },
+  "model_type": "task_run"
+}

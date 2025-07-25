@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "243551254077",
+  "created_at": "2025-07-24T18:08:47.361446",
+  "created_by": "scosman",
+  "input": "I have an MKV video needing conversion to H.264 codec with a resolution decrease by 50%.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Common Video Codecs and Their Uses"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "338102460226",
+    "path": null,
+    "created_at": "2025-07-24T18:08:47.361387",
+    "created_by": "scosman",
+    "output": "To convert an MKV video to use the H.264 codec and reduce its resolution by 50%, you can use the following technique:\n\n- -c:v libx264 selects the popular and efficient H.264 codec, commonly used for high compatibility and streaming.\n- -vf scale=iw/2:ih/2 halves both the width (iw) and height (ih) of the input video.\n- -c:a copy copies the original audio stream without re-encoding (useful if the audio is already in a compatible format).\n\nIf you want to ensure the output is widely compatible (e.g., for browser playback), you might also add -pix_fmt yuv420p and convert to MP4 container. Here, I’ll maintain MKV as the output, assuming you prefer to keep it (you can set output.mp4 to change container).\n\n```bash\nffmpeg -i input.mkv -vf scale=iw/2:ih/2 -c:v libx264 -crf 23 -preset medium -c:a copy output.mkv\n```\n\n- -crf 23 sets the output quality (lower means higher quality, 18–28 is typical; 23 is a good default).\n- -preset medium controls encoding speed vs. compression efficiency. Choose fast, slow, or other presets for your needs.\n\nAssumptions made:\n- Your input video is named input.mkv.\n- Audio codec is compatible with MKV; if not, consider also re-encoding audio (e.g., -c:a aac).\n- Output in MKV is acceptable—change the extension to .mp4 if you prefer MP4.\n\nThis will efficiently downscale and transcode your video to H.264.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 351,
+    "total_tokens": 949,
+    "cost": 0.004004
+  },
+  "model_type": "task_run"
+}

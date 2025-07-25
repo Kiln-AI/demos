@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "430774647343",
+  "created_at": "2025-07-24T20:23:25.308064",
+  "created_by": "scosman",
+  "input": "Extract subtitles as audio (speak.srt) using text-to-speech for video.mkv, save as tts.mp3.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "181933537748",
+    "path": null,
+    "created_at": "2025-07-24T20:23:25.308040",
+    "created_by": "scosman",
+    "output": "To extract subtitles from a video file and convert them into speech audio using text-to-speech (TTS), ffmpeg alone cannot perform TTS conversion because it does not have built-in text-to-speech capabilities. Instead, the process involves two main steps:\n\n1. Extract subtitles from the video as a plain text file.\n2. Use an external TTS engine or service to convert the subtitle text to an audio file (MP3).\n\nHere is a detailed approach assuming open-source tools:\n\n### Step 1: Extract subtitles from video.mkv to srt file (if not already separate)\nIf the subtitles are embedded in video.mkv:\n\n```bash\nffmpeg -i video.mkv -map 0:s:0 srt.srt\n```\n\nThis extracts the first subtitle stream as srt.srt.\n\n### Step 2: Use a TTS tool (e.g., `espeak`, `gtts-cli`, or any other TTS engine) to convert srt.srt to audio\n\nFor example, using `gtts-cli` (Google Text-to-Speech Python CLI), assuming you have Python and gtts installed:\n\n```bash\ngtts-cli -f srt.srt -o tts.mp3\n```\n\nAlternatively, with `espeak` you could:\n\n```bash\nespeak -f srt.srt --stdout | ffmpeg -i pipe: -codec:a libmp3lame -qscale:a 2 tts.mp3\n```\n\n### Summary\n\n- ffmpeg handles subtitle extraction.\n- External TTS tools convert text into audio.\n- You then encode the generated audio into MP3.\n\nIf you want a pure ffmpeg command just for subtitle extraction, here is that:\n\n```bash\nffmpeg -i video.mkv -map 0:s:0 srt.srt\n```\n\nSince TTS is beyond ffmpeg’s scope, choose your preferred TTS solution next.\n\n---\n\nIf you want me to help with a specific TTS engine, please specify it so I can provide the command.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 417,
+    "total_tokens": 1019,
+    "cost": 0.000908
+  },
+  "model_type": "task_run"
+}

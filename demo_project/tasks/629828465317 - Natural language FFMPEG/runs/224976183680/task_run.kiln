@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "224976183680",
+  "created_at": "2025-07-24T20:24:11.817785",
+  "created_by": "scosman",
+  "input": "There’s a 1280x720 video (movie.mp4) — make a 960x540 version of it. Minimize quality loss.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "207723166492",
+    "path": null,
+    "created_at": "2025-07-24T20:24:11.817694",
+    "created_by": "scosman",
+    "output": "To scale a 1280x720 video down to 960x540 while minimizing quality loss, you want to maintain high-quality encoding settings and preserve the aspect ratio exactly at 960x540 (which is exactly 3/2, matching 1280x720's 16:9 scaled down).\n\nKey points:\n- Use libx264 for efficient H.264 encoding.\n- Use a high-quality CRF value (lower number means better quality), such as 18-20 for near-transparent quality.\n- Use preset slow or medium as a trade-off between encoding speed and quality (slow is better quality).\n- Specify exact scaling to 960x540 with `-vf scale=960:540`.\n- Use pix_fmt yuv420p for broad compatibility.\n- Copy the audio stream without re-encoding to avoid quality loss or re-encode with good audio settings if preferred.\n- Use `-movflags +faststart` for good compatibility if it will be streamed or played in browsers.\n\nHere's the command assuming you want to re-encode video with high quality and copy audio as-is:\n\n```bash\nffmpeg -i movie.mp4 -vf scale=960:540 -c:v libx264 -preset slow -crf 18 -c:a copy -pix_fmt yuv420p -movflags +faststart movie_960x540.mp4\n```\n\nIf you want to re-encode audio with high quality AAC (e.g. 192k bitrate):\n\n```bash\nffmpeg -i movie.mp4 -vf scale=960:540 -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k -pix_fmt yuv420p -movflags +faststart movie_960x540.mp4\n```\n\nThis will produce a 960x540 output with minimal perceptible quality loss from the original 720p video.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 389,
+    "total_tokens": 993,
+    "cost": 0.000864
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "947248317053",
+  "created_at": "2025-07-23T11:30:40.002270",
+  "created_by": "scosman",
+  "input": "Extract frames from video.mp4 at 30fps rate and also convert the entire video to a single image thumbnail",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "claude_sonnet_4",
+      "model_provider": "anthropic",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Output Format with Conflicting Parameters"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "144910625381",
+    "path": null,
+    "created_at": "2025-07-23T11:30:40.002209",
+    "created_by": "scosman",
+    "output": "To extract frames at 30fps and create a thumbnail, you'll need two separate operations since they have conflicting output requirements - one creates multiple frame files, the other creates a single image.\n\nFor frame extraction at 30fps, I'll use `-r 30` to set the output frame rate and output to numbered PNG files. For the thumbnail, I'll extract a single frame from the middle of the video and scale it down.\n\n```bash\nffmpeg -i video.mp4 -r 30 -q:v 2 frame_%04d.png -vf \"select=eq(n\\,0)\" -vframes 1 -vf scale=320:240 thumbnail.jpg\n```\n\nThis command attempts to do both operations in a single command by:\n- `-r 30` sets 30fps frame extraction\n- `-q:v 2` sets high quality for PNG frames  \n- `frame_%04d.png` outputs numbered frame files\n- `-vf \"select=eq(n\\,0)\"` selects only the first frame for thumbnail\n- `-vframes 1` limits to one frame for thumbnail\n- `-vf scale=320:240` scales the thumbnail to 320x240\n- `thumbnail.jpg` outputs the thumbnail file\n\nHowever, you cannot use multiple `-vf` filters in the same command like this, so this command will fail. You'll need to run two separate commands instead.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "claude_sonnet_4",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "function_calling",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_243159560313",
+    "eval_correctness"
+  ],
+  "usage": {
+    "input_tokens": 993,
+    "output_tokens": 317,
+    "total_tokens": 1310,
+    "cost": 0.007734
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "179406531831",
+  "created_at": "2025-07-24T18:09:21.783117",
+  "created_by": "scosman",
+  "input": "There's a need to convert FLV to a streamable HTML5 format while keeping original audio attributes.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Streamlining Video Files for Web Streaming"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "333440889567",
+    "path": null,
+    "created_at": "2025-07-24T18:09:21.783063",
+    "created_by": "scosman",
+    "output": "To convert an FLV file to a streamable HTML5-compatible format, use the MP4 container with H.264 video and copy the original audio stream to retain all its original properties. Additionally, enabling fast start with -movflags +faststart optimizes the file for web streaming.\n\n- -c:v libx264 re-encodes the video to H.264, necessary for HTML5 compatibility.\n- -c:a copy preserves the FLV’s original audio codec, avoiding re-encoding (useful if the browser supports the audio format; most commonly FLV audio is MP3, which MP4 and browsers support).\n- -movflags +faststart ensures MP4 metadata is at the front for quick playback start in browsers.\n- -pix_fmt yuv420p ensures maximum compatibility with browsers and devices.\n- If the FLV contains unsupported audio (rare, such as Nellymoser or Speex), you’ll want to transcode audio to AAC instead (c:a aac -b:a 128k).\n\nAssumption: The FLV audio is already in MP3 or AAC format (browser compatible). If not, specify audio conversion as mentioned above.\n\n```bash\nffmpeg -i input.flv -c:v libx264 -c:a copy -pix_fmt yuv420p -movflags +faststart output.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 275,
+    "total_tokens": 872,
+    "cost": 0.003394
+  },
+  "model_type": "task_run"
+}

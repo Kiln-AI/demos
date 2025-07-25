@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "221105594995",
+  "created_at": "2025-07-24T18:12:33.167176",
+  "created_by": "scosman",
+  "input": "I would like to extract only the audio from a video file and then compress it to a specific file size without losing much quality. How can I ensure a specific bitrate is chosen correctly?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "242576013003",
+    "path": null,
+    "created_at": "2025-07-24T18:12:33.167149",
+    "created_by": "scosman",
+    "output": "To extract audio from a video and compress it to a target file size while maintaining quality, you need to select an appropriate audio bitrate based on your desired duration and target size. The general formula is:\n\n```\nbitrate (kbps) = (target_size_in_kilobits) / duration_in_seconds\n```\n\n**Steps:**\n1. Extract audio using ffmpeg by specifying the output audio codec (e.g., AAC or MP3).\n2. Set the bitrate with the `-b:a` flag.\n3. (Optional) Obtain the video duration using ffprobe or ffmpeg if you don't already know it.\n\n**Assumptions:**  \n- Output format is MP3; you can use AAC or another supported codec as needed.\n- Example: You want a 4 MB output (32,000 kbits) for a 3-minute (180 seconds) video.\n  - Bitrate = 32000 / 180 ≈ 178 kbps → use 180k, rounding up for quality.\n\n**Command:**\n\n```bash\nffmpeg -i input.mp4 -vn -c:a libmp3lame -b:a 180k output.mp3\n```\n\n- `-vn`: disables video recording (extracts audio only).\n- `-c:a libmp3lame`: uses MP3 encoding (replace with `aac` for AAC output).\n- `-b:a 180k`: sets the audio bitrate to 180 kbps.\n\n**Best practice:**  \nCalculate the required bitrate beforehand and always round up to preserve more quality if file size allows. For even more precise control, you may also want to specify the output format (`.aac`, `.mp3`, `.m4a`), depending on your needs.\n\nIf you need to automate bitrate selection for arbitrary files and sizes, use a script to obtain duration first:\n\n```bash\nDURATION=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 input.mp4)\nTARGET_SIZE_MB=4\nBITRATE=$(echo \"$TARGET_SIZE_MB*8192 / $DURATION\" | bc) # 1MB=8,192kb\nffmpeg -i input.mp4 -vn -c:a libmp3lame -b:a ${BITRATE}k output.mp3\n```\n\nThis way, you can guarantee your compressed audio fits your size requirement with optimal quality.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 611,
+    "output_tokens": 498,
+    "total_tokens": 1109,
+    "cost": 0.005206
+  },
+  "model_type": "task_run"
+}

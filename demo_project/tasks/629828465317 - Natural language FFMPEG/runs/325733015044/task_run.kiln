@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "325733015044",
+  "created_at": "2025-07-24T18:09:18.291634",
+  "created_by": "scosman",
+  "input": "I have a large MKV file that I want to stream via my website. It needs to be optimized for web streaming and compressed without losing too much quality.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Streamlining Video Files for Web Streaming"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "231959120428",
+    "path": null,
+    "created_at": "2025-07-24T18:09:18.291606",
+    "created_by": "scosman",
+    "output": "To optimize a large MKV file for web streaming and reduce its size while maintaining good quality, convert it to MP4 using H.264 video and AAC audio codecs—these are widely supported and efficient for streaming. The -movflags +faststart option moves metadata to the beginning of the file for faster playback startup in browsers. Use the -crf (Constant Rate Factor) parameter with libx264 to control quality and compression (a value of 23 is a good balance; lower means better quality, higher means more compression).\n\nAssumptions:\n- You want to retain the original resolution.\n- You aim for broad browser/device compatibility.\n- The source MKV contains video/audio compatible with H.264/AAC conversion.\n\nHere's the recommended ffmpeg command:\n\n```bash\nffmpeg -i input.mkv -c:v libx264 -crf 23 -preset medium -c:a aac -b:a 128k -movflags +faststart -pix_fmt yuv420p output.mp4\n```\n\n- -c:v libx264: Encode video with H.264 for compatibility and compression.\n- -crf 23: Balances quality and file size (adjust between 18 [higher quality, larger size] and 28 [lower quality, smaller size] as needed).\n- -preset medium: Good balance of speed and compression; you may use \"slow\" for even better compression at the expense of speed.\n- -c:a aac -b:a 128k: Converts audio to AAC at 128 kbps (sufficient for most web content).\n- -movflags +faststart: Enables immediate streaming/startup in browsers.\n- -pix_fmt yuv420p: Ensures video playback compatibility.\n\nThis conversion will result in a file optimized for smooth, immediate playback and efficient streaming on your website.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 609,
+    "output_tokens": 373,
+    "total_tokens": 982,
+    "cost": 0.004202
+  },
+  "model_type": "task_run"
+}

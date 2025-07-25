@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "100395842341",
+  "created_at": "2025-07-24T20:37:09.721888",
+  "created_by": "scosman",
+  "input": "Input file is an mp4 with H.264 video; produce an output with VP9 video, 2-pass encoding, bitrate 2 Mbps, and AAC audio.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "162683004654",
+    "path": null,
+    "created_at": "2025-07-24T20:37:09.721865",
+    "created_by": "scosman",
+    "output": "To convert an H.264 MP4 input into a VP9-encoded video with 2-pass encoding at 2 Mbps and AAC audio, you need to perform two encoding passes with ffmpeg. VP9 encoding typically uses the libvpx-vp9 encoder, which supports 2-pass encoding for improved quality at a specified bitrate.\n\n- First pass uses `-b:v 2M` to specify bitrate and `-pass 1` for first pass; video is not output (`-an -f null /dev/null`).\n- Second pass uses `-pass 2` to finalize encoding.\n- Audio is encoded with AAC at 128 kbps (`-c:a aac -b:a 128k`).\n- Output format is WebM or MP4 — since MP4 container has limited support for VP9, WebM is preferred for VP9, but if you want MP4, compatibility might be reduced.\n- Using `-row-mt 1` and `-threads` helps with encoding speed.\n- Include `-tile-columns` and `-frame-parallel` for better quality/encoding speed balance with VP9.\n\nAssuming the output container is WebM for best compatibility with VP9:\n\n```bash\nffmpeg -i input.mp4 -c:v libvpx-vp9 -b:v 2M -pass 1 -an -f webm -row-mt 1 -threads 8 -tile-columns 4 -frame-parallel 1 /dev/null && \\\nffmpeg -i input.mp4 -c:v libvpx-vp9 -b:v 2M -pass 2 -c:a aac -b:a 128k -row-mt 1 -threads 8 -tile-columns 4 -frame-parallel 1 output.webm\n```\n\nIf you specifically need MP4 container output with VP9, note that support is experimental and some players might not support it well. The command would be similar but with MP4 container:\n\n```bash\nffmpeg -i input.mp4 -c:v libvpx-vp9 -b:v 2M -pass 1 -an -f mp4 -row-mt 1 -threads 8 -tile-columns 4 -frame-parallel 1 /dev/null && \\\nffmpeg -i input.mp4 -c:v libvpx-vp9 -b:v 2M -pass 2 -c:a aac -b:a 128k -row-mt 1 -threads 8 -tile-columns 4 -frame-parallel 1 output.mp4\n```\n\nUse the first approach (WebM) for best compatibility. Adjust `-threads` according to your CPU cores. The `/dev/null` path works on Unix-like systems; on Windows use `NUL`.\n\nThis 2-pass process maximizes quality at the target bitrate of 2 Mbps.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 608,
+    "output_tokens": 595,
+    "total_tokens": 1203,
+    "cost": 0.0011952
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "313042172396",
+  "created_at": "2025-07-24T20:24:36.456894",
+  "created_by": "scosman",
+  "input": "Make an .mp4 with VP9 video and Opus audio for web distribution.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "280864085385",
+    "path": null,
+    "created_at": "2025-07-24T20:24:36.456814",
+    "created_by": "scosman",
+    "output": "To create an MP4 with VP9 video and Opus audio suitable for web distribution, you need to consider codec compatibility and container support:\n\n- VP9 video codec (`-c:v libvpx-vp9`) provides efficient compression and good quality for web videos.\n- Opus audio codec (`-c:a libopus`) is modern and offers excellent audio quality.\n- MP4 container doesn’t have widespread support for VP9 and Opus streams; WebM is the recommended container for VP9 + Opus for best browser compatibility.\n- However, if an MP4 container is strictly required, you can try embedding VP9 and Opus but playback support may be limited.\n- Use `-movflags +faststart` to optimize the file for progressive streaming on web.\n- Set a reasonable video bitrate or quality; here we use `-crf 30` with `-b:v` to control quality and bitrate.\n- Opus audio bitrate can be set with `-b:a 96k` for decent audio quality.\n\nBecause of the container support limitations, I recommend using WebM if possible. Below is the command for MP4, but for best compatibility, use the WebM command shown after.\n\n### MP4 container (limited compatibility):\n\n```bash\nffmpeg -i input -c:v libvpx-vp9 -crf 30 -b:v 0 -c:a libopus -b:a 96k -movflags +faststart output.mp4\n```\n\n### Recommended WebM container (best support for VP9 + Opus):\n\n```bash\nffmpeg -i input -c:v libvpx-vp9 -crf 30 -b:v 0 -c:a libopus -b:a 96k -auto-alt-ref 4 -arnr-maxframes 7 output.webm\n```\n\nAssumptions:  \n- Input file is named `input`.  \n- WebM is preferable for VP9 + Opus on the web.  \n- If MP4 is mandatory, be aware of possible playback issues in some browsers.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 422,
+    "total_tokens": 1013,
+    "cost": 0.0009116
+  },
+  "model_type": "task_run"
+}

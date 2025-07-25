@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "595332493331",
+  "created_at": "2025-07-24T20:27:40.646066",
+  "created_by": "scosman",
+  "input": "There's an annoying audio hiss at high frequencies in my mp3. Can this be reduced with ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "113379795929",
+    "path": null,
+    "created_at": "2025-07-24T20:27:40.646027",
+    "created_by": "scosman",
+    "output": "Reducing high-frequency hiss in an MP3 can be approached by applying an equalizer filter to attenuate the specific frequency range where the hiss is most pronounced. The `afftdn` (audio frequency domain denoiser) filter in ffmpeg can also help reduce background noise, but its effect may be less targeted.\n\nA common practice to reduce high-frequency hiss is to apply a high-shelf EQ filter or a low-pass filter that reduces frequencies above a given threshold.\n\nHere, I'll demonstrate using the `equalizer` filter to attenuate frequencies above ~8 kHz, which is a typical range where hiss occurs. You can adjust the `f` argument to target the exact frequency range.\n\n- `equalizer` uses parameters: frequency (`f`), width type (`width_type`), width (`w`), and gain (`g` in dB).  \n- We'll attenuate (reduce gain) at 8000 Hz with a reasonable width.\n\nIf you prefer a more general denoise, the `afftdn` filter can be used with a target \"nr\" (noise reduction) level, but this can alter the audio quality if set too aggressively.\n\nExample command uses a high-quality MP3 encoding with libmp3lame, bitrate 192k.\n\n```bash\nffmpeg -i input.mp3 -af \"equalizer=f=8000:width_type=h:w=2000:g=-15\" -c:a libmp3lame -b:a 192k output_denoised.mp3\n```\n\nExplanation:\n- `-af \"equalizer=...\"` applies the EQ to reduce gain by 15 dB centered at 8 kHz with a relatively wide bandwidth.\n- `-c:a libmp3lame` uses high-quality MP3 encoding.\n- `-b:a 192k` sets audio bitrate for good quality.\n\nAdjust `f` and `g` values as needed for your hiss frequency and desired attenuation.\n\nIf you want to try the frequency domain denoiser instead:\n\n```bash\nffmpeg -i input.mp3 -af afftdn=nf=-25 -c:a libmp3lame -b:a 192k output_denoised.mp3\n```\n\nHere, `nf` sets noise floor reduction in dB; you can experiment with values (-20 to -30) to find the right balance.\n\nAssumptions:\n- The hiss is located above ~8 kHz.\n- You're okay with slight audio coloration or softness caused by filtering.\n- Input is an MP3 file with a typical bitrate.\n\n# Summary\nFor most targeted hiss reduction, use the equalizer filter to dip high frequencies. For more general noise reduction, consider `afftdn`, but test carefully to avoid degrading audio quality.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 564,
+    "total_tokens": 1159,
+    "cost": 0.0011404
+  },
+  "model_type": "task_run"
+}

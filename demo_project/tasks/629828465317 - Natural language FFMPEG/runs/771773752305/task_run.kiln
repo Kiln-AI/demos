@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "771773752305",
+  "created_at": "2025-07-24T18:12:12.102318",
+  "created_by": "scosman",
+  "input": "What's the best way to convert a high-resolution TIFF image sequence (input%05d.tif) into a compressed MP4 video?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Handling Large Media Files Efficiently"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "260589000541",
+    "path": null,
+    "created_at": "2025-07-24T18:12:12.102276",
+    "created_by": "scosman",
+    "output": "To efficiently convert a high-resolution TIFF image sequence into a compressed MP4, use the H.264 codec (libx264), which is highly efficient and widely supported. For large, high-res sources, it’s important to:\n\n- Use -preset to balance compression speed/efficiency (medium or fast for most cases).\n- Use -crf (Constant Rate Factor, ~18–23) to control quality—lower means better quality, larger files.\n- -pix_fmt yuv420p for max compatibility.\n- -movflags +faststart to enable faster network streaming.\n- If frame rate is unspecified, use -framerate to set input frame rate (commonly 24/30).\n\nHere’s a best-practice command, assuming 30 FPS and that filenames are numbered as input00001.tif, input00002.tif, etc.:\n\n```bash\nffmpeg -framerate 30 -i input%05d.tif -c:v libx264 -preset fast -crf 20 -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nExplanation:\n- -framerate 30 specifies input sequence's intended FPS (change as needed).\n- -i input%05d.tif loads each TIFF in numerical order.\n- -c:v libx264 encodes video with H.264.\n- -preset fast for a good balance of speed and compression.\n- -crf 20 preserves quality while compressing (lower if quality is more important).\n- -pix_fmt yuv420p increases compatibility with most players.\n- -movflags +faststart places MP4 headers at the start for streaming.\n\nThis approach keeps CPU/RAM usage reasonable, outputs a widely compatible MP4, and works efficiently with large image sequences.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 361,
+    "total_tokens": 964,
+    "cost": 0.004094
+  },
+  "model_type": "task_run"
+}

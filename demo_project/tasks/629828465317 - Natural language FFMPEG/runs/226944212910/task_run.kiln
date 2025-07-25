@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "226944212910",
+  "created_at": "2025-07-24T20:39:22.793750",
+  "created_by": "scosman",
+  "input": "Can I automate extracting and saving subtitles from a bunch of .mkv files using ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "107173109141",
+    "path": null,
+    "created_at": "2025-07-24T20:39:22.793626",
+    "created_by": "scosman",
+    "output": "Yes, you can automate extracting subtitles from multiple `.mkv` files using a shell script combined with ffmpeg. The process involves the following:\n\n- Identifying the subtitle streams in each MKV file.\n- Extracting subtitle streams (usually in formats like SRT or ASS) using `-map` and the `-c:s copy` option to avoid re-encoding.\n- Naming the output appropriately based on the input filename.\n\nAssumptions:\n- All `.mkv` files are in the same directory.\n- Each MKV file contains one or more subtitle streams.\n- You want to extract all subtitle streams or the default subtitle stream per file.\n- This example will extract the first subtitle stream found per file as an `.srt` file. Adjust accordingly if you want multiple or specific subtitle streams.\n\n### Example bash script for batch extracting the first subtitle stream as .srt:\n\nThis script loops through all `.mkv` files in the current directory, extracts the first subtitle stream (stream specifier 0:s:0), and saves it as an `.srt` file named after the original file.\n\n```bash\n#!/bin/bash\n\nfor file in *.mkv; do\n  # Extract the base filename without extension\n  base=\"${file%.*}\"\n  \n  # Extract the first subtitle stream as .srt\n  # -map 0:s:0 = first subtitle stream from input 0\n  # -c:s copy = copy subtitle stream without re-encoding\n  # Note: Not all subtitles are in srt format; if subtitle is in ASS or PGS, convert if needed.\n  \n  ffmpeg -y -i \"$file\" -map 0:s:0 -c:s srt \"${base}.srt\" 2>/dev/null\n  \n  # Check if extraction was successful\n  if [ $? -eq 0 ]; then\n    echo \"Extracted subtitles from $file to ${base}.srt\"\n  else\n    echo \"No subtitle stream found in $file or extraction failed\"\n  fi\ndone\n```\n\n### Explanation of key points:\n\n- `-map 0:s:0` selects the first subtitle stream in the input.\n- `-c:s srt` converts subtitle to SRT format; if the subtitle is already in SRT format you can use `-c:s copy` to avoid conversion.\n- Suppressing ffmpeg output errors to keep the script output clean.\n- The `-y` flag forces overwriting output files without prompt.\n- The script checks the exit status to inform about success or failure of extraction.\n\nIf you want to extract all subtitle streams per file, or handle different subtitle formats differently, the script can be extended accordingly.\n\nThis approach automates bulk extraction efficiently, letting you process many MKV files unattended.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 572,
+    "total_tokens": 1165,
+    "cost": 0.0011524
+  },
+  "model_type": "task_run"
+}

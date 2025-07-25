@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "681458085714",
+  "created_at": "2025-07-24T18:10:54.980552",
+  "created_by": "scosman",
+  "input": "I have a video file and the audio sync is off. Can you delay the sound by 0.5 seconds?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Advanced FFmpeg Video Filters"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "199556143605",
+    "path": null,
+    "created_at": "2025-07-24T18:10:54.980476",
+    "created_by": "scosman",
+    "output": "To delay the audio by 0.5 seconds (500 milliseconds), you can use the asetpts audio filter or the adelay filter in FFmpeg. Here, adelay is most direct for constant delays. This command keeps the video as-is and shifts all audio streams by 500 ms.\n\n- adelay=500|500 makes sure both left and right channels are delayed by 500 ms (for stereo). If you have more channels, add more values separated by | as needed.\n- -c:v copy keeps your video stream unchanged (no re-encoding).\n- -c:a aac re-encodes audio (required by the filter) to AAC.\n- -movflags +faststart for web compatibility (optional but good practice).\n\n```bash\nffmpeg -i input.mp4 -c:v copy -af \"adelay=500|500\" -c:a aac -movflags +faststart output_delayed.mp4\n```\n\nAssumptions:\n- Input is stereo audio.\n- Output format is MP4; if your original is different, adjust output extension as needed.\n- Adjust |500 for each additional audio channel if applicable.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 234,
+    "total_tokens": 833,
+    "cost": 0.00307
+  },
+  "model_type": "task_run"
+}

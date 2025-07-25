@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "614426785908",
+  "created_at": "2025-07-24T18:10:19.931578",
+  "created_by": "scosman",
+  "input": "I recorded a 24fps video, but I need a version in PAL format of 25fps. Ensure that audio remains synced.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "542989843191",
+    "path": null,
+    "created_at": "2025-07-24T18:10:19.931550",
+    "created_by": "scosman",
+    "output": "To convert a 24fps video to 25fps for PAL compatibility, you need to speed up both video and audio by a factor of 25/24 (~4.1667%). This method preserves audio-video sync but results in slightly faster playback and a minor pitch increase in audio (as is standard for true PAL speed-up).\n\nTo achieve this:\n\n- Set the output frame rate to 25 fps: -r 25\n- Change the audio sample rate to maintain sync using atempo filter: atempo=25/24 (approximately 1.0417). Note that atempo only supports values between 0.5 and 2.0, so this works.\n- For best results, re-encode the audio and video streams.\n\nHere’s how you do it:\n\n```bash\nffmpeg -i input24fps.mp4 -vf \"setpts=PTS*24/25\" -r 25 -c:v libx264 -preset fast -crf 18 -c:a aac -b:a 192k -filter:a \"atempo=1.0416667\" output25fps.mp4\n```\n\nExplanation:\n- -vf \"setpts=PTS*24/25\": Speeds up the video by the required amount.\n- -r 25: Sets target output framerate.\n- -c:v libx264 -preset fast -crf 18: High quality H.264 video encoding.\n- -c:a aac -b:a 192k: Encodes audio with good quality AAC.\n- -filter:a \"atempo=1.0416667\": Speeds up audio by 25/24 to match new frame rate and keep sync.\n\nAssumptions: \n- Input file is called input24fps.mp4; change as needed.\n- The encoder choices (libx264 and AAC) provide good browser and device compatibility.\n- Slight speedup/pitch increase is acceptable, as is common in PAL standards conversion.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 402,
+    "total_tokens": 1005,
+    "cost": 0.004422
+  },
+  "model_type": "task_run"
+}

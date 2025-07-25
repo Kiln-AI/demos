@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "464560376561",
+  "created_at": "2025-07-24T18:07:48.117202",
+  "created_by": "scosman",
+  "input": "I need to convert a .mov file to .wmv without changing the audio format.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Video Conversion Techniques"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "246498238529",
+    "path": null,
+    "created_at": "2025-07-24T18:07:48.117135",
+    "created_by": "scosman",
+    "output": "To convert a .mov video to .wmv format while preserving the original audio codec and stream (if compatible with WMV), you can use the following approach:\n\n- The video stream is re-encoded to WMV (Windows Media Video 2 codec, aka wmv2).\n- The audio stream is copied as-is using -c:a copy. Note: .wmv containers usually expect WMA audio. If your source audio codec is compatible (like Windows Media Audio or uncompressed PCM), this will work. If not, you’ll need to re-encode the audio to ensure compatibility.\n- If you want FFmpeg to warn/fail if the audio isn't compatible, this command will do that.\n\nAssuming input.mov has WMV-compatible audio, the following command keeps the audio unchanged:\n\n```bash\nffmpeg -i input.mov -c:v wmv2 -c:a copy output.wmv\n```\n\nIf you get an error regarding audio codec compatibility, re-encode to WMA with -c:a wmav2:\n\n```bash\nffmpeg -i input.mov -c:v wmv2 -c:a wmav2 output.wmv\n```\n\nBut the first command attempts to preserve the audio as requested by copying it from the source.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 254,
+    "total_tokens": 846,
+    "cost": 0.003216
+  },
+  "model_type": "task_run"
+}

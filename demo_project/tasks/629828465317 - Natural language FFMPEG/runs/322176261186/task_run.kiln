@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "322176261186",
+  "created_at": "2025-07-24T20:36:14.671724",
+  "created_by": "scosman",
+  "input": "What ffmpeg arguments add vertical black bars to a wide video so it fits a 4:3 screen?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "509020314886",
+    "path": null,
+    "created_at": "2025-07-24T20:36:14.671699",
+    "created_by": "scosman",
+    "output": "To add vertical black bars (pillarboxing) to a wide video to fit a 4:3 aspect ratio screen, you can use the `scale` filter to first resize the video height to a fixed value and then use the `pad` filter to add black bars on the sides so the final output has the 4:3 aspect ratio.\n\nA 4:3 aspect ratio means width = height × 4/3.\n\n**Steps:**\n- Scale the video height to the desired output height (e.g., 720).\n- Calculate the target width as height × 4 / 3 (e.g., 720 × 4/3 = 960).\n- Scale the input video to the target height while keeping aspect ratio.\n- Pad the width to the calculated target width, adding black bars evenly on each side.\n\nAn example command assuming input is wide and we want the output height at 720 pixels (to keep decent quality) would be:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=-2:720, pad=960:720:(960 - iw)/2:0\" -c:a copy output.mp4\n```\n\nExplanation:\n- `scale=-2:720`: resizes the video to height 720, width auto-calculated to keep aspect ratio and divisible by 2.\n- `pad=960:720:(960 - iw)/2:0`: pads the video to 960 width (4:3 ratio), centering the input video horizontally by calculating left padding as half the difference between 960 and the scaled width, with no vertical padding.\n- `-c:a copy` copies the audio stream without re-encoding.\n\nIf you want another output height, just replace 720 and 960 accordingly (width = height × 4/3).\n\nThis way the video frame will have black vertical bars if the input is wider than 4:3, fitting it perfectly into a 4:3 frame without cropping or distortion.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 403,
+    "total_tokens": 999,
+    "cost": 0.0008832
+  },
+  "model_type": "task_run"
+}

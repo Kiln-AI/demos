@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "860221993754",
+  "created_at": "2025-07-24T20:38:04.107826",
+  "created_by": "scosman",
+  "input": "Add both English (eng.srt) and Japanese (jpn.srt) subtitle tracks to anime.mkv, setting English as default.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "118859452035",
+    "path": null,
+    "created_at": "2025-07-24T20:38:04.107802",
+    "created_by": "scosman",
+    "output": "To add multiple subtitle tracks into an MKV container with ffmpeg, you need to map the subtitles properly and set metadata to mark the English track as default. The MKV format supports multiple subtitle tracks.\n\n- Use `-i anime.mkv` for the input.\n- Add each subtitle file as a new input (`-i eng.srt -i jpn.srt`).\n- Use `-map` to include all streams from the original video/audio and the subtitle inputs.\n- Use `-c copy` to avoid re-encoding video and audio streams.\n- Assign proper codec for subtitles (`-c:s srt`), but since the input is already SRT, copy is fine.\n- Set metadata to mark the English subtitle track as the default (`-metadata:s:s:0` where s:s:0 refers to the first subtitle stream).\n- Also mark the Japanese subtitle track as non-default (`-metadata:s:s:1`).\n- mkv supports toggling forced subtitles and default flags via stream disposition flags, `-disposition:s:0 default` etc.\n\nAssuming anime.mkv has video and audio only, and the first subtitle track added is English (which we want as default), the order of subtitle inputs matters.\n\n```bash\nffmpeg -i anime.mkv -i eng.srt -i jpn.srt \\\n  -map 0:v -map 0:a -map 1 -map 2 \\\n  -c:v copy -c:a copy -c:s srt \\\n  -disposition:s:0 default -disposition:s:1 0 \\\n  output.mkv\n```\n\nExplanation:\n- `-map 0:v` and `-map 0:a` map video and audio from the original file.\n- `-map 1` and `-map 2` map all streams from the first and second subtitle inputs (each is SRT, so only one stream each).\n- `-c:v copy` and `-c:a copy` avoid re-encoding original video and audio.\n- `-c:s srt` ensures subtitles remain in SRT format.\n- `-disposition:s:0 default` sets first subtitle track (English) as default.\n- `-disposition:s:1 0` clears default flag for second subtitle track (Japanese).\n\nThis produces output.mkv with both subtitles and English as default track.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 490,
+    "total_tokens": 1091,
+    "cost": 0.0010244
+  },
+  "model_type": "task_run"
+}

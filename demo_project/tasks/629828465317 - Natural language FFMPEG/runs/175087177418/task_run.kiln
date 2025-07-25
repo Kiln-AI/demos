@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "175087177418",
+  "created_at": "2025-07-24T20:39:18.395782",
+  "created_by": "scosman",
+  "input": "How do I replace the audio track in multiple videos with a different audio file matching by filename?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "164799449019",
+    "path": null,
+    "created_at": "2025-07-24T20:39:18.395756",
+    "created_by": "scosman",
+    "output": "To replace the audio track in multiple videos with a different audio file that matches by filename (e.g., video1.mp4 with audio1.mp3), you can automate the process with a shell script that loops through each video file, finds the corresponding audio file, and uses `ffmpeg` to replace the audio.\n\nKey points:\n- Make sure the audio file has the same base filename but different extension (e.g., `.mp3`, `.aac`, etc.).\n- Use `-c:v copy` to copy the video stream without re-encoding for efficiency.\n- Use `-map` options to select video from the input file and audio from the audio file.\n- Overwrite output files or write to a new directory to avoid losing originals.\n\nHere's an example bash script assuming your video files are `.mp4` and your audio files are `.mp3` in the same directory:\n\n```bash\n#!/bin/bash\n\ninput_videos_dir=\"videos\"\ninput_audios_dir=\"audios\"\noutput_dir=\"output\"\n\nmkdir -p \"$output_dir\"\n\nfor video_path in \"$input_videos_dir\"/*.mp4; do\n  filename=$(basename \"$video_path\" .mp4)\n  audio_path=\"$input_audios_dir/${filename}.mp3\"\n\n  if [[ -f \"$audio_path\" ]]; then\n    ffmpeg -i \"$video_path\" -i \"$audio_path\" -c:v copy -map 0:v:0 -map 1:a:0 -shortest -y \"$output_dir/${filename}.mp4\"\n    echo \"Processed $filename\"\n  else\n    echo \"No matching audio for $filename, skipping.\"\n  fi\ndone\n```\n\nExplanation:\n- Loops through all `.mp4` files in the `videos` folder.\n- Checks if an audio file with the same base name exists in the `audios` folder.\n- Uses ffmpeg to copy video (`-c:v copy`) and replace the audio with the external audio track.\n- `-shortest` ensures the output duration matches the shorter input, avoiding extra silence or black frames if audio or video lengths differ.\n- `-y` allows overwriting existing output files.\n- Saves output in the `output` folder to preserve original videos.\n\nAdjust your folder names, file extensions, and output paths accordingly. This script can be adapted for different extensions or directory structures as needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 486,
+    "total_tokens": 1079,
+    "cost": 0.0010148
+  },
+  "model_type": "task_run"
+}

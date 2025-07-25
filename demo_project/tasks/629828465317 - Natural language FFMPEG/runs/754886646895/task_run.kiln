@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "754886646895",
+  "created_at": "2025-07-24T20:27:56.347725",
+  "created_by": "scosman",
+  "input": "There's a timecode watermark burnt into my video. Can I blur it or crop it out?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "321299607429",
+    "path": null,
+    "created_at": "2025-07-24T20:27:56.347661",
+    "created_by": "scosman",
+    "output": "You can either blur the watermark area to reduce its visibility or crop it out entirely, depending on your preference and the watermark's location.\n\n1. **Blurring the watermark:**\n\n   Use the `boxblur` filter applied to just the watermark area via the `crop` and `overlay` filters combined with `format=yuva420p` and `alpha` channel handling.\n\n   For example, if the watermark is located at the bottom-right corner of the video with width 100px and height 30px:\n\n   - Use `crop=100:30:x:y` to select the watermark region (replace x and y with the coordinates).\n   - Apply `boxblur` filter to that cropped area.\n   - Overlay the blurred patch back over the original video.\n\n2. **Cropping out the watermark:**\n\n   If the watermark is on an edge (e.g., at the bottom), crop the video to exclude that area.\n\n---\n\nExample commands:\n\n### Blurring watermark at bottom-right (example coordinates assumed)\n\n```bash\nffmpeg -i input.mp4 -filter_complex \"\n[0:v]crop=100:30:iw-100:ih-30,boxblur=10:1[blurred];\n[0:v][blurred]overlay=iw-100:ih-30\n\" -c:a copy output_blurred.mp4\n```\n\n- `crop=100:30:iw-100:ih-30` crops a 100x30 rectangle from bottom right corner (`iw` and `ih` are input width/height).\n- `boxblur=10:1` applies a strong blur.\n- `overlay=iw-100:ih-30` places the blurred patch back at the same position.\n- `-c:a copy` copies audio without re-encoding.\n\n### Cropping bottom 30 pixels to remove watermark\n\n```bash\nffmpeg -i input.mp4 -vf \"crop=iw:ih-30:0:0\" -c:a copy output_cropped.mp4\n```\n\n- `crop=iw:ih-30:0:0` keeps full input width and reduces height by 30 pixels from the bottom.\n- You lose part of the frame but completely eliminate the watermark area.\n- `-c:a copy` copies audio.\n\n---\n\n**Assumptions:**\n\n- The watermark is at the bottom-right corner (adjust coordinates for your video).\n- You know (or can find out) the watermark's position and size.\n- You want to keep audio as-is.\n\nIf you provide the exact watermark location and dimensions, I can tailor the command accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 534,
+    "total_tokens": 1127,
+    "cost": 0.0010916
+  },
+  "model_type": "task_run"
+}

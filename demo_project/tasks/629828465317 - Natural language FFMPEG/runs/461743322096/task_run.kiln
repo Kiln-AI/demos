@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "461743322096",
+  "created_at": "2025-07-24T20:26:32.612225",
+  "created_by": "scosman",
+  "input": "How can I batch convert all .wav files in different subfolders to .ogg, keeping the folder structure?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "221534152875",
+    "path": null,
+    "created_at": "2025-07-24T20:26:32.612177",
+    "created_by": "scosman",
+    "output": "To batch convert all `.wav` files in subfolders to `.ogg` while preserving the folder structure, you can use a shell script with `find` and `ffmpeg`. The script will:\n\n- Use `find` to locate all `.wav` files recursively.\n- For each found file, create the corresponding output directory in the destination root.\n- Run `ffmpeg` to convert `.wav` to `.ogg`.\n- Maintain the directory hierarchy by using relative paths.\n\nAssumptions:\n- You have a source root directory from which you want to recursively process `.wav` files.\n- You want to output converted `.ogg` files into a separate output directory root preserving all subfolders.\n- You have `bash` shell and `ffmpeg` installed.\n\nHere is an example script that accomplishes this. It is designed for Unix-like systems (Linux/macOS).\n\n```bash\n#!/bin/bash\n\n# Source directory root with .wav files (change as needed)\nSRC_DIR=\"/path/to/source\"\n\n# Destination directory root for .ogg files (change as needed)\nDST_DIR=\"/path/to/output\"\n\n# Find all .wav files and process\nfind \"$SRC_DIR\" -type f -iname \"*.wav\" | while read -r src_file; do\n  # Get relative path from source root\n  rel_path=\"${src_file#$SRC_DIR/}\"\n\n  # Change extension from .wav to .ogg\n  rel_path_ogg=\"${rel_path%.wav}.ogg\"\n\n  # Full output path\n  out_file=\"$DST_DIR/$rel_path_ogg\"\n\n  # Create destination directory if not exists\n  mkdir -p \"$(dirname \"$out_file\")\"\n\n  # Convert .wav to .ogg using ffmpeg\n  ffmpeg -i \"$src_file\" -c:a libvorbis -q:a 5 \"$out_file\"\n\n  echo \"Converted: $src_file -> $out_file\"\ndone\n```\n\nExplanation:\n- `-c:a libvorbis` sets the audio codec to Vorbis (standard for ogg).\n- `-q:a 5` sets quality level (0–10, higher is better quality, ~5 is good user quality/size tradeoff).\n- `mkdir -p` ensures output directories are created matching the source structure.\n- The `${src_file#$SRC_DIR/}` syntax gets the relative path by removing the source directory prefix.\n- This script can be run from the terminal after editing the `SRC_DIR` and `DST_DIR` paths.\n\nThis approach automates conversion in batch while keeping folder hierarchy intact, which is a best practice for batch processing and automation with ffmpeg.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 533,
+    "total_tokens": 1129,
+    "cost": 0.0010912
+  },
+  "model_type": "task_run"
+}

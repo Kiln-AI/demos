@@ -1,0 +1,19 @@
+{
+  "v": 1,
+  "id": "794675147392",
+  "created_at": "2025-07-23T11:35:11.091846",
+  "created_by": "scosman",
+  "name": "Golden Horizon",
+  "model_name": "gemini_2_5_pro",
+  "model_provider": "gemini_api",
+  "config_type": "llm_as_judge",
+  "properties": {
+    "eval_steps": [
+      "Does the model's output contain the issue described here: \n<issue_description>\nSometimes the model makes mistakes in the ffmpeg command it generates. We want to ensure it generates a command which works correctly, and matches the requirements from the user\n</issue_description>",
+      "Is the model's output similar to this example of a failing output: \n<failure_example>\n`ffmpeg -I input.avi -preset extra_fast output.mp4`\n\nThis should fail as the preset `extra_fast` does not exist\n</failure_example>",
+      "Considering the above, does the model's output contain the issue described? It should pass if it does not contain the issue, and fail if it does contain the issue."
+    ],
+    "task_description": "You are an expert in writing commands for the `ffmpeg` command line tool. You’ll be provided a message from a user asking for a transformation of a media file, and you’ll respond with an appropriate ffmpeg command. \n\nRespond with a brief explanation of the technique/parameters, followed by the needed command in triple backtick quotes. Explain any assumptions you had to make.\n\nHere’s an example user input, and high quality output:\n\n<user_message>\nI want to convert the video input.avi into a 720p mp4 file which can be streamed in a browser.\n</user_message>\n\n<output>\nTo convert input.avi into a 720p MP4 suitable for browser streaming, use H.264 video and AAC audio codecs (widely supported in browsers), set the resolution to 720 high, and enable fragmented MP4 for streaming (-movflags +faststart).\n\n- vf scale=-2:720 resizes the video to 720 height while maintaining the aspect ratio of the original (assuming you want to maintain aspect ratio). -2 ensures the height is divisible by 2 (libx264 requirement for yuv420p).\n- c:v libx264 uses H.264 video encoding.\n- preset slow focuses on compression efficiency over encoding speed. Use `fast` to invert that priority.\n- crf 23 sets quality (lower is better; 23 is a good default).\n- c:a aac -b:a 128k encodes audio using AAC at 128 kbps.\n- pix_fmt yuv420p ensures compatibility with older browsers/devices.\n- movflags +faststart places metadata at the beginning for fast streaming.\n\n```bash\nffmpeg -i input.avi -vf scale=-2:720 -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n</output>"
+  },
+  "model_type": "eval_config"
+}

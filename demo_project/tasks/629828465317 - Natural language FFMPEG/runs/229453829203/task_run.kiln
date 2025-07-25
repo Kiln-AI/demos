@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "229453829203",
+  "created_at": "2025-07-24T20:37:51.303444",
+  "created_by": "scosman",
+  "input": "Convert PGS subtitle track in bluray_remux.mkv into SRT and burn into new video.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "602486109000",
+    "path": null,
+    "created_at": "2025-07-24T20:37:51.303320",
+    "created_by": "scosman",
+    "output": "To extract the PGS subtitle track from a Blu-ray remux MKV and convert it into SRT format, then burn that SRT subtitle into a new video file, you generally need two steps:\n\n1. Extract and convert PGS subtitles into SRT using `ffmpeg` with OCR via `ccextractor` or similar tools, because PGS subtitles are image-based and cannot be directly converted to text subtitles with ffmpeg alone.\n2. Then burn the resulting SRT subtitles into the video stream using ffmpeg's subtitle filter.\n\nHere, I will assume you have `ccextractor` installed, as it supports extracting subtitles (including PGS) and converting to SRT. The workflow:\n\n**Step 1:** Extract PGS subtitles and convert to SRT using `ffmpeg` + `ccextractor`.\n\n```bash\nffmpeg -i bluray_remux.mkv -map 0:s:m:language:eng subs.sup\nccextractor subs.sup -out=txt -o subs.srt\n```\n\nExplanation:\n- `-map 0:s:m:language:eng` targets the PGS subtitle track with English language (adjust language tag if needed).\n- `subs.sup` is the extracted PGS subtitle file.\n- `ccextractor` processes `subs.sup` and outputs `subs.srt` subtitle text.\n\n**Step 2:** Burn subtitles into the video.\n\n```bash\nffmpeg -i bluray_remux.mkv -vf \"subtitles=subs.srt:force_style='FontName=Arial,FontSize=24'\" -c:v libx264 -preset slow -crf 18 -c:a copy output_burned.mkv\n```\n\nExplanation:\n- `-vf subtitles=subs.srt` burns the SRT subtitles directly onto the video frames.\n- `force_style` sets font styling for readability.\n- `-c:v libx264` to re-encode video as subtitles require re-encoding.\n- `-preset slow -crf 18` for high-quality output (adjust as needed).\n- `-c:a copy` keeps original audio without re-encoding.\n\n**Note:** If the PGS subtitles have another language or are multiple tracks, adjust mapping accordingly. OCR quality depends on `ccextractor` performance and subtitle image quality.\n\n---\n\nFull combined example commands:\n\n```bash\nffmpeg -i bluray_remux.mkv -map 0:s:m:language:eng subs.sup\nccextractor subs.sup -out=txt -o subs.srt\nffmpeg -i bluray_remux.mkv -vf \"subtitles=subs.srt:force_style='FontName=Arial,FontSize=24'\" -c:v libx264 -preset slow -crf 18 -c:a copy output_burned.mkv\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 587,
+    "total_tokens": 1181,
+    "cost": 0.0011768
+  },
+  "model_type": "task_run"
+}

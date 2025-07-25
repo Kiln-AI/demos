@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "916926487779",
+  "created_at": "2025-07-23T11:35:25.442968",
+  "created_by": "scosman",
+  "dataset_id": "687706851240",
+  "task_run_config_id": null,
+  "eval_config_eval": true,
+  "input": "I have a file with 4 video streams and 8 audio streams. I want to use video stream 0:2 and audio stream 0:7 to create output.mp4 from input.mkv",
+  "output": "To map specific streams from a multi-stream file, you'll use the `-map` parameter to select exactly which video and audio streams you want in the output. This allows you to choose specific streams by their indices.\n\nThe `-map` parameter uses the format `-map input_file_index:stream_index` where the input file index is typically 0 for the first (and often only) input file, followed by the stream index within that file.\n\n```bash\nffmpeg -i input.mkv -map 0:3 -map 0:8 -c copy output.mp4\n```\n\nI'm using `-c copy` to avoid re-encoding the streams, which will be faster and maintain original quality. The command maps video stream index 3 (the third video stream) and audio stream index 8 (the eighth audio stream) from the input file to create the output MP4.",
+  "intermediate_outputs": {
+    "reasoning": "**My Analysis of the ffmpeg Command**\n\nAlright, let's break this down. The user's goal is straightforward: select specific video and audio streams from an MKV and create an MP4. They gave me the input file, the desired video and audio stream indices, and the output file name. Simple enough.\n\nHowever, the command I generated is incorrect. I should have used `ffmpeg -i input.mkv -map 0:2 -map 0:7 -c copy output.mp4`.  Instead, I gave them `-map 0:3` and `-map 0:8`. That's a critical error. The user specified they wanted video stream `0:2` and audio stream `0:7`. My command is off by one index on each stream.\n\nI understand the core concept of `-map`.  It's about telling `ffmpeg` which streams to include, based on their index in the input file. The `-c copy` is the right move for this kind of stream selection - avoid re-encoding.\n\nMy mistake was in interpreting the stream indices. The user was clear: video stream 2 and audio stream 7. I failed to apply this information accurately, and thus my result is incorrect. The user's request was specific, and I didn't get it right."
+  },
+  "scores": {
+    "correctness": 0.0
+  },
+  "task_run_usage": {
+    "input_tokens": 1017,
+    "output_tokens": 197,
+    "total_tokens": 1214,
+    "cost": 0.006006
+  },
+  "model_type": "eval_run"
+}

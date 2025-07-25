@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "295242509664",
+  "created_at": "2025-07-24T20:37:41.506038",
+  "created_by": "scosman",
+  "input": "Embed subtitles.srt into video_without_subs.mp4 as a soft subtitle track.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "720560552515",
+    "path": null,
+    "created_at": "2025-07-24T20:37:41.505929",
+    "created_by": "scosman",
+    "output": "To embed an SRT subtitle file as a soft (selectable) subtitle track in an MP4 container, you can use the `-c:s mov_text` codec, which converts subtitles to the MP4-compatible text subtitle format (MOV_TEXT). This allows players to toggle subtitles on or off without hardcoding them into the video.\n\nKey points in the command:\n- `-i video_without_subs.mp4 -i subtitles.srt`: two inputs, the video and subtitle file.\n- `-map 0:v -map 0:a? -map 1:s`: maps video and audio from the first input, and subtitles from the second.\n- `-c:v copy -c:a copy`: copies the original video and audio streams without re-encoding.\n- `-c:s mov_text`: encodes subtitles as mov_text for MP4 containers.\n- `-metadata:s:s:0 language=eng` sets subtitle track language metadata to English.\n  \nIf the original video does not have any audio, or you want subtitles only, you could adjust the mapping accordingly.\n\n```bash\nffmpeg -i video_without_subs.mp4 -i subtitles.srt -map 0:v -map 0:a? -map 1:s -c:v copy -c:a copy -c:s mov_text -metadata:s:s:0 language=eng output_with_subs.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 282,
+    "total_tokens": 872,
+    "cost": 0.0006872
+  },
+  "model_type": "task_run"
+}

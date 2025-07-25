@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "256208613517",
+  "created_at": "2025-07-24T20:26:03.954879",
+  "created_by": "scosman",
+  "input": "Mux a video file with multiple external subtitles, but default to English subs on playback.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "331942725524",
+    "path": null,
+    "created_at": "2025-07-24T20:26:03.954850",
+    "created_by": "scosman",
+    "output": "To mux a video with multiple external subtitles and set the English subtitle as the default on playback, you can use ffmpeg to add subtitle tracks as separate streams and specify disposition flags to mark the English subtitle as default, while leaving the others as regular subtitle streams.\n\nKey points:\n- Use `-i` multiple times to input the video and each subtitle file.\n- Use `-map` to specify which streams to include.\n- Use `-metadata:s:s:X language=eng` to set the language metadata for each subtitle stream.\n- Use `-disposition:s:X default` to set the default subtitle stream (English).\n- Use `-disposition:s:X 0` to clear default from other subtitles.\n- Use a container format that supports multiple subtitle streams, like MKV (.mkv).\n\nAssumptions:\n- You have one main video file (input.mp4).\n- You have multiple subtitle files, for instance `subs_eng.srt` (English), `subs_fra.srt` (French), etc.\n- You want the output container to be MKV for subtitle stream support.\n  \nExample command below assumes two subtitles external in SRT format: English and French, with English as default.\n\n```bash\nffmpeg -i input.mp4 -i subs_eng.srt -i subs_fra.srt \\\n-map 0:v -map 0:a -map 1 -map 2 \\\n-c:v copy -c:a copy -c:s srt \\\n-metadata:s:s:0 language=eng -disposition:s:0 default \\\n-metadata:s:s:1 language=fra -disposition:s:1 0 \\\noutput.mkv\n```\n\nExplanation:\n- `-map 0:v` and `-map 0:a` map the original video and audio streams.\n- `-map 1` and `-map 2` add the English and French subtitles streams.\n- `-c:v copy` and `-c:a copy` copy video and audio without re-encoding.\n- `-c:s srt` specifies subtitle codec (pass-through SRT).\n- Metadata and disposition set languages and specify English subtitle as default.\n\nThis results in an MKV file with multiple selectable subtitles, defaulting to English upon playback in compatible players.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 464,
+    "total_tokens": 1054,
+    "cost": 0.0009784
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "184529270686",
+  "created_at": "2025-07-24T20:39:40.722645",
+  "created_by": "scosman",
+  "input": "I tried converting a video to H.265 but my hardware encoder (NVENC) isn't available. I want to fallback to CPU/software, and log this.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "147867917513",
+    "path": null,
+    "created_at": "2025-07-24T20:39:40.722620",
+    "created_by": "scosman",
+    "output": "When hardware encoding (e.g., nvenc) is not available, you can check for hardware device presence programmatically outside `ffmpeg` and then fallback to a software encoder like `libx265`. `ffmpeg` itself doesn't have built-in conditional fallback logic in one command, but you can do this using a wrapper script. To log this fallback, you can perform a check before running `ffmpeg` and echo a message.\n\nHere’s a general approach assuming bash shell:\n\n1. **Check if NVENC H.265 encoder is available** by parsing `ffmpeg -encoders` or using `ffmpeg -hwaccels`.\n2. If NVENC is present, run `ffmpeg` with `-c:v hevc_nvenc`.\n3. Otherwise, log the fallback and run `ffmpeg` using software encoder `libx265`.\n\nExample script:\n\n```bash\n#!/bin/bash\n# Check if hevc_nvenc encoder is available\nif ffmpeg -hide_banner -encoders | grep -q \"hevc_nvenc\"; then\n    echo \"Using hardware encoder hevc_nvenc\"\n    ffmpeg -i input.mp4 -c:v hevc_nvenc -preset fast -b:v 5M -c:a aac -b:a 128k output.mp4\nelse\n    echo \"NVENC hardware encoder not available; falling back to CPU software encoder libx265\" >&2\n    ffmpeg -i input.mp4 -c:v libx265 -preset medium -crf 28 -c:a aac -b:a 128k output.mp4\nfi\n```\n\n### Explanation:\n- `ffmpeg -encoders` lists all available encoders. The presence of `hevc_nvenc` indicates NVENC for H.265 is available.\n- `hevc_nvenc` is the NVENC codec for H.265.\n- Software fallback is to `libx265`, using `-crf` (quality based) instead of bitrate.\n- The log message is sent to stderr (`>&2`) to separate it from normal output.\n- Presets differ because hardware encoders often have fewer, different presets and software encoders usually need balance between speed and quality.\n  \nThis is the best practice for handling encoder fallback and logging outside ffmpeg, as `ffmpeg` itself doesn't support inline conditional fallbacks. \n\nIf you want just the command lines without a script, here they are:\n\n**Hardware (NVENC) encoding command:**\n```bash\nffmpeg -i input.mp4 -c:v hevc_nvenc -preset fast -b:v 5M -c:a aac -b:a 128k output.mp4\n```\n\n**Software libx265 encoding command:**\n```bash\nffmpeg -i input.mp4 -c:v libx265 -preset medium -crf 28 -c:a aac -b:a 128k output.mp4\n```\n\nFor a fully automated fallback and logging mechanism, a wrapper script or program is required.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 606,
+    "output_tokens": 619,
+    "total_tokens": 1225,
+    "cost": 0.0012328
+  },
+  "model_type": "task_run"
+}

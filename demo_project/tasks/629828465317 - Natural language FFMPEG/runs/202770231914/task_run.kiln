@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "202770231914",
+  "created_at": "2025-07-24T18:09:41.305638",
+  "created_by": "scosman",
+  "input": "Downscale the file educational.flv to 360p so it's lightweight for streaming under poor network conditions.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Streamlining Video Files for Web Streaming"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "621249695198",
+    "path": null,
+    "created_at": "2025-07-24T18:09:41.305612",
+    "created_by": "scosman",
+    "output": "To make educational.flv lightweight and optimal for streaming under poor network conditions, downscale the video to 360p height, encode it with H.264 (widely supported for streaming), and AAC audio. Enable faststart so the video can begin playing before it’s fully downloaded.\n\n- scale=-2:360 keeps the original aspect ratio while setting the height to 360 pixels (width will auto-adjust and be divisible by 2).\n- c:v libx264 and c:a aac choose efficient, streaming-friendly codecs.\n- crf 28 increases compression for a smaller file, good for low-bandwidth scenarios (adjust lower if better quality is needed).\n- b:a 96k reduces audio bitrate for lower file size.\n- preset veryfast speeds up encoding if that's a concern, but you can use slow/medium for smaller files if you prefer.\n- pix_fmt yuv420p and movflags +faststart maximize device compatibility and streaming ability.\n\n```bash\nffmpeg -i educational.flv -vf scale=-2:360 -c:v libx264 -preset veryfast -crf 28 -c:a aac -b:a 96k -pix_fmt yuv420p -movflags +faststart educational_360p.mp4\n```\nThis will yield a compact, 360p MP4 file suitable for smooth web streaming even on unreliable networks.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 280,
+    "total_tokens": 878,
+    "cost": 0.003436
+  },
+  "model_type": "task_run"
+}

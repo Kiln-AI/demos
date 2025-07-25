@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "198398241632",
+  "created_at": "2025-07-24T20:36:42.152842",
+  "created_by": "scosman",
+  "input": "Can you encode 'sample.mov' to mp4, with H.264 video constrained to baseline profile for maximum compatibility?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "230332425791",
+    "path": null,
+    "created_at": "2025-07-24T20:36:42.152817",
+    "created_by": "scosman",
+    "output": "To encode `sample.mov` to MP4 using the H.264 codec with the baseline profile, which ensures maximum compatibility with older devices and stricter decoders (such as some mobile devices and embedded systems), set the `-profile:v baseline` option. The baseline profile limits certain advanced features, enhancing broad compatibility. \n\nUse `libx264` codec, specify the baseline profile, and ensure pixel format is yuv420p for compatibility. The `-movflags +faststart` option is recommended to enable progressive streaming by moving the metadata to the start of the file.\n\nAssuming you want to keep a good quality, a CRF of 23 is a sensible default balancing quality and file size.\n\n```bash\nffmpeg -i sample.mov -c:v libx264 -profile:v baseline -preset medium -crf 23 -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nExplanation of key parameters:\n- `-profile:v baseline`: Limits H.264 features for max compatibility.\n- `-preset medium`: Balanced encoding speed and compression efficiency.\n- `-crf 23`: Quality control (lower means better quality).\n- `-pix_fmt yuv420p`: Ensures broad compatibility on color format.\n- `-c:a aac -b:a 128k`: Use AAC audio codec at 128 kbps.\n- `-movflags +faststart`: Places metadata at the start for smooth streaming.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 310,
+    "total_tokens": 908,
+    "cost": 0.0007352
+  },
+  "model_type": "task_run"
+}

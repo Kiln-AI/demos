@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "287056709158",
+  "created_at": "2025-07-24T20:27:34.937953",
+  "created_by": "scosman",
+  "input": "My video has a weird green tint. Can ffmpeg help correct the colors?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "152226760385",
+    "path": null,
+    "created_at": "2025-07-24T20:27:34.937927",
+    "created_by": "scosman",
+    "output": "A green tint usually indicates an issue with color balance or a corrupted color channel. ffmpeg can help correct this by adjusting the color levels or using filter chains to modify the color channels.\n\nA common approach is to use the `colorchannelmixer` filter to reduce the green channel intensity or rebalance colors. If the green tint is due to a color space misinterpretation, converting color space with `format` or `colorspace` filters may fix it.\n\nHere's a command that reduces the green channel slightly to balance out a green tint:\n\n- `colorchannelmixer=rg=1:gg=0.85:bg=0:ag=0` reduces green intensity on the green channel to 85%.\n- You can adjust the parameters for other channels (rr, gr, br, ar for red channel mixer, etc.) if needed.\n- `-c:a copy` copies audio unchanged to avoid re-encoding.\n\nAssuming the issue is green channel overload, try this:\n\n```bash\nffmpeg -i input.mp4 -vf \"colorchannelmixer=0.9:0:0:0:0:0.85:0:0:0:0:1:0:0:0:0:1\" -c:a copy output_corrected.mp4\n```\n\nExplanation of parameters in the colorchannelmixer filter:\n\n- rr=0.9 (red output intensity from red input)\n- rg=0 (red output from green input)\n- rb=0 (red output from blue input)\n- ra=0 (red output from alpha input)\n- gr=0 (green output from red input)\n- gg=0.85 (green output intensity from green input, reduced)\n- gb=0 (green output from blue input)\n- ga=0 (green output from alpha input)\n- br=0 (blue output from red input)\n- bg=0 (blue output from green input)\n- bb=1 (blue output intensity from blue input)\n- ba=0 (blue output from alpha input)\n- ar=0, ag=0, ab=0, aa=1 (alpha channel unchanged)\n\nIf the green tint persists, you may want to experiment with values or alternatively try a `curves` filter or use `eq` (equalizer) for brightness, contrast, and color manipulation.\n\nExample with `eq` filter decreasing green gain as an alternative:\n\n```bash\nffmpeg -i input.mp4 -vf \"eq=gamma_g=0.8\" -c:a copy output_corrected.mp4\n```\n\nThis decreases green channel gamma, reducing green intensity.\n\nTry these approaches and adjust parameters as per the specific tint severity.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 548,
+    "total_tokens": 1138,
+    "cost": 0.0011128
+  },
+  "model_type": "task_run"
+}

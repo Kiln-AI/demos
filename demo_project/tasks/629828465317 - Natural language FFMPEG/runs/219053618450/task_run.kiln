@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "219053618450",
+  "created_at": "2025-07-24T20:24:49.320621",
+  "created_by": "scosman",
+  "input": "Compress a .mp4 video using AV1 codec for experimental use (assume playback device supports AV1).",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "311817099461",
+    "path": null,
+    "created_at": "2025-07-24T20:24:49.320492",
+    "created_by": "scosman",
+    "output": "To compress a .mp4 video using the AV1 codec for experimental purposes, you can use the `libaom-av1` encoder (official AV1 encoder in ffmpeg). AV1 offers very high compression efficiency but is computationally intensive and slower than more established codecs. \n\nKey parameters and options:\n- `-c:v libaom-av1` selects the AV1 encoder.\n- `-crf` controls quality (lower is better quality). For AV1, typical values range from 20 to 40. A value around 30 is a good balance.\n- `-b:v 0` enables constant quality mode (ignores bitrate target and only follows CRF).\n- `-preset` controls encoding speed/compression tradeoff; slower presets improve compression but take longer (ranges from `0` slowest to `8` fastest, default is `4`).\n- `-c:a copy` copies audio stream directly without re-encoding (assuming compatibility).\n- `-movflags +faststart` enables progressive playback for streaming.\n\nExample assumes input file is `input.mp4` and output is `output_av1.mp4`.\n\n```bash\nffmpeg -i input.mp4 -c:v libaom-av1 -crf 30 -b:v 0 -preset 4 -c:a copy -movflags +faststart output_av1.mp4\n```\n\nThis command preserves audio as-is, compresses video using AV1 in constant-quality mode at medium preset speed, and produces a playback device-compatible MP4 container. Adjust `crf` and `preset` to tweak quality and encoding speed as desired.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 334,
+    "total_tokens": 930,
+    "cost": 0.0007728
+  },
+  "model_type": "task_run"
+}

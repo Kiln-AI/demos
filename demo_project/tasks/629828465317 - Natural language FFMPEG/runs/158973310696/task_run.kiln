@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "158973310696",
+  "created_at": "2025-07-24T18:11:37.569394",
+  "created_by": "scosman",
+  "input": "How can I convert a `DV` file into `output.mp4` suitable for browser playback at full HD quality?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Optimizing Encoding for Browser Compatibility"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "367203824135",
+    "path": null,
+    "created_at": "2025-07-24T18:11:37.569352",
+    "created_by": "scosman",
+    "output": "To convert a DV file (Digital Video format, often from camcorders) to an MP4 file optimized for browser compatibility at full HD (1920x1080) quality, you should use H.264 for video and AAC for audio. Browser compatibility is further enhanced by forcing the pixel format to yuv420p, and by using the +faststart movflag so playback begins quickly before the file fully downloads.\n\nHere’s a breakdown:\n- -vf scale=1920:1080: Rescales the video to 1920x1080 (Full HD).\n- -c:v libx264: Encodes video with H.264.\n- -preset fast: Reasonable balance of encoding speed and file size.\n- -crf 21: High quality (lower than default, suitable for HD and browser).\n- -pix_fmt yuv420p: Ensures maximum compatibility.\n- -c:a aac -b:a 192k: High quality stereo AAC audio.\n- -movflags +faststart: Allows instant playback once the metadata is loaded.\n- output.mp4: Your output file.\n\nAssuming your input is named input.dv:\n\n```bash\nffmpeg -i input.dv -vf scale=1920:1080 -c:v libx264 -preset fast -crf 21 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart output.mp4\n```\n\nThis command will produce a browser-friendly, high quality Full HD MP4 file from your DV source.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 318,
+    "total_tokens": 918,
+    "cost": 0.003744
+  },
+  "model_type": "task_run"
+}

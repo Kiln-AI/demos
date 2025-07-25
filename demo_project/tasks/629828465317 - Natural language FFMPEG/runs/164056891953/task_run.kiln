@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "164056891953",
+  "created_at": "2025-07-24T20:39:13.557314",
+  "created_by": "scosman",
+  "input": "I want to batch convert all .m4a audio files to 32kbps mono mp3s for audiobook distribution. What’s the best ffmpeg command?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "128702850264",
+    "path": null,
+    "created_at": "2025-07-24T20:39:13.557289",
+    "created_by": "scosman",
+    "output": "To batch convert all `.m4a` files to 32 kbps mono MP3s suitable for audiobook distribution, you want to ensure low bitrate, mono channel, and MP3 format. The command should:\n\n- Set audio bitrate to 32 kbps with `-b:a 32k`.\n- Convert audio to mono with `-ac 1` (audiobooks generally don't require stereo).\n- Use the `libmp3lame` codec for MP3 encoding.\n- Maintain original filenames but change the extension to `.mp3`.\n\nFor batch processing, you can use a shell `for` loop to process each `.m4a` file in the current directory.\n\n```bash\nfor f in *.m4a; do\n  ffmpeg -i \"$f\" -ac 1 -b:a 32k -codec:a libmp3lame \"${f%.m4a}.mp3\"\ndone\n```\n\nThis script loops through every `.m4a` file, converts it with the specified parameters, and saves it as an `.mp3`.\n\nExplanation:\n- `-ac 1`: downmixes audio to mono.\n- `-b:a 32k`: sets the audio bitrate to 32 kbps.\n- `-codec:a libmp3lame`: using LAME MP3 encoder for broad compatibility.\n- `\"${f%.m4a}.mp3\"`: generates the output name by replacing the `.m4a` extension with `.mp3`.\n  \nMake sure you run this command in the directory containing your `.m4a` files.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 607,
+    "output_tokens": 325,
+    "total_tokens": 932,
+    "cost": 0.0007628
+  },
+  "model_type": "task_run"
+}

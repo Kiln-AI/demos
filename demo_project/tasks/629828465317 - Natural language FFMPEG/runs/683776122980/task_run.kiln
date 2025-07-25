@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "683776122980",
+  "created_at": "2025-07-24T20:35:08.831546",
+  "created_by": "scosman",
+  "input": "Convert a 10-bit h265 .mkv to an 8-bit h264 mp4.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "104629287232",
+    "path": null,
+    "created_at": "2025-07-24T20:35:08.831522",
+    "created_by": "scosman",
+    "output": "To convert a 10-bit HEVC (H.265) .mkv file to an 8-bit H.264 MP4, we need to:\n\n- Decode the input with 10-bit depth.\n- Encode video using libx264 with 8-bit (default pixel format yuv420p).\n- Use AAC audio codec for broad compatibility.\n- Convert pixel format to yuv420p explicitly to ensure 8-bit output.\n- Use `-movflags +faststart` for better streaming compatibility.\n  \nAssumptions:\n- You want good quality balanced with reasonable encoding speed, so `-preset medium` and `-crf 23` are chosen.\n- The input file is named `input.mkv` and output will be `output.mp4`.\n- Audio is copied if compatible or re-encoded to AAC otherwise for compatibility.\n\nHere is the command:\n\n```bash\nffmpeg -i input.mkv -c:v libx264 -pix_fmt yuv420p -preset medium -crf 23 -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nThis command will decode the 10-bit HEVC video, convert it to 8-bit H.264 in yuv420p format inside an MP4 container, suitable for broad playback.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 269,
+    "total_tokens": 862,
+    "cost": 0.0006676
+  },
+  "model_type": "task_run"
+}

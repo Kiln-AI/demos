@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "165217750501",
+  "created_at": "2025-07-24T22:11:09.351302",
+  "created_by": "scosman",
+  "dataset_id": "245834620919",
+  "task_run_config_id": "293392130654",
+  "eval_config_eval": false,
+  "input": "I have a video file with multiple audio tracks and I want to extract only the third audio stream and the first video stream into a new file. The input file is movie.mkv and I want the output as final.mp4",
+  "output": "To extract the first video stream and the third audio stream from movie.mkv and save them into an MP4 container, you should specify input streams using their indexes (starting from 0). Here, the first video stream is typically stream 0:v:0, and the third audio stream can vary depending on the file layout, so usually it'll be 0:a:2 assuming the file layout is the standard order. Using -map correctly selects the desired stream.\n\n- `-map 0:v:0` selects the first video stream from input 0.\n- `-map 0:a:2` selects the third audio stream from input 0.\n- Note: This assumes positional audio/video stream indices; recheck your file with `ffprobe movie.mkv` or `ffmpeg -i movie.mkv` for precise locations if needed.\n- Using H.264 video codec with AAC audio ensures compatibility.\n- Using `-c copy` copies streams without re-encoding (fastest, lossless; change if you want re-encoding).\n- Output container is MP4, which is a common choice for containing these codecs.\n\nHere’s the command:\n\n```bash\nffmpeg -i movie.mkv -map 0:v:0 -map 0:a:2 -c copy final.mp4\n```\n\n**If audio track 2 is not present, increment the audio index until the correct stream is mapped. If re-encoding is required, replace `-c copy` with `-c:v libx264 -c:a aac -b:a 256k` and adjust other parameters as needed.**",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does not contain the issue described in the <issue_description>. The command is appropriate for the user's request and accurately specifies the streams to extract from the input file.\n\n2) The model's output is not similar to the example of a failing output in the <failure_example>. The generated command is syntactically correct and uses valid parameters and options.\n\n3) The command does not break any requirements dictated in the ffmpeg man page. It correctly maps the input streams to output using the `-map` option, which is properly applied to the output file as per ffmpeg's requirements.\n\n4) Based on the evaluation, the model’s output passes all checks and does not contain the issue described, indicating that it performed well in generating a correct ffmpeg command for the user's request."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 489,
+    "output_tokens": 331,
+    "total_tokens": 820,
+    "cost": 0.0
+  },
+  "model_type": "eval_run"
+}

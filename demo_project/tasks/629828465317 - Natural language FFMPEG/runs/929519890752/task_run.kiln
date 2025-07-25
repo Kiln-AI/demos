@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "929519890752",
+  "created_at": "2025-07-24T20:40:06.643251",
+  "created_by": "scosman",
+  "input": "I have DV footage with a non-square (anamorphic) pixel aspect ratio — how do I convert to square pixels for web playback?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "221483786719",
+    "path": null,
+    "created_at": "2025-07-24T20:40:06.643228",
+    "created_by": "scosman",
+    "output": "To convert DV footage with non-square (anamorphic) pixel aspect ratio to square pixels suitable for web playback, you need to adjust the aspect ratio by scaling the video accordingly. DV typically has a storage aspect ratio unlike the displayed aspect ratio, so simply forcing square pixels without scaling would distort the video.\n\nHere’s the approach:\n- Use the video filter `setsar=1` to set the sample (pixel) aspect ratio to 1 (square pixels).\n- To avoid distortion, apply scaling to the video dimensions proportional to the original display aspect ratio. For DV footage, the display aspect ratio (DAR) might be 4:3 or 16:9, but the pixel aspect ratio (SAR) might be, for example, 10:11 or 40:33.\n- You can apply `scale` filter by calculating the new width or height: width × SAR or height ÷ SAR as appropriate.\n- A practical way is to use `scale=iw*sar:ih` to scale the width of the input (`iw`) by the sample aspect ratio (`sar`) to get the correct display width and set the height as input height (`ih`). Then apply `setsar=1` to fix the pixel aspect ratio.\n- This conversion will resample the video into a square-pixel format without distortion.\n\nExample command:\n\n```bash\nffmpeg -i input.dv -vf \"scale=iw*sar:ih,setsar=1\" -c:v libx264 -crf 18 -preset medium -c:a aac -b:a 128k output.mp4\n```\n\nExplanation:\n- `scale=iw*sar:ih` scales the width by the pixel aspect ratio so the image dimensions match the display aspect with square pixels.\n- `setsar=1` resets the pixel aspect ratio.\n- `libx264` for H.264 video encoding suitable for web playback.\n- `-crf 18` for visually lossless or near-lossless quality.\n- `-preset medium` balances encoding speed and compression.\n- `aac` audio codec with 128 kbps bitrate for good compatibility.\n\nAssumption: The input DV footage is standard anamorphic with a correct pixel aspect ratio metadata. This command preserves the visual presentation by adjusting the width appropriately and making pixels square.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 469,
+    "total_tokens": 1070,
+    "cost": 0.0009908
+  },
+  "model_type": "task_run"
+}

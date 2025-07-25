@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "285199871136",
+  "created_at": "2025-07-24T20:27:45.010147",
+  "created_by": "scosman",
+  "input": "My H.265 video isn't playing in my browser. Can you convert it to a more compatible format?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "147412249515",
+    "path": null,
+    "created_at": "2025-07-24T20:27:45.010122",
+    "created_by": "scosman",
+    "output": "Most browsers have limited or no native support for H.265 (HEVC) video playback due to licensing and compatibility issues. To ensure your video plays smoothly in browsers, converting it to H.264 (AVC) is the best approach, as it's widely supported.\n\nKey points for the conversion:\n\n- Re-encode video to H.264 using `libx264`.\n- Encode audio to AAC for broad compatibility.\n- Set pixel format to `yuv420p` for compatibility with older devices and browsers.\n- Use `-movflags +faststart` to move the movie metadata to the start of the file, enabling progressive playback during download.\n- Preserve the original audio/video length without re-encoding unnecessarily.\n  \nAssuming your input file is `input_hevc.mkv`, the output file will be `output_h264.mp4`.\n\n```bash\nffmpeg -i input_hevc.mkv -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output_h264.mp4\n```\n\nExplanation of parameters:\n\n- `-c:v libx264`: encode video using H.264 codec.\n- `-preset medium`: balanced encoding speed and compression efficiency.\n- `-crf 23`: controls output quality (lower is better; 23 is a reasonable default).\n- `-c:a aac -b:a 128k`: encode audio with AAC codec at 128 kbps.\n- `-pix_fmt yuv420p`: ensure pixel format compatibility.\n- `-movflags +faststart`: enable streaming by placing moov atom at the file start.\n\nThis command will convert your H.265 video to a widely-compatible H.264 MP4 file suitable for playback in most browsers.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 372,
+    "total_tokens": 967,
+    "cost": 0.0008332
+  },
+  "model_type": "task_run"
+}

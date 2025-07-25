@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "205076675481",
+  "created_at": "2025-07-24T18:07:50.795176",
+  "created_by": "scosman",
+  "input": "I'd like to convert a .avi file to .flv format and limit the output file size to 5 MB.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Video Conversion Techniques"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "115140104496",
+    "path": null,
+    "created_at": "2025-07-24T18:07:50.795151",
+    "created_by": "scosman",
+    "output": "To convert a .avi video to .flv format while targeting a maximum file size of 5 MB, you need to use the `-fs` option, which tells ffmpeg to stop encoding when the file reaches the specified size. Note that this may create a truncated file if the bitrate required for the full video exceeds the size limit, which could result in incomplete output. For best results, you should also set the codecs appropriate for FLV files (typically H.264 or FLV1 video, MP3 or AAC audio).\n\nAssumptions:\n- You want to preserve as much video as possible up to 5 MB.\n- The input is not longer than what 5 MB can reasonably contain with standard bitrate video/audio.\n- Using FLV1 and MP3 codecs for maximum compatibility.\n\n```bash\nffmpeg -i input.avi -c:v flv -c:a libmp3lame -fs 5M output.flv\n```\n\n- `-c:v flv` uses the FLV1 video codec (compatible with .flv files).\n- `-c:a libmp3lame` encodes audio to MP3 (standard for FLV).\n- `-fs 5M` ensures the output will not exceed 5 MB.\n\nIf you want more control over quality, you could estimate the needed bitrate to fit the duration into 5 MB and set it accordingly, but using `-fs` is the most direct way to enforce a strict file size limit.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 305,
+    "total_tokens": 903,
+    "cost": 0.003636
+  },
+  "model_type": "task_run"
+}

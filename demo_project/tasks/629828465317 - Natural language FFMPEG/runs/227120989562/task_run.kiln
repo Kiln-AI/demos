@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "227120989562",
+  "created_at": "2025-07-24T20:27:46.887645",
+  "created_by": "scosman",
+  "input": "Can you convert a 10-bit HDR video to standard 8-bit SDR for sharing online?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "689215788343",
+    "path": null,
+    "created_at": "2025-07-24T20:27:46.887620",
+    "created_by": "scosman",
+    "output": "Converting a 10-bit HDR video to standard 8-bit SDR involves tone mapping the HDR content to preserve detail in bright and dark areas and then reducing the bit depth and color space accordingly. This process ensures the output looks good on standard SDR displays and is compatible with common online platforms.\n\nKey considerations and options in ffmpeg:\n\n- Use the `zscale` filter to perform tone mapping from HDR (usually in PQ or HLG color space) to SDR BT.709 color space.\n- Convert the pixel format from `p010le` or similar 10-bit formats to `yuv420p` 8-bit.\n- Use x265 or x264 for encoding; x264 is more widely compatible, but x265 supports HDR metadata if you want to retain it (not applicable here since we're converting to SDR).\n- For online sharing, H.264 (libx264) with AAC audio in an MP4 container is common.\n- Apply `-pix_fmt yuv420p` for broad compatibility.\n- If the input is HDR10 PQ, the tone mapping can be done with zscale's `transfer=linear` conversion, then applying `tonemap=tonemap=hable` or `tonemap=clip`, then converting to BT.709.\n- `-movflags +faststart` enables progressive streaming.\n\nAssumptions:\n\n- The HDR video uses PQ transfer characteristics (HDR10).\n- Input filename is `input_hdr.mkv`.\n- Output filename will be `output_sdr.mp4`.\n- We want a good balance of quality and compatibility for online sharing.\n\nExample command:\n\n```bash\nffmpeg -i input_hdr.mkv -vf \"zscale=t=linear:npl=100,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,pad=ceil(iw/2)*2:ceil(ih/2)*2\" -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k -pix_fmt yuv420p -movflags +faststart output_sdr.mp4\n```\n\nExplanation of filter chain:\n\n- `zscale=t=linear:npl=100`: Convert HDR PQ to linear light with a nominal peak luminance (100 nits typical for SDR).\n- `tonemap=tonemap=hable:desat=0`: Apply Hable tonemapping operator for smooth highlight roll-offs with no desaturation.\n- `zscale=t=bt709:m=bt709:r=tv`: Convert back to SDR transfer, BT.709 color matrix, range limited (TV).\n- `pad=ceil(iw/2)*2:ceil(ih/2)*2`: Ensures dimensions are divisible by 2 for codec requirements.\n\nThis command effectively maps HDR to SDR and outputs a high-quality, web-compatible SDR video file.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 590,
+    "total_tokens": 1183,
+    "cost": 0.0011812
+  },
+  "model_type": "task_run"
+}

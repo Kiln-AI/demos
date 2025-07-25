@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "334690318507",
+  "created_at": "2025-07-24T20:26:07.338807",
+  "created_by": "scosman",
+  "input": "Convert external SRT subtitles into internal MOV text tracks.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "126888408820",
+    "path": null,
+    "created_at": "2025-07-24T20:26:07.338783",
+    "created_by": "scosman",
+    "output": "To convert external SRT subtitles into internal MOV text tracks, you need to mux the SRT subtitles into the MOV container as a subtitle stream. The MOV format supports text-based subtitle tracks (like mov_text), so you'll want to use the mov_text codec for subtitles. This embeds the subtitles inside the video file rather than keeping them separate.\n\nKey points:\n- Use `-i` twice: once for the video file and once for the external SRT subtitle file.\n- Use `-c:v copy` and `-c:a copy` to avoid re-encoding video and audio streams.\n- Use `-c:s mov_text` to convert and embed the SRT subtitles into MOV text tracks.\n- Use `-map` parameters to include all streams (video, audio, and subtitles).\n- The output file must have .mov extension.\n\nAssuming the input video is input.mov and the subtitles are external.srt, the command looks like this:\n\n```bash\nffmpeg -i input.mov -i external.srt -c:v copy -c:a copy -c:s mov_text -map 0 -map 1 -metadata:s:s:0 language=eng output_with_subs.mov\n```\n\nExplanation:\n- `-map 0` maps all streams from the first input (video + audio).\n- `-map 1` maps the subtitle stream(s) from the second input (SRT file).\n- `-c:v copy` and `-c:a copy` avoid re-encoding video and audio.\n- `-c:s mov_text` converts the SRT subtitles into MOV text subtitles.\n- `-metadata:s:s:0 language=eng` optionally sets the language tag for the first subtitle stream (adjust as needed).\n\nThis command produces a mov file with internal subtitles that can be toggled in players supporting MOV text tracks.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 584,
+    "output_tokens": 375,
+    "total_tokens": 959,
+    "cost": 0.0008336
+  },
+  "model_type": "task_run"
+}

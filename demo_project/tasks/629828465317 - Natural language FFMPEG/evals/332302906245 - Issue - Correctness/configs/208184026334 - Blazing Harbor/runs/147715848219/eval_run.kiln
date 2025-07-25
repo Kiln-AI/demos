@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "147715848219",
+  "created_at": "2025-07-23T13:13:47.557048",
+  "created_by": "scosman",
+  "dataset_id": "311454288431",
+  "task_run_config_id": null,
+  "eval_config_eval": true,
+  "input": "Take the first video track (0:0) and the sixth audio stream (0:5) from my input file complex.mov and combine them into simple.mp4",
+  "output": "To extract a specific video track and audio stream from your input file, you'll use FFmpeg's stream mapping feature with the `-map` parameter to select exactly which streams you want in the output.\n\n- `-map 0:0` selects the first video stream from the input file\n- `-map 0:5` selects the sixth audio stream from the input file  \n- `-c:v copy` and `-c:a copy` copy the streams without re-encoding for faster processing\n\n```bash\nffmpeg -i complex.mov -map 0:0 -map 0:6 -c:v copy -c:a copy simple.mp4\n```\n\nThis assumes your input file has at least 6 audio streams (indexed 0-5) and uses stream copying to avoid quality loss and speed up the process.",
+  "intermediate_outputs": {
+    "reasoning": "**The Mismatch: A Case of Incorrect Stream Mapping**\n\nOkay, so I've been given a task: combine a specific video and audio stream from a complex media file. The input file is `complex.mov`, and I want the first video stream (`0:0`) and the sixth audio stream (`0:5`) to create a new file named `simple.mp4`. Simple enough.\n\nThe model's explanation seemed promising at first. It correctly stated that `-map 0:0` would select the video stream, and then that `-map 0:5` would select the audio stream. Great! Exactly what I needed.\n\nHowever, when I looked at the actual command, I immediately saw the problem: `ffmpeg -i complex.mov -map 0:0 -map 0:6 -c:v copy -c:a copy simple.mp4`. Wait a minute... that's *not* what I asked for! The model's explanation said it would be `-map 0:5`, but the command uses `-map 0:6`.  This is a serious discrepancy.\n\nLet's break this down. In `ffmpeg`, stream indexing starts at zero. So, stream `0:5` *is* the sixth audio stream.  The model's explanation was correct in that respect. But the command itself uses `0:6`, which would actually map to the seventh stream. This is a fundamental error.  I specifically stated I needed the audio stream `0:5`.\n\nThe explanation's suggestion that \"-map 0:5 selects the sixth audio stream from the input file\" is absolutely correct, but it's irrelevant because the command itself doesn't reflect this.  It's very misleading! The explanation even acknowledges that the file needs *at least* six audio streams which is the minimum, but then the command uses `0:6`, which, as a consequence, suggests the file needs seven!\n\nThis is a clear failure on the model's part. The command provided will not do what I requested. It will select the wrong audio stream and effectively produce the wrong file. This won't work.  I need to go back and correct this. The mapping is crucial, and in this instance, it's completely botched."
+  },
+  "scores": {
+    "correctness": 0.0
+  },
+  "task_run_usage": {
+    "input_tokens": 1004,
+    "output_tokens": 183,
+    "total_tokens": 1187,
+    "cost": 0.005757
+  },
+  "model_type": "eval_run"
+}

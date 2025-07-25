@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "315718133823",
+  "created_at": "2025-07-24T20:39:03.961724",
+  "created_by": "scosman",
+  "input": "How do I downscale all 4K videos to 1080p and change their audio track to mono in one batch using ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "262697320378",
+    "path": null,
+    "created_at": "2025-07-24T20:39:03.961668",
+    "created_by": "scosman",
+    "output": "To batch downscale all 4K videos (assumed to be in a directory) to 1080p resolution and convert their audio tracks to mono, you can use a shell loop (Bash example below). The ffmpeg command inside the loop will:\n\n- Use `-vf scale=-2:1080` to resize the height to 1080p, preserving aspect ratio (width is auto-calculated and divisible by 2).\n- Use `-ac 1` to convert audio to mono (one audio channel).\n- Use libx264 for video encoding with a good balance of speed and quality (`-preset medium` and `-crf 23`).\n- Use AAC audio codec at 128 kbps for wide compatibility.\n- Set pixel format `yuv420p` for compatibility.\n- Use `-movflags +faststart` to optimize MP4 files for streaming.\n\nAssumptions:\n- Your 4K videos have extensions like `.mp4`, `.mkv`, or `.mov`. Adjust the glob pattern accordingly.\n- You want output files in the same directory with a suffix `_1080p`.\n- You have Bash or a compatible shell on your system.\n\nExample command for a directory of `.mp4` files:\n\n```bash\nfor f in *.mp4; do\n  ffmpeg -i \"$f\" -vf scale=-2:1080 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -ac 1 -pix_fmt yuv420p -movflags +faststart \"${f%.mp4}_1080p.mp4\"\ndone\n```\n\nIf your videos have different extensions, you can run the loop multiple times or adapt with `find`:\n\n```bash\nfind . -type f \\( -iname '*.mp4' -o -iname '*.mkv' -o -iname '*.mov' \\) -exec bash -c '\n  for f; do\n    ext=\"${f##*.}\"\n    base=\"${f%.*}\"\n    ffmpeg -i \"$f\" -vf scale=-2:1080 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -ac 1 -pix_fmt yuv420p -movflags +faststart \"${base}_1080p.$ext\"\n  done\n' bash {} +\n```\n\nThis approach will batch process all matching videos efficiently and produce consistent 1080p mono audio outputs.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 516,
+    "total_tokens": 1119,
+    "cost": 0.0010668
+  },
+  "model_type": "task_run"
+}

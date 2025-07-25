@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "187056497411",
+  "created_at": "2025-07-24T20:27:53.729439",
+  "created_by": "scosman",
+  "input": "There's a slight delay between video and audio in my clip. How can I adjust only the audio stream to match?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "292509960468",
+    "path": null,
+    "created_at": "2025-07-24T20:27:53.729412",
+    "created_by": "scosman",
+    "output": "To fix audio-video sync issues by adjusting only the audio stream's timing, use the `-itsoffset` option before the audio input stream or apply `adelay`/`adelay` filter depending on whether you're shifting audio forward or backward. \n\n- If audio is delayed and you want to make it earlier (audio leads video), use a negative offset.\n- If audio is ahead and you want to delay audio (audio lags video), use a positive offset.\n- `-itsoffset` shifts the timestamps of an input stream.\n- The `adelay` filter adds delay in milliseconds but can't take negative values, so it only delays audio.\n\nExample: to delay audio by 0.5 seconds (make it start 0.5 seconds later to sync with video):\n\n```bash\nffmpeg -i input.mp4 -itsoffset 0.5 -i input.mp4 -map 0:v -map 1:a -c:v copy -c:a copy output.mp4\n```\n\nHere `-itsoffset 0.5` shifts the second input's audio 0.5 seconds forward, then we map video from first input and audio from second input.\n\nAlternatively, you can use the `adelay` filter like:\n\n```bash\nffmpeg -i input.mp4 -filter_complex \"[0:a]adelay=500|500[aud]\" -map 0:v -map \"[aud]\" -c:v copy -c:a aac -b:a 128k output.mp4\n```\nThis delays both stereo channels by 500 milliseconds (500ms = 0.5s).\n\n**Assumptions:**\n- You want to keep the video stream unchanged.\n- Audio delay amount and direction are known.\n- Input file is mp4 but methods work similarly on other container types.\n- For precise adjustments, use `-itsoffset` with input repetition to shift audio timing.\n\n---\n\n**Example command to delay audio by 0.5 seconds:**\n\n```bash\nffmpeg -i input.mp4 -itsoffset 0.5 -i input.mp4 -map 0:v -map 1:a -c:v copy -c:a copy output.mp4\n```\n\n**Example command to advance audio by 0.3 seconds (make audio start earlier):**\n\nSince `-itsoffset` only allows positive offsets, to make audio earlier, you can shift video instead (or trim initial audio samples):\n\n```bash\nffmpeg -itsoffset 0.3 -i input.mp4 -i input.mp4 -map 1:v -map 0:a -c:v copy -c:a copy output.mp4\n```\n\nAdjust the values accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 547,
+    "total_tokens": 1144,
+    "cost": 0.001114
+  },
+  "model_type": "task_run"
+}

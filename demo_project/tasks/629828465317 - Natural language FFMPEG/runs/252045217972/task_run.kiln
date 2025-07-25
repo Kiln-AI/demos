@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "252045217972",
+  "created_at": "2025-07-24T20:35:34.527153",
+  "created_by": "scosman",
+  "input": "Extract the audio from input.ts, normalize the peak volume, and export as normalized.aac.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "124707106729",
+    "path": null,
+    "created_at": "2025-07-24T20:35:34.527128",
+    "created_by": "scosman",
+    "output": "To extract the audio from input.ts and normalize its peak volume, we can use the `loudnorm` filter in FFmpeg, which performs loudness normalization based on EBU R128 standards or simpler peak normalization with `-filter:a`. Since you requested peak normalization specifically, we’ll use `-filter:a \"volume=...dB\"` or `-af \"dynaudnorm\"` for more advanced dynamic normalization. However, for peak normalization, the typical approach is to use `-filter:a \"volume=volume=1\"` combined with `-af loudnorm` to adjust the audio peaks properly.\n\nHere, I'll use `-af \"loudnorm\"` for robust normalization to ensure consistent loudness while preventing clipping, since simple peak normalization isn't directly supported as a one-liner in FFmpeg filters. Then, we'll encode the output audio to AAC format.\n\nExplanation:\n- `-i input.ts`: input file.\n- `-vn`: disables video processing (extract audio only).\n- `-af loudnorm`: applies loudness normalization filter conforming to broadcast standards.\n- `-c:a aac -b:a 192k`: encode audio as AAC codec with 192 kbps bitrate for good quality.\n- `-y`: overwrite output file if exists.\n\nIf you strictly want peak normalization (to a target peak level) without loudness normalization, the best approach is a two-pass scan with `-af \"volumedetect\"` and volume adjustment, but `loudnorm` is recommended for general normalization.\n\n```bash\nffmpeg -i input.ts -vn -af loudnorm -c:a aac -b:a 192k -y normalized.aac\n```\n\nIf you want true peak normalization to 0 dB FS, here is a two-pass approach:\n\n1. Detect peak volume:\n\n```bash\nffmpeg -i input.ts -af volumedetect -vn -f null /dev/null\n```\n\nLook for `max_volume: -X.XX dB` (negative value).\n\n2. Compute the required gain to reach 0 dB peak: gain = - (max_volume)\n\n3. Apply gain filter:\n\n```bash\nffmpeg -i input.ts -vn -af \"volume=GAINdB\" -c:a aac -b:a 192k -y normalized.aac\n```\n\nReplace `GAIN` with the computed positive number.\n\nBut for simplicity and best practice, the first command with `loudnorm` is recommended.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 507,
+    "total_tokens": 1101,
+    "cost": 0.0010488
+  },
+  "model_type": "task_run"
+}

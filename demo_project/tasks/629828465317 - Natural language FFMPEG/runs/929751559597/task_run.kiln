@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "929751559597",
+  "created_at": "2025-07-24T20:37:26.412804",
+  "created_by": "scosman",
+  "input": "I need to trim the first 5 seconds off a video. Can I do this with stream copy and no reencoding?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "297735297855",
+    "path": null,
+    "created_at": "2025-07-24T20:37:26.412780",
+    "created_by": "scosman",
+    "output": "Yes, you can trim the first 5 seconds from a video using stream copy (also called \"copy codec\" mode) with `-ss` and `-c copy` to avoid re-encoding. This is much faster and preserves the original quality, but with a few caveats:\n\n- When using `-ss` as an input option before `-i`, ffmpeg seeks accurately but may still need to decode frames internally to get to the exact frame if the input format doesn't support keyframe-accurate seeking.\n- When using `-ss` as an output option (after `-i`), seeking is frame-accurate but slower.\n- Stream copy trimming generally starts at the nearest keyframe before the requested start time, so the actual trimmed result might start a bit earlier.\n- Some container formats may require re-muxing for proper cutting.\n\nAssuming you want to cut exactly starting at 5 seconds, and are okay with slight inaccuracy depending on keyframes, this command uses `-ss` as an input option for faster start and no re-encoding:\n\n```bash\nffmpeg -ss 5 -i input.mp4 -c copy -avoid_negative_ts make_zero output_trimmed.mp4\n```\n\nExplanation:\n- `-ss 5` before `-i` seeks input to 5 seconds.\n- `-c copy` copies all streams without re-encoding.\n- `-avoid_negative_ts make_zero` helps fix timestamp issues in some containers when copying streams.\n- This is best for formats like MP4 or MKV.\n\nIf more precise cutting is needed, re-encoding or keyframe-aligned cuts should be considered.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 339,
+    "total_tokens": 941,
+    "cost": 0.0007832
+  },
+  "model_type": "task_run"
+}

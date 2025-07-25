@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "134583898754",
+  "created_at": "2025-07-24T20:24:40.156426",
+  "created_by": "scosman",
+  "input": "My video is in .avi with DivX and MP3; convert it to MP4 with H.264 and AAC, keeping quality similar.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "402524320471",
+    "path": null,
+    "created_at": "2025-07-24T20:24:40.156401",
+    "created_by": "scosman",
+    "output": "To convert a DivX (MPEG-4 Part 2) and MP3 encoded AVI video to MP4 with H.264 video and AAC audio, you want to transcode both streams while aiming for a similar quality. We can achieve similar perceived quality by using a CRF (Constant Rate Factor) around 18-23 for H.264, which is visually lossless or near-lossless for most content. For audio, AAC at 128 kbps or higher is typical for good quality.\n\nKey points and options used:\n- `-c:v libx264`: use H.264 encoder via libx264.\n- `-crf 20`: a good balance between quality and compression; lower values mean higher quality.\n- `-preset medium`: default preset balancing speed and compression efficiency.\n- `-c:a aac -b:a 192k`: encode audio in AAC at 192 kbps for good quality.\n- `-movflags +faststart`: reposition MP4 metadata for faster progressive streaming, improving web playback compatibility.\n- No scale filter included, assuming you want to keep original resolution.\n\n```bash\nffmpeg -i input.avi -c:v libx264 -crf 20 -preset medium -c:a aac -b:a 192k -movflags +faststart output.mp4\n```\n\nThis produces a high-quality MP4 with H.264 video and AAC audio preserving close quality to the original DivX AVI. Adjust the `-crf` value if you want smaller size (`crf 23`) or better quality (`crf 18`).",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 327,
+    "total_tokens": 930,
+    "cost": 0.0007644
+  },
+  "model_type": "task_run"
+}

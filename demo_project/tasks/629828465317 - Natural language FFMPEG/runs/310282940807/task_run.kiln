@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "310282940807",
+  "created_at": "2025-07-24T20:37:23.967426",
+  "created_by": "scosman",
+  "input": "Is there a command to take an mkv and output a new mkv with only video and English subtitles, streams copied?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "219208298934",
+    "path": null,
+    "created_at": "2025-07-24T20:37:23.967384",
+    "created_by": "scosman",
+    "output": "To create a new MKV from an existing one by copying only the video stream(s) and the English subtitle stream(s) without re-encoding, you can use stream selection with stream copy mode (`-c copy`). This is efficient because it avoids quality loss and is fast.\n\nKey points:\n- `-c copy` to copy all selected streams without re-encoding.\n- Use `-map` to select streams: pick all video streams (`-map 0:v`) and subtitle streams with language tag English (`-map 0:s:m:language:eng`).\n- The MKV container supports subtitles and multiple video streams, so no re-muxing issues.\n- This assumes the input file's subtitle streams have proper language metadata.\n\nExample command:\n\n```bash\nffmpeg -i input.mkv -map 0:v -map 0:s:m:language:eng -c copy output.mkv\n```\n\nExplanation:\n- `-map 0:v`: selects all video streams from input 0.\n- `-map 0:s:m:language:eng`: selects subtitle streams with the `eng` language metadata.\n- `-c copy`: copies streams directly without re-encoding.\n- Output is saved to `output.mkv`.\n\nIf you want just the first video stream and English subtitles:\n\n```bash\nffmpeg -i input.mkv -map 0:v:0 -map 0:s:m:language:eng -c copy output.mkv\n```\n\nThis copies only the first video stream plus English subtitles.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 313,
+    "total_tokens": 915,
+    "cost": 0.0007416
+  },
+  "model_type": "task_run"
+}

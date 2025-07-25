@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "349267194102",
+  "created_at": "2025-07-23T11:30:46.421249",
+  "created_by": "scosman",
+  "input": "I want to speed up my video by 2x and also slow it down to 0.5x speed for different parts of the same file",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "claude_sonnet_4",
+      "model_provider": "anthropic",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Output Format with Conflicting Parameters"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "297788234188",
+    "path": null,
+    "created_at": "2025-07-23T11:30:46.421224",
+    "created_by": "scosman",
+    "output": "To change the speed of different parts of a video file, you'll need to split the video into segments, apply different speed changes to each segment, then concatenate them back together. I'll show you how to speed up the first half by 2x and slow down the second half to 0.5x.\n\nThe setpts filter changes playback speed by adjusting timestamps:\n- setpts=0.5*PTS speeds up by 2x (dividing timestamps by 2)\n- setpts=2.0*PTS slows down to 0.5x (multiplying timestamps by 2)\n- atempo filter adjusts audio speed accordingly\n\n```bash\nffmpeg -i input.mp4 -filter_complex \"[0:v]split=2[v1][v2]; [0:a]asplit=2[a1][a2]; [v1]trim=end=30,setpts=0.5*PTS[v1out]; [a1]atrim=end=30,atempo=2.0[a1out]; [v2]trim=start=30,setpts=2.0*PTS[v2out]; [a2]atrim=start=30,atempo=0.5[a2out]; [v1out][a1out][v2out][a2out]concat=n=2:v=1:a=1[vout][aout]\" -map \"[vout]\" -map \"[aout]\" output.mp4\n```\n\nThis assumes your video is 60 seconds long (splitting at 30 seconds). Replace the trim times with your desired split points.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "claude_sonnet_4",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "function_calling",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_243159560313",
+    "eval_correctness"
+  ],
+  "usage": {
+    "input_tokens": 999,
+    "output_tokens": 372,
+    "total_tokens": 1371,
+    "cost": 0.008577
+  },
+  "model_type": "task_run"
+}

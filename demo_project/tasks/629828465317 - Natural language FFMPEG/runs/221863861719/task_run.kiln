@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "221863861719",
+  "created_at": "2025-07-24T20:40:10.991548",
+  "created_by": "scosman",
+  "input": "Input MOV reports \"moov atom not found\" error. How do I recover what I can from this damaged file?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "280803831740",
+    "path": null,
+    "created_at": "2025-07-24T20:40:10.991517",
+    "created_by": "scosman",
+    "output": "The error \"moov atom not found\" indicates that the MOV/MP4 file's metadata index (the moov atom) is missing or corrupted. The moov atom holds the index of the file and is necessary for normal playback and seeking. Without it, the file generally won't play in many players.\n\nTo recover what you can, you can try to extract the raw streams (audio and video) as elementary streams with `ffmpeg`, which bypasses the need for the moov atom. This way you get raw data you can then try to re-mux or re-encode. This recovery won't guarantee a complete or perfectly synchronized video, and some data might be lost, but it often recovers most of the content.\n\nTypical approach:\n\n- Use `-c copy` to copy streams without re-encoding, if possible.\n- Use `-err_detect ignore_err` or `-fflags +ignor_err` to instruct ffmpeg to be more tolerant of broken input.\n- Extract raw streams to raw formats if container parsing fails: e.g., H.264 video to `.h264` and AAC audio to `.aac`.\n- Optionally, re-mux raw streams into a new container later.\n\nHere is a basic sequence to try:\n\n1. Try to remux the MOV into MP4 ignoring errors:\n\n```bash\nffmpeg -err_detect ignore_err -i damaged.mov -c copy recovered.mp4\n```\n\nIf that fails because moov atom is missing:\n\n2. Extract raw video and audio elementary streams:\n\n```bash\nffmpeg -fflags +genpts -i damaged.mov -c:v copy -an recovered_video.h264\nffmpeg -fflags +genpts -i damaged.mov -c:a copy -vn recovered_audio.aac\n```\n\n- `-fflags +genpts` generates presentation timestamps if missing.\n- Use `-an` to skip audio output or `-vn` to skip video output.\n\n3. Later, if you get both raw streams, you can try to mux them again:\n\n```bash\nffmpeg -framerate 25 -i recovered_video.h264 -i recovered_audio.aac -c:v copy -c:a copy recovered_final.mp4\n```\n\n(Assuming the video framerate is 25 fps; adjust as needed.)\n\nSummary: recovering from missing moov atom relies on extracting raw streams first. Perfect synchronization may not be possible without the moov atom, but this method maximizes recovery.\n\n```bash\n# Attempt to remux ignoring errors:\nffmpeg -err_detect ignore_err -i damaged.mov -c copy recovered.mp4\n\n# If above fails, extract raw video:\nffmpeg -fflags +genpts -i damaged.mov -c:v copy -an recovered_video.h264\n\n# Extract raw audio:\nffmpeg -fflags +genpts -i damaged.mov -c:a copy -vn recovered_audio.aac\n\n# (Optional) Remux raw streams (adjust framerate as needed):\nffmpeg -framerate 25 -i recovered_video.h264 -i recovered_audio.aac -c:v copy -c:a copy recovered_final.mp4\n```\n\nThis approach represents a best practice when dealing with missing or corrupted moov atoms in MOV/MP4 files.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 661,
+    "total_tokens": 1259,
+    "cost": 0.0012968
+  },
+  "model_type": "task_run"
+}

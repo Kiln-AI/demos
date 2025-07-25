@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "210135508429",
+  "created_at": "2025-07-24T20:36:28.221300",
+  "created_by": "scosman",
+  "input": "I want to resize and overlay a transparent watermark, all in one ffmpeg command.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "326428596133",
+    "path": null,
+    "created_at": "2025-07-24T20:36:28.221272",
+    "created_by": "scosman",
+    "output": "To resize a video and overlay a transparent watermark in one ffmpeg command, you can use the `-vf` (video filter) option combined with the `scale` and `overlay` filters. This approach applies resizing first, then overlays the watermark image with transparency preserved (assuming a PNG watermark with alpha channel). \n\nKey points:  \n- Use `scale` filter to resize the main video. Specify desired width and height, or use -1 to preserve aspect ratio.  \n- The watermark image should have an alpha channel to maintain transparency.  \n- Use `overlay` filter to place the watermark on the video. You can specify the position with x and y coordinates.  \n\nAssuming:  \n- Input video is `input.mp4`  \n- Watermark image is `watermark.png` (with transparency)  \n- Desired output resolution is 1280x720  \n- Watermark position is bottom-right with 10 pixels padding from the edges  \n\n```bash\nffmpeg -i input.mp4 -i watermark.png -filter_complex \"[0:v]scale=1280:720[scaled];[scaled][1:v]overlay=W-w-10:H-h-10\" -c:a copy output.mp4\n```\n\nExplanation:  \n- `[0:v]scale=1280:720[scaled]` resizes the main video stream to 1280x720 and labels it as `[scaled]`.  \n- `[scaled][1:v]overlay=W-w-10:H-h-10` overlays the watermark (second input) onto the scaled video. `W` and `H` are the output scaled video's width and height; `w` and `h` are the watermark's width and height, so this positions the watermark 10 pixels from the bottom-right corner.  \n- `-c:a copy` copies the audio stream without re-encoding.  \n\nIf you want to resize with aspect ratio preserved and width set at 1280: `scale=1280:-2` can be used instead. Adjust scaling and overlay position as needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 417,
+    "total_tokens": 1008,
+    "cost": 0.0009036
+  },
+  "model_type": "task_run"
+}

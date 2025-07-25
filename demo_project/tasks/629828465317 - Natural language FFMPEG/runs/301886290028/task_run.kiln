@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "301886290028",
+  "created_at": "2025-07-24T18:12:36.854989",
+  "created_by": "scosman",
+  "input": "While attempting to convert a video to a GIF, the resultant file is excessively large. What settings should I use to balance quality and file size?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "497649900249",
+    "path": null,
+    "created_at": "2025-07-24T18:12:36.854963",
+    "created_by": "scosman",
+    "output": "Creating GIFs from videos often leads to large files due to the format’s limited compression and color palette. To reduce file size while maintaining decent quality, apply these best practices:\n\n- Limit the frame rate (e.g., 12 fps or lower, via -r).\n- Scale down resolution, keeping width/height even (e.g., -vf scale=480:-1).\n- Use an efficient palette (palettegen/paletteuse filters), which boosts visual quality at lower file sizes for GIFs.\n- Optionally, trim duration to just the desired segment.\n\nSample command (assuming you want a 5-second GIF from input.mp4, starting at 0:00, scaled to a width of 480px, at 12 fps):\n\n```bash\n# 1. Generate palette (for optimal color reduction)\nffmpeg -t 5 -i input.mp4 -vf \"fps=12,scale=480:-1:flags=lanczos,palettegen\" palette.png\n\n# 2. Create the GIF using the palette\nffmpeg -t 5 -i input.mp4 -i palette.png -filter_complex \"fps=12,scale=480:-1:flags=lanczos[x];[x][1:v]paletteuse\" output.gif\n```\n\nThis approach uses:\n- -t 5 to limit GIF to first 5 seconds (adjust as needed).\n- fps=12 to limit frames per second (tune for smoothness vs. size).\n- scale=480:-1 for a width of 480 px, automatically setting matching height while preserving aspect ratio.\n- palettegen/paletteuse for optimal GIF color compression.\n\nAdjust these parameters to balance your specific file size and quality needs.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 349,
+    "total_tokens": 952,
+    "cost": 0.003998
+  },
+  "model_type": "task_run"
+}

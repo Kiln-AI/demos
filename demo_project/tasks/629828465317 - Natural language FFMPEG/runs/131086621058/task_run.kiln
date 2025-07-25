@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "131086621058",
+  "created_at": "2025-07-24T20:38:33.465380",
+  "created_by": "scosman",
+  "input": "How can I automate the process of resizing a batch of videos in a folder to 1080p and save them as .mp4?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "759814574291",
+    "path": null,
+    "created_at": "2025-07-24T20:38:33.465356",
+    "created_by": "scosman",
+    "output": "To automate resizing a batch of videos in a folder to 1080p and save them as MP4 files, you can write a simple shell script (bash) that loops through all video files, resizes them using ffmpeg, and outputs each in MP4 format. Here are key points and best practices:\n\n- Use a for-loop to process each video file in the input folder.\n- Use `ffmpeg`'s `-vf scale=-2:1080` filter to resize videos to 1080p height while preserving aspect ratio. The `-2` ensures width is divisible by 2 (a common requirement).\n- Select efficient and compatible encoding: H.264 for video (`libx264`), AAC for audio.\n- Use CRF (constant rate factor) to control quality, e.g., 23 is a good start.\n- Use `-preset fast` to balance speed and quality.\n- Use `-pix_fmt yuv420p` to ensure compatibility.\n- Use `-movflags +faststart` to make the MP4 files optimized for streaming.\n- You can customize or extend to check and skip already processed files, handle spaces in filenames, etc.\n\nHere's a sample bash script you can run in the folder containing your videos or adjust paths as needed:\n\n```bash\n#!/bin/bash\n\n# Create output directory if it doesn't exist\nmkdir -p output\n\nfor input_file in *.*; do\n    # Skip if not a video by checking extension (adjust extensions as needed)\n    if [[ \"$input_file\" =~ \\.(mp4|avi|mkv|mov|flv|wmv|webm)$ ]]; then\n        # Extract filename without extension\n        filename=\"${input_file%.*}\"\n        output_file=\"output/${filename}_1080p.mp4\"\n        \n        echo \"Processing '$input_file' -> '$output_file' ...\"\n        \n        ffmpeg -i \"$input_file\" -vf scale=-2:1080 -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart \"$output_file\"\n        \n        echo \"Done with '$input_file'\"\n    fi\ndone\n```\n\nExplanation:\n- The script processes all common video types in the current directory.\n- It outputs resized MP4s in a subfolder named `output`.\n- Resizing uses 1080p height, preserving aspect ratio.\n- Encoding is set for compatibility and decent quality.\n- The process prints status messages to track progress.\n\nYou can run this script by saving it, e.g., as `resize_videos.sh`, then executing:\n\n```bash\nchmod +x resize_videos.sh\n./resize_videos.sh\n```\n\nThis approach automates batch processing, making it reproducible and efficient.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 580,
+    "total_tokens": 1182,
+    "cost": 0.0011688
+  },
+  "model_type": "task_run"
+}

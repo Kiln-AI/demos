@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "194694554753",
+  "created_at": "2025-07-24T20:39:02.546728",
+  "created_by": "scosman",
+  "input": "I have a series of images in multiple folders. How do I batch convert each folder to a video slideshow, naming the output files after the folder?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "301578011118",
+    "path": null,
+    "created_at": "2025-07-24T20:39:02.546701",
+    "created_by": "scosman",
+    "output": "To batch convert multiple folders of images into individual video slideshows named after each folder, you can use a shell script that iterates over the folders. For each folder:\n\n- `ffmpeg` uses an image sequence pattern to read images (assumed to be named in a sortable way like img001.jpg, img002.jpg, etc.).\n- We set the frame rate (e.g., 30 fps for smooth playback).\n- We encode the output video with H.264 (-c:v libx264), using a good preset and CRF for quality.\n- The output file is named after the current folder and saved in a specified output directory.\n\nAssumptions:\n- Images in each folder have a consistent naming pattern (e.g., frame001.jpg, frame002.jpg).\n- You want the output videos in MP4 format, ready for playback.\n- You have bash or a similar shell.\n\nHere's an example bash script demonstrating this approach:\n\n```bash\n#!/bin/bash\n\ninput_root=\"/path/to/root_folder\"  # Root folder containing image folders\noutput_root=\"/path/to/output_videos\"  # Where output videos will be saved\nfps=30  # Set desired frame rate\n\nmkdir -p \"$output_root\"\n\nfor folder in \"$input_root\"/*/; do\n  # Remove trailing slash and extract folder name\n  folder_name=$(basename \"$folder\")\n\n  # Define input pattern (adjust extension if needed)\n  input_pattern=\"$folder/%04d.jpg\"  # expects images like 0001.jpg, 0002.jpg, etc.\n\n  # Check if folder contains images matching pattern\n  if ls \"$folder\"/*.jpg 1> /dev/null 2>&1; then\n    echo \"Processing folder '$folder_name'...\"\n\n    ffmpeg -y -framerate $fps -i \"$input_pattern\" \\\n      -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p \\\n      \"$output_root/${folder_name}.mp4\"\n  else\n    echo \"No matching images in '$folder_name', skipping.\"\n  fi\ndone\n```\n\nExplanation:\n- `-framerate` specifies the input frame rate of the image sequence.\n- Input pattern `%04d.jpg` expects zero-padded 4-digit numbers beginning from 0001.jpg.\n- `-crf 18` sets high-quality output (lower CRF = better quality).\n- `-pix_fmt yuv420p` ensures compatibility with most players.\n- `-y` overwrites output if it exists.\n- You can adjust extensions and naming patterns if your images use different schemes.\n\nModify paths and image patterns as needed. This script is reusable and automates batch video creation from multiple image folders.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 558,
+    "total_tokens": 1162,
+    "cost": 0.0011344
+  },
+  "model_type": "task_run"
+}

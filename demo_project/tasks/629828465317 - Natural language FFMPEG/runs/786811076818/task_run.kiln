@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "786811076818",
+  "created_at": "2025-07-24T20:27:40.933037",
+  "created_by": "scosman",
+  "input": "I have a ProRes .mov video and want to make a low bitrate preview version as mp4.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "203986556616",
+    "path": null,
+    "created_at": "2025-07-24T20:27:40.933012",
+    "created_by": "scosman",
+    "output": "To create a low bitrate preview MP4 from a high-quality ProRes .mov, you want to:\n\n- Re-encode video to H.264 with a lower bitrate to reduce file size.\n- Use a CRF value and bitrate limit (--maxrate) to control quality and file size.\n- Use AAC audio codec with a low bitrate for audio.\n- Use pixel format yuv420p for compatibility.\n- Use `-movflags +faststart` to allow progressive streaming in browsers.\n- Assuming a modest bitrate like 500 kbps video and 64 kbps audio for preview.\n\nThis balances quality and creates a small preview file suitable for quick viewing or previews.\n\n```bash\nffmpeg -i input.mov -c:v libx264 -b:v 500k -maxrate 500k -bufsize 1000k -preset veryfast -c:a aac -b:a 64k -movflags +faststart -pix_fmt yuv420p preview.mp4\n```\n\nExplanation:\n- `-c:v libx264` encodes video to H.264.\n- `-b:v 500k` sets video bitrate to 500 kbps for low bitrate.\n- `-maxrate` and `-bufsize` control rate control to keep bitrate consistent.\n- `-preset veryfast` speeds up encoding for a preview build.\n- `-c:a aac -b:a 64k` encodes audio at low bitrate AAC.\n- `-movflags +faststart` enables streaming-optimized mp4.\n- `-pix_fmt yuv420p` ensures broad compatibility.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 330,
+    "total_tokens": 925,
+    "cost": 0.000766
+  },
+  "model_type": "task_run"
+}

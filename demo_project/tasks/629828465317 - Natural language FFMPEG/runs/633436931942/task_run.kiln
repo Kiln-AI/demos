@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "633436931942",
+  "created_at": "2025-07-24T20:27:05.372093",
+  "created_by": "scosman",
+  "input": "How do I strip out all non-English audio streams from mkv files in a folder?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "361296287005",
+    "path": null,
+    "created_at": "2025-07-24T20:27:05.372066",
+    "created_by": "scosman",
+    "output": "To batch strip out all non-English audio streams from MKV files in a folder, you can use a script that uses `ffprobe` to detect audio stream languages and `ffmpeg` to copy only English streams without re-encoding. The approach is:\n\n- Use `ffprobe` to identify audio streams marked with the English language tag (`eng`).\n- Build an `ffmpeg` command that copies the video, subtitles, and English audio streams only.\n- Use `-c copy` to avoid re-encoding for speed and quality retention.\n- Loop over all MKV files in the folder.\n\nHere's a robust bash script example for Unix-like systems:\n\n```bash\n#!/bin/bash\n\nfor file in *.mkv; do\n  echo \"Processing $file...\"\n\n  # Get indices of English audio streams\n  eng_streams=$(ffprobe -v error -select_streams a \\\n    -show_entries stream=index:stream_tags=language \\\n    -of csv=p=0 \"$file\" | awk -F',' '$2 == \"eng\" {print $1}')\n\n  if [ -z \"$eng_streams\" ]; then\n    echo \"No English audio streams found in $file, skipping.\"\n    continue\n  fi\n\n  # Prepare stream specifiers for ffmpeg - map video, subtitles, and English audio only\n  # Map all video streams\n  maps=()\n  while IFS= read -r i; do\n    maps+=(\"-map\" \"0:v:$i\")\n  done < <(ffprobe -v error -select_streams v -show_entries stream=index -of csv=p=0 \"$file\")\n\n  # Map English audio streams\n  for i in $eng_streams; do\n    maps+=(\"-map\" \"0:a:$i\")\n  done\n\n  # Map all subtitle streams\n  maps+=($(ffprobe -v error -select_streams s -show_entries stream=index -of csv=p=0 \"$file\" | awk '{print \"-map 0:s:\"$1}'))\n\n  # Output filename, e.g., input.mkv -> input.eng.mkv\n  outfile=\"${file%.mkv}.eng.mkv\"\n\n  # Run ffmpeg copy only, preserving video, subtitles, English audio\n  ffmpeg -i \"$file\" \"${maps[@]}\" -c copy \"$outfile\"\n\n  echo \"Created $outfile with English audio only.\"\ndone\n```\n\n### Explanation:\n- `ffprobe` extracts stream indices and languages.\n- Only audio streams explicitly labeled as English (`eng`) are kept.\n- Video and subtitle streams are copied fully.\n- `-c copy` avoids re-encoding for speed and no quality loss.\n- Outputs are saved as `originalname.eng.mkv`.\n\n**Assumptions:**\n- Language tags in streams are properly set.\n- The system has bash, ffmpeg, and ffprobe installed.\n- The folder only contains or only targets `.mkv` files.\n\nThis method ensures a clean, automated batch operation for your MKV files to retain only English audio.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 625,
+    "total_tokens": 1217,
+    "cost": 0.0012368
+  },
+  "model_type": "task_run"
+}

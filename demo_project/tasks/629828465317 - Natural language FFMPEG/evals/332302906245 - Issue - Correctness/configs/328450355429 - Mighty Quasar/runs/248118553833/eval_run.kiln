@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "248118553833",
+  "created_at": "2025-07-23T12:09:33.514794",
+  "created_by": "scosman",
+  "dataset_id": "271319913924",
+  "task_run_config_id": "152835495494",
+  "eval_config_eval": false,
+  "input": "Convert my video to both H.264 and H.265 codecs simultaneously in the same output file",
+  "output": "To encode a video into both H.264 and H.265 video streams simultaneously in the same container file, you need to map the same input video twice with different codecs and assign different stream indexes. MP4 can hold multiple video streams, but playback behavior depends on player support.\n\nThis command encodes:\n- Video stream 0: H.264 using libx264.\n- Video stream 1: H.265 using libx265.\n- Audio stream is copied as-is.\n\nNote: Not all players support switching between multiple video streams in one file.\n\n```bash\nffmpeg -i input.mp4 -map 0:v -c:v:0 libx264 -preset medium -crf 23 -map 0:v -c:v:1 libx265 -preset medium -crf 28 -map 0:a -c:a copy output.mp4\n```\n\nExplanation:\n- `-map 0:v` twice to map the video stream twice.\n- `-c:v:0 libx264` encodes first video stream with H.264.\n- `-c:v:1 libx265` encodes second video stream with H.265.\n- `-map 0:a` includes audio stream(s), copied without re-encoding.\n- Preset and crf adjusted for typical quality.\n\nAssumption:\n- Your input has one video and one (or multiple) audio streams.\n- You want the audio unchanged.\n- Output is MP4 container allowing multiple video streams.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does not contain the issue described in the issue description. The generated ffmpeg command correctly encodes the input video to both H.264 and H.265 formats as per the user's request and does not contain mistakes that would render it incorrect.\n\n2) The model's output is not similar to the example of a failing output. The failure example provided shows a command that uses an invalid preset. In contrast, the output provided by the model specifies valid codecs and parameters without any direct mistakes or invalid options.\n\n3) The command does not break any requirements dictated in the man page. The syntax is correct, following the synopsis provided; it correctly maps input streams to output streams, applies the specified codecs, and uses valid options for copying the audio stream. \n\n4) Therefore, the model's output does not contain the issue described, and it successfully meets the requirements set by the user as well as the guidelines inferred from the man page for ffmpeg."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 431,
+    "output_tokens": 305,
+    "total_tokens": 736,
+    "cost": 0.0006604
+  },
+  "model_type": "eval_run"
+}

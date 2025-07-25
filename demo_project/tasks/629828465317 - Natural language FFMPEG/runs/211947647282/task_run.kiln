@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "211947647282",
+  "created_at": "2025-07-24T20:40:09.969311",
+  "created_by": "scosman",
+  "input": "Merging video and audio from separate files, but their lengths are off by a few frames. How to pad, trim or sync automatically?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "934386282616",
+    "path": null,
+    "created_at": "2025-07-24T20:40:09.969280",
+    "created_by": "scosman",
+    "output": "When merging video and audio with slight length discrepancies, you want to ensure synchronization by either trimming the longer stream or padding the shorter one, avoiding out-of-sync playback.\n\nA common approach is to use `ffmpeg`'s `-itsoffset` or `aresample` filters for audio sync adjustments; however, for automatic handling of slight length differences, the `-shortest` option makes the output duration match the shortest input, effectively trimming the longer stream to the shorter one.\n\nIf you want to pad the shorter stream (e.g., audio) with silence to match the video length, you'd use `apad` filter on audio. Conversely, trimming can be done by default with `-shortest`.\n\nTo sync audio and video streams without manual offsets:\n\n- Use `-map` to select streams explicitly.\n- Use `-c:v copy` and `-c:a aac` (or desired codecs).\n- Use `-shortest` to end output at shortest input length (trimming).\n- Or combine with `apad` filter to pad audio if needed.\n\nExample: For padding audio to video length automatically:\n\n```bash\nffmpeg -i video.mp4 -i audio.wav -c:v copy -filter_complex \"[1:a]apad[aud]\" -map 0:v -map \"[aud]\" -shortest output.mp4\n```\n\nThis pads audio stream with silence if shorter, while trimming output at shortest stream (video). If audio is longer, output is trimmed to video length.\n\nIf you want to ensure minimal stream delay and sync, you can also add `aresample=async=1` as audio filter to resample and stretch audio slightly:\n\n```bash\nffmpeg -i video.mp4 -i audio.wav -c:v copy -filter_complex \"[1:a]aresample=async=1,apad[aud]\" -map 0:v -map \"[aud]\" -shortest output.mp4\n```\n\nThis tries to fix small sync issues and pads audio if shorter.\n\nAssumptions:\n\n- Input video has video stream only (or if audio present, you intend to replace it).\n- Audio and video streams are roughly aligned, only off by slight frame/audio samples.\n- You want final output to match video length.\n\n---\n\n**Summary of recommended command to automatically pad or trim audio to video length and fix slight sync:**\n\n```bash\nffmpeg -i video.mp4 -i audio.wav -c:v copy -filter_complex \"[1:a]aresample=async=1,apad[aud]\" -map 0:v -map \"[aud]\" -shortest output.mp4\n```\n\nExplanation:\n\n- `[1:a]aresample=async=1` fixes minor audio sync issues by stretching/compressing audio samples.\n- `apad` pads audio with silence if shorter than video.\n- `-shortest` ensures output stops at the shortest stream length (video length).\n- `-c:v copy` copies video without re-encoding for speed and quality.\n- `-map` ensures proper stream selection.\n\nThis provides automatic syncing with padding/trimming as needed without manually specifying offsets.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 639,
+    "total_tokens": 1241,
+    "cost": 0.0012632
+  },
+  "model_type": "task_run"
+}

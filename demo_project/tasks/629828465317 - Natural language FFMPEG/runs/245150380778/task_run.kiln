@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "245150380778",
+  "created_at": "2025-07-24T20:27:12.361010",
+  "created_by": "scosman",
+  "input": "Show me a script to deinterlace all .avi files in a directory and save them as progressive .mp4s.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "144436437258",
+    "path": null,
+    "created_at": "2025-07-24T20:27:12.360985",
+    "created_by": "scosman",
+    "output": "To batch deinterlace all `.avi` files in a directory and convert them to progressive `.mp4` files, you can use a simple shell script (bash) that processes each `.avi` file with ffmpeg. \n\n- The `yadif` filter is a widely used deinterlacing filter in ffmpeg, producing good results.\n- Output uses H.264 video (`libx264`) and AAC audio (`aac`), the most compatible codecs for progressive MP4.\n- `-preset medium` balances encoding speed and compression.\n- `-crf 23` ensures good quality.\n- `-pix_fmt yuv420p` guarantees widespread player compatibility.\n- `-movflags +faststart` enables progressive download for the MP4 container.\n- The output filename replaces `.avi` with `.mp4`.\n\nMake sure you run this script in the directory with the `.avi` files or specify the input directory path.\n\nHere is a robust bash script example:\n\n```bash\n#!/bin/bash\n\n# Loop through all .avi files in current directory\nfor input_file in *.avi; do\n  # Skip if no .avi files found\n  [ -e \"$input_file\" ] || { echo \"No .avi files found.\"; exit 1; }\n\n  # Define output filename by replacing .avi with .mp4\n  output_file=\"${input_file%.avi}.mp4\"\n\n  echo \"Processing '$input_file' -> '$output_file'\"\n\n  ffmpeg -i \"$input_file\" -vf yadif -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k \\\n    -pix_fmt yuv420p -movflags +faststart \"$output_file\"\n\n  if [ $? -eq 0 ]; then\n    echo \"Finished processing '$input_file'\"\n  else\n    echo \"Error processing '$input_file'\"\n  fi\ndone\n```\n\nExplanation:\n- This script iterates over all `.avi` files in the directory.\n- Applies `yadif` deinterlacing to each.\n- Converts to MP4 with recommended encoding parameters.\n- Provides progress and error messages for better automation monitoring.\n\nRun this script by saving it as `deinterlace_batch.sh`, making it executable (`chmod +x deinterlace_batch.sh`), and then executing it (`./deinterlace_batch.sh`).",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 488,
+    "total_tokens": 1087,
+    "cost": 0.0010204
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "158146183872",
+  "created_at": "2025-07-24T18:12:27.577985",
+  "created_by": "scosman",
+  "input": "I'm looking to downsample a high-resolution video to 480p but face compatibility issues on some players. How should I adjust the pixel format or other parameters to fix this?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "246843589898",
+    "path": null,
+    "created_at": "2025-07-24T18:12:27.577960",
+    "created_by": "scosman",
+    "output": "When downsampling to 480p and aiming for maximum compatibility across various players, use the following best practices:\n\n- Rescale with `-vf scale=-2:480` to ensure the height is 480 pixels and width is automatically calculated to maintain aspect ratio.\n- Set the pixel format to `yuv420p` with `-pix_fmt yuv420p`, since older devices and players may not handle higher chroma subsampling like `yuv422p` or `yuv444p`.\n- Use `libx264` for H.264 encoding (widely supported), and set `-movflags +faststart` for better network streaming.\n- Optionally, use `-profile:v baseline` or `-profile:v main` for maximum compatibility, as some players dislike high and higher profiles.\n\nHere's the optimized command:\n\n```bash\nffmpeg -i input.mp4 -vf scale=-2:480 -c:v libx264 -preset medium -crf 23 -profile:v baseline -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 128k output_480p.mp4\n```\n\n**Assumptions:**  \n- Input file is `input.mp4` (replace as needed).\n- You want both maximum compatibility and decent quality for general playback.\n- AAC is chosen for audio for widely supported playback.\n\nThis setup ensures your 480p video plays correctly on the widest range of devices and media players.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 609,
+    "output_tokens": 302,
+    "total_tokens": 911,
+    "cost": 0.003634
+  },
+  "model_type": "task_run"
+}

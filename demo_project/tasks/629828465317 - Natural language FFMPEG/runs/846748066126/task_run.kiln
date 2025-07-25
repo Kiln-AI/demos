@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "846748066126",
+  "created_at": "2025-07-24T20:24:36.294523",
+  "created_by": "scosman",
+  "input": "Take a .webm (VP8/Opus) and convert it to .mp4 (H.264/AAC) for Facebook upload.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "908128789748",
+    "path": null,
+    "created_at": "2025-07-24T20:24:36.294488",
+    "created_by": "scosman",
+    "output": "To convert a WebM file (using VP8 video and Opus audio) to an MP4 formatted file suitable for Facebook upload, you'll want to transcode the video stream to H.264 and the audio stream to AAC. Facebook recommends H.264 video and AAC audio in MP4 containers for best compatibility. \n\nKey points:\n- Use `libx264` encoder for video to ensure wide compatibility.\n- Use `aac` audio codec with a decent bitrate (128k is a good default).\n- Use `-movflags +faststart` to move metadata to the beginning of the file for smoother streaming.\n- Make sure pixel format is set to `yuv420p` for compatibility with many devices.\n- Copying metadata or optimizing container flags can help but primary is codec compatibility.\n\nHere’s the command assuming the input file is input.webm and the output file is output.mp4:\n\n```bash\nffmpeg -i input.webm -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nExplanation of options:\n- `-c:v libx264` — transcodes video to H.264.\n- `-preset medium` — balances encoding speed and efficiency.\n- `-crf 23` — quality setting for video (lower is better quality, 23 is default).\n- `-c:a aac` — transcodes audio to AAC.\n- `-b:a 128k` — sets audio bitrate.\n- `-pix_fmt yuv420p` — sets pixel format for broad compatibility.\n- `-movflags +faststart` — enables fast start streaming by relocating metadata.\n\nThis will produce an MP4 file optimized and compatible for Facebook uploads.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 373,
+    "total_tokens": 977,
+    "cost": 0.0008384
+  },
+  "model_type": "task_run"
+}

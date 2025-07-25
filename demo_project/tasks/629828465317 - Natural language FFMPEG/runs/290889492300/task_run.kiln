@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "290889492300",
+  "created_at": "2025-07-24T18:11:32.463731",
+  "created_by": "scosman",
+  "input": "Please provide an ffmpeg command to convert `input.mp4` to a 1080p MKV file optimized for streaming in all major web browsers.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Optimizing Encoding for Browser Compatibility"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "311500523617",
+    "path": null,
+    "created_at": "2025-07-24T18:11:32.463698",
+    "created_by": "scosman",
+    "output": "To convert `input.mp4` into a 1080p MKV file optimized for browser streaming, it’s important to use widely supported codecs (H.264 for video, AAC or Opus for audio). Although MP4 is generally more compatible for direct browser playback, MKV can also be used if you ensure proper codecs and optimization for streaming (by enabling `-movflags +faststart` and compliant settings).\n\nHere’s how the command works:\n- `-vf scale=-2:1080` resizes the video to 1080 pixels in height, maintaining the original aspect ratio (width automatically adjusted, divisible by 2 for encoder compatibility).\n- `-c:v libx264` encodes the video using the H.264 codec, which is supported in all major browsers.\n- `-preset medium` balances encoding speed and compression efficiency.\n- `-crf 23` sets the quality (constant rate factor); 23 is a standard high-quality target.\n- `-c:a aac -b:a 192k` encodes audio using AAC at 192 kbps, maximizing browser support.\n- `-pix_fmt yuv420p` ensures the pixel format is compatible with browsers.\n- `-movflags +faststart` makes sure the file’s metadata (moov atom) is at the beginning, which is standard for streaming support.\n\nNote: While MKV is not natively supported by all browsers (unlike MP4/WebM), using H.264/AAC in MKV containers is maximally compatible when browser support is available (such as via MediaSource Extensions or on platforms like Chromium/Firefox).\n\n```bash\nffmpeg -i input.mp4 -vf scale=-2:1080 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 192k -pix_fmt yuv420p -movflags +faststart output.mkv\n```\n\n**Assumptions**:\n- You want maximum browser compatibility while using an MKV container.\n- Input can be resized to 1080p without cropping or distorting.\n- Seeking immediate streaming playback capability is important (`+faststart`).\n- If browser-native MKV support is a must, consider using the WebM container with VP8/VP9/Opus codecs for even wider compatibility; but if H.264 is needed, this command is optimal.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 607,
+    "output_tokens": 490,
+    "total_tokens": 1097,
+    "cost": 0.005134
+  },
+  "model_type": "task_run"
+}

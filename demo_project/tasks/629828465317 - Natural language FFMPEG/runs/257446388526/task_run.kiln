@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "257446388526",
+  "created_at": "2025-07-24T18:09:11.453484",
+  "created_by": "scosman",
+  "input": "Could you convert a video, presentation.mp4, to a lower bit rate to reduce file size?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Commands for Video Editing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "980952671072",
+    "path": null,
+    "created_at": "2025-07-24T18:09:11.453460",
+    "created_by": "scosman",
+    "output": "To reduce the file size of presentation.mp4 by lowering its bit rate, you can use the Constant Rate Factor (CRF) approach for a good balance between quality and compression, or you can set a specific average bit rate. CRF is generally preferred for presentations (which may have still images and low-motion scenes) because it adapts to content while preserving quality.\n\nIn this example, we'll use the H.264 codec with a CRF value of 28, which provides visibly good quality at a much reduced file size for most presentations. For AAC audio, we’ll use 96k for additional size savings.\n\n- -c:v libx264 encodes video with H.264.\n- -crf 28 sets quality (higher = smaller file, lower = better quality; 23 is default, 28 is noticeably smaller with acceptable quality for non-critical content).\n- -preset veryfast speeds up encoding—change to slower for better compression, but slower encode.\n- -c:a aac -b:a 96k compresses audio.\n- -movflags +faststart helps playback start earlier on the web.\n\n```bash\nffmpeg -i presentation.mp4 -c:v libx264 -preset veryfast -crf 28 -c:a aac -b:a 96k -movflags +faststart presentation_compressed.mp4\n```\n\nAssumptions:\n\n- You want to keep the resolution and frame rate unchanged, just reduce size.\n- The CRF value is a compromise for presentations; adjust (e.g., 26 for higher quality, 30 for even smaller size).\n- If you need a fixed size, target -b:v instead.\n\nLet me know if you need to hit a strict file size or want to set a target bitrate!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 360,
+    "total_tokens": 955,
+    "cost": 0.00407
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "926571547434",
+  "created_at": "2025-07-24T19:04:29.111234",
+  "created_by": "scosman",
+  "dataset_id": "304339871343",
+  "task_run_config_id": "311590806518",
+  "eval_config_eval": false,
+  "input": "I want to rotate my video 90 degrees clockwise and apply advanced noise reduction with the strongest filters available.",
+  "output": "To rotate a video 90 degrees clockwise, use the transpose filter with argument 1. For advanced noise reduction, use the hqdn3d (for light to medium noise) or nf-nlmeans (for more intensive noise). Combining nf-nlmeans with denoise_nlmeans can give strong but slow noise reduction, and the MinMax filter is also effective for smoothing.\n\nHere is a recommended chain for strong noise reduction and rotation:\n\n- -vf \"transpose=1,nf-nlmeans=strength=15:smoothing=10:search=9,denoise_nlmeans=radius=7:strength=14\" first rotates the video, then applies nf-nlmeans (stronger, more advanced non-local means), followed by denoise_nlmeans (a refined version); you can adjust strengths and smoothing as needed.\n- -preset slow and -crf 18 ensure high quality output—lower values increase quality, though file size increases.\n- -c:v libx264 for H.264 encoding.\n- -c:a copy copies the audio without re-encoding.\n\nAssumption: Input has audio; if not, omit -c:a copy.\n\n```bash\nffmpeg -i input.mp4 -vf \"transpose=1,nf-nlmeans=strength=15:smoothing=10:search=9,denoise_nlmeans=radius=7:strength=14\" -c:v libx264 -preset slow -crf 18 -c:a copy output_rotated_denoised.mp4\n```\n\nAdjust the parameters for the nf-nlmeans and denoise_nlmeans filters (strength, smoothing, search radius) for different levels of noise and detail retention if needed. These settings provide very strong noise reduction while trying to preserve image details.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does **not** contain the issue described. The generated command matches the requirements from the user for rotating the video 90 degrees clockwise and applying advanced noise reduction. \n\n2) The model's output is **not** similar to the example of a failing output. The command produced is valid and contains all necessary options and arguments relevant to the user's request.\n\n3) The command in the model's output does **not** break any requirements dictated in the man page. It follows the proper syntax and includes valid options for video filtering, codec selection, and output format.\n\n4) Based on the evaluation, the model's output **does not** contain the issues described and successfully fulfills the user requirements for the task. Therefore, it should be considered a successful generation of the ffmpeg command."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 485,
+    "output_tokens": 391,
+    "total_tokens": 876,
+    "cost": null
+  },
+  "model_type": "eval_run"
+}

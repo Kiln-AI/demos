@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "972823410669",
+  "created_at": "2025-07-24T18:09:33.441171",
+  "created_by": "scosman",
+  "input": "I need to take a 60fps video and make it web-ready, downscaling it to 30fps without significant quality drop.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Streamlining Video Files for Web Streaming"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "178520343805",
+    "path": null,
+    "created_at": "2025-07-24T18:09:33.441147",
+    "created_by": "scosman",
+    "output": "To prepare a 60fps video for web streaming while downscaling it to 30fps and maintaining good quality, you should:\n\n- Set the output frame rate to 30fps using `-r 30`.\n- Use the H.264 codec (`libx264`) for broad browser compatibility.\n- Set a constant rate factor with `-crf` (23 is a good balance for web; adjust lower for better quality).\n- Use AAC audio for compatibility.\n- Use `-movflags +faststart` so the video is streamable (metadata at front).\n- Ensure pixel format is `yuv420p` for compatibility.\n- Optionally, add a preset for faster or slower encoding (e.g., `fast`, `medium`, or `slow`).\n\nHere’s the command:\n\n```bash\nffmpeg -i input.mp4 -r 30 -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output_30fps.mp4\n```\n\n- This command takes `input.mp4` at 60fps, converts it to 30fps, and outputs a browser-ready `.mp4` that streams smoothly online.\n- If you want even higher output quality, lower the `-crf` value (e.g., `-crf 20`).",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 605,
+    "output_tokens": 286,
+    "total_tokens": 891,
+    "cost": 0.003498
+  },
+  "model_type": "task_run"
+}

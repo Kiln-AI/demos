@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "185947569006",
+  "created_at": "2025-07-24T20:37:22.381125",
+  "created_by": "scosman",
+  "input": "How can I remove all subtitle tracks from an mkv file, but keep everything else using stream copy?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "264411622935",
+    "path": null,
+    "created_at": "2025-07-24T20:37:22.381101",
+    "created_by": "scosman",
+    "output": "To remove all subtitle tracks from an MKV file while keeping all other streams intact, you can use ffmpeg's stream copy mode (`-c copy`) for video and audio to avoid re-encoding, and explicitly exclude subtitle streams by not mapping them.\n\nThe key steps:\n\n- Use `-map 0` to include all streams from the input.\n- Use `-map -0:s` to exclude all subtitle streams (`s` is the subtitle stream specifier).\n- Use `-c copy` to copy all streams without re-encoding.\n\nThis way, only non-subtitle streams (video, audio, attachments, chapters, etc.) will be copied over, and subtitles removed efficiently without quality loss.\n\nExample command:\n\n```bash\nffmpeg -i input.mkv -map 0 -map -0:s -c copy output.mkv\n```\n\nAssumption: Input file has any number of subtitle streams. This command will remove them all. Other streams like video, audio, attachments, and chapters are preserved exactly as they are.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 211,
+    "total_tokens": 809,
+    "cost": 0.0005768
+  },
+  "model_type": "task_run"
+}

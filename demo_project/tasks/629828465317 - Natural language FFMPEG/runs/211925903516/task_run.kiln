@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "211925903516",
+  "created_at": "2025-07-24T20:24:19.044056",
+  "created_by": "scosman",
+  "input": "Downscale timelapse.mov to 960x540, but only if the original is larger.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "166448478086",
+    "path": null,
+    "created_at": "2025-07-24T20:24:19.044027",
+    "created_by": "scosman",
+    "output": "To downscale timelapse.mov to 960x540 only if the original resolution is larger, you can use ffmpeg's scale filter with the 'if' function. This allows conditional scaling by checking the width and height of the input.\n\n- The expression `if(gt(iw,960),960,iw)` sets the width to 960 if input width (iw) > 960, else keeps original width.\n- Similarly, `if(gt(ih,540),540,ih)` sets the height to 540 if input height (ih) > 540, else keeps original height.\n- We use `force_original_aspect_ratio=decrease` to ensure the aspect ratio is preserved and the output fits inside 960x540.\n- `eval=frame` ensures the expression is evaluated once per frame (default is 'init', which would be fine here. You can omit or keep it).\n- Copying audio stream as-is with `-c:a copy` to avoid unnecessary re-encoding.\n- Using libx264 with CRF 23 for good quality and compatibility.\n- Setting `-movflags +faststart` if the output is MP4 for better streaming compatibility (assuming output format mp4).\n\nThis filters the video only when needed, maintaining the best possible quality and aspect ratio.\n\n```bash\nffmpeg -i timelapse.mov -vf \"scale='if(gt(iw,960),960,iw)':'if(gt(ih,540),540,ih)':force_original_aspect_ratio=decrease\" -c:v libx264 -preset medium -crf 23 -c:a copy -movflags +faststart output.mp4\n```\n\nAssumptions:\n- Output extension changed to .mp4 for wider compatibility.\n- Original audio is compatible; if not, audio codec adjustment might be needed.\n- The user wants aspect ratio preserved, not a forced 960x540 distortion.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 392,
+    "total_tokens": 986,
+    "cost": 0.0008648
+  },
+  "model_type": "task_run"
+}

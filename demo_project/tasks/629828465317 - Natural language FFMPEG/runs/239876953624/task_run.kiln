@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "239876953624",
+  "created_at": "2025-07-24T20:25:14.223204",
+  "created_by": "scosman",
+  "input": "I want to remux a .mov file to .mp4, but my video codec is ProRes – is that possible and how?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "173162861728",
+    "path": null,
+    "created_at": "2025-07-24T20:25:14.223177",
+    "created_by": "scosman",
+    "output": "Remuxing a .mov file to .mp4 while keeping the ProRes codec is possible only if the container supports that codec. However, the MP4 container generally does not officially support ProRes (a high-quality codec used mostly in .mov containers). This mismatch can cause compatibility issues with players expecting standard MP4 codecs (like H.264). \n\nIf you want to keep ProRes without re-encoding, the best approach is to copy the streams directly (-c copy), but you should be aware that the resulting file may not play correctly in all players expecting standard MP4 streams. Alternatively, you can convert the ProRes video to H.264 or HEVC if maximum compatibility is needed.\n\nHere’s how you can attempt a remux by stream copying to MP4:\n\n- `-c copy` copies streams without re-encoding.\n- Input is your ProRes .mov file.\n- Output is .mp4 container.\n\n**Assumption:** Your goal is to avoid transcoding to save time and quality. Be mindful that playback compatibility may be limited.\n\n```bash\nffmpeg -i input.mov -c copy output.mp4\n```\n\nIf this results in playback issues, consider transcoding:\n\n```bash\nffmpeg -i input.mov -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k output.mp4\n```\n\nThis re-encodes video to H.264 and audio to AAC for broad compatibility at high quality.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 605,
+    "output_tokens": 304,
+    "total_tokens": 909,
+    "cost": 0.0007284
+  },
+  "model_type": "task_run"
+}

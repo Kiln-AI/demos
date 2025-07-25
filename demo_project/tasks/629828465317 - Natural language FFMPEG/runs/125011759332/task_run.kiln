@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "125011759332",
+  "created_at": "2025-07-24T20:25:25.186632",
+  "created_by": "scosman",
+  "input": "I have a file with both Dolby and stereo audio. How to remux just the stereo audio and video to a new file?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "138505565312",
+    "path": null,
+    "created_at": "2025-07-24T20:25:25.186607",
+    "created_by": "scosman",
+    "output": "To remux a file preserving only the video stream and the stereo audio stream without re-encoding, use stream copying with the `-c copy` option. Since your file contains multiple audio streams (Dolby and stereo), you should identify the stereo audio stream based on its index or characteristics and map only the video and that stereo audio stream to the output file.\n\nHere’s the step-by-step approach:\n\n1. Use `ffprobe` to list all streams and identify the index of the stereo audio stream.\n2. Use `-map` options to select video (`-map 0:v`) and the specific stereo audio stream (`-map 0:a:<index>`) for output.\n3. Use `-c copy` to remux without re-encoding.\n\nAssuming the stereo audio stream is stream 1:1 (first audio stream in the second stream group), this command example remuxes video and that audio stream:\n\n```bash\nffmpeg -i input.mkv -map 0:v -map 0:a:1 -c copy output.mkv\n```\n\nExplanation of parameters:\n- `-map 0:v`: Selects all video streams from input 0.\n- `-map 0:a:1`: Selects the second audio stream (commonly where stereo is, but you must verify with ffprobe).\n- `-c copy`: Copies streams directly without re-encoding for fast processing and no quality loss.\n\n**Important:** First run `ffprobe` to confirm which audio stream index corresponds to the stereo audio, since stream indices vary by file.\n\nExample `ffprobe` command to inspect streams:\n\n```bash\nffprobe -i input.mkv -show_streams -select_streams a\n```\n\nLook for `channels=2` in the output to find the stereo audio stream index and replace `0:a:1` accordingly.\n\nIf you want to explicitly exclude the Dolby audio stream and keep only the stereo audio and video, do so by mapping only the desired streams.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 409,
+    "total_tokens": 1012,
+    "cost": 0.0008956
+  },
+  "model_type": "task_run"
+}

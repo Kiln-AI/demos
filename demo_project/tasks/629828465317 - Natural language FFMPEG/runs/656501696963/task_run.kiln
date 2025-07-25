@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "656501696963",
+  "created_at": "2025-07-24T18:08:21.239514",
+  "created_by": "scosman",
+  "input": "Can you help me normalize the volume of sound.wav to a target loudness of -16 LUFS?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Encoding Basics"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "438403585134",
+    "path": null,
+    "created_at": "2025-07-24T18:08:21.239488",
+    "created_by": "scosman",
+    "output": "To normalize the volume of sound.wav to a target loudness of -16 LUFS, use the loudnorm filter in ffmpeg, which is designed for ITU-R BS.1770 loudness normalization. This filter analyzes and adjusts the audio to meet your specified integrated loudness (I), here -16 LUFS.\n\n- You should run a two-pass process for full accuracy:\n  1. First pass: analyze and measure loudness stats.\n  2. Second pass: apply measured values for consistent, standards-compliant normalization.\n- Below is a best-practice script for applying loudnorm to stereo audio:\n\n```bash\n# First pass (analysis):\nffmpeg -i sound.wav -af loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json -f null -\n\n# Note the output stats from the first pass and use them for the second pass.\n\n# Second pass (normalization), substituting detected_* values from first pass output:\nffmpeg -i sound.wav -af loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=INPUT1:measured_LRA=INPUT2:measured_TP=INPUT3:measured_thresh=INPUT4:offset=INPUT5:linear=true:print_format=summary normalized_sound.wav\n```\n\n- Replace INPUT1 through INPUT5 with their respective values from the first pass’s output.\n- TP=-1.5 ensures output true peak is at most -1.5 dBTP (a good standard).\n- LRA=11 controls the allowed loudness range (default/recommended).\n\nIf you want a quick, single-pass method (less precise):\n\n```bash\nffmpeg -i sound.wav -af loudnorm=I=-16:TP=-1.5:LRA=11 normalized_sound.wav\n```\n\nBut for compliance and best results, two-pass normalization is recommended.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 391,
+    "total_tokens": 985,
+    "cost": 0.004316
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "132427477711",
+  "created_at": "2025-07-24T20:27:32.513739",
+  "created_by": "scosman",
+  "input": "There are black bars on the sides of my video. Please crop them automatically.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "191399241368",
+    "path": null,
+    "created_at": "2025-07-24T20:27:32.513643",
+    "created_by": "scosman",
+    "output": "To remove black bars on the sides of your video automatically, you can use the `cropdetect` filter to analyze the video and detect the cropping area, then apply that crop using the `crop` filter. This is a two-step process in practice:\n\n1. Analyze the video to find the crop area:\n```\nffmpeg -i input.mp4 -vf cropdetect=24:16:0 -t 10 -f null -\n```\nThis analyzes the first 10 seconds to detect black bars. The output will include lines like:\n```\n[Parsed_cropdetect_0 @ ...] x1:XX x2:XX y1:XX y2:XX w:XXX h:XXX x:XX y:XX pts:XXX t:XX crop=WIDTH:HEIGHT:X:Y\n```\nNote the crop parameters from the last outputs for stable detection.\n\n2. Use those crop parameters to crop the video:\n```\nffmpeg -i input.mp4 -vf crop=WIDTH:HEIGHT:X:Y -c:a copy output.mp4\n```\n\nIf you want to do it all in one command assuming your video has stable black bars, you could use the `cropdetect` filter combined with the `crop` filter via `ffmpeg`'s `-filter_complex` or use scripts to parse cropdetect output.\n\nBecause you asked for a direct command, a practical approach is using `cropdetect` for detection then applying the crop manually with the detected values for accuracy.\n\nExample with assumed crop detected (replace with your actual detected params):\n```bash\nffmpeg -i input.mp4 -vf \"crop=1280:720:100:0\" -c:a copy output_cropped.mp4\n```\n\nHere:\n- `crop=width:height:x:y` crops video to width and height starting at (x,y).\n- `-c:a copy` copies audio without re-encoding.\n\nThis ensures only black bars are removed.\n\nIf you want a fully automatic approach in one command, there's a trick using the `cropdetect` with `-vf` and `select` filter, but this may be less reliable across different videos.\n\nAssumption: Input video is `input.mp4`; output will be saved as `output_cropped.mp4`. You will need to run the first cropdetect command to get accurate cropping values.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 477,
+    "total_tokens": 1067,
+    "cost": 0.0009992
+  },
+  "model_type": "task_run"
+}

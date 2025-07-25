@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "528842971000",
+  "created_at": "2025-07-24T20:36:19.981598",
+  "created_by": "scosman",
+  "input": "What are the best ffmpeg options for resizing a video for Instagram (1080x1350, portrait)?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "138225818248",
+    "path": null,
+    "created_at": "2025-07-24T20:36:19.981574",
+    "created_by": "scosman",
+    "output": "When resizing a video for Instagram portrait posts (1080x1350), the goal is to fit the video into this vertical aspect ratio (4:5) while preserving quality and compatibility. Instagram prefers H.264 video codec, AAC audio, and MP4 container.\n\nKey points and recommended options:\n\n- Scale the video so it fits within 1080x1350 without distortion. Generally, scale width to 1080 and limit height to 1350, preserving aspect ratio.\n- If the video’s aspect ratio differs, adding black bars (padding) can ensure exact 1080x1350 output without cropping the content.\n- Use libx264 codec with a CRF value (18-23) to balance quality and file size.\n- Use `-preset` medium or slow for better compression efficiency.\n- Use `-movflags +faststart` for better playback on web.\n- Set pixel format to `yuv420p` to ensure wide compatibility.\n- Use AAC audio codec at 128k bitrate.\n- Use `-profile:v high -level 4.1` to meet Instagram codec profile expectations.\n- Instagram expects videos to have a frame rate no higher than 30fps, so limit frame rate if necessary.\n\nExample command scenarios:\n\n1. **Resize with padding (letterboxing/pillarboxing) to fit exactly 1080x1350:**\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=w=1080:h=1350:force_original_aspect_ratio=decrease,pad=1080:1350:(ow-iw)/2:(oh-ih)/2\" -c:v libx264 -profile:v high -level 4.1 -preset slow -crf 20 -c:a aac -b:a 128k -pix_fmt yuv420p -r 30 -movflags +faststart output_instagram_portrait.mp4\n```\n\nExplanation:\n\n- `scale=w=1080:h=1350:force_original_aspect_ratio=decrease`: scales the video to fit inside the 1080x1350 box without cropping.\n- `pad=1080:1350:(ow-iw)/2:(oh-ih)/2`: adds black padding to reach exactly 1080x1350, centered.\n- `-r 30`: caps frame rate at 30fps.\n\n2. **If you prefer to crop instead of padding to fill the frame fully**\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=w=1080:h=1350:force_original_aspect_ratio=increase,crop=1080:1350\" -c:v libx264 -profile:v high -level 4.1 -preset slow -crf 20 -c:a aac -b:a 128k -pix_fmt yuv420p -r 30 -movflags +faststart output_instagram_portrait_cropped.mp4\n```\n\n- `force_original_aspect_ratio=increase` scales up to ensure the whole 1080x1350 area is filled.\n- `crop=1080:1350` crops the excess parts.\n\n---\n\nChoose padding if you want to preserve the entire original frame; choose cropping if you want to fill the frame fully without black bars.\n\nThese commands balance quality, compatibility, and Instagram's resolution requirements well.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 687,
+    "total_tokens": 1283,
+    "cost": 0.0013376
+  },
+  "model_type": "task_run"
+}

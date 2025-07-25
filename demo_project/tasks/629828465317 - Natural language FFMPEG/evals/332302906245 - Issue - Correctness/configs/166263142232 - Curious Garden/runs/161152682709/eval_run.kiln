@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "161152682709",
+  "created_at": "2025-07-23T13:32:39.152073",
+  "created_by": "scosman",
+  "dataset_id": "137388627865",
+  "task_run_config_id": null,
+  "eval_config_eval": true,
+  "input": "I have a file with 4 video streams and 6 audio streams. I need to select video stream 8 and audio stream 12 for my output file final.mp4",
+  "output": "To select specific streams from a multi-stream file, you use the `-map` parameter to specify which input streams to include in the output. This allows you to cherry-pick exactly which video and audio tracks you want.\n\nThe `-map` parameter uses the format `-map input_index:stream_type:stream_index` where stream indices start from 0. So to select video stream 8 and audio stream 12:\n\n```bash\nffmpeg -i input.mkv -map 0:v:8 -map 0:a:12 -c copy final.mp4\n```\n\nThis command:\n- `-map 0:v:8` selects video stream 8 from input 0\n- `-map 0:a:12` selects audio stream 12 from input 0  \n- `-c copy` copies the streams without re-encoding for faster processing\n\nI assumed your input file is named something like `input.mkv` since you didn't specify the filename, and used copy mode to preserve quality and speed up processing.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) Analysis of the Command:\n\nThe produced command seems to have issues regarding the correct selection of streams. In `ffmpeg`, stream indices start from 0. Thus, if the user wants to select video stream 8 and audio stream 12, they should specify `-map` parameters such that the indices correspond correctly.\n\nLet's break down the command:\n- Assumes that the input file has sufficient video and audio streams (at least 9 and 13, respectively).\n- The suggested `ffmpeg` command is:\n  ```bash\n  ffmpeg -i input.mkv -map 0:v:8 -map 0:a:12 -c copy final.mp4\n  ```\n\nGiven user input, the indices provided (8 and 12) should correctly correspond to the streams in a 0-based index setup provided by `ffmpeg`. The produced command uses:\n- `-map 0:v:8`: Selects the 9th video stream (since count starts at 0)\n- `-map 0:a:12`: Selects the 13th audio stream\n\nThe command itself is valid and runable, assuming that the provided `input.mkv` has enough video and audio streams.\n\n2) Criteria Evaluation:\n\n- The command is valid and runable if the assumptions about the number of streams available in `input.mkv` hold true.\n- It follows the user request, assuming the 8th video stream (0-based index) means the 9th stream as requested, and similarly for audio.\n\nThus, the eval should pass as:\n- The command is syntactically valid.\n- It follows the user's specific stream selection request correctly, from a 0-index perspective, which is standard for ffmpeg.\n\nOverall, based on the provided details and assumptions, there does not appear to be any mistake in the command relative to the user's request."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 1009,
+    "output_tokens": 233,
+    "total_tokens": 1242,
+    "cost": 0.006522
+  },
+  "model_type": "eval_run"
+}

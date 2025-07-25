@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "274224330354",
+  "created_at": "2025-07-24T20:24:26.081431",
+  "created_by": "scosman",
+  "input": "I want to downscale presentation.flv to standard 480p, preserving subtitles.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "191102774304",
+    "path": null,
+    "created_at": "2025-07-24T20:24:26.081406",
+    "created_by": "scosman",
+    "output": "To downscale presentation.flv to standard 480p while preserving subtitles, you'll want to:\n\n- Use the video filter scale=-2:480, which sets the height to 480 pixels and automatically adjusts the width to maintain the aspect ratio. The width is set to -2 to ensure it is divisible by 2, a requirement for many codecs.\n- Copy the subtitle stream or re-encode subtitles if necessary to ensure they are preserved. If subtitles are in a separate stream (e.g., SRT or embedded), you can copy them with -c:s copy; if they are rendered as bitmap subtitles (like DVD or Blu-ray subs), more complex processing might be required.\n- Encode the video with a compatible codec like libx264 for good quality and compatibility.\n- Keep audio by copying or re-encoding as needed.\n- Output MP4 or MKV depending on subtitle support you need (MKV is better for embedded subtitle support).\n\nAssuming the subtitles are in a separate stream compatible with copy and you want an MKV output (which supports subtitles well):\n\n```bash\nffmpeg -i presentation.flv -vf scale=-2:480 -c:v libx264 -preset medium -crf 23 -c:a copy -c:s copy output.mkv\n```\n\nExplanation:\n\n- `-vf scale=-2:480`: Downscale video to height 480 preserving aspect ratio.\n- `-c:v libx264 -preset medium -crf 23`: Encode video with balanced quality/speed.\n- `-c:a copy`: Copy audio stream without re-encoding.\n- `-c:s copy`: Copy subtitles without re-encoding.\n- Output container `output.mkv` supports subtitles well.\n\nIf subtitles are not in a separate stream and are hardcoded, additional steps would be needed to burn them into the video using `-vf subtitles=filename.srt`. Let me know if that’s the case.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 392,
+    "total_tokens": 983,
+    "cost": 0.0008636
+  },
+  "model_type": "task_run"
+}

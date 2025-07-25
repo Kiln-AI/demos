@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "235232791524",
+  "created_at": "2025-07-24T20:24:28.609789",
+  "created_by": "scosman",
+  "input": "I have an MKV video file with H.264 video and FLAC audio. I want to convert the audio to AAC but keep the video as is. How do I do that?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "204814024771",
+    "path": null,
+    "created_at": "2025-07-24T20:24:28.609724",
+    "created_by": "scosman",
+    "output": "To convert just the audio from FLAC to AAC while keeping the H.264 video stream unchanged, you can use stream copy for video (`-c:v copy`) and re-encode audio with AAC (`-c:a aac`).\n\nKey points:\n- `-c:v copy` leaves the video stream untouched, avoiding quality loss and re-encoding time.\n- `-c:a aac` converts the audio stream from FLAC to AAC.\n- You may specify bitrate for AAC with `-b:a` (e.g., 128k) for consistent audio quality.\n- Output container should be compatible with AAC and the original codec; MP4 is common, but MKV also supports AAC, so you can keep MKV.\n\nHere is the command assuming input in `input.mkv` and output as `output.mkv`:\n\n```bash\nffmpeg -i input.mkv -c:v copy -c:a aac -b:a 128k output.mkv\n```\n\nThis converts only the audio track to AAC at 128 kbps, and copies the original video stream without re-encoding. The output remains in MKV container for compatibility with the original format.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 612,
+    "output_tokens": 240,
+    "total_tokens": 852,
+    "cost": 0.0006288
+  },
+  "model_type": "task_run"
+}

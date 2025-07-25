@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "125766203987",
+  "created_at": "2025-07-24T18:13:08.119680",
+  "created_by": "scosman",
+  "input": "Is it possible to add burned-in subtitles to a video, but maintain the option of having a subtitle track that could be turned on or off?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "194207525355",
+    "path": null,
+    "created_at": "2025-07-24T18:13:08.119654",
+    "created_by": "scosman",
+    "output": "Yes, you can both burn in subtitles (hardcode them into the video frames) and include a selectable (soft) subtitle track in the output file. This requires two separate steps:\n\n1. **Burn in subtitles** by overlaying them on the video frames.\n2. **Include the subtitle file as an additional track** in the final video, so players can choose to show/hide them.\n\nAssuming:\n- `input.mp4` is your source video.\n- `subs.srt` is your subtitle file.\n- You want the output as an `.mp4` container.\n\nExample explanation and command:\n\n**Technique:**\n- -vf subtitles=subs.srt adds burned-in (hardcoded) subtitles.\n- -map 0 maps all streams from the input video.\n- -map 1 includes the subtitle file as an additional selectable track.\n- -c copy copies all original streams, but you must re-encode the video if burning subtitles.\n- -c:s mov_text encodes the soft subtitle in the MP4-compatible format.\n\n```bash\nffmpeg -i input.mp4 -vf subtitles=subs.srt -i subs.srt -map 0:v -map 0:a? -map 1 -c:v libx264 -c:a copy -c:s mov_text output_with_both.mp4\n```\n\n**Notes:**\n- This command burns the subtitles onto the video frames **and** adds the same SRT as a selectable subtitle track.\n- The output video stream is re-encoded (`-c:v libx264`) because burning subtitles prevents copying the video stream.\n- `-map 0:a?` includes audio if present, but doesn't error if not.\n- You can use another output extension (.mkv) if you want broader subtitle codec/container support.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 366,
+    "total_tokens": 969,
+    "cost": 0.004134
+  },
+  "model_type": "task_run"
+}

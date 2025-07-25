@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "144628361803",
+  "created_at": "2025-07-24T18:09:16.335860",
+  "created_by": "scosman",
+  "input": "I have a video with a resolution higher than Full HD. I need to downscale it to 1080p for smoother streaming and smaller file size.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Streamlining Video Files for Web Streaming"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "296019216105",
+    "path": null,
+    "created_at": "2025-07-24T18:09:16.335835",
+    "created_by": "scosman",
+    "output": "To downscale your video to Full HD (1920x1080) for optimal streaming and reduced file size, use the H.264 codec for compatibility and set the height to 1080 pixels. The following options will ensure smooth playback and broad device/browser support:\n\n- -vf \"scale=-2:1080\" resizes the video to 1080 pixels in height, maintaining the original aspect ratio (width becomes closest even number).\n- -c:v libx264 encodes video using H.264, widely supported in browsers/players.\n- -crf 23 provides solid quality at a reduced size (lower=better, 23 is a good default for streaming).\n- -preset fast balances compression efficiency and encoding speed.\n- -c:a aac -b:a 128k encodes audio as AAC at 128kbps.\n- -pix_fmt yuv420p increases compatibility.\n- -movflags +faststart moves MP4 metadata to the start of the file for immediate streaming.\n\nAssuming your input file is input_highres.mp4:\n\n```bash\nffmpeg -i input_highres.mp4 -vf \"scale=-2:1080\" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output_1080p.mp4\n```\n\nThis command produces a 1080p MP4 optimized for web streaming and playback across most platforms.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 608,
+    "output_tokens": 306,
+    "total_tokens": 914,
+    "cost": 0.003664
+  },
+  "model_type": "task_run"
+}

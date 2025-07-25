@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "321343985638",
+  "created_at": "2025-07-24T20:26:43.639625",
+  "created_by": "scosman",
+  "input": "I want to batch downscale videos in a folder to 540p height, keeping aspect ratio and exporting to .mp4. How can I do this?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "134079463062",
+    "path": null,
+    "created_at": "2025-07-24T20:26:43.639536",
+    "created_by": "scosman",
+    "output": "To batch downscale videos in a folder to 540p height while maintaining their aspect ratio and exporting to MP4 format, you can use a simple shell script that loops through all video files, runs `ffmpeg` with scaling, and outputs them with `.mp4` extension.\n\nKey points used in the command:\n\n- `-vf scale=-2:540`: The width is automatically calculated to maintain the aspect ratio, with `-2` ensuring it's divisible by 2, as required by many video codecs.\n- `-c:v libx264`: Using the efficient and widely supported H.264 codec.\n- `-preset fast`: Balanced encoding speed and quality.\n- `-crf 23`: Good quality/size trade-off for the output video.\n- `-c:a aac -b:a 128k`: Encode audio with AAC codec at 128 kbps for compatibility.\n- `-pix_fmt yuv420p`: Ensures color compatibility with most players.\n- `-movflags +faststart`: Optimizes MP4 for streaming or quick playback start.\n\nAssumptions:\n- Your input videos can be any common video format (you may adjust the input file pattern as needed).\n- You have `bash` or similar shell available.\n- Output files will be saved in the same folder with the same base name but `.mp4` extension.\n- You want to overwrite existing files if they exist (if not, add safeguards).\n\nExample Bash script for Linux/macOS:\n\n```bash\n#!/bin/bash\nshopt -s nullglob\nfor input in *.{mp4,mkv,avi,mov}; do\n    output=\"${input%.*}_540p.mp4\"\n    echo \"Converting $input to $output ...\"\n    ffmpeg -i \"$input\" -vf scale=-2:540 -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart \"$output\"\ndone\n```\n\nExplanation:\n\n- `shopt -s nullglob` avoids iterating if no files match.\n- The loop goes over `.mp4, .mkv, .avi, .mov` files; update extensions as needed.\n- The output filename appends `_540p` to avoid overwriting the original.\n- Each file processed individually with the recommended `ffmpeg` parameters for quality and compatibility.\n\nThis approach provides an automated, high-quality batch conversion pipeline.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 606,
+    "output_tokens": 508,
+    "total_tokens": 1114,
+    "cost": 0.0010552
+  },
+  "model_type": "task_run"
+}

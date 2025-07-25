@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "304933189930",
+  "created_at": "2025-07-24T18:09:43.263963",
+  "created_by": "scosman",
+  "input": "I need to compress and convert video.mp4 to 720p for faster loading on a webpage.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Streamlining Video Files for Web Streaming"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "296848697766",
+    "path": null,
+    "created_at": "2025-07-24T18:09:43.263939",
+    "created_by": "scosman",
+    "output": "To compress and convert video.mp4 to 720p for optimized web streaming, you should:\n\n- Scale down the video to 720 pixels in height while preserving aspect ratio. The filter scale=-2:720 lets ffmpeg calculate the width automatically (must be divisible by 2 for H.264).\n- Use H.264 video codec (libx264) and AAC audio codec—these are universally compatible with browsers.\n- Set -crf 23 for a good trade-off between video quality and file size (lower means higher quality; can adjust as needed).\n- Use -preset fast (or slower for smaller files, faster for speed).\n- -movflags +faststart moves important metadata to the start of the file, so browsers can start playback before the full file loads.\n- Enforce yuv420p pixel format for maximum compatibility.\n\nHere’s the recommended command:\n\n```bash\nffmpeg -i video.mp4 -vf scale=-2:720 -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart video_720p_web.mp4\n```\n\nAssumptions:  \n- Your input file is called video.mp4.\n- You want a balance of speed and quality (preset fast, crf 23).\n- Output is intended for browser playback, so settings maximize compatibility and streaming performance. \n\nYou can adjust -crf for higher/lower quality and file size, or -preset for faster/slower encoding as needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 318,
+    "total_tokens": 915,
+    "cost": 0.003738
+  },
+  "model_type": "task_run"
+}

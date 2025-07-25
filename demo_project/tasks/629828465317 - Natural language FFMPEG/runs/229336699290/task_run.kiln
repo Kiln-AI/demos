@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "229336699290",
+  "created_at": "2025-07-24T20:26:38.428479",
+  "created_by": "scosman",
+  "input": "Can I overlay a watermark image on the bottom right of every .avi video in a folder using ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "177725312873",
+    "path": null,
+    "created_at": "2025-07-24T20:26:38.428450",
+    "created_by": "scosman",
+    "output": "To overlay a watermark image on the bottom right of every .avi video in a folder, you can use a simple bash loop combined with ffmpeg. The watermark will be placed relative to the bottom right corner using the overlay filter, specifically at coordinates (main_w - watermark_w - 10, main_h - watermark_h - 10) to keep a 10-pixel margin from the edges.\n\nKey points:\n- The loop processes each .avi file individually.\n- The watermark image should be a transparent PNG if you want proper overlay.\n- Output files will be saved with a suffix (e.g., \"_watermarked.mp4\") to avoid overwriting originals.\n- The output format here is MP4 with H.264/AAC for good compatibility.\n- Using `-movflags +faststart` for better streaming compatibility if needed.\n- The overlay filter positions the watermark dynamically based on input video and watermark dimensions.\n\nExample command assuming your watermark image is `watermark.png`:\n\n```bash\nfor f in *.avi; do\n  ffmpeg -i \"$f\" -i watermark.png -filter_complex \"overlay=main_w-overlay_w-10:main_h-overlay_h-10\" \\\n  -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -movflags +faststart \"${f%.avi}_watermarked.mp4\"\ndone\n```\n\nThis will produce MP4 files with the watermark positioned nicely on the bottom right of each video.\n\nIf you want to keep the output AVI format and codecs, you can adjust accordingly, but MP4 with H.264 and AAC is generally recommended for better compatibility and compression.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 341,
+    "total_tokens": 937,
+    "cost": 0.000784
+  },
+  "model_type": "task_run"
+}

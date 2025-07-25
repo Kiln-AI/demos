@@ -1,0 +1,67 @@
+{
+  "v": 1,
+  "id": "646630545953",
+  "created_at": "2025-07-23T11:41:11.202792",
+  "created_by": "scosman",
+  "input": "My file `archive.mkv` has three audio tracks. I need to extract the second audio track and the main video track into a new file `output.mp4` without re-encoding anything.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gemini_2_5_pro",
+      "model_provider": "gemini_api",
+      "adapter_name": "kiln_data_gen"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "868679531001",
+    "path": null,
+    "created_at": "2025-07-23T11:41:11.202763",
+    "created_by": "scosman",
+    "output": "To extract the second audio track and main video track without re-encoding, you'll use stream mapping with the `-map` option and copy codecs to avoid transcoding. This preserves quality and processes much faster since no encoding occurs.\n\n- `-map 0:v:0` selects the first (main) video stream\n- `-map 0:a:1` selects the second audio stream (0-indexed, so index 1 is the second track)\n- `-c copy` copies both video and audio streams without re-encoding\n- The output container MP4 will remux the streams\n\n```bash\nffmpeg -i archive.mkv -map 0:v:0 -map 0:a:2 -c copy output.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "claude_sonnet_4",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "function_calling",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": {
+      "v": 1,
+      "id": "317106735969",
+      "path": null,
+      "created_at": "2025-07-23T11:44:17.039978",
+      "created_by": "scosman",
+      "type": "five_star",
+      "value": null,
+      "requirement_ratings": {
+        "named::Correctness": {
+          "value": 0.0,
+          "type": "pass_fail"
+        }
+      },
+      "model_type": "task_output_rating"
+    },
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_616379110733",
+    "eval_golden_correctness"
+  ],
+  "usage": {
+    "input_tokens": 1045,
+    "output_tokens": 171,
+    "total_tokens": 1216,
+    "cost": 0.0057
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "166019082548",
+  "created_at": "2025-07-24T18:13:05.187629",
+  "created_by": "scosman",
+  "input": "Can you guide me on how to convert a high-bitrate video file into another format while minimizing quality loss using two-pass encoding?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "318194337418",
+    "path": null,
+    "created_at": "2025-07-24T18:13:05.187560",
+    "created_by": "scosman",
+    "output": "To convert a high-bitrate video into another format with minimal quality loss, two-pass encoding is a best practice. Two-pass encoding allows ffmpeg to analyze the video during the first pass and optimize bitrate allocation during the second pass, thus improving quality and compression efficiency.\n\nAssumptions:\n- You want to convert to MP4 using H.264 (libx264), widely supported and high quality.\n- You want to keep audio quality high as well.\n- Input file: input.mkv (replace with your source file)\n- Output file: output.mp4\n- Target bitrate: 4000k (adjust as needed for your requirements).\n\nExplanation of parameters:\n- -c:v libx264: Use H.264 encoder.\n- -b:v 4000k: Set target video bitrate.\n- -pass 1 / -pass 2: Enable two-pass encoding.\n- -an in pass 1 disables audio (saves encoding time).\n- -c:a aac -b:a 192k: Convert audio to AAC at 192 kbps.\n- -movflags +faststart: Makes the output MP4 streamable.\n- -preset slow: Produces better compression (can use medium/fast if needed).\n- -y: Overwrites files if they exist.\n\nFirst pass (video only):\n\n```bash\nffmpeg -y -i input.mkv -c:v libx264 -b:v 4000k -preset slow -pass 1 -an -f mp4 /dev/null\n```\n\nSecond pass (video + audio):\n\n```bash\nffmpeg -y -i input.mkv -c:v libx264 -b:v 4000k -preset slow -pass 2 -c:a aac -b:a 192k -movflags +faststart output.mp4\n```\n\nThis approach ensures the best possible quality at your chosen bitrate thanks to optimized bitrate allocation in two-pass encoding. Adjust `-b:v` and `-b:a` to suit your needs, and substitute input/output filenames as necessary.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 418,
+    "total_tokens": 1018,
+    "cost": 0.004544
+  },
+  "model_type": "task_run"
+}

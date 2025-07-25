@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "424072245132",
+  "created_at": "2025-07-24T20:25:55.605168",
+  "created_by": "scosman",
+  "input": "Burn subtitles from a URL source (https://example.com/subs.vtt) into input.mp4.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "232920444672",
+    "path": null,
+    "created_at": "2025-07-24T20:25:55.605141",
+    "created_by": "scosman",
+    "output": "To burn subtitles from a WebVTT URL into a video, first download or directly use the subtitle file with ffmpeg, then use the `subtitles` filter to overlay the subtitles onto the video frames. Since ffmpeg doesn't directly handle remote URLs with the subtitles filter, you typically need to download the subtitle file first.\n\nAssuming you've saved the subtitle file locally as `subs.vtt`, you can burn it into `input.mp4` using the subtitles filter. This operation re-encodes the video because subtitles are being rendered into frames.\n\n- `-i input.mp4` inputs the original video.\n- `-vf subtitles=subs.vtt` burns the subtitles onto the video.\n- `-c:a copy` copies audio without re-encoding.\n- `-c:v libx264 -crf 23 -preset medium` encodes video with a good balance of quality and speed.\n- `-pix_fmt yuv420p` ensures compatibility.\n- `-movflags +faststart` helps with streaming compatibility.\n\nIf you want a fully automated single command including subtitle download, you can combine `curl` and ffmpeg in a shell command but generally it's recommended to download first, then run ffmpeg.\n\nExample:\n\n```bash\n# Download subtitles first\ncurl -o subs.vtt https://example.com/subs.vtt\n\n# Burn subtitles into video\nffmpeg -i input.mp4 -vf subtitles=subs.vtt -c:a copy -c:v libx264 -crf 23 -preset medium -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nThis approach ensures subtitles from the URL are properly burned into the video.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 344,
+    "total_tokens": 938,
+    "cost": 0.000788
+  },
+  "model_type": "task_run"
+}

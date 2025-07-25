@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "236615156684",
+  "created_at": "2025-07-24T20:26:25.586445",
+  "created_by": "scosman",
+  "input": "Synchronize external subtitle file (subs.srt) with a framerate-changed video before burning.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "306513781050",
+    "path": null,
+    "created_at": "2025-07-24T20:26:25.586417",
+    "created_by": "scosman",
+    "output": "To synchronize an external subtitle file (subs.srt) with a video that has undergone a framerate change before burning the subtitles, you should first ensure that the subtitles are properly synced to the new timing of the video. If the frame rate changes, subtitle timing may shift because subtitle timestamps are in time units, not frames, but if the video length or timestamps shift, subtitles may be out of sync.\n\nSince your goal is to burn subtitles into the video, ffmpeg can directly read the subtitle file and burn it with the video while applying the framerate change. Burned subtitles will be rendered directly onto the frames, so timing must match the output video.\n\nKey steps & parameters:\n- Use `-r` to change the output frame rate.\n- Use `-vf subtitles=subs.srt` filter to burn the subtitles.\n- If subtitles need a timing offset correction (delay or advance), you can use the `-itsoffset` if the subtitle source is separate or preprocess the srt file, but ffmpeg’s `subtitles` filter offers an option to shift timestamps via `force_style` or processing prior to ffmpeg.\n- Here, we assume the subtitles are already adjusted or the sync is proportional to framerate change (no timing offset), since ffmpeg does not do direct subtitle timestamp framerate remapping.\n\nExample command burning subtitles onto a video while changing frame rate from input.mp4 at the same time:\n```bash\nffmpeg -i input.mp4 -vf \"subtitles=subs.srt\" -r 30 -c:a copy output.mp4\n```\n\nExplanation:\n- `-vf \"subtitles=subs.srt\"` burns the subtitle file onto each frame.\n- `-r 30` sets the output video framerate to 30 fps (change this to your target frame rate).\n- `-c:a copy` copies audio stream without re-encoding.\n  \nIf the subtitles are out of sync because of the frame rate change altering timestamps, you'd need to fix subtitle timing externally (e.g., by resyncing the srt file with a subtitle editing tool or by shifting timestamps with `ffsubsync` or subtitle timing utilities) before burning them in.\n\nIf you want to shift subtitle timing by a constant offset (e.g., delay by 2 seconds) while burning, use the `subtitles` filter option `:si=0:force_style='TimeOffset=2'` is not supported directly but you can use `-itsoffset` for input or preprocess the SRT. For subtle timing shifts it's best done before burning.\n\n---\n\n### High-quality command assuming adjusted subtitles and framerate change to 25fps:\n\n```bash\nffmpeg -i input.mp4 -vf \"subtitles=subs.srt\" -r 25 -c:v libx264 -preset medium -crf 23 -c:a copy output_with_subs.mp4\n```\n\nThis re-encodes video with libx264 for quality control, changes framerate to 25fps, burns the subtitles, and copies the original audio.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 623,
+    "total_tokens": 1216,
+    "cost": 0.001234
+  },
+  "model_type": "task_run"
+}

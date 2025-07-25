@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "219788453259",
+  "created_at": "2025-07-24T19:04:28.963612",
+  "created_by": "scosman",
+  "dataset_id": "245834620919",
+  "task_run_config_id": "311590806518",
+  "eval_config_eval": false,
+  "input": "I have a video file with multiple audio tracks and I want to extract only the third audio stream and the first video stream into a new file. The input file is movie.mkv and I want the output as final.mp4",
+  "output": "To extract the third audio stream and the first video stream from movie.mkv into a new MP4 file, you should use the map option (-map) with the input stream identifiers.\n\n- -map 0:v:0 selects the first video stream (v:0).\n- -map 0:a:2 selects the third audio stream (a:2) (remember, stream indexes are zero-based).\n- -c:v copy keeps the video stream as-is to avoid re-encoding.\n- -c:a aac encodes the third audio stream as AAC, which is commonly supported in MP4.\n- -b:a 256k sets a reasonableAAC audio bitrate.\n- -movflags +faststart optimizes the output for web streaming.\n\nAssumptions:\n- The third audio stream exists and is the one you want.\n- Output should be \"web-friendly\" for streaming, so audio is re-encoded to AAC for maximum compatibility.\n- Movie.mkv contains at least one video and at least three audio streams.\n\n```bash\nffmpeg -i movie.mkv -map 0:v:0 -map 0:a:2 -c:v copy -c:a aac -b:a 256k -movflags +faststart final.mp4\n```\nThis command efficiently copies the first video and extracts/re-encodes the third audio track as desired.",
+  "intermediate_outputs": {
+    "chain_of_thought": "Let's evaluate the model's output step by step based on the provided criteria:\n\n1) **Does the model's output contain the issue described?**\n   - The model successfully generates a completely valid `ffmpeg` command that fits the requirements outlined by the user (extracting a specific audio track and video track). The command uses proper mapping, codec specifications, and additional parameters for streaming. Therefore, the model's output does **not** contain the described issue.\n\n2) **Is the model's output similar to this example of a failing output?**\n   - The generated command correctly includes directives for mapping streams and does not include any non-existent options (like the wrong preset in the failure example). The output doesn't resemble the failure example, which uses an incorrect preset. Therefore, the model's output does **not** resemble the failure example.\n\n3) **Does the command break any requirements dictated in the man page?**\n   - The command adheres to the requirements as stated in the ffmpeg man page. The mappings of the audio and video streams are correctly specified. The codecs and parameters used are valid based on the man page. The model's command does not break any rules outlined in the man documentation.\n\n4) **Overall Assessment:**\n   - The model generated a correct, functional `ffmpeg` command that meets the user’s request without issues. Thus, it **passes** the evaluation."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 510,
+    "output_tokens": 308,
+    "total_tokens": 818,
+    "cost": null
+  },
+  "model_type": "eval_run"
+}

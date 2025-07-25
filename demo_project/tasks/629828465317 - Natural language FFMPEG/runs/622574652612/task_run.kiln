@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "622574652612",
+  "created_at": "2025-07-24T20:36:12.410557",
+  "created_by": "scosman",
+  "input": "How do I scale a video to 640x360 and speed it up 2x in the same command?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "791907477319",
+    "path": null,
+    "created_at": "2025-07-24T20:36:12.410521",
+    "created_by": "scosman",
+    "output": "To scale a video to 640x360 and speed it up by 2x in a single ffmpeg command, you can use the `-vf` filtergraph combining `scale` and `setpts`. The `scale=640:360` filter resizes the video to the exact 640x360 resolution. The `setpts=PTS/2` filter speeds up the video playback by 2x by halving the presentation timestamps (PTS).\n\nAdditionally, you need to speed up the audio to keep it in sync, which can be done using the `atempo` audio filter. Since `atempo` only accepts values between 0.5 and 2.0, you can apply it once with a factor of 2.0 to double the speed of audio.\n\nHere's a command that does this:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=640:360,setpts=PTS/2\" -filter:a \"atempo=2.0\" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k output_640x360_2x.mp4\n```\n\nExplanation:\n- `-vf \"scale=640:360,setpts=PTS/2\"` resizes the video and doubles playback speed.\n- `-filter:a \"atempo=2.0\"` doubles audio speed to match video.\n- Using H.264 video (`libx264`) with reasonable quality (`crf 23`) for a good balance.\n- Encoding audio with AAC at 128 kbps for compatibility.\n- `-preset fast` for a good trade-off between encoding speed and compression.\n\nIf the audio speed-up factor were higher than 2.0, multiple `atempo` filters would need chaining, but 2x speed works with a single filter. This command assumes your input is named `input.mp4` and outputs to `output_640x360_2x.mp4`.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 406,
+    "total_tokens": 1003,
+    "cost": 0.0008884
+  },
+  "model_type": "task_run"
+}

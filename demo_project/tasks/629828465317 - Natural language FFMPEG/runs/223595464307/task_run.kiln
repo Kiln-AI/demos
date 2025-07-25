@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "223595464307",
+  "created_at": "2025-07-24T18:12:21.199506",
+  "created_by": "scosman",
+  "input": "Is it possible to convert a VR180 video (input.mkv) to a standard 2D video while keeping the audio intact?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Handling Large Media Files Efficiently"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "136388778433",
+    "path": null,
+    "created_at": "2025-07-24T18:12:21.199481",
+    "created_by": "scosman",
+    "output": "Yes, you can convert a VR180 (which is a 180-degree stereoscopic video format, often in side-by-side layout) to a standard 2D video by cropping or selecting just one eye (usually the left half). This will generate a flat, monoscopic view while preserving the audio track.\n\nHere's how:\n- Use the crop video filter to select the left half of the video. This assumes the VR180 is encoded as side-by-side (the most common way).\n- Copy or re-encode audio using -c:a copy to keep it intact.\n- Use -c:v libx264 (or another modern codec) for broad compatibility.\n\nAssumptions:\n- Input is side-by-side stereo (check with ffprobe or a video player; adapt crop parameters otherwise).\n- Crop picks the left eye only (standard approach).\n- Video output is H.264 MP4 for compatibility.\n\n```bash\nffmpeg -i input.mkv -filter:v \"crop=iw/2:ih:0:0\" -c:v libx264 -crf 23 -preset fast -c:a copy output_2d.mp4\n```\n\n- crop=iw/2:ih:0:0 extracts the left half of the video.\n- -c:a copy keeps the original audio stream unchanged for efficiency.\n- -c:v libx264 -crf 23 -preset fast balances quality and speed; adjust as needed.\n\nThis approach allows you to efficiently handle large VR180 files without re-encoding audio, resulting in a smaller, standard 2D video suitable for broader playback.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 324,
+    "total_tokens": 927,
+    "cost": 0.003798
+  },
+  "model_type": "task_run"
+}

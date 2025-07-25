@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "307322883687",
+  "created_at": "2025-07-24T20:40:24.578942",
+  "created_by": "scosman",
+  "input": "I have a .mkv file with variable channel layout (some scenes 5.1, some stereo). How to standardize or mixdown to stereo cleanly?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "260697291348",
+    "path": null,
+    "created_at": "2025-07-24T20:40:24.578827",
+    "created_by": "scosman",
+    "output": "To standardize audio from a variable channel layout (e.g., 5.1 surround and stereo) into stereo, you want to use an audio filter that intelligently downmixes any multi-channel audio to two channels to ensure consistent playback across all scenes. The `aresample` filter with the `matrix_encoding` set to `dplii` helps create a clean stereo downmix that maintains surround sound cues where possible.\n\nKey points:\n- `-ac 2` forces output to 2 audio channels (stereo).\n- Using the `aresample` audio filter with `matrix_encoding=dplii` applies Dolby Pro Logic II downmixing which preserves surround information in stereo. This results in a stereo mix that's perceptually balanced and clean.\n- Copying video stream as is (assuming no video changes needed).\n- Encoding audio to a standard codec like AAC at a good bitrate for compatibility and quality.\n\nHere's an example command assuming you want to keep the video stream unchanged and just standardize audio to stereo AAC:\n\n```bash\nffmpeg -i input.mkv -c:v copy -af \"aresample=matrix_encoding=dplii\" -ac 2 -c:a aac -b:a 192k output.mkv\n```\n\nExplanation:\n- `-c:v copy` copies the original video stream without re-encoding.\n- `-af \"aresample=matrix_encoding=dplii\"` applies the downmix filter.\n- `-ac 2` ensures stereo output.\n- `-c:a aac -b:a 192k` re-encodes audio to AAC at 192 kbps, a good stereo bitrate.\n\nThis approach ensures all audio streams end up cleanly mixed to stereo regardless of their original layout.\n\nIf you want to preserve exact audio quality or use another codec, modify `-c:a` and `-b:a` accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 608,
+    "output_tokens": 380,
+    "total_tokens": 988,
+    "cost": 0.0008512
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "332520620873",
+  "created_at": "2025-07-24T20:35:39.513367",
+  "created_by": "scosman",
+  "input": "Extract audio, apply dynamic range compression, and output to out_compressed.wav.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "170052393640",
+    "path": null,
+    "created_at": "2025-07-24T20:35:39.513341",
+    "created_by": "scosman",
+    "output": "To extract audio from a video or audio file and apply dynamic range compression, you can use ffmpeg's built-in audio filter \"acompressor.\" This filter reduces the volume difference between the loud and quiet parts of the audio, making the overall sound more consistent.\n\nKey parameters in the acompressor filter:\n- threshold: level (dB) above which compression starts (e.g., -20dB)\n- ratio: compression ratio (e.g., 4:1)\n- attack: how quickly compressor reacts (ms)\n- release: how quickly compressor stops affecting (ms)\n- makeup: how much gain is added after compression (dB)\n\nAssuming you want moderate compression with typical settings and a wav output file, the command would be:\n\n```bash\nffmpeg -i input -af \"acompressor=threshold=-20dB:ratio=4:attack=5:release=50:makeup=8\" -c:a pcm_s16le out_compressed.wav\n```\n\nExplanation:\n- `-i input` is the input file (replace with your actual input filename).\n- `-af \"acompressor=...\"` applies the dynamic range compression audio filter with given settings.\n- `-c:a pcm_s16le` ensures uncompressed 16-bit WAV output.\n- `out_compressed.wav` is the output filename.\n\nMake sure to replace `input` with your actual input file name or path.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 290,
+    "total_tokens": 881,
+    "cost": 0.0007004
+  },
+  "model_type": "task_run"
+}

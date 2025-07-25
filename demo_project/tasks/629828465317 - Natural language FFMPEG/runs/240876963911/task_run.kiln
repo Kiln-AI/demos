@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "240876963911",
+  "created_at": "2025-07-24T20:26:47.257990",
+  "created_by": "scosman",
+  "input": "How do I replace the audio track on every mp4 in a folder with a new track named track.mp3 (matching by filename)?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "461798626454",
+    "path": null,
+    "created_at": "2025-07-24T20:26:47.257961",
+    "created_by": "scosman",
+    "output": "To replace the audio track in every MP4 file in a folder with a corresponding MP3 file named similarly (e.g., video filename \"movie.mp4\" gets audio from \"movie.mp3\"), you can use a bash script that loops over all MP4 files, checks for the matching MP3, and uses ffmpeg to replace the audio.\n\nKey points and best practices in the command:\n- `-i video.mp4` to input the source video\n- `-i audio.mp3` to input the new audio\n- `-map 0:v:0` selects the original video stream from the video file\n- `-map 1:a:0` selects the new audio stream from the MP3 file\n- `-c:v copy` copies the video stream without re-encoding (fast and without quality loss)\n- `-c:a aac -b:a 192k` encodes audio with AAC at decent quality for compatibility and quality\n- `-shortest` ensures the output duration matches the shortest stream — useful if audio and video differ in length\n- Output filename can overwrite or be saved separately (here, saved as `output/filename.mp4` to avoid overwriting the original)\n\nThis approach ensures efficient batch processing and preserves video quality.\n\nHere’s an example bash script to do this in a folder:\n\n```bash\nmkdir -p output\nfor video in *.mp4; do\n  base=\"${video%.*}\"\n  audio=\"${base}.mp3\"\n  if [[ -f \"$audio\" ]]; then\n    ffmpeg -i \"$video\" -i \"$audio\" -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 192k -shortest \"output/${video}\"\n  else\n    echo \"Warning: No matching audio file for $video\"\n  fi\ndone\n```\n\nExplanation:\n- Creates an output directory named `output` to save new files and avoid overwriting originals.\n- Loops through all `.mp4` files.\n- Finds matching `.mp3` by filename.\n- Only runs ffmpeg if matching audio exists; otherwise, prints a warning.\n- Copies video to new file with replaced audio track.\n\nThis method can be adapted and extended for other audio codecs or filenames if needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 474,
+    "total_tokens": 1075,
+    "cost": 0.0009988
+  },
+  "model_type": "task_run"
+}

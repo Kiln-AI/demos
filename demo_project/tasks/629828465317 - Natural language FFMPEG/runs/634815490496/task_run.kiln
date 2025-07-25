@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "634815490496",
+  "created_at": "2025-07-24T18:09:33.089482",
+  "created_by": "scosman",
+  "input": "Can you convert a video named trailer.mov into a 480p web-compatible format?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Streamlining Video Files for Web Streaming"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "996188348402",
+    "path": null,
+    "created_at": "2025-07-24T18:09:33.089458",
+    "created_by": "scosman",
+    "output": "To convert trailer.mov into a 480p web-friendly video, use the H.264 video codec and AAC audio codec inside an MP4 container. This format is widely supported by all browsers. We'll resize the video to 480 pixels high while saving the aspect ratio, and prepare the MP4 for smooth web streaming with faststart.\n\n- -vf scale=-2:480: Scales the video to 480 pixels tall; the width (-2) is automatically calculated by ffmpeg to maintain aspect ratio and to be divisible by 2 (required for yuv420p).\n- -c:v libx264: Encodes video with H.264, which is broadly supported for web streaming.\n- -preset faster: Increases encoding speed, useful for quick transcodes, but you may use slow for better compression.\n- -crf 23: Standard quality trade-off; lower is better, 23 is a good default.\n- -c:a aac -b:a 128k: Encodes audio in AAC at 128 kbps.\n- -pix_fmt yuv420p: Ensures broad compatibility with web players.\n- -movflags +faststart: Moves metadata to the file's start for instant playback during progressive download.\n\n```bash\nffmpeg -i trailer.mov -vf scale=-2:480 -c:v libx264 -preset faster -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart trailer_480p.mp4\n```\n\nAssumption: You want to maintain the source video's aspect ratio and ensure playback compatibility across all major browsers.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 335,
+    "total_tokens": 929,
+    "cost": 0.003868
+  },
+  "model_type": "task_run"
+}

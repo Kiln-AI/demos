@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "347762750105",
+  "created_at": "2025-07-24T20:25:04.934394",
+  "created_by": "scosman",
+  "input": "I have an .mkv file with multiple audio tracks. Can you give me a command to remux it to .mp4, keeping only the second audio track?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "197731977697",
+    "path": null,
+    "created_at": "2025-07-24T20:25:04.934317",
+    "created_by": "scosman",
+    "output": "To remux an MKV file to MP4 while keeping only the second audio track, you should use stream copying (`-c copy`) to avoid re-encoding, which preserves quality and is faster. You need to explicitly select the video, the second audio track, and any subtitle or other streams you want (commonly, subtitles are omitted in MP4 unless converted). The stream selection uses `-map`. Audio tracks are zero-indexed, so `-map 0:a:1` selects the second audio stream of the first input.\n\nAssuming you want to keep the video stream and the second audio track only, the essential command is:\n\n```bash\nffmpeg -i input.mkv -map 0:v -map 0:a:1 -c copy -disposition:a:0 default output.mp4\n```\n\nExplanation:\n- `-map 0:v` selects the video stream(s) from the first input (usually one).\n- `-map 0:a:1` selects the second audio track only.\n- `-c copy` copies all selected streams without re-encoding.\n- `-disposition:a:0 default` marks the selected audio track as default in the MP4 container for better playback compatibility.\n  \nThis command assumes the source video stream is compatible with MP4 (e.g., H.264 or similar), and audio is compatible (e.g., AAC, AC3). If not, re-encoding may be required. Also, note subtitles are not included here; include or convert them if needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 611,
+    "output_tokens": 314,
+    "total_tokens": 925,
+    "cost": 0.0007468
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "194129023424",
+  "created_at": "2025-07-24T20:27:15.275092",
+  "created_by": "scosman",
+  "input": "Can you batch convert 4K videos in a folder to 1080p and compress them for sharing?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "415751873758",
+    "path": null,
+    "created_at": "2025-07-24T20:27:15.275064",
+    "created_by": "scosman",
+    "output": "To batch convert all 4K videos in a folder to 1080p and compress them for sharing, you can use a shell script or command loop that processes each video file. The conversion will scale the video down to 1080p (Full HD) while preserving aspect ratio, encode with efficient H.264 compression using `libx264`, and compress audio with AAC codec. The `-preset medium` balances speed and quality, and `-crf 23` applies a good quality/size tradeoff. We also enable `-movflags +faststart` to optimize files for streaming or sharing.\n\nAssuming your 4K videos are in MP4, MKV, or a similar format commonly ending with typical extensions, here is an example bash loop for Linux/macOS. Adjust the input extension to match your files, or extend the pattern to more extensions.\n\n```bash\nfor input in /path/to/folder/*.{mp4,mkv,mov}; do\n  [ -e \"$input\" ] || continue\n  filename=$(basename \"$input\")\n  output=\"/path/to/output_folder/1080p_${filename%.*}.mp4\"\n  ffmpeg -i \"$input\" -vf scale=-2:1080 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart \"$output\"\ndone\n```\n\nExplanation:\n- `/path/to/folder/*.{mp4,mkv,mov}` matches video files in the input folder with common extensions.\n- The `scale=-2:1080` filter maintains the aspect ratio by setting height to 1080 and width automatically.\n- `libx264` codec encodes video with good compression.\n- `-preset medium` for balanced speed/quality.\n- `-crf 23` controls output quality (lower means better quality/larger file).\n- `-c:a aac -b:a 128k` compresses audio to AAC 128 kbps.\n- `-pix_fmt yuv420p` ensures broad compatibility.\n- `-movflags +faststart` optimizes file for streaming.\n- Output filenames are prefixed with \"1080p_\" and saved as MP4 to an output folder.\n\nMake sure to create the output folder beforehand or adjust paths accordingly. This script can be modified for other formats or more encoding options as needed for your sharing platform.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 505,
+    "total_tokens": 1101,
+    "cost": 0.0010464
+  },
+  "model_type": "task_run"
+}

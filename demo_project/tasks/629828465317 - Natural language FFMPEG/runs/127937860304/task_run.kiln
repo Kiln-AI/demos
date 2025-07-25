@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "127937860304",
+  "created_at": "2025-07-24T20:39:51.886984",
+  "created_by": "scosman",
+  "input": "I have a long video, but the audio falls out of sync with the video slightly over time after conversion. How do I fix sync/drift?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "115103262229",
+    "path": null,
+    "created_at": "2025-07-24T20:39:51.886960",
+    "created_by": "scosman",
+    "output": "Audio-video sync drift usually happens due to differences in frame rate interpretation, variable frame rate (VFR) input, or timestamp issues during conversion. To fix this in ffmpeg, the best practice is to force re-encoding with proper timestamp and synchronization handling.\n\nKey points to fix sync/drift issues:\n\n- Use the `-async 1` option (audio sync method) to stretch/squeeze the audio slightly to match timestamps.\n- Use `-vsync 1` to handle video frame rate and timestamps properly (constant frame rate).\n- If the input has VFR, you can force a constant frame rate output with `-r` (specify input or desired output fps).\n- Re-encode both audio and video to ensure proper timestamping.\n- Consider using `-fflags +genpts` to generate presentation timestamps if input is lacking or corrupted.\n- Avoid copying streams directly (no `-c copy`) since that can preserve problematic timestamps.\n\nHere's a command assuming your input is `input.mp4` and you want to produce `output.mp4` with fixed sync:\n\n```bash\nffmpeg -fflags +genpts -i input.mp4 -async 1 -vsync 1 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k output.mp4\n```\n\nExplanation:\n\n- `-fflags +genpts` forces ffmpeg to generate missing presentation timestamps to improve sync.\n- `-async 1` fixes audio sync by slightly adjusting audio speed.\n- `-vsync 1` ensures a constant frame rate output, which can fix frame drop/repeat issues causing drift.\n- Re-encoding video and audio (libx264 & aac here) ensures fresh timestamps.\n- `-preset medium` and `-crf 23` balance quality and encoding time.\n  \nAdjust `-crf` for better/worse video quality, and adjust audio bitrate if needed.\n\nIf you know the exact frame rate needed, add `-r <fps>` after `-i input.mp4` to enforce constant frame rate.\n\nIf the video is extremely long and sync problems remain, chunking the video into smaller segments and then rejoining might help, but usually this approach fixes most sync drift issues.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 467,
+    "total_tokens": 1071,
+    "cost": 0.0009888
+  },
+  "model_type": "task_run"
+}

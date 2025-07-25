@@ -1,0 +1,67 @@
+{
+  "v": 1,
+  "id": "201156735288",
+  "created_at": "2025-07-23T11:39:35.337353",
+  "created_by": "scosman",
+  "input": "Convert my 4K video to 1080p and compress it significantly to reduce file size, but keep the best possible quality.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "claude_sonnet_4",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "144127570893",
+    "path": null,
+    "created_at": "2025-07-23T11:39:35.337322",
+    "created_by": "scosman",
+    "output": "To convert 4K video to 1080p with significant compression while maintaining good quality, I'll use H.264 encoding with a higher CRF value for more compression, a faster preset, and scale down to 1080p resolution.\n\n- vf scale=1920:1080 resizes from 4K to 1080p (Full HD)\n- c:v libx264 uses H.264 video encoding for good compression\n- preset medium balances encoding speed and compression efficiency\n- crf 28 sets a higher compression level for smaller file size (lower values = better quality but larger files)\n- c:a aac -b:a 96k compresses audio to 96kbps for additional space savings\n- pix_fmt yuv420p ensures broad compatibility\n\n```bash\nffmpeg -i input.mp4 -vf scale=1920:1080 -c:v libx264 -preset medium -crf 28 -c:a aac -b:a 96k -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nNote: I assumed your input is an MP4 file. Adjust the input filename and extension as needed for your specific file format.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "claude_sonnet_4",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "function_calling",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": {
+      "v": 1,
+      "id": "249360968108",
+      "path": null,
+      "created_at": "2025-07-23T11:44:20.569899",
+      "created_by": "scosman",
+      "type": "five_star",
+      "value": null,
+      "requirement_ratings": {
+        "named::Correctness": {
+          "value": 0.0,
+          "type": "pass_fail"
+        }
+      },
+      "model_type": "task_output_rating"
+    },
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_690983396887",
+    "eval_golden_correctness"
+  ],
+  "usage": {
+    "input_tokens": 999,
+    "output_tokens": 283,
+    "total_tokens": 1282,
+    "cost": 0.007242
+  },
+  "model_type": "task_run"
+}

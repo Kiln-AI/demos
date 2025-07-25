@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "676586118008",
+  "created_at": "2025-07-24T20:27:23.040678",
+  "created_by": "scosman",
+  "input": "I have a .mov file with multiple audio tracks. How can I extract only the English audio track?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "515102048801",
+    "path": null,
+    "created_at": "2025-07-24T20:27:23.040652",
+    "created_by": "scosman",
+    "output": "To extract only the English audio track from a .mov file with multiple audio tracks, you need to identify the specific audio stream corresponding to the English track and then map only that track when extracting. \n\nCommonly, audio tracks contain metadata like language tags. ffmpeg can filter streams based on the \"language\" metadata in the stream (-map and -metadata). First, you can identify which stream has the English language tag by probing the file with `ffprobe`:\n\n```bash\nffprobe -v error -show_entries stream=index,codec_type:stream_tags=language -of default=noprint_wrappers=1 input.mov\n```\n\nOnce you find the English audio stream index (e.g. stream 1:1 or 0:1), you can extract that audio alone using `-map` with the stream index, and copy the audio codec to avoid re-encoding.\n\nHere’s a typical command assuming the English track is stream 0:1:\n\n```bash\nffmpeg -i input.mov -map 0:a:m:language:eng -c:a copy output_eng_audio.aac\n```\n\nExplanation:\n\n- `-map 0:a:m:language:eng` selects audio streams from input 0 with language tag \"eng\".\n- `-c:a copy` copies audio without re-encoding.\n- Output is saved in a container appropriate for the audio codec, e.g. `.aac` if AAC audio or `.m4a` is also common for AAC tracks.\n\nIf you want to keep the original container but only with the English audio, you can write:\n\n```bash\nffmpeg -i input.mov -map 0:v -map 0:a:m:language:eng -c copy output_with_english_audio.mov\n```\n\nHere you keep the video track(s) and only the English audio track.\n\nAssumptions:\n\n- The English audio track has proper language metadata set as `eng`.\n- You want to extract audio only or audio plus video.\n- You know the codec of the audio track to pick a matching container extension or re-mux into `.mov`.\n\nIf language metadata is missing, you might need to identify the audio stream manually by trial or based on codec/channels. Using `ffprobe` output helps.\n\n---\n\n```bash\n# Step 1: Identify English audio stream(s)\nffprobe -v error -show_entries stream=index,codec_type:stream_tags=language -of default=noprint_wrappers=1 input.mov\n\n# Step 2: Extract English audio only (copy codec)\nffmpeg -i input.mov -map 0:a:m:language:eng -c:a copy output_eng_audio.aac\n```\n\nIf unsure of codec or to extract in a universal format, you can re-encode audio to AAC:\n\n```bash\nffmpeg -i input.mov -map 0:a:m:language:eng -c:a aac -b:a 192k output_eng_audio.m4a\n```\n\nThis command converts the English audio track to AAC with 192 kbps bitrate and saves as `.m4a`.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 629,
+    "total_tokens": 1224,
+    "cost": 0.0012444
+  },
+  "model_type": "task_run"
+}

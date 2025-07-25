@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "219760606291",
+  "created_at": "2025-07-24T20:39:34.505012",
+  "created_by": "scosman",
+  "input": "I want to convert a video with both stereo and 5.1 surround tracks, but only retain the highest-quality surround track and embed it in MKV.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "692219142787",
+    "path": null,
+    "created_at": "2025-07-24T20:39:34.504988",
+    "created_by": "scosman",
+    "output": "To retain only the highest-quality surround (5.1) audio track from a video that contains both stereo and 5.1 surround audio, you can use stream selection to pick the best 5.1 channel track and discard the stereo track. This approach assumes the 5.1 surround audio is one of the input audio streams.\n\nKey details:\n\n- Use `-map` to select the video stream and the desired audio stream explicitly.\n- Identify the 5.1 surround track by channel layout or by audio stream index.\n- Use `-c:v copy` and `-c:a copy` to avoid re-encoding and preserve quality (assuming the audio is already in an MKV-compatible codec; if not, re-encoding would be required).\n- Output container is MKV to support surround audio and preserve original codec compatibility.\n\nIf you don't know the exact stream index of the 5.1 track, first run `ffmpeg -i input` to find the 5.1 stream index.\n\nFor demonstration, the example assumes:\n\n- Video stream is stream 0:v:0\n- 5.1 surround audio is stream 0:a:1 (adjust accordingly)\n- We discard the stereo audio stream 0:a:0\n\nHere is the command:\n\n```bash\nffmpeg -i input.ext -map 0:v:0 -map 0:a:1 -c:v copy -c:a copy output.mkv\n```\n\nExplanation:\n\n- `-map 0:v:0` selects the first video stream.\n- `-map 0:a:1` selects the second audio stream, assumed to be 5.1.\n- `-c:v copy` and `-c:a copy` keep streams as-is without re-encoding.\n- Outputs an MKV file embedding video and only the 5.1 audio track.\n\nIf the 5.1 track is not at `0:a:1`, adjust the stream index accordingly. Alternatively, you can filter by audio channel count with a more complex ffmpeg filter script or use `ffprobe` to identify the stream with 6 channels (5.1).\n\nExample of using `ffprobe` to find 5.1 audio stream index:\n\n```bash\nffprobe -v error -select_streams a -show_entries stream=index,channels -of csv=p=0 input.ext\n```\n\nThis lists audio stream indexes with their channel counts. Then pick the stream with `channels=6`.\n\nIf the audio codec requires conversion (e.g., DTS or DTS-HD to a more compatible format), you would add re-encoding parameters like `-c:a ac3 -b:a 640k` for 5.1 AC3 encoding.\n\n---\n\n**Final command assuming copying streams and that the second audio stream is 5.1:**\n\n```bash\nffmpeg -i input.ext -map 0:v:0 -map 0:a:1 -c:v copy -c:a copy output.mkv\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 606,
+    "output_tokens": 610,
+    "total_tokens": 1216,
+    "cost": 0.0012184
+  },
+  "model_type": "task_run"
+}

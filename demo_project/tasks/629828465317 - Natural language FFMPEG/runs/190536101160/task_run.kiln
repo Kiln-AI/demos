@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "190536101160",
+  "created_at": "2025-07-24T20:28:02.015465",
+  "created_by": "scosman",
+  "input": "Can I combine two video files to have a picture-in-picture effect, with one in the corner?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "302995134425",
+    "path": null,
+    "created_at": "2025-07-24T20:28:02.015438",
+    "created_by": "scosman",
+    "output": "To create a picture-in-picture (PiP) effect combining two videos, you can overlay one video on top of another, positioning it in a corner. The technique uses the `overlay` filter in ffmpeg.\n\nAssuming:\n- `background.mp4` is the main full-screen video.\n- `pip.mp4` is the smaller video you want in the corner (e.g., top-right).\n- You want to scale `pip.mp4` to a smaller size (e.g., 25% of its original width).\n- You want `pip.mp4` positioned with some margin from the corner (e.g., 10 pixels from top and right).\n\nKey points:\n- Use `-filter_complex` for multiple video filters.\n- Scale the PiP video first with `scale` filter.\n- Use `overlay` with x and y expressions to place it in a corner.\n- The x position `main_w - overlay_w - 10` aligns to right minus 10 pixels margin.\n- The y position `10` aligns to 10 pixels down from the top.\n\nExample command:\n```bash\nffmpeg -i background.mp4 -i pip.mp4 -filter_complex \"[1:v]scale=iw*0.25:-1[pip_scaled];[0:v][pip_scaled]overlay=x=main_w-overlay_w-10:y=10\" -c:a copy output_pip.mp4\n```\n\nExplanation:\n- `[1:v]scale=iw*0.25:-1[pip_scaled]`: scales second input to 25% width; height is auto to maintain aspect.\n- `[0:v][pip_scaled]overlay=...`: overlays scaled PiP on main video.\n- `-c:a copy`: copies audio from the main input (background.mp4).\n- You can add `-preset`, `-crf`, or other encoding options as desired for output quality.\n\nIf audio from both videos is needed, additional mixing is required.\n\nThis command produces a picture-in-picture effect with `pip.mp4` in the top-right corner of `background.mp4`.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 425,
+    "total_tokens": 1019,
+    "cost": 0.0009176
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "332456936303",
+  "created_at": "2025-07-23T11:28:21.844167",
+  "created_by": "scosman",
+  "input": "Can you help me create a filter chain that adds a watermark, adjusts saturation, and crops the video to 16:9 aspect ratio?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "claude_sonnet_4",
+      "model_provider": "anthropic",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Filter Chains with Syntax Errors"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "250561418455",
+    "path": null,
+    "created_at": "2025-07-23T11:28:21.844128",
+    "created_by": "scosman",
+    "output": "To create a filter chain that adds a watermark, adjusts saturation, and crops to 16:9 aspect ratio, you'll need to use the `-vf` option to chain multiple video filters together. The filters will be applied in sequence: first crop to 16:9, then adjust saturation, and finally overlay the watermark.\n\n- `crop=ih*16/9:ih` crops the video to 16:9 aspect ratio by taking the input height and calculating the appropriate width\n- `eq=saturation=1.2` increases saturation by 20% (values above 1.0 increase saturation)\n- `movie=watermark.png[wm];[in][wm]overlay=10:10` loads the watermark image and overlays it at position (10,10) from top-left\n\n```bash\nffmpeg -i input.mp4 -vf \"crop=ih*16/9:ih,eq=saturation=1.2,movie=watermark.png[wm];[in][wm]overlay=10:10\" -c:a copy output.mp4\n```\n\nI assumed you have a watermark file named \"watermark.png\" and want to position it 10 pixels from the top-left corner. The audio is copied without re-encoding for efficiency.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "claude_sonnet_4",
+        "model_provider": "anthropic",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "function_calling",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_243159560313",
+    "eval_correctness"
+  ],
+  "usage": {
+    "input_tokens": 1002,
+    "output_tokens": 298,
+    "total_tokens": 1300,
+    "cost": 0.007476
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "948413161165",
+  "created_at": "2025-07-24T18:07:52.212968",
+  "created_by": "scosman",
+  "input": "Can you convert a .mp4 video to .wav audio format while preserving the audio quality?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Video Conversion Techniques"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "223538274856",
+    "path": null,
+    "created_at": "2025-07-24T18:07:52.212935",
+    "created_by": "scosman",
+    "output": "To extract the audio from an .mp4 video and save it as a .wav file without compression (thus preserving the original audio quality), you can instruct ffmpeg to copy the audio stream if it's already in PCM format, or to convert it to 16-bit PCM WAV (the standard uncompressed wav format) if it isn’t.\n\n- -vn disables video recording (audio only).\n- -acodec pcm_s16le sets the audio codec to uncompressed 16-bit PCM little-endian, which is the most widely compatible WAV format.\n- -ar 44100 sets the sample rate to 44.1kHz (CD-quality, change if your source uses a different rate or you have other requirements).\n- -ac 2 sets the audio to stereo (2 channels).\n\nIf your mp4 source uses different sample rate or channel count and you want to preserve exactly what’s in the source, you can omit -ar and -ac.\n\n```bash\nffmpeg -i input.mp4 -vn -acodec pcm_s16le -ar 44100 -ac 2 output.wav\n```\n\nAssumption: The desired output is a high quality, standard WAV file with CD-quality specs (44.1kHz stereo). If the source audio has a different sample rate/channels and you want to match those exactly, use -ar and -ac values matching those of the input, or omit them to let ffmpeg default to input settings.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 297,
+    "total_tokens": 890,
+    "cost": 0.003562
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "285010109797",
+  "created_at": "2025-07-24T20:24:10.517555",
+  "created_by": "scosman",
+  "input": "Scale sport.avi to 720p for YouTube (use best quality settings).",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "204300218384",
+    "path": null,
+    "created_at": "2025-07-24T20:24:10.517528",
+    "created_by": "scosman",
+    "output": "To scale \"sport.avi\" to 720p for YouTube with best quality settings, you need to:\n\n- Resize the video to a height of 720 pixels while preserving the aspect ratio (`-vf scale=-2:720`). Setting width to -2 ensures it is divisible by 2, which is required by most codecs.\n- Use the H.264 codec (`libx264`), which is widely supported and recommended for YouTube.\n- Use a high-quality CRF value (between 18-20 is visually lossless or near-lossless for HD).\n- Use the `slow` or `veryslow` preset for better compression efficiency and thus better quality at the same bitrate.\n- Use `yuv420p` pixel format for maximum compatibility.\n- Use AAC audio codec at a good bitrate.\n- Set `-movflags +faststart` to enable progressive streaming on YouTube.\n\nExample command with `veryslow` preset to prioritize quality over speed:\n\n```bash\nffmpeg -i sport.avi -vf scale=-2:720 -c:v libx264 -preset veryslow -crf 18 -c:a aac -b:a 192k -pix_fmt yuv420p -movflags +faststart sport_720p.mp4\n```\n\nThis command optimizes for best visual quality while maintaining YouTube compatibility at 720p resolution.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 283,
+    "total_tokens": 874,
+    "cost": 0.0006892
+  },
+  "model_type": "task_run"
+}

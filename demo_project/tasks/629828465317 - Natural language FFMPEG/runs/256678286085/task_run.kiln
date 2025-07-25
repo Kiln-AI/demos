@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "256678286085",
+  "created_at": "2025-07-24T20:37:58.747865",
+  "created_by": "scosman",
+  "input": "Extract forced subtitles and ignore normal ones from disc.mkv.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "183601235076",
+    "path": null,
+    "created_at": "2025-07-24T20:37:58.747840",
+    "created_by": "scosman",
+    "output": "To extract only the forced subtitles in `disc.mkv` and ignore the normal subtitles, you should use ffmpeg's `-flags +bitexact` and subtitle stream selection options. Forced subtitles streams are typically marked with the \"forced\" flag in the metadata. With ffprobe you can identify which subtitle streams are forced, but to directly extract, you can map subtitle streams that have the forced flag set.\n\nA practical approach is to extract only subtitle streams tagged as forced. Unfortunately, ffmpeg’s direct selection by forced flag is limited, but a filter approach is to use the `-filter_complex` with `subtitles` filter for forced subtitles or to extract the specific stream identified as forced.\n\nAssuming you know which subtitle stream is forced (e.g., stream 0:s:1), you can extract it with:\n\n- `-map 0:s:FORCED_STREAM_INDEX` to map the forced subtitle stream you identified.\n- Use `-c:s copy` to copy subtitles without re-encoding.\n- Output to an appropriate subtitle container or extract as .srt.\n\nIf you don't know the stream index, run `ffprobe -select_streams s -show_entries stream=index:stream_tags=forced disc.mkv` to identify forced subtitle streams.\n\nExample command (assuming subtitle stream 0:s:1 is forced):\n\n```bash\nffmpeg -i disc.mkv -map 0:s:1 -c:s copy forced_subtitles.srt\n```\n\nIf you need to extract all forced subtitles and there are multiple, you might need to script the identification of forced streams and extract them individually.\n\nSummary:\n- Identify forced subtitle streams (usually flagged in metadata).\n- Extract only those streams using -map.\n- Copy subtitle streams directly to keep quality.\n\n```bash\nffprobe -v error -select_streams s -show_entries stream=index:stream_tags=forced disc.mkv\n```\n\nOnce forced subtitle stream index is known (e.g., 0:s:2), extract with:\n\n```bash\nffmpeg -i disc.mkv -map 0:s:2 -c:s copy forced_subtitles.srt\n```\nIf the subtitles are in PGS/HDMV format (e.g., Blu-ray subtitles), extracting as `.sup` may be required:\n\n```bash\nffmpeg -i disc.mkv -map 0:s:2 -c:s copy forced_subtitles.sup\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 585,
+    "output_tokens": 490,
+    "total_tokens": 1075,
+    "cost": 0.001018
+  },
+  "model_type": "task_run"
+}

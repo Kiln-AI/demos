@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "231886505843",
+  "created_at": "2025-07-24T18:08:54.267432",
+  "created_by": "scosman",
+  "input": "What is the best way to convert a batch of avi files to mp4 format while maintaining the original quality?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Commands for Video Editing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "226702835533",
+    "path": null,
+    "created_at": "2025-07-24T18:08:54.267407",
+    "created_by": "scosman",
+    "output": "To batch convert AVI files to MP4 while maintaining original quality, you should use a lossless or near-lossless H.264 encoding, copying the audio stream directly if compatible, or re-encoding if not. The command below uses crf 18 for visually lossless quality (lower crf = higher quality), and copies the original audio if possible. This command assumes all your AVI files are in the same directory.\n\nFor batch processing, you can use a bash for loop:\n\n```bash\nfor f in *.avi; do\n  ffmpeg -i \"$f\" -c:v libx264 -crf 18 -preset slow -c:a copy -pix_fmt yuv420p -movflags +faststart \"${f%.avi}.mp4\"\ndone\n```\n\n**Explanation:**\n- `-c:v libx264` uses H.264 video encoding.\n- `-crf 18` ensures high quality (use 18 for near lossless; lower for even higher quality).\n- `-preset slow` optimizes compression, improving quality and reducing file size (change to `medium` or `fast` for faster encoding).\n- `-c:a copy` copies the audio stream if compatible; otherwise, you can use `-c:a aac -b:a 192k` to convert audio if you encounter issues.\n- `-pix_fmt yuv420p` ensures the output is widely compatible.\n- `-movflags +faststart` helps the video start faster when streamed.\n- `\"${f%.avi}.mp4\"` changes the file extension to .mp4 for output filenames.\n\nIf you need to ensure audio compatibility, modify `-c:a copy` to `-c:a aac -b:a 192k`. \n\nThis method efficiently batch processes your .avi files with minimal quality loss.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 375,
+    "total_tokens": 972,
+    "cost": 0.004194
+  },
+  "model_type": "task_run"
+}

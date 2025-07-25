@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "322639972450",
+  "created_at": "2025-07-24T20:23:42.493809",
+  "created_by": "scosman",
+  "input": "Denoise and de-ess (remove sibilance) from singer.wav.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "218549286988",
+    "path": null,
+    "created_at": "2025-07-24T20:23:42.493711",
+    "created_by": "scosman",
+    "output": "To denoise and de-ess (reduce sibilance) from the audio file singer.wav using ffmpeg, we can leverage its built-in audio filters:\n\n1. **Denoise**: Use the `afftdn` (FFT-based denoiser) filter. It reduces broadband noise. You can adjust the `nr` parameter to control noise reduction strength (default is 12 dB). Higher means more aggressive denoising but can affect audio quality.\n\n2. **De-ess**: ffmpeg does not have a dedicated de-esser filter, but de-essing can be approximated by carefully applying a dynamic range compressor (`acompressor`) to high frequencies only by using `highpass` and `sidechaincompress` filters, or using the `compand` filter on sibilant frequency bands. A simpler approach is:\n   - Use `highpass` to isolate sibilant frequencies (typically 4kHz-10kHz).\n   - Apply a compressor to attenuate peaks in this band.\n   - Mix back with the original audio.\n\nFor a concise and effective command, we'll do:\n\n- Denoise with `afftdn`.\n- Apply a bandpass filter around 5kHz - 9kHz for sibilance.\n- Compress the bandpassed signal with `acompressor` to reduce harsh sibilance.\n- Mix the compressed sibilance back with the rest of the spectrum using `amerge` and `pan` or `sidechaincompress`.\n\nHere’s a practical example assuming the sibilance band between 5kHz and 9kHz:\n\n```bash\nffmpeg -i singer.wav -af \\\n\"afftdn=nf=-25, \\\nasplit=2[clean][sibilance]; \\\n[sibilance]bandpass=f=7000:w=4000,acompressor=threshold=-25dB:ratio=5:attack=5:release=50[deessed]; \\\n[clean][deessed]amix=inputs=2:weights=1 0.6:normalize=0,volume=2\" \\\noutput_denoised_deessed.wav\n```\n\n### Explanation:\n- `afftdn=nf=-25`: Noise floor set to -25 dB for denoising.\n- `asplit=2[clean][sibilance]`: Split audio into two streams.\n- `[sibilance]bandpass=f=7000:w=4000`: Isolate frequencies centered at 7kHz with a bandwidth ~4kHz (covers 5kHz-9kHz).\n- `acompressor`: Compresses sibilance frequencies.\n- `amix` mixes original and processed sibilant streams with weights (1 for clean, 0.6 for de-essed part) to control de-essing intensity.\n- `volume=2` to compensate for mixing volume reduction.\n\nAssumptions:\n- The sibilance frequency band is roughly 5kHz to 9kHz.\n- Basic noise floor and compressor settings are set for typical vocals; you can tweak parameters per your audio’s characteristics.\n- Output file is WAV to preserve quality.\n\nThis method provides a balance of denoising and de-essing purely with ffmpeg audio filters. For more advanced de-essing, specialized audio tools/plugins might be better.\n\n```bash\nffmpeg -i singer.wav -af \"afftdn=nf=-25, asplit=2[clean][sibilance]; [sibilance]bandpass=f=7000:w=4000,acompressor=threshold=-25dB:ratio=5:attack=5:release=50[deessed]; [clean][deessed]amix=inputs=2:weights=1 0.6:normalize=0,volume=2\" output_denoised_deessed.wav\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 793,
+    "total_tokens": 1385,
+    "cost": 0.0015056
+  },
+  "model_type": "task_run"
+}

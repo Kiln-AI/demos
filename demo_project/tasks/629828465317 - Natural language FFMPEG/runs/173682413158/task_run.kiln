@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "173682413158",
+  "created_at": "2025-07-24T20:24:08.515907",
+  "created_by": "scosman",
+  "input": "I need to convert a vertical 1080x1920 video to horizontal 1280x720, cropping the top and bottom as needed.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "800457594079",
+    "path": null,
+    "created_at": "2025-07-24T20:24:08.515883",
+    "created_by": "scosman",
+    "output": "To convert a vertical 1080x1920 video to a horizontal 1280x720 video by cropping the top and bottom, you need to:\n\n- Crop the source video height from 1920 down to 720 pixels centered vertically.\n- Resize the width from 1080 to 1280 pixels to fit the target horizontal resolution.\n- Use the `crop` filter to remove equal parts of the top and bottom.\n- Then, use `scale` if needed to stretch the cropped area’s width to 1280.\n- This process involves carefully maintaining the aspect ratio by cropping rather than squashing the image.\n\nThe effective cropping will be:\n- Crop height: 720 pixels (target height)\n- Crop width: keep original width 1080 while cropping height down\n- Then scale width to 1280 to convert from vertical aspect to horizontal 16:9 ratio.\n\nAssuming the user wants to fill the horizontal 1280x720 frame completely, we crop vertically and then scale horizontally.\n\n```bash\nffmpeg -i input.mp4 -vf \"crop=iw:720:(iw-ow)/2:(ih-720)/2,scale=1280:720\" -c:a copy output_1280x720.mp4\n```\n\nExplanation:\n- `crop=iw:720:(iw-ow)/2:(ih-720)/2`: crop width to input width (`iw`=1080), height to 720, center crop vertically.\n- `scale=1280:720`: scale the cropped video to 1280 width and 720 height.\n- `-c:a copy`: copy the audio stream without re-encoding.\n\nThis assumes the input's vertical resolution is exactly 1920, width is 1080 and you want a centered crop from top/bottom before stretching width to fit 1280 pixels.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 376,
+    "total_tokens": 979,
+    "cost": 0.0008428
+  },
+  "model_type": "task_run"
+}

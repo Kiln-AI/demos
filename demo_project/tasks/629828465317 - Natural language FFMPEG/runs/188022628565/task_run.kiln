@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "188022628565",
+  "created_at": "2025-07-24T20:37:45.464342",
+  "created_by": "scosman",
+  "input": "Extract all subtitle streams from series.mkv into separate SRT files.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "219028129889",
+    "path": null,
+    "created_at": "2025-07-24T20:37:45.464274",
+    "created_by": "scosman",
+    "output": "To extract all subtitle streams from a Matroska file (series.mkv) into separate SRT files, you first need to identify which subtitle streams are present and their stream indexes. Then, you can extract each subtitle stream individually using `-map` to select the specific stream and setting the codec to `copy` to avoid re-encoding.\n\nAssuming you want to extract all subtitle streams in SRT format (which means the streams need to be compatible with or convertible to SRT), you can:\n\n1. Use `ffprobe` to list subtitle streams and their indexes.\n2. Use a separate `ffmpeg` command for each subtitle stream, specifying the map and output filename accordingly.\n\nExample commands and explanation:\n\nStep 1: List subtitle streams and their indexes:\n```bash\nffprobe -v error -select_streams s -show_entries stream=index:stream_tags=language -of csv=p=0 series.mkv\n```\nThis will output subtitle stream indexes and their languages if available.\n\nStep 2: Extract each subtitle:\n\nSuppose you find subtitle streams at indexes 2 and 3.\n\nExtract them as:\n```bash\nffmpeg -i series.mkv -map 0:s:0 subs_0.srt\nffmpeg -i series.mkv -map 0:s:1 subs_1.srt\n```\n\nIf subtitle streams are in formats other than SRT, ffmpeg will attempt conversion if possible.\n\nAlternatively, for automatic extraction of all subtitles, a shell loop can be used (on Unix-like systems):\n\n```bash\ncount=0\nfor stream in $(ffprobe -v error -select_streams s -show_entries stream=index -of csv=p=0 series.mkv); do\n  ffmpeg -i series.mkv -map 0:s:$count subs_$count.srt\n  count=$((count+1))\ndone\n```\n\nHowever, since you requested the command, here is the general form for a single extraction; repeat or script for all subtitle streams.\n\n```bash\nffmpeg -i series.mkv -map 0:s:0 subs_0.srt\n```\n\n**Note:** The output format will be SRT if the subtitle codec is compatible or automatically convertible by ffmpeg. Otherwise, you might need to specify the codec explicitly with `-c:s srt`.\n\nComplete example extracting all subtitles by specifying codec:\n\n```bash\nffmpeg -i series.mkv -map 0:s:0 -c:s srt subs_0.srt\nffmpeg -i series.mkv -map 0:s:1 -c:s srt subs_1.srt\n```\n\n---\n\nSummary: Identify subtitle streams, then extract each with `-map` and `-c:s srt`.\n\n# Example extracting first two subtitle streams:\n\n```bash\nffmpeg -i series.mkv -map 0:s:0 -c:s srt subs_0.srt\nffmpeg -i series.mkv -map 0:s:1 -c:s srt subs_1.srt\n```\n\nYou can adapt the commands for however many subtitle streams your file contains.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 587,
+    "output_tokens": 641,
+    "total_tokens": 1228,
+    "cost": 0.0012604
+  },
+  "model_type": "task_run"
+}

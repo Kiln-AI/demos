@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "721778092748",
+  "created_at": "2025-07-24T18:11:12.188132",
+  "created_by": "scosman",
+  "input": "How can I add a watermark image logo.png in the top right corner of video.mp4 without altering the video resolution or quality?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Advanced FFmpeg Video Filters"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "178046194132",
+    "path": null,
+    "created_at": "2025-07-24T18:11:12.188108",
+    "created_by": "scosman",
+    "output": "To add a watermark (logo.png) to the top right corner of video.mp4 while preserving the original resolution and quality:\n\n- The `overlay` filter is used, with x and y positioning.\n- To place it in the top right, use x=main_w-overlay_w-10 and y=10 for a 10-pixel margin from the top/right.\n- By default, re-encoding is needed; use `-c:a copy` to stream copy the audio without loss, and `-c:v libx264 -crf 18 -preset veryfast -pix_fmt yuv420p` for visually lossless output (or change CRF for different quality).\n- No scale filter is used, so resolution is unaltered.\n- If you want to avoid double compression, consider using a lossless codec, but for MP4, a low CRF (like 18) gives high quality.\n\nAssuming logo.png has transparency. For maximum compatibility, we use yuv420p for the pixel format.\n\n```bash\nffmpeg -i video.mp4 -i logo.png -filter_complex \"overlay=x=main_w-overlay_w-10:y=10\" -c:v libx264 -crf 18 -preset veryfast -pix_fmt yuv420p -c:a copy output_with_logo.mp4\n```\n\nThis command overlays the watermark at the top right with a small 10px margin, keeps the original audio untouched, and maintains nearly original visual quality.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 303,
+    "total_tokens": 904,
+    "cost": 0.003626
+  },
+  "model_type": "task_run"
+}

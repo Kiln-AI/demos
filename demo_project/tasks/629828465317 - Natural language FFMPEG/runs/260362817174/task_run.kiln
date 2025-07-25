@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "260362817174",
+  "created_at": "2025-07-24T20:24:54.989605",
+  "created_by": "scosman",
+  "input": "I have a 360p RealMedia (.rm) video; give me a command to produce a compatible .mp4.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "218311626064",
+    "path": null,
+    "created_at": "2025-07-24T20:24:54.989564",
+    "created_by": "scosman",
+    "output": "To convert a 360p RealMedia (.rm) video to a widely compatible MP4 format, you should use the H.264 video codec (libx264) and AAC audio codec for broad device and browser compatibility. Since the input is 360p, you can keep the resolution as-is or scale it explicitly to 360p. The pixel format yuv420p ensures compatibility across most devices. Adding `-movflags +faststart` moves metadata to the start of the file, enabling progressive playback during streaming.\n\nKey points:\n- `-c:v libx264` for H.264 encoding.\n- `-vf scale=-2:360` to enforce 360 height and maintain aspect ratio (width is auto-calculated and divisible by 2).\n- `-crf 23` balances quality and file size.\n- `-preset medium` balances encoding speed and compression.\n- `-c:a aac -b:a 128k` for AAC audio.\n- `-pix_fmt yuv420p` for max compatibility.\n- `-movflags +faststart` for streaming friendliness.\n\n```bash\nffmpeg -i input.rm -vf scale=-2:360 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nAssumptions:\n- The input audio codec is compatible with AAC encoding.\n- You want to maintain the original aspect ratio while resizing to 360p height.\n- The input file is named `input.rm`; modify accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 331,
+    "total_tokens": 930,
+    "cost": 0.0007692
+  },
+  "model_type": "task_run"
+}

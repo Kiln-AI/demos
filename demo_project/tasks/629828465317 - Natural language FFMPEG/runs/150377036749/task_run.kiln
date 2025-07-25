@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "150377036749",
+  "created_at": "2025-07-24T20:34:59.297331",
+  "created_by": "scosman",
+  "input": "Turn a .mkv anime video into a 480p mp4 with dual audio and soft subtitles.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "124563889022",
+    "path": null,
+    "created_at": "2025-07-24T20:34:59.297192",
+    "created_by": "scosman",
+    "output": "To convert a .mkv anime video to a 480p MP4 with dual audio tracks and soft subtitles, you should:\n\n- Resize the video to 480p height with aspect ratio preserved (`-vf scale=-2:480`).\n- Use H.264 for video codec (`-c:v libx264`) and AAC for audio codec (`-c:a aac`).\n- Map both audio streams explicitly to preserve dual audio (`-map 0:v -map 0:a:0 -map 0:a:1`), assuming two audio tracks in the input.\n- Copy subtitles as soft subtitles (`-c:s mov_text`) to keep them as selectable text subtitle tracks in the MP4 container.\n- Use `-preset` and `-crf` for quality and encoding speed balance.\n- Use `-movflags +faststart` for streaming compatibility.\n\nAssuming the input `.mkv` has exactly two audio streams and at least one subtitle stream.\n\n```bash\nffmpeg -i input.mkv -vf scale=-2:480 -map 0:v -map 0:a:0 -map 0:a:1 -map 0:s? -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -c:s mov_text -movflags +faststart output.mp4\n```\n\nExplanation:\n\n- `-map 0:v`, `-map 0:a:0`, `-map 0:a:1` select video and the first two audio streams.\n- `-map 0:s?` includes subtitle streams if present (the `?` makes subtitle stream optional, preventing errors if subtitles are missing).\n- `-c:s mov_text` converts subtitles to MP4-compatible text subtitles (soft subtitles).\n- `-preset medium` balances encoding speed and compression.\n- `-crf 23` provides good quality video at reasonable bitrate.\n- `-b:a 128k` sets audio bitrate to 128 kbps per audio track.\n- `-movflags +faststart` moves metadata to the beginning for progressive streaming.\n\nThis command preserves dual audio tracks and soft subtitles within the MP4 container at 480p resolution.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 457,
+    "total_tokens": 1051,
+    "cost": 0.0009688
+  },
+  "model_type": "task_run"
+}

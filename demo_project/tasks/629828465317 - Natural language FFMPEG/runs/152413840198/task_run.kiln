@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "152413840198",
+  "created_at": "2025-07-24T20:23:00.408468",
+  "created_by": "scosman",
+  "input": "Convert largefile.avi into a smaller .mp4, making sure the size shrinks significantly without destroying quality.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "199609569552",
+    "path": null,
+    "created_at": "2025-07-24T20:23:00.408443",
+    "created_by": "scosman",
+    "output": "To significantly reduce the size of largefile.avi while maintaining good visual quality, you can re-encode the video using the H.264 codec with a higher CRF (Constant Rate Factor) value around 28-30, which balances compression and quality. The AAC codec for audio at 128 kbps is efficient for good audio quality without much size penalty. Using the `-preset` option set to `slow` or `medium` offers better compression efficiency compared to `fast`. The `-movflags +faststart` ensures the MP4 is streamable promptly.\n\nHere, I assume you want the output to remain visually pleasing but with a much smaller file size, so `crf 28` is chosen as a good tradeoff. You can adjust it if you want better quality (lower) or smaller size (higher).\n\n```bash\nffmpeg -i largefile.avi -c:v libx264 -preset slow -crf 28 -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nExplanation:\n- `-c:v libx264`: Use H.264 video codec for efficient compression.\n- `-preset slow`: Slower preset for better compression efficiency.\n- `-crf 28`: Controls quality; higher means smaller size but lower quality.\n- `-c:a aac -b:a 128k`: Encode audio with AAC codec at 128 kbps.\n- `-movflags +faststart`: Move MP4 header to the start for streaming compatibility.\n\nThis command will yield a much smaller MP4 without destroying quality, suitable for many use cases.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 335,
+    "total_tokens": 931,
+    "cost": 0.0007744
+  },
+  "model_type": "task_run"
+}

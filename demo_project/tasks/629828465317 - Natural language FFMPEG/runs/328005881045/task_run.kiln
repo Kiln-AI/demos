@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "328005881045",
+  "created_at": "2025-07-24T18:11:29.573425",
+  "created_by": "scosman",
+  "input": "I have a `.ts` video file. Can you convert it to `.m4v` format for browser playback, maintaining the original resolution?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Optimizing Encoding for Browser Compatibility"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "119991325206",
+    "path": null,
+    "created_at": "2025-07-24T18:11:29.573396",
+    "created_by": "scosman",
+    "output": "To convert a `.ts` video file to `.m4v` for browser playback while keeping the original resolution, you should use the H.264 codec for video and AAC for audio, as these are broadly supported by browsers in the `.m4v` container. The `-c:v libx264` and `-c:a aac` options specify these codecs. The `-movflags +faststart` flag moves the moov atom to the start of the file, enabling fast playback in browsers.\n\nAssumptions:\n- Your input `.ts` contains H.264 video and AAC/compatible audio. If not, re-encoding is handled.\n- You want to retain the original dimensions (no scaling applied).\n- Output file will be named `output.m4v`.\n\nHere's the recommended command:\n\n```bash\nffmpeg -i input.ts -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.m4v\n```\n\n**Explanation of parameters:**\n- `-c:v libx264` – Encodes video in H.264 for browser support.\n- `-crf 23` – Constant Rate Factor for good quality/size tradeoff.\n- `-preset fast` – Faster encoding, reasonable compression.\n- `-c:a aac -b:a 128k` – Encodes audio to AAC at 128kbps (widely supported).\n- `-pix_fmt yuv420p` – Ensures video compatibility (most browsers require this).\n- `-movflags +faststart` – Optimizes for streaming and browser playback.\n- No scaling options are set, so the original resolution is preserved.\n\nThis will produce an `.m4v` file compatible with browser playback and optimized for streaming.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 605,
+    "output_tokens": 380,
+    "total_tokens": 985,
+    "cost": 0.00425
+  },
+  "model_type": "task_run"
+}

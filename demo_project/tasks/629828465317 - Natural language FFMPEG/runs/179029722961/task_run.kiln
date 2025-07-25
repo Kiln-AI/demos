@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "179029722961",
+  "created_at": "2025-07-24T20:24:04.139767",
+  "created_by": "scosman",
+  "input": "I have a portrait mode video (720x1280). Pad it with blurred sidebars so it fits in a 1920x1080 frame.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "255395136604",
+    "path": null,
+    "created_at": "2025-07-24T20:24:04.139741",
+    "created_by": "scosman",
+    "output": "To fit a 720x1280 portrait video into a 1920x1080 landscape frame with blurred sidebars, you should:\n\n1. Scale the input video to fit the height of 1080 pixels while preserving aspect ratio.\n2. Create blurred sidebars by scaling the video to fill the entire 1920x1080 frame, then applying a strong blur filter.\n3. Overlay the original scaled video centered on top of the blurred background.\n\nThis approach uses the `scale` filter to resize the main video, and a combination of `scale` and `boxblur` filters on a stacked video to generate the blurred background sidebars. The `overlay` filter combines them.\n\nHere is the complete ffmpeg command demonstrating this technique:\n\n```bash\nffmpeg -i input.mp4 -filter_complex \"\\\n[0:v]scale=-1:1080[main]; \\\n[0:v]scale=1920:1080,boxblur=10:10[blurred]; \\\n[blurred][main]overlay=(W-w)/2:(H-h)/2:format=yuv420\" \\\n-c:a copy output.mp4\n```\n\nExplanation:\n\n- `[0:v]scale=-1:1080[main]`: scales the input video to a height of 1080 pixels, width auto-calculated to maintain aspect ratio (should become 607x1080).\n- `[0:v]scale=1920:1080,boxblur=10:10[blurred]`: scales the input to fill 1920x1080 and applies a strong blur to create sidebars background.\n- `[blurred][main]overlay=(W-w)/2:(H-h)/2:format=yuv420`: overlays the scaled main video centered over the blurred background.\n- `-c:a copy`: copies the audio stream without re-encoding.\n\nThis produces a 1920x1080 video with your portrait content in the middle and blurred sidebars filling the rest of the frame, preserving the video's aspect ratio without distortion.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 605,
+    "output_tokens": 415,
+    "total_tokens": 1020,
+    "cost": 0.000906
+  },
+  "model_type": "task_run"
+}

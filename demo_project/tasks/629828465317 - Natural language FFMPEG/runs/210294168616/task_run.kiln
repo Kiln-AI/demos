@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "210294168616",
+  "created_at": "2025-07-24T18:10:37.242053",
+  "created_by": "scosman",
+  "input": "Can you help me normalize the audio levels in my video.bam to a volume between -1 dBFS and -3 dBFS?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Command Line Techniques for Audio Enhancement"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "340081266471",
+    "path": null,
+    "created_at": "2025-07-24T18:10:37.242029",
+    "created_by": "scosman",
+    "output": "Certainly! To normalize the audio levels in video.bam to a target peak between -1 dBFS and -3 dBFS, you should employ the ffmpeg loudnorm filter, which provides advanced normalization suitable for both speech and music.\n\nFor your request, you most likely want to set the output true peak to, for example, -1.5 dBFS (which lands comfortably between -1 and -3 dBFS). The loudnorm filter's tp parameter does this. This will ensure no peaks go above -1.5 dBFS (which is well within your specified range), achieving both loudness normalization and true-peak limiting.\n\nHere’s how to do it:\n\n- loudnorm applies EBU R128 normalization (for perceived loudness) and allows you to set maximum true peak (tp).\n- The recommended workflow is a two-pass scan for maximum accuracy, but for simplicity and most use cases, a single pass works well.\n- dynaudnorm or vol filters are less precise for true-peak limiting than loudnorm.\n\nAssumption: You want to keep the video as-is and only normalize the audio.\n\n```bash\nffmpeg -i video.bam -af loudnorm=I=-16:TP=-1.5:LRA=11 -c:v copy -c:a aac -b:a 192k normalized_video.mp4\n```\n\n- I=-16: Integrated loudness target (LUFS); -16 LUFS is standard for online video.\n- TP=-1.5: True peak target, in dBFS (within your specified range).\n- LRA=11: Loudness Range; 11 is default, you can adjust if needed.\n- -c:v copy: Video stream is untouched.\n- -c:a aac -b:a 192k: Encodes audio to AAC at 192kbps, widely compatible.\n\nThis command produces normalized_video.mp4 with audio peaks safely under -1.5 dBFS and normalized level for consistent listening. If you desire a more precise normalization (for broadcasting, etc.), consider running a two-pass normalization using loudnorm. Let me know if you’d like those instructions!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 605,
+    "output_tokens": 442,
+    "total_tokens": 1047,
+    "cost": 0.004746
+  },
+  "model_type": "task_run"
+}

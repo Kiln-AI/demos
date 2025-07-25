@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "141708222922",
+  "created_at": "2025-07-23T13:55:57.446662",
+  "created_by": "scosman",
+  "dataset_id": "229522787665",
+  "task_run_config_id": "104202333365",
+  "eval_config_eval": false,
+  "input": "I have a multi-track video file and I want to map video stream 6 and audio stream 9 to create output.mp4",
+  "output": "To select specific video stream 6 and audio stream 9 from a multi-track input file and encode them into an MP4 with compatible codecs, use the `-map` option to specify the streams explicitly. This assumes your input file (e.g., `input.mp4`) has at least 6 video streams and 9 audio streams. The command ensures the output uses **H.264** (for MP4 compatibility) and **AAC** audio, while excluding all other streams. If these streams are already in compatible codecs, replace `libx264`/`aac` with `-c:v copy -c:a copy` to avoid re-encoding, but confirm first via `ffmpeg -i input.mp4`.\n\n- `-map 0:v:6` maps the 7th video stream (0-indexed in ffmpeg).\n- `-map 0:a:9` maps the 10th audio stream (0-indexed).\n- `-c:v libx264` - encodes video to H.264.\n- `-c:a aac` - encodes audio to AAC.\n- `-movflags +faststart` for web streaming compatibility.\n\n```bash\nffmpeg -i input.mp4 -map 0:v:6 -map 0:a:9 -c:v libx264 -c:a aac -movflags +faststart output.mp4\n```\n\n**Note**: Replace `input.mp4` with your actual input filename and confirm stream numbers with `ffmpeg -i input.mp4`. Video/audio streams are 0-indexed in ffmpeg (6 = 7th video track, 9 = 10th audio track).",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) **Does the model's output contain the issue described?**  \nNo, the model's output does not contain issues. The generated command properly maps the specified video and audio streams while adhering to the requirements stated by the user. There is a clear use of the `-map` option to select specific streams, and it employs compatible codecs for output.\n\n2) **Is the model's output similar to this example of a failing output?**  \nNo, the model's output is not similar to the failure example provided. The command generated in the output is valid and does not contain any parameters or options that don't exist or are used incorrectly, unlike the example with the nonexistent `-preset extra_fast`.\n\n3) **Does the command break any requirements dictated in the man page?**  \nNo, the command does not break any requirements from the man page. The syntax is correct, with options placed appropriately for mapping streams and defining codecs. The mappings are consistent with ffmpeg's requirements for stream indexing (0-indexed). \n\n4) **Considering the above, does the model's output contain the issue described? It should pass if it does not contain the issue, and fail if it does contain the issue.**  \nThe model's output does not contain the issue described, so it should pass. The command is correctly formed and aligns with the specifications of the user input."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 471,
+    "output_tokens": 1748,
+    "total_tokens": 2219,
+    "cost": 0.000059913
+  },
+  "model_type": "eval_run"
+}

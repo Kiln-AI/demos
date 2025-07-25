@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "180196558806",
+  "created_at": "2025-07-23T11:45:39.066006",
+  "created_by": "scosman",
+  "dataset_id": "687706851240",
+  "task_run_config_id": null,
+  "eval_config_eval": true,
+  "input": "I have a file with 4 video streams and 8 audio streams. I want to use video stream 0:2 and audio stream 0:7 to create output.mp4 from input.mkv",
+  "output": "To map specific streams from a multi-stream file, you'll use the `-map` parameter to select exactly which video and audio streams you want in the output. This allows you to choose specific streams by their indices.\n\nThe `-map` parameter uses the format `-map input_file_index:stream_index` where the input file index is typically 0 for the first (and often only) input file, followed by the stream index within that file.\n\n```bash\nffmpeg -i input.mkv -map 0:3 -map 0:8 -c copy output.mp4\n```\n\nI'm using `-c copy` to avoid re-encoding the streams, which will be faster and maintain original quality. The command maps video stream index 3 (the third video stream) and audio stream index 8 (the eighth audio stream) from the input file to create the output MP4.",
+  "intermediate_outputs": {
+    "chain_of_thought": "Step 1: Does the model's output contain the issue described?\n- The user's requirement: Use video stream 0:2 and audio stream 0:7 from input.mkv to create output.mp4.\n- The provided command:\n  ```\n  ffmpeg -i input.mkv -map 0:3 -map 0:8 -c copy output.mp4\n  ```\n- Issue: In ffmpeg, streams are zero-indexed internally, so video stream 0:2 means the third video stream, audio stream 0:7 means the eighth audio stream. \n- However, the model maps 0:3 and 0:8, which are the fourth video and ninth audio streams, not 0:2 and 0:7 as requested.\n\nStep 2: Is the model's output similar to the example of failing output?\n- The example of failing output is a command using nonexistent parameters.\n- In this case, the parameters exist, but the stream indices do not match the user's input, leading to incorrect stream selection.\n\nStep 3: Does the model's output contain the issue?\n- Yes. The model's command is incorrect: it does not select the correct video and audio streams as per the user's requirement (off by one error in stream indices).\n\nFinal answer: **Fail**"
+  },
+  "scores": {
+    "correctness": 0.0
+  },
+  "task_run_usage": {
+    "input_tokens": 1017,
+    "output_tokens": 197,
+    "total_tokens": 1214,
+    "cost": 0.006006
+  },
+  "model_type": "eval_run"
+}

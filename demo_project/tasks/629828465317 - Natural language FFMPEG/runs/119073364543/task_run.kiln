@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "119073364543",
+  "created_at": "2025-07-24T18:07:39.009625",
+  "created_by": "scosman",
+  "input": "Help me convert a video file to play on an iOS device optimized for battery life and space.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Video Conversion Techniques"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "135404936209",
+    "path": null,
+    "created_at": "2025-07-24T18:07:39.009596",
+    "created_by": "scosman",
+    "output": "To optimize a video for iOS devices with a focus on saving battery and storage space, it's best to:\n\n- Use H.264 (libx264) for video encoding and AAC for audio, as both are highly compatible and efficient for iOS devices.\n- Limit the resolution to 720p or lower (e.g., 1280x720), as higher resolutions need more power and space.\n- Use a reasonable bitrate or Constant Rate Factor (CRF) to balance quality and file size.\n- Set pixel format to yuv420p for broad compatibility.\n- Use the -movflags +faststart parameter to make playback start quicker on mobile devices.\n\nHere’s a command that applies these best practices (assuming your source is input.mp4 and you want output optimized.mp4):\n\n```bash\nffmpeg -i input.mp4 -vf scale=-2:720 -c:v libx264 -preset slow -crf 28 -profile:v high -level 4.0 -c:a aac -b:a 96k -ac 2 -movflags +faststart -pix_fmt yuv420p optimized.mp4\n```\n\n**Explanation of parameters:**\n\n- -vf scale=-2:720: Resizes video to 720p, maintaining aspect ratio.\n- -c:v libx264: Uses H.264 codec (battery- and space-friendly).\n- -preset slow: Improves compression efficiency (smaller file, though slower to encode).\n- -crf 28: Conservative quality setting for smaller size (lower number means higher quality, higher number saves more space).\n- -profile:v high -level 4.0: Ensures iOS compatibility.\n- -c:a aac -b:a 96k -ac 2: Encodes stereo AAC audio at 96kbps (good blend of quality/space).\n- -pix_fmt yuv420p: Maximum compatibility.\n- -movflags +faststart: Allows playback to start quickly (important on iOS).\n\nFeel free to adjust the CRF value if you want higher/lower quality or different bitrates.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 429,
+    "total_tokens": 1023,
+    "cost": 0.00462
+  },
+  "model_type": "task_run"
+}

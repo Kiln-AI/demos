@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "524387158385",
+  "created_at": "2025-07-24T20:38:58.336114",
+  "created_by": "scosman",
+  "input": "How can I batch overlay a text timestamp onto each video as it is processed?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "178569581159",
+    "path": null,
+    "created_at": "2025-07-24T20:38:58.336090",
+    "created_by": "scosman",
+    "output": "To batch overlay a text timestamp onto each video during processing, you can automate ffmpeg commands with a drawtext filter that displays the video's current timestamp. This requires the `drawtext` filter with the expression `pts\\:hms` that shows the presentation timestamp in hours, minutes, and seconds.\n\nKey details:\n- `drawtext=text='%{pts\\:hms}'` overlays running timestamp.\n- Specify font, size, color, and position for readability.\n- Batch processing involves running a loop in your shell/command prompt to apply this command to multiple input videos.\n- To avoid issues with fonts, specify a system font path or a generic font family.\n- Output files should be renamed to avoid overwriting.\n\nExample assumes you want timestamp in bottom-left corner, white text, with some shadow for contrast. Adjust paths, fonts, colors, and positions as needed.\n\n**Linux/macOS Bash example loop:**\n\n```bash\nfor input in *.mp4; do\n  output=\"timestamped_${input}\"\n  ffmpeg -i \"$input\" -vf \"drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='%{pts\\:hms}':fontcolor=white@0.8:fontsize=24:box=1:boxcolor=black@0.5:boxborderw=5:x=10:y=h-th-10\" -c:a copy \"$output\"\ndone\n```\n\nExplanation:\n- Loops through all mp4 files.\n- Overlays current video timestamp at bottom-left, with white semi-transparent text on a black box for readability.\n- Copies audio without re-encoding (`-c:a copy`) for speed.\n- Saves output with \"timestamped_\" prefix.\n\nAdjust fontfile path for your operating system and font availability. On Windows, you may need a different font path or use a font name (e.g., `font='Arial'`) instead of file.\n\nThis method efficiently batch processes videos, overlaying dynamic timestamps on each.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 412,
+    "total_tokens": 1002,
+    "cost": 0.0008952
+  },
+  "model_type": "task_run"
+}

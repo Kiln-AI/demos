@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "156325612847",
+  "created_at": "2025-07-24T20:23:52.312035",
+  "created_by": "scosman",
+  "input": "Can you upscale a 480p video named oldfamily.mp4 to 720p and save it as newfamily.mp4?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "166736673252",
+    "path": null,
+    "created_at": "2025-07-24T20:23:52.312010",
+    "created_by": "scosman",
+    "output": "To upscale a 480p video to 720p, you can use ffmpeg's scale video filter. Upscaling enlarges the resolution, which may reduce image sharpness as new pixels are interpolated. We will scale the video to a height of 720 pixels while preserving the aspect ratio to avoid stretching or distortion, setting width to -2 to automatically calculate width divisible by 2 (required by many codecs).\n\nWe'll use the libx264 codec with a reasonable CRF value for quality balance, AAC audio codec, and set the pixel format to yuv420p for compatibility.\n\nHere is a well-formed ffmpeg command to do this:\n\n```bash\nffmpeg -i oldfamily.mp4 -vf scale=-2:720 -c:v libx264 -preset medium -crf 20 -c:a aac -b:a 128k -pix_fmt yuv420p newfamily.mp4\n```\n\nExplanation:\n- `-vf scale=-2:720` scales video height to 720, width adjusted automatically to maintain aspect ratio and divisible by 2.\n- `-c:v libx264` encodes video with H.264 codec.\n- `-preset medium` balances encoding speed and compression efficiency.\n- `-crf 20` produces good visual quality (lower CRF means higher quality; 18-23 is typical range).\n- `-c:a aac -b:a 128k` encodes audio using AAC at 128 kbps.\n- `-pix_fmt yuv420p` ensures broad compatibility with players.\n\nThis command assumes you want to keep the original aspect ratio and just upscale vertically to 720p.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 340,
+    "total_tokens": 940,
+    "cost": 0.000784
+  },
+  "model_type": "task_run"
+}

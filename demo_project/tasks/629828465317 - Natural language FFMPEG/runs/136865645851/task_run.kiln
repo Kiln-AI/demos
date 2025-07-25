@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "136865645851",
+  "created_at": "2025-07-24T20:38:07.248053",
+  "created_by": "scosman",
+  "input": "Extract the subtitle stream with language code “spa” from telenovela.mkv.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "254497105736",
+    "path": null,
+    "created_at": "2025-07-24T20:38:07.248030",
+    "created_by": "scosman",
+    "output": "To extract the subtitle stream with the language code \"spa\" (Spanish) from telenovela.mkv, you first need to identify the subtitle stream index with that language tag. Then you can extract that specific subtitle stream without re-encoding by copying it.\n\nThe general approach is:\n1. Use `ffprobe` to find the subtitle stream index by language.\n2. Use `ffmpeg` to extract that subtitle stream by stream index.\n\nAssuming you've identified the correct stream index for \"spa\" (or you want to extract all subtitles with language \"spa\"), here is a direct `ffmpeg` command to extract the first subtitle stream with language \"spa\" in `telenovela.mkv` into an external `.srt` file:\n\n```bash\nffmpeg -i telenovela.mkv -map 0:s:m:language:spa -c:s copy telenovela.spa.srt\n```\n\nExplanation:\n- `-map 0:s:m:language:spa` selects subtitle streams (`s`) in the first input (`0`) where the metadata tag `language` equals `spa`.\n- `-c:s copy` copies the subtitle codec without transcoding.\n- Output file extension `.srt` assumes the subtitle codec inside the MKV is compatible with the SRT format (common for text-based subtitles).\n\nIf the subtitles are in a different format like PGS (image subtitles), you may need to extract to `.sup` or convert them.\n\nIf you want to identify the exact stream first, run:\n\n```bash\nffprobe -v error -show_entries stream=index,codec_type,codec_name:stream_tags=language -of default=noprint_wrappers=1 telenovela.mkv\n```\n\nThis will help identify which subtitle stream index corresponds to Spanish.\n\n---\n\n**Summary command to extract Spanish subtitle stream:**\n\n```bash\nffmpeg -i telenovela.mkv -map 0:s:m:language:spa -c:s copy telenovela.spa.srt\n```\n\nThis extracts the Spanish subtitle stream directly without re-encoding, producing an `.srt` subtitle file.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 440,
+    "total_tokens": 1031,
+    "cost": 0.0009404
+  },
+  "model_type": "task_run"
+}

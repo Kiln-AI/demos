@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "225733022018",
+  "created_at": "2025-07-24T20:26:40.802800",
+  "created_by": "scosman",
+  "input": "How can I speed up every video in a folder by 1.5x and save the results with \"_fast\" appended to the filename?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "891990268075",
+    "path": null,
+    "created_at": "2025-07-24T20:26:40.802739",
+    "created_by": "scosman",
+    "output": "To speed up every video by 1.5x in a folder and save the results with \"_fast\" appended to each filename, you can use a simple shell script loop that leverages `ffmpeg`. \n\nKey points:\n- `setpts=PTS/1.5` filter speeds up the video by a factor of 1.5 (making the video 1.5 times faster).\n- `atempo=1.5` speeds up the audio by 1.5x. Since `atempo` only supports tempo between 0.5 and 2.0, it works well for 1.5x.\n- We need to carefully construct output filenames by appending \"_fast\" before the extension.\n- This script assumes your videos have common video file extensions like `.mp4`, `.mov`, `.mkv`, `.avi`. You can modify the extensions as needed.\n- This approach processes videos one by one and overwrites nothing.\n- If your folder contains spaces or unusual characters, it's safer to tweak the script with extra quoting or use `find` and `while read` loops.\n\nHere is a bash script example for Unix-like systems:\n\n```bash\n#!/bin/bash\n\nfor input in *.{mp4,mov,mkv,avi}; do\n  # Skip if no files match\n  [ -e \"$input\" ] || continue\n\n  # Extract filename without extension\n  filename=\"${input%.*}\"\n  extension=\"${input##*.}\"\n\n  # Create the output filename with _fast appended\n  output=\"${filename}_fast.${extension}\"\n\n  # Run ffmpeg to speed up video and audio by 1.5x\n  ffmpeg -i \"$input\" -vf \"setpts=PTS/1.5\" -filter:a \"atempo=1.5\" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k \"$output\"\ndone\n```\n\nExplanation:\n- `setpts=PTS/1.5`: video timestamps are divided to make video play 1.5x faster.\n- `atempo=1.5`: audio speed increased by 1.5x.\n- Re-encoding video with libx264 and audio with AAC for good compatibility.\n- Preset fast and CRF 23 balance encoding speed and quality.\n\nMake sure you have executable permission (`chmod +x yourscript.sh`) and run it inside the folder containing your videos.\n\nIf your folder has a lot of files and you want concurrency or more robustness, you can use GNU parallel or more sophisticated scripting. This script demonstrates best practices for batch processing of video speed change with `ffmpeg`.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 547,
+    "total_tokens": 1150,
+    "cost": 0.0011164
+  },
+  "model_type": "task_run"
+}

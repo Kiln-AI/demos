@@ -1,0 +1,48 @@
+{
+  "v": 1,
+  "id": "429781374990",
+  "created_at": "2025-07-24T19:01:50.564442",
+  "created_by": "scosman",
+  "input": "convert a video to sepia and make it backwards",
+  "input_source": {
+    "type": "human",
+    "properties": {
+      "created_by": "scosman"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "323075276513",
+    "path": null,
+    "created_at": "2025-07-24T19:01:50.564325",
+    "created_by": "scosman",
+    "output": "To convert a video to sepia and play it backwards in ffmpeg, you’ll need to:\n\n- Apply the sepia tone filter using the `colorchannelmixer` filter which shifts the red, green, and blue channels towards sepia hues (typically R=0.393, G=0.769, B=0.189 is a standard sepia mix).\n- Reverse the video and audio streams. Use the `reverse` filter and `areverse` filter for video and audio respectively. \n- Re-encode video and audio as MP4 with widely supported codecs.\n\nAssumptions:\n- Input is named input.mp4.\n- Output should be output.mp4.\n- Video is already stereo audio. If not, adjust audio options.\n- Use H.264/AAC for broad compatibility.\n\nHere’s the command:\n\n```bash\nffmpeg -i input.mp4 -vf \"reverse,colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131\" \\\n-af \"areverse\" -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nExplanation:\n- `-vf \"reverse,colorchannelmixer=...:\"` reverses the video and applies the sepia filter.\n- `-af \"areverse\"` reverses the audio.\n- `-c:v libx264 -crf 23 -preset fast` encodes video at decent quality/speed.\n- `-c:a aac -b:a 128k` encodes stereo AAC audio for compatibility.\n- `-movflags +faststart` enables optimized playback on the web.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "2891944478265::629828465317::267208126290",
+        "model_provider": "kiln_fine_tune",
+        "prompt_id": "fine_tune_prompt::2891944478265::629828465317::267208126290",
+        "structured_output_mode": "json_instructions",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "manual_run"
+  ],
+  "usage": {
+    "input_tokens": 472,
+    "output_tokens": 408,
+    "total_tokens": 880,
+    "cost": null
+  },
+  "model_type": "task_run"
+}

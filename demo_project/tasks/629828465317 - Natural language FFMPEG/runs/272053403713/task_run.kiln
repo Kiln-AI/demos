@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "272053403713",
+  "created_at": "2025-07-24T20:38:23.362443",
+  "created_by": "scosman",
+  "input": "Correct out of sync subtitles (shift by 3 seconds) and burn into vacation.mov.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "487008446313",
+    "path": null,
+    "created_at": "2025-07-24T20:38:23.362415",
+    "created_by": "scosman",
+    "output": "To correct out-of-sync subtitles by shifting them by 3 seconds and burn them into the video, you can use ffmpeg's subtitle filter with the `itsoffset` option to delay subtitles, then burn the subtitles onto the video using the `subtitles` filter.\n\nAssumptions:\n- The subtitles are in an external file named \"subtitle.srt\".\n- The desired subtitle shift is +3 seconds (i.e., subtitles should appear 3 seconds later).\n- The video file is \"vacation.mov\".\n- Output file will be \"vacation_burned.mov\".\n\nThe approach:\n- Use `-itsoffset 3` to delay the subtitles by 3 seconds.\n- Use the `-vf subtitles=subtitle.srt` filter to burn the subtitles.\n- Use a suitable video codec to avoid quality loss.\n\nIf subtitles are embedded inside a file, a different approach would be needed, but here we assume an external .srt.\n\nExample command:\n\n```bash\nffmpeg -i vacation.mov -itsoffset 3 -i subtitle.srt -map 0:v -map 0:a? -filter_complex \"[0:v][1:s]overlay=format=auto\" -c:v libx264 -crf 18 -preset veryfast -c:a copy vacation_burned.mov\n```\n\nHowever, ffmpeg cannot overlay subtitle streams this way. Instead, the best practice to burn shifted subtitles is to shift timestamps inside the subtitle file or use the `subtitles` filter with the `force_style` parameter and the `start` option.\n\nBetter approach:\n- Use the subtitles filter with `:si`, no but instead use `subtitles=subtitle.srt:force_style='...' :offset=X` is not a documented option.\n- Shift subtitles by modifying the input subtitles start time or using the syntax: `subtitles=filename:speed=1:force_style=` — no direct offset param.\n- So, better to use ffmpeg's `subtitles` filter with an input subtitle file shifted by 3 seconds using `-ss` is not possible.\n\nBest practical approach:\n- First create an adjusted subtitle file with timestamps shifted by +3 seconds, then burn that into the video with the `subtitles` filter.\n\nYou can also use ffmpeg with `-itsoffset` for the subtitle input (not always compatible with `subtitles` filter).\n\nIf subtitles are external .srt we can use `-itsoffset 3 -i subtitle.srt` and then use `-filter_complex` to burn them.\n\nHere's the recommended command:\n\nExplanation:\n- `-itsoffset 3` shifts the subtitle input 3 seconds (delays).\n- `-i vacation.mov` main video.\n- `-i subtitle.srt` subtitle with 3 seconds offset.\n- `-filter_complex` with `subtitles` filter to burn shifted subtitles.\n- `-c:v libx264 -crf 18 -preset veryfast` to encode video.\n- `-c:a copy` keeps the audio as is.\n\nSince ffmpeg's `subtitles` filter does not accept input from a second input stream, we need to shift subtitles before encoding or do it external to ffmpeg.\n\nTherefore, the best high-quality solution is:\n\n1. Shift the subtitle file timestamps by 3 seconds using FFmpeg's `subtitles` filter's `start` option via `subtitles=filename:charenc=UTF-8:force_style='...'` Unfortunately, no direct `start` or `offset`.\n\n2. Alternatively, use ffmpeg's `subtitles` filter's timing options:\n\nUse the undocumented `subtitles=subtitle.srt:si=0:original_size=WxH:fontsdir=DIR` – no offset.\n\nHence, the best is to externally shift the subtitle timestamps and then burn them.\n\nTo shift subtitles externally, you can use `ffmpeg` with `-ss` and `-itsoffset` for inputs is limited to audio/video.\n\nHere is a specialized approach using `ffmpeg`'s `ass` filter via `-vf`:\n\n- Convert .srt to .ass shifted by 3 seconds using `ffmpeg` itself:\n\n```bash\nffmpeg -itsoffset 3 -i subtitle.srt shifted_subtitle.srt\n```\n(not supported)\n\nAlternatively use `ffmpeg`'s `aresample` or similar commands but not for subtitles.\n\nConclusion: The best practice is to shift the subtitle file timestamps by 3 seconds using subtitle editing tools or scripts, then burn the shifted subtitles with ffmpeg.\n\nIf that is not an option, you can burn subtitles on the fly with ffmpeg's `subtitles` filter and `-ss 3` on the input:\n\n```bash\nffmpeg -i vacation.mov -vf \"subtitles=subtitle.srt:enable='gte(t,3)'\" -c:v libx264 -crf 18 -preset veryfast -c:a copy vacation_burned.mov\n```\n\nBut this only shows subtitles after 3 seconds, not shifts them.\n\nTherefore, one trick is to load the subtitle as external and shift timestamps by adding 3 seconds offset using `subtitles` filter's `:force_style='...'` is not enough.\n\nTherefore, it's recommended to shift your subtitle file external to ffmpeg.\n\nAssuming the subtitle file is shifted externally, then:\n\n```bash\nffmpeg -i vacation.mov -vf subtitles=shifted_subtitle.srt -c:v libx264 -crf 18 -preset veryfast -c:a copy vacation_burned.mov\n```\n\nSummary:\n- Ideally, shift subtitles first (outside ffmpeg).\n- Burn shifted subtitles using `-vf subtitles=shifted_subtitle.srt` filter.\n\n---\n\nIf you want to do everything in ffmpeg, assuming the subtitle file is named subtitle.srt, then the practical command to burn unshifted subtitles is:\n\n```bash\nffmpeg -i vacation.mov -vf subtitles=subtitle.srt -c:v libx264 -crf 18 -preset veryfast -c:a copy vacation_burned.mov\n```\n\nThen you should manually offset subtitle timestamps in the srt file by adding 3 seconds to all timestamps.\n\n---\n\nIn summary, ffmpeg does not natively support shifting subtitles on the fly directly with the `subtitles` filter, so the best practice is:\n\n1. Shift subtitle timestamps externally by +3 seconds.\n\n2. Burn shifted subtitles with ffmpeg using the `subtitles` filter.\n\n---\n\n# Final command after shifting subtitles externally:\n\n```bash\nffmpeg -i vacation.mov -vf subtitles=shifted_subtitle.srt -c:v libx264 -crf 18 -preset veryfast -c:a copy vacation_burned.mov\n```\n\nIf external shifting is not possible, a workaround is to create an ASS subtitle with shifted timings and use that.\n\n---\n\n# To help you shift subtitles quickly via ffmpeg, you can use the `ffmpeg` subtitles filter with `-ss` on `ffmpeg -i subtitle.srt` but it's not straightforward.\n\nAlternatively, use `ffsubsync` or `subtitleeditor` or scripting tools to shift subtitles timestamps.\n\n---\n\n# Summary:\n\nffmpeg command to burn shifted subtitles assumes the subtitles are timestamp-shifted in the file.\n\n```bash\nffmpeg -i vacation.mov -vf subtitles=shifted_subtitle.srt -c:v libx264 -crf 18 -preset veryfast -c:a copy vacation_burned.mov\n```\n\nUse external tools to shift subtitle timestamps by +3 seconds.\n\n---\n\n# Bonus: If you have an `.ass` subtitle file, you can do the shifting inside the `.ass` by editing the timestamps or use `ffmpeg` with `-vf ass=shifted_subtitle.ass` similarly. The `subtitles` filter can handle both `.srt` and `.ass`.\n\n# Explanation:\n\n- `-vf subtitles=shifted_subtitle.srt` burns the subtitles into the video.\n\n- `-c:v libx264 -crf 18` encodes video with high quality (lower crf means higher quality).\n\n- `-preset veryfast` for quick encoding balancing speed and quality.\n\n- `-c:a copy` copies the original audio stream without re-encoding.\n\n# Alternative to burn external subtitle into video on the fly, shifting by 3 seconds with `-itsoffset` is unreliable.\n\n---\n\nThis is the best practice command demonstrating subtitle burn-in after correcting timing outside ffmpeg.\n\n```bash\nffmpeg -i vacation.mov -vf subtitles=shifted_subtitle.srt -c:v libx264 -crf 18 -preset veryfast -c:a copy vacation_burned.mov\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 1786,
+    "total_tokens": 2377,
+    "cost": 0.003094
+  },
+  "model_type": "task_run"
+}

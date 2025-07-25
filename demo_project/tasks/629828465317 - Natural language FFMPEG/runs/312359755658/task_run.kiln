@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "312359755658",
+  "created_at": "2025-07-24T20:23:58.921875",
+  "created_by": "scosman",
+  "input": "I want to double the resolution of smallfootage.mp4. Keep the aspect ratio the same.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "326379671074",
+    "path": null,
+    "created_at": "2025-07-24T20:23:58.921841",
+    "created_by": "scosman",
+    "output": "To double the resolution of a video while preserving the aspect ratio, you can use the `scale` filter in `ffmpeg` with expressions to multiply the width and height by 2. We use `iw` and `ih` (input width and height) to dynamically calculate the output dimensions, ensuring the aspect ratio remains the same. It's important to ensure the output dimensions are even numbers for compatibility with most codecs, so we will round to the nearest even number using `ceil` and divide/multiply operations.\n\nHere's the command that does this:\n\n```bash\nffmpeg -i smallfootage.mp4 -vf \"scale=2*iw:2*ih\" -c:v libx264 -preset medium -crf 23 -c:a copy output_doubled.mp4\n```\n\nExplanation:\n- `scale=2*iw:2*ih` doubles both width and height based on the input video dimensions.\n- `-c:v libx264` encodes the video using H.264, a widely compatible codec.\n- `-preset medium` balances encoding speed and compression.\n- `-crf 23` sets quality, lower values mean higher quality (23 is a good default).\n- `-c:a copy` copies the audio stream without re-encoding.\n  \nIf you want to be more thorough and ensure the output resolution is always even (since many codecs require that), you can use expressions to round to the nearest even number like this:\n\n```bash\nffmpeg -i smallfootage.mp4 -vf \"scale=trunc(2*iw/2)*2:trunc(2*ih/2)*2\" -c:v libx264 -preset medium -crf 23 -c:a copy output_doubled.mp4\n```\n\nThis version uses `trunc(.../2)*2` to force even output dimensions.\n\nEither approach will effectively double the resolution while maintaining the input aspect ratio.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 397,
+    "total_tokens": 991,
+    "cost": 0.0008728
+  },
+  "model_type": "task_run"
+}

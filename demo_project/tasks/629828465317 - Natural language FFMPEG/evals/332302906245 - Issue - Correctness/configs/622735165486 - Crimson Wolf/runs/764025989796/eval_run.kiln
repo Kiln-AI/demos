@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "764025989796",
+  "created_at": "2025-07-23T11:45:44.822587",
+  "created_by": "scosman",
+  "dataset_id": "687706851240",
+  "task_run_config_id": null,
+  "eval_config_eval": true,
+  "input": "I have a file with 4 video streams and 8 audio streams. I want to use video stream 0:2 and audio stream 0:7 to create output.mp4 from input.mkv",
+  "output": "To map specific streams from a multi-stream file, you'll use the `-map` parameter to select exactly which video and audio streams you want in the output. This allows you to choose specific streams by their indices.\n\nThe `-map` parameter uses the format `-map input_file_index:stream_index` where the input file index is typically 0 for the first (and often only) input file, followed by the stream index within that file.\n\n```bash\nffmpeg -i input.mkv -map 0:3 -map 0:8 -c copy output.mp4\n```\n\nI'm using `-c copy` to avoid re-encoding the streams, which will be faster and maintain original quality. The command maps video stream index 3 (the third video stream) and audio stream index 8 (the eighth audio stream) from the input file to create the output MP4.",
+  "intermediate_outputs": {
+    "chain_of_thought": "Let me analyze the model's performance step by step.\n\n## Step 1: Does the model's output contain the issue described?\n\nThe issue is about mistakes in the ffmpeg command that would prevent it from working correctly or matching user requirements.\n\n## Step 2: Is the model's output similar to the failure example?\n\nThe failure example shows an incorrect parameter (`-I` instead of `-i` and non-existent preset `extra_fast`). Let me examine the model's command for similar issues.\n\n## Step 3: Analysis of the model's command\n\nThe user requested:\n- Video stream `0:2` (meaning stream index 2)\n- Audio stream `0:7` (meaning stream index 7)\n\nThe model provided:\n```bash\nffmpeg -i input.mkv -map 0:3 -map 0:8 -c copy output.mp4\n```\n\n**Critical Issue Found**: The model mapped the wrong streams!\n- User wanted video stream `0:2` → Model used `0:3` \n- User wanted audio stream `0:7` → Model used `0:8`\n\nThis is a significant error because:\n1. Stream indices in ffmpeg are 0-based\n2. The user specifically requested streams 2 and 7\n3. The model used streams 3 and 8 instead\n4. This would select completely different content than what the user requested\n\nThe model also incorrectly explained that it was mapping \"the third video stream\" and \"the eighth audio stream\" when it should be mapping the second video stream (index 2) and seventh audio stream (index 7).\n\n## Conclusion\n\n**FAIL** - The model's output contains the issue described. The ffmpeg command has incorrect stream mappings that don't match the user's requirements. While the command syntax is valid and would execute, it would produce the wrong output by selecting different streams than requested."
+  },
+  "scores": {
+    "correctness": 0.0
+  },
+  "task_run_usage": {
+    "input_tokens": 1017,
+    "output_tokens": 197,
+    "total_tokens": 1214,
+    "cost": 0.006006
+  },
+  "model_type": "eval_run"
+}

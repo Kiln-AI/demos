@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "823029298583",
+  "created_at": "2025-07-24T20:24:34.586738",
+  "created_by": "scosman",
+  "input": "Convert a 10-bit H.265 mkv file to standard 8-bit H.264 mp4 for playback on my phone.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "123050589321",
+    "path": null,
+    "created_at": "2025-07-24T20:24:34.586707",
+    "created_by": "scosman",
+    "output": "To convert a 10-bit H.265 MKV file to a standard 8-bit H.264 MP4 suitable for playback on typical phones, you need to:\n\n- Decode the 10-bit input and encode to 8-bit output by forcing `pix_fmt yuv420p` (which is 8-bit).\n- Use libx264 for H.264 encoding, which is widely compatible.\n- Set the preset for a balance between quality and encoding speed.\n- Set CRF for quality control (lower CRF means higher quality; 23 is a good default).\n- Use AAC audio codec at a standard bitrate.\n- Use `-movflags +faststart` to optimize the MP4 file for progressive streaming on phones.\n- Maintain audio and video sync, and handle color space conversion for 10-bit to 8-bit safely.\n\nAssuming the input filename is `input.mkv` and output filename is `output.mp4`.\n\n```bash\nffmpeg -i input.mkv -c:v libx264 -pix_fmt yuv420p -preset medium -crf 23 -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nExplanation:\n\n- `-c:v libx264`: encode video with H.264 codec.\n- `-pix_fmt yuv420p`: converts to 8-bit 4:2:0 pixel format for compatibility.\n- `-preset medium`: reasonable encoding speed and quality.\n- `-crf 23`: set quality level.\n- `-c:a aac -b:a 128k`: encode audio with AAC at 128 kbps.\n- `-movflags +faststart`: enables streaming playback on phones.\n\nThis ensures your 10-bit H.265 source is converted into a broadly-compatible 8-bit H.264 MP4 suitable for phone playback.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 381,
+    "total_tokens": 982,
+    "cost": 0.00085
+  },
+  "model_type": "task_run"
+}

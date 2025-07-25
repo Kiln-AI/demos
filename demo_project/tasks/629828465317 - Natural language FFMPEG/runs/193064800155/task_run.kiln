@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "193064800155",
+  "created_at": "2025-07-24T20:26:17.279897",
+  "created_by": "scosman",
+  "input": "Add chapter markers at every subtitle change to input.mp4.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "208357123061",
+    "path": null,
+    "created_at": "2025-07-24T20:26:17.279872",
+    "created_by": "scosman",
+    "output": "Adding chapter markers at every subtitle change involves extracting the subtitle timestamps and using them to create chapter metadata. FFmpeg itself does not automatically create chapters from subtitles, so this typically requires these steps:\n\n1. Extract subtitle timestamps from the subtitle stream or an external subtitle file.\n2. Format these timestamps into a chapter metadata file compatible with FFmpeg.\n3. Remux the input video with the chapter file added.\n\nAssuming `input.mp4` contains embedded subtitles (e.g., in `mov_text` or `srt` format), the best approach is to extract the subtitles as text (SRT) with timestamps, then convert those timestamps into FFmpeg chapter metadata format, and then remux.\n\nHere is a high-level workflow using FFmpeg and a lightweight manual step using ffprobe and scripting (the scripting part you would need to automate externally):\n\n### Step 1: Extract subtitles to SRT  \n```bash\nffmpeg -i input.mp4 -map 0:s:0 subs.srt\n```\n*(Assuming the first subtitle stream is the target, adjust `0:s:0` as necessary.)*\n\n### Step 2: Convert `subs.srt` to FFmpeg chapter metadata file `chapters.txt`\n\nExample FFmpeg chapter metadata format snippet:\n```\n;FFMETADATA1\n[CHAPTER]\nTIMEBASE=1/1000\nSTART=0\nEND=1234\ntitle=Chapter 1\n[CHAPTER]\nTIMEBASE=1/1000\nSTART=1235\nEND=5678\ntitle=Chapter 2\n...\n```\nWhere START and END are in milliseconds.\n\nYou need to parse the subtitle start times and end times, convert to milliseconds, and write this metadata file.\n\n### Step 3: Mux the video with chapters\n\n```bash\nffmpeg -i input.mp4 -i chapters.txt -map 0 -map_metadata 1 -c copy output_with_chapters.mp4\n```\n\n---\n\nIf you want a purely FFmpeg-based guess (limited automation):\n\nFFmpeg's `subtitles` filter can be used to burn subtitles but does not create chapters.\n\n**Assumptions:**\n\n- The subtitles are embedded in `input.mp4` as a subtitle stream.\n- You have an external way (e.g., script) to generate the chapters metadata file from subtitles.\n\n---\n\nHere is a sample command sequence assuming you've prepared `chapters.txt` in FFmpeg metadata format:\n\n```bash\nffmpeg -i input.mp4 -map 0 -map_metadata chapters.txt -c copy output_with_chapters.mp4\n```\n\n---\n\n**Summary**: FFmpeg cannot auto-create chapter markers from subtitle changes on its own; you must extract subtitle timings and create a chapters metadata text file in FFmpeg format, then merge it into the video.\n\nIf you'd like, I can help generate a script to parse SRT into FFmpeg chapter metadata. Let me know!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 585,
+    "output_tokens": 595,
+    "total_tokens": 1180,
+    "cost": 0.001186
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "291797437495",
+  "created_at": "2025-07-24T20:23:58.753185",
+  "created_by": "scosman",
+  "input": "How do I scale my video lesson.mkv to 854x480 without distorting the image?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "203570900880",
+    "path": null,
+    "created_at": "2025-07-24T20:23:58.753161",
+    "created_by": "scosman",
+    "output": "To scale your video lesson.mkv to 854x480 without distorting the image, you should maintain the original aspect ratio and add padding (letterboxing or pillarboxing) to fill the remaining space. This prevents stretching or squashing the image.\n\nUse the `scale` filter with `force_original_aspect_ratio=decrease` to scale the video to fit inside the 854x480 frame while preserving aspect ratio, and then use the `pad` filter to add black bars to reach exactly 854x480 resolution.\n\nHere’s the breakdown:\n- `scale=w=854:h=480:force_original_aspect_ratio=decrease`: scales the video to fit within 854x480, preserving aspect ratio.\n- `pad=854:480:(ow-iw)/2:(oh-ih)/2`: pads the video to 854x480 with the scaled video centered.\n\nAssuming you want to keep the original video and audio codecs, or you can specify codecs as needed.\n\n```bash\nffmpeg -i lesson.mkv -vf \"scale=w=854:h=480:force_original_aspect_ratio=decrease,pad=854:480:(ow-iw)/2:(oh-ih)/2\" -c:a copy -c:v libx264 -crf 23 -preset medium output_854x480.mp4\n```\n\nExplanation:\n- `-c:v libx264 -crf 23 -preset medium`: re-encodes video using H.264 with good quality and balanced speed.\n- `-c:a copy`: copies the original audio without re-encoding.\n- Output container changed to `.mp4` for compatibility, but you can choose another if preferred.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 347,
+    "total_tokens": 941,
+    "cost": 0.0007928
+  },
+  "model_type": "task_run"
+}

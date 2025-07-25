@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "707686065727",
+  "created_at": "2025-07-24T20:39:32.754314",
+  "created_by": "scosman",
+  "input": "My phone recorded a vertical video upside-down. How do I rotate and correct its orientation, assuming the rotation flag wasn't set?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "176382822819",
+    "path": null,
+    "created_at": "2025-07-24T20:39:32.754284",
+    "created_by": "scosman",
+    "output": "To fix an upside-down vertical video when the rotation metadata is missing or incorrect, you can rotate the video frames directly with ffmpeg's `transpose` or `rotate` filters.\n\nSince it's upside-down, a 180-degree rotation is needed. Here are some common ways to do this:\n\n- Using `transpose` twice: `transpose=2,transpose=2` rotates 180 degrees but can be less intuitive for some users.\n- Using the `rotate` filter with `PI` radians: rotates the video 180 degrees.\n- Using the `vflip` and `hflip` filters together: vertical flip + horizontal flip also equals 180 degrees rotation.\n\nAssuming you want to preserve audio and re-encode video using H.264 for compatibility, and assuming the input filename is `input.mp4`, outputting as `output.mp4`:\n\n```bash\nffmpeg -i input.mp4 -vf \"rotate=PI\" -c:v libx264 -preset slow -crf 18 -c:a copy output.mp4\n```\n\nExplanation:\n- `-vf \"rotate=PI\"` rotates the video frames 180° (PI radians).\n- `-c:v libx264` specifies H.264 encoding for compatibility.\n- `-preset slow` and `-crf 18` aim for high-quality output.\n- `-c:a copy` copies audio stream without re-encoding.\n\nIf you prefer using flips:\n\n```bash\nffmpeg -i input.mp4 -vf \"hflip,vflip\" -c:v libx264 -preset slow -crf 18 -c:a copy output.mp4\n```\n\nBoth methods achieve the same result. Choose the one you find clearer.\n\nNote: If the video is vertical and you want to maintain aspect ratio with no scaling besides rotation, this will suffice. Ensure output container supports H.264 (mp4 is recommended).",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 387,
+    "total_tokens": 986,
+    "cost": 0.0008588
+  },
+  "model_type": "task_run"
+}

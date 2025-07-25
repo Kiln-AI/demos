@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "305060044628",
+  "created_at": "2025-07-24T18:12:41.339259",
+  "created_by": "scosman",
+  "input": "I want to compress a video until it's under 10 MB without ruining its quality significantly, but my previous attempts have failed. What's going wrong?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "989401303295",
+    "path": null,
+    "created_at": "2025-07-24T18:12:41.339235",
+    "created_by": "scosman",
+    "output": "Achieving a specific file size (e.g., under 10 MB) while maintaining good quality is challenging with ffmpeg, because quality and file size are influenced by several factors: video duration, resolution, codec efficiency, audio bitrate, and complexity of content.\n\nOften, “failed attempts” happen because:\n\n- **Bitrate/control mismatch**: Using a fixed “-crf” (quality-based) value or default settings gives unpredictable sizes; use average bitrate (“-b:v”) or two-pass encoding for size targeting.\n- **Audio not compressed enough**: Audio can take unnecessary space if left at defaults.\n- **Resolution too high**: High resolutions need more bits to look good.\n- **Too long duration**: No matter the parameters, some videos can’t meet tight size + quality constraints if they’re long or detailed.\n- **Container overhead**: Some output containers are less efficient.\n\n**Best Practice:**  \nUse two-pass encoding with H.264 for efficient compression, target your desired size by calculating total bitrate needed, and consider lowering resolution or audio bitrate as needed.\n\n**How to Calculate Target Bitrate:**  \nSuppose your video is 2 minutes (120 seconds) long:\n- Target size = 10 MB = 80 Megabits (10 × 8)\n- Total bitrate = 80 Megabits / 120 sec ≈ 667 kbps\n- Allocate ≈ 128 kbps to audio, so video bitrate = 667 - 128 = 539 kbps\n\n**Example Command (2-pass, H.264, AAC, assuming input.mp4, for 2-min video):**\n\n```bash\nffmpeg -y -i input.mp4 -c:v libx264 -b:v 539k -pass 1 -an -f mp4 /dev/null \\\n&& ffmpeg -i input.mp4 -c:v libx264 -b:v 539k -pass 2 -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\n**Assumptions:**  \n- Your input is \"input.mp4\".\n- Video is about 2 minutes; adjust bitrates if your video is longer/shorter.\n- Change values if your input video has other specifications.\n\n**Troubleshooting Tips:**\n- Lower resolution (-vf scale=) if quality with low bitrate is poor.\n- Lower audio bitrate if needed.\n- If still too large, reduce bitrate further or trim duration.\n\nLet me know your input file's duration/parameters for precise adjustments!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 519,
+    "total_tokens": 1122,
+    "cost": 0.005358
+  },
+  "model_type": "task_run"
+}

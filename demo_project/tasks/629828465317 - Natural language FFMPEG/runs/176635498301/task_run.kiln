@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "176635498301",
+  "created_at": "2025-07-24T20:36:13.627764",
+  "created_by": "scosman",
+  "input": "I have several video files in different resolutions. How do I script ffmpeg to make them all 720p?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "299564110266",
+    "path": null,
+    "created_at": "2025-07-24T20:36:13.627739",
+    "created_by": "scosman",
+    "output": "To batch convert multiple videos to 720p resolution using ffmpeg, you can write a shell script that processes each file in a folder, scaling the video to 720p height while preserving the aspect ratio.\n\nKey points:\n- Use `-vf scale=-2:720` to resize the height to 720 pixels and automatically adjust width to maintain the original aspect ratio, ensuring width is divisible by 2.\n- Use a commonly supported video codec (libx264) and audio codec (aac).\n- Use `-movflags +faststart` for better streaming compatibility if output is MP4.\n- Adapt the output filename to distinguish converted files.\n\nExample shell script for Unix-like systems (bash):\n\n```bash\n#!/bin/bash\nfor input in *.mp4; do\n  # Derive output filename by appending _720p before the extension\n  output=\"${input%.mp4}_720p.mp4\"\n  ffmpeg -i \"$input\" -vf scale=-2:720 -c:v libx264 -preset slow -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart \"$output\"\ndone\n```\n\nExplanation:\n- This script processes all `.mp4` files in the current directory.\n- You can modify the file extension or use a more advanced file selection if needed.\n- `-preset slow` in libx264 improves compression efficiency for better quality at a given file size.\n- Audio is encoded at 128 kbps AAC.\n- `pix_fmt yuv420p` ensures compatibility with most players.\n- The output files will have `_720p` appended before the extension to avoid overwriting originals.\n\nIf your videos come in multiple formats, replace `*.mp4` with a pattern like `*.*` and add a check for valid video files or use a loop that handles extensions dynamically.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 387,
+    "total_tokens": 984,
+    "cost": 0.000858
+  },
+  "model_type": "task_run"
+}

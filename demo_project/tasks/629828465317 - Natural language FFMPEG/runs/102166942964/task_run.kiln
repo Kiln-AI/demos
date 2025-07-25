@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "102166942964",
+  "created_at": "2025-07-24T20:37:18.166523",
+  "created_by": "scosman",
+  "input": "I want to merge two MP4 files containing different language audio streams into a single MKV with both audios, but no re-encoding.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "159174169296",
+    "path": null,
+    "created_at": "2025-07-24T20:37:18.166484",
+    "created_by": "scosman",
+    "output": "To merge two MP4 files that contain different language audio streams into a single MKV file with both audio streams preserved, without re-encoding, you can use stream copying (`-c copy`). This will just remux the streams, keeping original quality and encoding. The MKV container supports multiple audio tracks and various codecs typically found in MP4s.\n\nAssumptions:\n- The first MP4 file has video + audio in language A.\n- The second MP4 file has audio only in language B (or at least you want that audio).\n- You want to keep the original video from the first file and add the second file's audio track(s).\n- The codecs in both files are compatible with MKV (usually they are).\n\nThe command uses `-map` to specify which streams to include: video and audio from first file, audio only from second file.\n\nYou can also assign language metadata to the audio streams for better player support with `-metadata:s:a:X language=xyz`.\n\nExample command:\n\n```bash\nffmpeg \\\n  -i input1.mp4 \\\n  -i input2.mp4 \\\n  -map 0:v \\\n  -map 0:a:0 \\\n  -map 1:a:0 \\\n  -c copy \\\n  -metadata:s:a:0 language=eng \\\n  -metadata:s:a:1 language=spa \\\n  output.mkv\n```\n\nExplanation:\n- `-map 0:v` takes video from the first file.\n- `-map 0:a:0` takes the first audio stream from first file.\n- `-map 1:a:0` takes the first audio stream from second file.\n- `-c copy` copies all selected streams without re-encoding.\n- `-metadata:s:a:X` sets language code on audio streams (adjust as appropriate).\n- Result is MKV with video + two audio tracks.\n\nIf the second file contains multiple audio streams you want to add, add additional `-map` entries accordingly. If the first file contains subtitles or other streams you want to keep, add mappings similarly.\n\nThis approach efficiently merges without quality loss.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 606,
+    "output_tokens": 433,
+    "total_tokens": 1039,
+    "cost": 0.0009352
+  },
+  "model_type": "task_run"
+}

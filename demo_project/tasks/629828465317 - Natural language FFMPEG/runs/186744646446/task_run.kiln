@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "186744646446",
+  "created_at": "2025-07-24T18:10:18.204404",
+  "created_by": "scosman",
+  "input": "I want a video file that's currently in 16:9 aspect ratio to become 21:9 without cropping any essential parts of the frame.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "115453779715",
+    "path": null,
+    "created_at": "2025-07-24T18:10:18.204376",
+    "created_by": "scosman",
+    "output": "To convert a 16:9 video to 21:9 aspect ratio without losing any essential image content, the best approach is to add black bars (letterboxing) above and below the video to fit the wider frame, rather than cropping the sides. \n\nHere’s the breakdown:\n- We calculate the output dimensions so that the width remains the same, and the height is reduced to produce a 21:9 aspect ratio.\n- Use the pad filter to add black bars to the top and bottom as needed.\n- Assuming your input is 1920x1080 (common 16:9), for 21:9, the closest match for width 1920 is a height of 822 pixels (1920/21*9 ≈ 822).\n- To avoid cropping, scale down the video so it fits within 1920x822, and then pad the rest.\n- For arbitrary input sizes, you can automate adjustment using ffmpeg filter expressions.\n\nHere’s a command which automatically converts any 16:9 input to 21:9 by letterboxing:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=iw:min(iw*9/21\\,ih),pad=iw:iw*9/21:(ow-iw)/2:(oh-ih)/2\" -c:a copy output_21x9.mp4\n```\n\nExplanation:\n- `scale=iw:min(iw*9/21\\,ih)`: scales the video to the original width, but limits the height to 21:9 proportion.\n- `pad=iw:iw*9/21:(ow-iw)/2:(oh-ih)/2`: pads the scaled video to the new 21:9 size, centering it vertically.\n- `-c:a copy` copies the audio stream without re-encoding.\n- This method guarantees the original content is preserved without cropping.\n\nAssumption: The input is a 16:9 video, and you want the result in the same resolution width with necessary padding for 21:9. Adjust input/output filenames as needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 605,
+    "output_tokens": 425,
+    "total_tokens": 1030,
+    "cost": 0.00461
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "152379394030",
+  "created_at": "2025-07-24T19:03:48.685769",
+  "created_by": "scosman",
+  "dataset_id": "197670641177",
+  "task_run_config_id": "311590806518",
+  "eval_config_eval": false,
+  "input": "Please stabilize my shaky video `bumpy_ride.mp4`. Use the `deshake` filter.",
+  "output": "To stabilize shaky video using FFmpeg’s deshake filter, you can apply the deshake filter, which smooths camera motion and reduces visual shake. The default options are usually sufficient for basic video stabilization, but you can further refine the results by tweaking values like the period (how often to re-center motion) or the smoothing radius.\n\nFor best results, you should also run the deshake twice: once to generate the transformations, and a second time to apply them (this process is known as a 2-pass stabilization). However, for quick single-pass processing, you can use the mode=smooth option to smooth the motion. Here is the simplified command:\n\n```bash\nffmpeg -i bumpy_ride.mp4 -vf deshake=shake=1:smoothing=20 output_stable.mp4\n```\n\n- shake=1 increases the amount of allowed error correction each frame (default).\n- smoothing=20 increases the smoothing applied to the camera path (default: 16, higher means smoother motion). You can increase smoothing if your camera motion is still too jerky.\n- -i bumpy_ride.mp4: input file.\n- output_stable.mp4: stabilized output file.\n\nFor the most robust stabilization, consider running a 2-pass workflow following FFmpeg's recommendation, which writes a file with calculated transformations:\n\n```bash\n# First pass: generate transformations\nffmpeg -i bumpy_ride.mp4 -vf deshake=shake=1:smoothing=20:output=transforms.trf -an -f null -\n```\n\n```bash\n# Second pass: apply the transforms for actual stabilization\nffmpeg -i bumpy_ride.mp4 -i transforms.trf -vf \"deshake=shake=1:smoothing=20:input=transforms.trf\" -c:a copy output_stable.mp4\n```\n\nThis ensures more accurate motion correction, particularly for complex or long sequences. Adjust `shake` and `smoothing` as needed for your particular video.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does not contain the issue described. The proposed ffmpeg commands are structured correctly to stabilize the video using the `deshake` filter and take into account the user's request. Additionally, it provides a clear double-pass approach that is suitable for high-quality stabilization.\n\n2) The model's output is not similar to the failing output example. The command generated is valid and utilizes existing options correctly, ensuring that it would run without errors. The command structure aligns with the specified requirements.\n\n3) The command in the model's output adheres to the requirements dictated in the man page. The use of `-vf deshake` is correct, as it is a valid filter in FFmpeg, and the parameters included for stabilization (shake and smoothing) are appropriate based on the filter's documentation.\n\n4) Since the model's output does not contain any issues, it should pass the evaluation. The command generated is correct, fulfills the user's request for stabilization, and follows the syntax and requirements stated in the FFmpeg man page."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 485,
+    "output_tokens": 427,
+    "total_tokens": 912,
+    "cost": null
+  },
+  "model_type": "eval_run"
+}

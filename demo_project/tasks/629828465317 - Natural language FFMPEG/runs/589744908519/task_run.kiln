@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "589744908519",
+  "created_at": "2025-07-24T20:25:19.367908",
+  "created_by": "scosman",
+  "input": "Is it possible to remux a .mkv containing HEVC video into .mp4 and what limitations should I consider?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "823211446427",
+    "path": null,
+    "created_at": "2025-07-24T20:25:19.367888",
+    "created_by": "scosman",
+    "output": "Yes, it is possible to remux an MKV file containing HEVC (H.265) video into an MP4 container using ffmpeg without re-encoding, by stream copying the video and audio streams. However, there are some important considerations and limitations:\n\n1. **MP4 Container Compatibility:**  \n   MP4 supports HEVC video, but not all players support HEVC in MP4 as widely as MKV. Make sure your target playback devices or software support HEVC in MP4.\n\n2. **Audio Compatibility:**  \n   Some audio codecs commonly found in MKV (e.g., DTS, certain versions of TrueHD, or FLAC) may not be supported in MP4 containers. If the audio codec is incompatible, you might need to re-encode or convert the audio or remove it.\n\n3. **Subtitle Streams:**  \n   MKV supports advanced subtitle types (e.g., PGS, VobSub) which MP4 does not. Such subtitles may be lost during remuxing unless converted or extracted separately.\n\n4. **Metadata and Tags:**  \n   Some metadata or chapters might not be fully preserved during remuxing.\n\n5. **Stream Copying:**  \n   Since we are only remuxing (stream copying), the process is fast and lossless but assumes stream compatibility with MP4.\n\n### Command to remux by stream copying:\n\n```bash\nffmpeg -i input.mkv -c copy -map 0 -movflags +faststart output.mp4\n```\n\nExplanation:  \n- `-c copy` stream copies all streams (video, audio, subtitles) without re-encoding.  \n- `-map 0` includes all streams from the input; you may want to exclude incompatible streams manually.  \n- `-movflags +faststart` helps with playback by placing the metadata at the beginning of the file.  \n- If you encounter audio or subtitle compatibility issues, specify streams manually or re-encode those streams selectively.\n\nIf an audio or subtitle stream is incompatible, for example, to exclude subtitles and re-encode audio to AAC:\n\n```bash\nffmpeg -i input.mkv -c:v copy -c:a aac -b:a 128k -sn -movflags +faststart output.mp4\n```\n\n(-sn disables subtitles)\n\nThis approach combines remuxing video and re-encoding audio for compatibility.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 483,
+    "total_tokens": 1085,
+    "cost": 0.0010136
+  },
+  "model_type": "task_run"
+}

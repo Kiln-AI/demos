@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "114334893183",
+  "created_at": "2025-07-24T20:27:12.607059",
+  "created_by": "scosman",
+  "input": "Can you show me a method to create contact sheets (image grids) for every video file in a folder with ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "338284663798",
+    "path": null,
+    "created_at": "2025-07-24T20:27:12.606978",
+    "created_by": "scosman",
+    "output": "Creating contact sheets (image grids) for every video in a folder can be efficiently automated using a batch script (bash for Linux/macOS or PowerShell for Windows) combined with ffmpeg's `select` filter and `tile` filter for generating grids.\n\n### Explanation\n\n- We'll extract a set number of thumbnails evenly spaced throughout each video.\n- ffmpeg can extract multiple frames in one command using `select` or `thumbnail` filters, then arrange them into a grid using the `tile` filter.\n- The number of thumbnails and grid layout (rows x columns) can be customized.\n- We'll write a script to loop over all video files in a directory and output a contact sheet png per file.\n\n### Key ffmpeg parameters for the contact sheet:\n\n- `fps=...` or `select='not(mod(n,interval))'` extracts frames at set intervals.\n- `scale` to resize thumbnails (e.g., 200x?).\n- `tile=colsxrows` arranges all extracted frames in a grid.\n- `-frames:v 1` outputs a single image per input video.\n\n---\n\n### Example bash (Linux/macOS) script for contact sheets\n\nThis script assumes:\n\n- You want 12 thumbnails per video, arranged in a 4x3 grid.\n- Thumbnails scaled to width 200px (height auto).\n- Supports common video extensions: mp4, mkv, avi, mov.\n- Outputs contact sheet as `{inputfilename}_contact_sheet.png`.\n\n```bash\n#!/bin/bash\n\n# Number of thumbnails per video\nthumbs=12\n\n# Grid configuration (cols x rows)\ncols=4\nrows=3\n\n# Thumbnail width\nthumb_width=200\n\nfor video in *.{mp4,mkv,avi,mov}; do\n  # Skip if no files match the pattern\n  [[ -e \"$video\" ]] || continue\n\n  # Remove extension for output naming\n  filename=\"${video%.*}\"\n\n  # Get duration in seconds (float)\n  duration=$(ffprobe -v error -select_streams v:0 -show_entries format=duration \\\n           -of default=noprint_wrappers=1:nokey=1 \"$video\")\n\n  # Calculate interval between thumbnails in seconds\n  interval=$(echo \"$duration / $thumbs\" | bc -l)\n\n  # Build select filter expression to pick frames at approximately equal intervals:\n  # select frames at pts >= i*interval for i=0..thumbs-1\n  # We'll use the select filter with 'gte(t\\, X)' and 'lt(t\\, Y)' for each frame,\n  # using the 'if' function in ffmpeg is complex, so we approximate by fps extraction.\n\n  # Instead, simpler to extract frames at constant interval by fps:\n  fps=$(echo \"1 / $interval\" | bc -l)\n\n  # Run ffmpeg command to generate contact sheet:\n  ffmpeg -y -i \"$video\" \\\n    -vf \"fps=$fps,scale=$thumb_width:-1,tile=${cols}x${rows}\" \\\n    -frames:v 1 \"${filename}_contact_sheet.png\"\ndone\n```\n\n---\n\n### Explanation of the ffmpeg filter chain\n\n- `fps=$fps` extracts frames at regular intervals so total extracted frames ≈ thumbs (may be slightly less or more).\n- `scale=$thumb_width:-1` resizes the width to 200 pixels, height automatically to maintain aspect ratio.\n- `tile=${cols}x${rows}` arranges frames into a grid.\n\n---\n\n### Windows PowerShell equivalent (for all videos in folder)\n\n```powershell\n$thumbs = 12\n$cols = 4\n$rows = 3\n$thumb_width = 200\n\nGet-ChildItem -Include *.mp4,*.mkv,*.avi,*.mov -File | ForEach-Object {\n  $video = $_.FullName\n  $filename = $_.BaseName\n\n  $duration = ffprobe -v error -select_streams v:0 -show_entries format=duration `\n    -of default=noprint_wrappers=1:nokey=1 $video\n\n  $interval = [double]($duration) / $thumbs\n  $fps = 1 / $interval\n\n  ffmpeg -y -i $video `\n    -vf \"fps=$fps,scale=$thumb_width:-1,tile=${cols}x${rows}\" `\n    -frames:v 1 \"${filename}_contact_sheet.png\"\n}\n```\n\n---\n\nThis approach produces one contact sheet PNG per video file in the folder, arranging approx 12 thumbnails evenly spaced through the video.\n\nLet me know if you need help adapting the script with a different number of thumbnails, different resolutions, or other formats!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 978,
+    "total_tokens": 1577,
+    "cost": 0.0018044
+  },
+  "model_type": "task_run"
+}

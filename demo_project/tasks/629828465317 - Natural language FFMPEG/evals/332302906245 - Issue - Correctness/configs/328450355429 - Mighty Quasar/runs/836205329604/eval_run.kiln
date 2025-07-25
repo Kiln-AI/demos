@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "836205329604",
+  "created_at": "2025-07-25T10:10:01.772302",
+  "created_by": "scosman",
+  "dataset_id": "165128780702",
+  "task_run_config_id": "297487652142",
+  "eval_config_eval": false,
+  "input": "Can you create an ffmpeg command to select video stream 12 and audio stream 25 from my multi-stream file recording.mkv?",
+  "output": "<think>\n\n</think>\n\nTo extract specific video and audio streams by their stream index from a multi-stream MKV file, you can use the stream index specification in ffmpeg. The syntax for selecting a specific stream is `-map 0:v:12 -map 0:a:25`, where `0` is the input number (0 for the first and only input in this case), `v:12` is video stream 12, and `a:25` is audio stream 25. To avoid including the all-stream subtitle or other streams, `-map 0` (which selects all streams from input 0) is not used; instead, only selected streams are mapped.\n\nTo re-c mux these streams into an output file (say, output.mkv or another container format like .mp4), you can set output as needed.\n\nHere is an example ffmpeg command to extract only stream 12 (video) and 25 (audio) from `recording.mkv` and output them with minimal changes (passthrough or default codec copy if desired):\n\n```bash\nffmpeg -i recording.mkv -map 0:v:12 -map 0:a:25 -c copy output.mkv\n```\n\n- `-map 0:v:12` selects the 12th video stream from the first input.\n- `-map 0:a:25` selects the 25th audio stream from the first input.\n- `-c copy` is used to copy the streams as is (fast, no re-encoding) if desired. Replace with codec parameters if encoding is needed.\n\nIf you want to encode the video and audio instead of just copying, you’d replace `-c copy` with appropriate encoders like `-c:v libx265 -c:a aac`. But again, the question appears to be about stream selection only.\n\n> Note: Stream indices in ffmpeg start at 0, so a stream numbered 12 in media players (and in mkvinfo etc.) may be index 13 in ffmpeg unless carefully checked. ffmpeg numbering is consistent with input file's stream index as read by ffmpeg. To check stream indices, you can use `ffmpeg -i recording.mkv` and look at the line numbers of the streams listed.\n\nAssuming you have verified that stream 12 is video and 25 is audio in your MKV (i.e., their indices are 0-based, and 12 and 25 are correct in ffmpeg's terms), the above command is valid. Otherwise, you may need to adjust the `-map 0:v:12` and `-map 0:a:25` part to match ffmpeg-detected indexes.\n\nIf instead the MKV application or media player shows the stream as 12, that is probably the index. Sometimes, media players label tracks with 1-based numbers, so this is why it’s important to run `ffmpeg -i recording.mkv` and verify the input stream indices match your intended selection.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does not contain an issue as described in the issue description. The ffmpeg command it generated appears to correctly specify the stream mapping for video stream 12 and audio stream 25 while using proper syntax and parameters. \n\n2) The model’s output is not similar to the failure example provided. The generated command does not contain any incorrect parameters or syntax errors, and it is functionally appropriate for the request.\n\n3) The command produced by the model adheres to the requirements set out in the ffmpeg man page. It accurately uses options to specify the input file, map the desired streams, and options for copying the streams, which is aligned with the documentation.\n\n4) The model's output does not contain the issue described and accurately fulfills the user request. The command can function correctly to extract specified streams from the input file without errors or misalignments in option usage. Thus, it should pass based on the evaluation criteria provided."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 475,
+    "output_tokens": 624,
+    "total_tokens": 1099,
+    "cost": 0.0
+  },
+  "model_type": "eval_run"
+}

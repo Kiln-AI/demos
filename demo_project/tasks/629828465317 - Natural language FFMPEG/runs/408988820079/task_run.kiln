@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "408988820079",
+  "created_at": "2025-07-24T20:24:35.534779",
+  "created_by": "scosman",
+  "input": "Turn a 4k .mov file encoded in ProRes into a 1080p .mp4 using efficient compression for streaming.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "104347562649",
+    "path": null,
+    "created_at": "2025-07-24T20:24:35.534729",
+    "created_by": "scosman",
+    "output": "To convert a 4K ProRes .mov file into a 1080p MP4 optimized for streaming, you want to:\n\n- Downscale the resolution to 1080p (height 1080 while preserving aspect ratio).\n- Use the H.264 codec (libx264) for efficient compression and broad compatibility.\n- Use a good balance between quality and file size with CRF and preset options.\n- Encode audio in AAC format at a reasonable bitrate.\n- Ensure pixel format compatibility (yuv420p).\n- Use the `-movflags +faststart` flag to enable progressive streaming by moving metadata to the start of the file.\n\nAssuming the input file is in ProRes and high bitrate, this command:\n\n- Scales video height to 1080 with `-2` for width to keep aspect ratio and ensure divisibility by 2.\n- Uses `-preset slow` for better compression efficiency, but you can switch to `medium` or `fast` if encoding speed is more important.\n- Sets CRF 23 for a good balance of quality and size.\n- Encodes audio with AAC at 128 kbps.\n\n```bash\nffmpeg -i input.mov -vf scale=-2:1080 -c:v libx264 -preset slow -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 293,
+    "total_tokens": 894,
+    "cost": 0.0007092
+  },
+  "model_type": "task_run"
+}

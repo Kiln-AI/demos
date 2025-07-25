@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "493958245038",
+  "created_at": "2025-07-24T20:36:20.447762",
+  "created_by": "scosman",
+  "input": "How do I convert a 21:9 ultrawide video to 16:9 for easier sharing online?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "172978816028",
+    "path": null,
+    "created_at": "2025-07-24T20:36:20.447737",
+    "created_by": "scosman",
+    "output": "To convert a 21:9 ultrawide video to a standard 16:9 aspect ratio for easier online sharing, you generally need to either crop or pad the video.\n\nTwo main approaches:\n\n1. **Crop the sides** of the ultrawide video to fit 16:9, preserving the height and removing some width. This is a common choice if you want to focus on the central content.\n\n2. **Add black bars (padding)** top and bottom to fit 16:9 without removing content, but this results in letterboxed video.\n\nAssuming you prefer cropping (most common for ultrawide to 16:9), you'll:\n\n- Determine the input video's height and calculate width for 16:9 with the same height.\n- Crop the width to the calculated 16:9 width from the center.\n\nHere's how to do it with ffmpeg's `crop` filter. I'll assume the input video has a 21:9 aspect ratio (e.g. 2520x1080), but the command can adapt dynamically to any resolution. \n\n### Explanation:\n\n- We keep the input height (`in_h`).\n- Calculate the crop width to `in_h * 16/9`.\n- Crop horizontally from the center: x = (in_w - crop_w) / 2.\n\nThis ensures the output has a 16:9 aspect ratio without distorting or padding.\n\n---\n\n```bash\nffmpeg -i input.mp4 -filter:v \"crop=iw*9/16:ih:(iw - iw*9/16)/2:0\" -c:a copy output_16_9.mp4\n```\n\n### Details:\n\n- `iw` = input width\n- `ih` = input height\n- crop width = `iw * 9 / 16` is incorrect here because the goal is to get width = `height * 16/9`.\n  \nCorrection based on the logic explained:\n\nThe crop width should be:\n\n`ih * 16 / 9`\n\nHence the proper crop filter:\n\n```crop=w=ih*16/9:h=ih:x=(iw - ih*16/9)/2:y=0```\n\nSo the full corrected command:\n\n```bash\nffmpeg -i input.mp4 -filter:v \"crop=w=ih*16/9:h=ih:x=(iw - ih*16/9)/2:y=0\" -c:a copy output_16_9.mp4\n```\n\nThis dynamically calculates the 16:9 width based on height, crops equally from left and right, and keeps audio as is.\n\n---\n\nIf you want to **scale** the cropped video to a standard height, say 1080p, you can chain filters:\n\n```bash\n-filter:v \"crop=w=ih*16/9:h=ih:x=(iw - ih*16/9)/2:y=0,scale=1920:1080\"\n```\n\n---\n\n### Summary:\n\n- Crop from ultrawide 21:9 to 16:9 using height-based crop width.\n- Keep the video height same to preserve vertical resolution.\n- Crop equally left and right from center.\n- Copy audio stream without re-encoding for speed.\n\n---\n\n### Final recommended command:\n\n```bash\nffmpeg -i input.mp4 -filter:v \"crop=w=ih*16/9:h=ih:x=(iw - ih*16/9)/2:y=0\" -c:a copy output_16_9.mp4\n```\n\nThis converts any ultrawide video to 16:9 by cropping sides, ideal for standard online sharing.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 736,
+    "total_tokens": 1333,
+    "cost": 0.0014164
+  },
+  "model_type": "task_run"
+}

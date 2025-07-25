@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "134242620510",
+  "created_at": "2025-07-24T20:22:59.290224",
+  "created_by": "scosman",
+  "input": "I need to batch convert all the .wav files in a folder to .flac. What’s the command?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "161530761236",
+    "path": null,
+    "created_at": "2025-07-24T20:22:59.290199",
+    "created_by": "scosman",
+    "output": "To batch convert all `.wav` files in a folder to `.flac` format using `ffmpeg`, you can use a shell loop. This approach processes each `.wav` file individually, preserving the original file name and just changing the extension to `.flac`. \n\n- `for f in *.wav` loops over all `.wav` files in the current directory.\n- `ffmpeg -i \"$f\" -c:a flac \"${f%.wav}.flac\"` converts each `.wav` file to `.flac` using the FLAC audio codec.\n- `${f%.wav}.flac` changes the file extension from `.wav` to `.flac`.\n\nHere’s a safe, widely compatible command for a bash shell on Linux or macOS:\n\n```bash\nfor f in *.wav; do\n    ffmpeg -i \"$f\" -c:a flac \"${f%.wav}.flac\"\ndone\n```\n\nIf you are on Windows and using PowerShell, the equivalent would be:\n\n```powershell\nGet-ChildItem *.wav | ForEach-Object {\n    $out = $_.BaseName + '.flac'\n    ffmpeg -i $_.FullName -c:a flac $out\n}\n``` \n\nThis converts all `.wav` files in the current directory without changing their filenames aside from the extension.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 275,
+    "total_tokens": 871,
+    "cost": 0.0006784
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "166771265990",
+  "created_at": "2025-07-24T20:27:57.971339",
+  "created_by": "scosman",
+  "input": "Can I convert a slomo (high FPS) video to normal speed at 30fps, dropping duplicate frames?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "112440864200",
+    "path": null,
+    "created_at": "2025-07-24T20:27:57.971313",
+    "created_by": "scosman",
+    "output": "To convert a high FPS slow-motion video to normal speed at 30 fps and drop duplicate frames, you need to adjust the playback speed and resample frames accordingly.\n\nKey points:\n- Use the `setpts` filter to change the presentation timestamp, effectively speeding up the video.\n- To drop duplicate frames and set a fixed output frame rate, use the `fps` filter after adjusting PTS.\n- Assume the slow-motion video is shot at a known high frame rate (e.g., 120fps). We will speed it up by a factor of (input_fps / 30) to achieve normal speed.\n- If the exact input frame rate is unknown or variable, you can extract metadata first or specify accordingly.\n- Audio can be sped up at the same factor using `atempo` filter (up to 2.0 per filter, so for larger factors chain them).\n\nExample assumes input video at 120 fps slowed down 4x, so speeding it up by 4x:\n\n```bash\nffmpeg -i input.mp4 -filter_complex \"[0:v]setpts=PTS/4,fps=30[v];[0:a]atempo=2,atempo=2[a]\" -map \"[v]\" -map \"[a]\" output_30fps_normal_speed.mp4\n```\n\nExplanation:\n\n- `setpts=PTS/4`: speeds video playback 4 times faster (normal speed).\n- `fps=30`: output video at 30 fps, dropping duplicate frames intelligently.\n- `atempo=2,atempo=2`: speeds audio by 4x (2x * 2x), since atempo only supports up to 2x per instance.\n- `-filter_complex` groups video and audio filters.\n- `-map` ensures filtered streams are used in output.\n\nAdjust the `setpts` divisor and audio `atempo` chaining to match your input FPS and desired speed-up ratio.\n\nIf your input frame rate is unknown, run `ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of default=nw=1:nk=1 input.mp4` to get it and calculate speed factor = (input_fps / 30). Then update `setpts=PTS/factor` and audio `atempo` accordingly. For fractional atempo values greater than 2, chain accordingly (e.g., atempo=1.5,atempo=1.33 for 2x speed).\n\nThis method produces smooth normal-speed video at 30 fps dropping duplicate frames.\n\n```bash\nffmpeg -i input.mp4 -filter_complex \"[0:v]setpts=PTS/4,fps=30[v];[0:a]atempo=2,atempo=2[a]\" -map \"[v]\" -map \"[a]\" output_30fps_normal_speed.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 588,
+    "total_tokens": 1185,
+    "cost": 0.0011796
+  },
+  "model_type": "task_run"
+}

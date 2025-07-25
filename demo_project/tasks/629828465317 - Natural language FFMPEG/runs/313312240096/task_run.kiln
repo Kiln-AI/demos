@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "313312240096",
+  "created_at": "2025-07-24T20:27:43.836270",
+  "created_by": "scosman",
+  "input": "My input video has interlaced lines. Can you deinterlace it?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "214625816692",
+    "path": null,
+    "created_at": "2025-07-24T20:27:43.836247",
+    "created_by": "scosman",
+    "output": "To deinterlace a video with interlaced lines, you can use the yadif filter in ffmpeg, which is a popular and efficient deinterlacing filter. It analyzes the fields and generates a progressive frame, removing the combing effect of interlaced video.\n\nKey points:\n- `-vf yadif` applies the yadif deinterlacing filter.\n- By default, yadif outputs at the same frame rate as the input but with progressive frames.\n- It's important to keep the pixel format compatible (usually yuv420p).\n- You can add other encoding parameters depending on your output requirements.\n\nHere's a basic example that takes `input.mp4` with interlaced lines and outputs a deinterlaced progressive `output.mp4` using common settings for H.264 video and AAC audio:\n\n```bash\nffmpeg -i input.mp4 -vf yadif -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p output.mp4\n```\n\nThis command:\n- Applies deinterlacing,\n- Encodes video with libx264 at a quality level of CRF 23,\n- Encodes audio in AAC at 128 kbps,\n- Ensures pixel format compatibility for most players.\n\nIf your input has specific frame rate or pixel format needs, or you'd like streaming-optimized MP4, that can be added as well.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 296,
+    "total_tokens": 886,
+    "cost": 0.0007096
+  },
+  "model_type": "task_run"
+}

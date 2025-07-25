@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "108592487597",
+  "created_at": "2025-07-24T20:23:46.366875",
+  "created_by": "scosman",
+  "input": "Time-stretch input.wav audio to exactly 1 minute, regardless of original length.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "164754802245",
+    "path": null,
+    "created_at": "2025-07-24T20:23:46.366809",
+    "created_by": "scosman",
+    "output": "To time-stretch an audio file to an exact duration (1 minute in this case), you can use the `atempo` filter in a smart way. However, the `atempo` filter accepts tempo values only between 0.5 and 2.0, so if the required stretch factor is outside this range, you must chain multiple `atempo` filters.\n\nThe approach:\n\n1. First, get the input audio duration using ffprobe or assume the duration is known.\n2. Calculate the tempo factor = input_duration / target_duration.\n3. To handle `atempo` limits, decompose the tempo factor into a product of numbers each between 0.5 and 2.0, chaining `atempo` filters accordingly.\n\nSince the user wants a generic command, and we can't get the duration dynamically in a single ffmpeg command, the best practice is:\n\n- Use ffprobe to get the duration.\n- Calculate tempo factor (tempo = original_duration / 60).\n- Then run ffmpeg with chained `atempo` filters.\n\nExample assuming input.wav has duration D seconds:\n\n```\ntempo = D / 60\n```\n\nIf input length = 120 seconds, tempo = 2.0 (speed up 2x).\n\nIf input length = 30 seconds, tempo = 0.5 (slow down 2x).\n\nExample command for tempo=1.5 (chain one atempo=1.5):\n\n```\nffmpeg -i input.wav -filter:a \"atempo=1.5\" output.wav\n```\n\nFor tempo = 4.0 (too high), decompose: 2.0 * 2.0, so `atempo=2.0,atempo=2.0`.\n\n---\n\nAssuming the user can provide the original duration, or we provide a bash snippet for automating this:\n\n```bash\nDURATION=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 input.wav)\n\nTEMPO=$(echo \"$DURATION / 60\" | bc -l)\n\n# To chain atempo filters:\n# We create a function to break TEMPO into factors between 0.5-2.0.\n\n# Here's a bash snippet that outputs the filter:\n\nfunction atempo_filter() {\n  local tempo=$1\n  local filters=\"\"\n  while (( $(echo \"$tempo > 2.0\" | bc -l) )); do\n    filters+=\"atempo=2.0,\"\n    tempo=$(echo \"$tempo / 2.0\" | bc -l)\n  done\n  while (( $(echo \"$tempo < 0.5\" | bc -l) )); do\n    filters+=\"atempo=0.5,\"\n    tempo=$(echo \"$tempo / 0.5\" | bc -l)\n  done\n  filters+=\"atempo=$tempo\"\n  echo $filters\n}\n\nFILTER=$(atempo_filter $TEMPO)\n\nffmpeg -i input.wav -filter:a \"$FILTER\" output.wav\n```\n\nBecause the user wants a one-line command, the best we can do is show the method and a generic example assuming the tempo is in the acceptable range.\n\n---\n\nHere is a high quality example for an assumed tempo value:\n\nIf the audio is originally 90 seconds long and you want to stretch it to 60 seconds, tempo = 90/60 = 1.5:\n\n```bash\nffmpeg -i input.wav -filter:a \"atempo=1.5\" output.wav\n```\n\nIf tempo > 2.0 or < 0.5, chain filters accordingly, e.g., tempo=4.0:\n\n```bash\nffmpeg -i input.wav -filter:a \"atempo=2.0,atempo=2.0\" output.wav\n```\n\n---\n\n**Summary:** Time-stretch audio with the `atempo` filter (tempo = original_duration / 60), chaining multiple filters if needed to stay within the 0.5-2.0 range.\n\n---\n\n```bash\n# Example command for stretching to 1 minute, assuming tempo factor is 1.5\nffmpeg -i input.wav -filter:a \"atempo=1.5\" output.wav\n```\n\nIf you want to automate the duration detection and tempo calculation, use the following bash script snippet:\n\n```bash\n# Get duration in seconds (float)\nduration=$(ffprobe -v error -show_entries format=duration \\\n -of default=noprint_wrappers=1:nokey=1 input.wav)\n\n# Calculate tempo factor\ntempo=$(echo \"$duration / 60\" | bc -l)\n\n# Function to generate atempo filters chain in bash\ngenerate_atempo_chain() {\n  local t=$1\n  local filters=\"\"\n  while (( $(echo \"$t > 2.0\" | bc -l) )); do\n    filters+=\"atempo=2.0,\"\n    t=$(echo \"$t / 2.0\" | bc -l)\n  done\n  while (( $(echo \"$t < 0.5\" | bc -l) )); do\n    filters+=\"atempo=0.5,\"\n    t=$(echo \"$t / 0.5\" | bc -l)\n  done\n  filters+=\"atempo=$t\"\n  echo $filters\n}\n\nfilter_chain=$(generate_atempo_chain $tempo)\n\nffmpeg -i input.wav -filter:a \"$filter_chain\" output.wav\n```\n\nThis will reliably stretch or compress the audio to 1 minute duration, preserving pitch without complex resampling artifacts.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 1152,
+    "total_tokens": 1744,
+    "cost": 0.00208
+  },
+  "model_type": "task_run"
+}

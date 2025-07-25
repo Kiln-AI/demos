@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "310716905598",
+  "created_at": "2025-07-24T18:09:58.404443",
+  "created_by": "scosman",
+  "input": "I'd like to produce a 2k video from 'documentary.flv', keeping the original frame rate of 24fps.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "101396242550",
+    "path": null,
+    "created_at": "2025-07-24T18:09:58.404416",
+    "created_by": "scosman",
+    "output": "To upscale 'documentary.flv' to 2K resolution while preserving the original frame rate of 24 fps, you should:\n\n- Use the scale filter to set the vertical resolution to 1440 pixels (standard 2K is 2560x1440). Setting width to -2 ensures the aspect ratio is preserved and the width is a multiple of 2, which is required by most codecs.\n- The fps filter is not necessary since your source is already 24fps, but using -r 24 ensures the output maintains this frame rate regardless of input metadata.\n- Choose a modern codec such as H.264 for broad compatibility.\n- Use yuv420p pixel format for playback compatibility.\n\nExample command:\n\n```bash\nffmpeg -i documentary.flv -vf \"scale=-2:1440\" -r 24 -c:v libx264 -crf 18 -preset slow -pix_fmt yuv420p -c:a aac -b:a 256k -movflags +faststart documentary_2k.mp4\n```\n\n- -crf 18 gives visually lossless quality; adjust to a higher value (e.g., 20–23) for smaller files.\n- -preset slow emphasizes quality and compression efficiency.\n- -c:a aac -b:a 256k encodes audio at high quality.\n- -movflags +faststart allows for smooth streaming.\n\nAssumption: Your original video is 24fps and you want to keep the same. Output is .mp4 for compatibility.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 314,
+    "total_tokens": 916,
+    "cost": 0.003716
+  },
+  "model_type": "task_run"
+}

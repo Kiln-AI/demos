@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "241611074904",
+  "created_at": "2025-07-24T18:07:31.767463",
+  "created_by": "scosman",
+  "input": "What if I want to concatenate multiple video files into one single file using ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Video Conversion Techniques"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "290656305926",
+    "path": null,
+    "created_at": "2025-07-24T18:07:31.767440",
+    "created_by": "scosman",
+    "output": "To concatenate multiple video files efficiently, all source files should have the same codec, resolution, and framerate. The safest and most reliable way is to use FFmpeg’s concat demuxer, which involves creating a text file listing each video in the desired order.\n\nAssuming your files are all in MP4 format and have matching parameters, create a file named filelist.txt with the following contents:\n\n```\nfile 'file1.mp4'\nfile 'file2.mp4'\nfile 'file3.mp4'\n```\n\nThen, run FFmpeg with the concat demuxer:\n\n- -f concat tells FFmpeg to use the special concat input format.\n- -safe 0 disables certain path restrictions (useful if you have absolute paths or nonstandard characters).\n- -c copy copies audio and video streams directly, avoiding re-encoding for speed and quality.\n\n```bash\nffmpeg -f concat -safe 0 -i filelist.txt -c copy output.mp4\n```\n\nIf your videos have differing codecs or parameters, you’ll need to re-encode; in that case, first convert them all to matching codecs/resolution/framerate, then use this method. This basic technique covers most concat use cases in video processing.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 250,
+    "total_tokens": 841,
+    "cost": 0.003182
+  },
+  "model_type": "task_run"
+}

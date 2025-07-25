@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "968438978741",
+  "created_at": "2025-07-24T20:35:58.226771",
+  "created_by": "scosman",
+  "input": "Can you help me scale a video to 512x512 for input to a neural network, stretching if needed?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "299425149468",
+    "path": null,
+    "created_at": "2025-07-24T20:35:58.226748",
+    "created_by": "scosman",
+    "output": "Certainly! To scale a video to exactly 512x512 pixels, stretching the video if necessary (i.e., ignoring the original aspect ratio), you should use the `scale` filter in FFmpeg with fixed width and height values. Setting the scale filter to `512:512` forces the output size directly without preserving aspect ratio, which can distort the video but suits your use case for neural network input.\n\nHere's what the command does:\n- `-vf scale=512:512` sets the video size to 512x512 pixels.\n- We will keep the original codecs unless you specify a target codec.\n- You can specify an output filename with an appropriate extension, e.g., `.mp4` or `.avi`.\n\nIf you want to ensure maximum compatibility and a commonly used codec for neural network input, consider encoding to rawvideo or a lossless codec, but the below example keeps output simple.\n\n```bash\nffmpeg -i input.mp4 -vf scale=512:512 -c:a copy output_512x512.mp4\n```\n\nThis command takes `input.mp4`, scales the video to 512 by 512 pixels stretching if needed, and copies the original audio stream without re-encoding. Replace `input.mp4` and `output_512x512.mp4` with your actual filenames.\n\nIf your neural network does not require audio, you can drop audio completely with `-an`:\n\n```bash\nffmpeg -i input.mp4 -vf scale=512:512 -an output_512x512.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 315,
+    "total_tokens": 912,
+    "cost": 0.0007428
+  },
+  "model_type": "task_run"
+}

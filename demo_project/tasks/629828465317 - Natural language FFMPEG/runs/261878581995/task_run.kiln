@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "261878581995",
+  "created_at": "2025-07-24T20:38:46.750111",
+  "created_by": "scosman",
+  "input": "What’s the ffmpeg command for extracting a thumbnail at 00:00:05 from every video in a directory?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "399946388109",
+    "path": null,
+    "created_at": "2025-07-24T20:38:46.750088",
+    "created_by": "scosman",
+    "output": "To extract a thumbnail at exactly 5 seconds (00:00:05) from every video file in a directory, you can use a shell loop with ffmpeg. The key options in the ffmpeg command are:\n\n- `-ss 00:00:05` seeks to 5 seconds to pick the thumbnail time.\n- `-vframes 1` grabs just one frame (the thumbnail).\n- Output image format (e.g., JPEG) and naming it appropriately per input file.\n\nAssuming you want to process common video files (like .mp4, .mkv, .avi) and save thumbnails as `.jpg` with the same base name appended with `_thumb.jpg`, you can use this bash script snippet:\n\n```bash\nfor f in *.mp4 *.mkv *.avi; do\n  [ -e \"$f\" ] || continue  # skip if no files found for pattern\n  ffmpeg -ss 00:00:05 -i \"$f\" -vframes 1 -q:v 2 \"${f%.*}_thumb.jpg\"\ndone\n```\n\nExplanation:\n\n- The loop iterates over the video files in your directory.\n- `-ss 00:00:05` before `-i` is a fast seek, efficient for thumbnails.\n- `-vframes 1` outputs exactly one frame.\n- `-q:v 2` controls JPEG quality (scale 2 is high quality).\n- `${f%.*}_thumb.jpg` creates output filenames like `video_thumb.jpg`.\n\nThis approach automates batch thumbnail extraction cleanly and efficiently. Make sure you run this in a shell (bash) environment in the directory with videos.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 343,
+    "total_tokens": 941,
+    "cost": 0.000788
+  },
+  "model_type": "task_run"
+}

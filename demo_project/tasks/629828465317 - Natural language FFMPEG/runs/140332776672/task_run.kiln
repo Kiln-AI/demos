@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "140332776672",
+  "created_at": "2025-07-24T18:08:29.599786",
+  "created_by": "scosman",
+  "input": "I would like to convert a video with DTS audio to one with AC3 audio while keeping the same video track intact.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Common Video Codecs and Their Uses"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "251197758904",
+    "path": null,
+    "created_at": "2025-07-24T18:08:29.599761",
+    "created_by": "scosman",
+    "output": "To convert a video with DTS audio to AC3 audio while preserving the original video stream, you should:\n\n- Use -c:v copy to copy the video stream without re-encoding.\n- Use -c:a ac3 to re-encode the audio track to AC3 format (Dolby Digital).\n- Set the audio bitrate with -b:a (e.g., 384k or 448k—both are common for AC3).\n- If your video has multiple audio tracks and you only want to convert a specific one, use -map or -disposition, but here I assume a single DTS audio track.\n\nHere’s the command:\n\n```bash\nffmpeg -i input.mkv -c:v copy -c:a ac3 -b:a 448k output.mkv\n```\n\nThis command:\n- Takes input.mkv (assuming your container, adjust for .mp4, .ts, etc.).\n- Copies the video stream as-is.\n- Encodes the audio to AC3 at 448 kbps, a widely supported and commonly used bitrate for AC3.\n- Outputs to output.mkv (you can use .mp4 as well, though AC3 is more universally compatible in MKV).\n\nIf you want to ensure you are only converting DTS tracks and not other possible audio tracks, you may need to identify the index of the DTS stream (use ffprobe or ffmpeg -i input.mkv to check), and explicitly convert/map it. Let me know if you need a command for multiple or specific audio streams.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 309,
+    "total_tokens": 910,
+    "cost": 0.003674
+  },
+  "model_type": "task_run"
+}

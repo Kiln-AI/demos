@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "180135024132",
+  "created_at": "2025-07-24T18:09:53.174790",
+  "created_by": "scosman",
+  "input": "I'd like to change my video file 'sample.mov' to 4K resolution but keep the frame rate the same. Help with a command, please.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "288704910415",
+    "path": null,
+    "created_at": "2025-07-24T18:09:53.174766",
+    "created_by": "scosman",
+    "output": "To upscale your video sample.mov to 4K resolution (3840x2160), you’ll use the scale filter to set the width and height. To keep the original frame rate, simply omit any fps-related options—FFmpeg preserves the input’s frame rate by default. Here, we use H.264 encoding for compatibility and yuv420p for broad device support.\n\n- `-vf scale=3840:2160` resizes the video to 4K.\n- `-c:v libx264` chooses H.264 for wide compatibility.\n- `-crf 18` ensures high-quality output (lower values = higher quality; adjust as needed).\n- `-preset slow` gives a good balance between file size and encode time.\n- `-c:a copy` copies the original audio without re-encoding.\n- `-pix_fmt yuv420p` ensures compatibility with most players.\n- No fps flag is specified, so the frame rate stays unchanged.\n\n```bash\nffmpeg -i sample.mov -vf scale=3840:2160 -c:v libx264 -preset slow -crf 18 -c:a copy -pix_fmt yuv420p output_4k.mp4\n```\n\nAssumption: The input isn’t interlaced and has standard color depth. If your video needs a different pixel format or codec, adjust accordingly. This command produces a high-quality, widely compatible 4K output while keeping the original frame rate.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 607,
+    "output_tokens": 302,
+    "total_tokens": 909,
+    "cost": 0.00363
+  },
+  "model_type": "task_run"
+}

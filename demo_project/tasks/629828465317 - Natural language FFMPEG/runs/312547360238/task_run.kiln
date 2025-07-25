@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "312547360238",
+  "created_at": "2025-07-24T18:12:45.901460",
+  "created_by": "scosman",
+  "input": "Attempting to remove a video's audio track has resulted in a corrupt file. What's the safest method to achieve a streamlined video-only file?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "288171023408",
+    "path": null,
+    "created_at": "2025-07-24T18:12:45.901416",
+    "created_by": "scosman",
+    "output": "To safely remove all audio tracks from a video without corrupting the output, use the `-an` flag, which explicitly disables audio recording in the output. Additionally, copy the video stream as-is to prevent unnecessary re-encoding and possible quality loss or errors. Using `-c:v copy` (copy the video codec) and writing directly to a compatible container format (such as .mp4 or .mkv, depending on your source codecs) ensures stream integrity and fast processing.\n\nIf the input contains video codecs that are fully supported by your chosen output container, this method is safe and efficient. If re-encoding is unavoidable due to container/codec incompatibility, omit `-c:v copy` and use appropriate encoding instead.\n\n**Example:** Remove all audio streams and create a streamlined, video-only MP4 file:\n\n```bash\nffmpeg -i input.mp4 -c:v copy -an output.mp4\n```\n\n- `-i input.mp4` specifies your input video.\n- `-c:v copy` copies the video stream without re-encoding (fast, lossless).\n- `-an` disables all audio in the output.\n- `output.mp4` is your new, audio-free video file.\n\n**Assumptions:**  \n- Input uses a video codec supported by the MP4 container (such as H.264 with .mp4).  \n- If you use a different container or codec, adjust the output extension and check codec compatibility.  \n- If you suspect the input had corruption, try re-muxing first (copy streams without changing content), as above.\n\nThis command is the safest and most reliable for removing audio from a video using ffmpeg.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 342,
+    "total_tokens": 943,
+    "cost": 0.003938
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "868473820463",
+  "created_at": "2025-07-23T13:32:38.829222",
+  "created_by": "scosman",
+  "dataset_id": "687706851240",
+  "task_run_config_id": null,
+  "eval_config_eval": true,
+  "input": "I have a file with 4 video streams and 8 audio streams. I want to use video stream 0:2 and audio stream 0:7 to create output.mp4 from input.mkv",
+  "output": "To map specific streams from a multi-stream file, you'll use the `-map` parameter to select exactly which video and audio streams you want in the output. This allows you to choose specific streams by their indices.\n\nThe `-map` parameter uses the format `-map input_file_index:stream_index` where the input file index is typically 0 for the first (and often only) input file, followed by the stream index within that file.\n\n```bash\nffmpeg -i input.mkv -map 0:3 -map 0:8 -c copy output.mp4\n```\n\nI'm using `-c copy` to avoid re-encoding the streams, which will be faster and maintain original quality. The command maps video stream index 3 (the third video stream) and audio stream index 8 (the eighth audio stream) from the input file to create the output MP4.",
+  "intermediate_outputs": {
+    "chain_of_thought": "Upon reviewing the provided information, let's go through the evaluation step by step:\n\n1) **Command Issues:**\n   - The user specified the intention to use \"video stream 0:2 and audio stream 0:7\" from the input file `input.mkv`. However, the generated command uses `-map 0:3 -map 0:8`, which is incorrect. The command maps `video stream 0:3` and `audio stream 0:8`, neither of which matches the user's request.\n   - According to FFmpeg's stream indexing, streams start at index 0. So, the user's request for video stream `0:2` and audio stream `0:7` means that the video stream and the audio stream in use should be those respective indices not the ones used in the command.\n\n2) **Criteria Evaluation:**\n   - **Valid Command:** The given command uses valid flags and parameters (`-map` and `-c copy`), and it seems to be syntactically correct and runnable as per FFmpeg syntax.\n   - **Correctness to User Request:** The command fails to follow the user's request by selecting the wrong stream indices. Therefore, it does not adhere to the user directive of using video stream `0:2` and audio stream `0:7`.\n\nIn conclusion, the produced command does not adhere to the user's request due to incorrect stream mapping. Thus, while the command is syntactically valid, it does not fulfill the user’s specified requirement, and the evaluation should fail based on the given criteria."
+  },
+  "scores": {
+    "correctness": 0.0
+  },
+  "task_run_usage": {
+    "input_tokens": 1017,
+    "output_tokens": 197,
+    "total_tokens": 1214,
+    "cost": 0.006006
+  },
+  "model_type": "eval_run"
+}

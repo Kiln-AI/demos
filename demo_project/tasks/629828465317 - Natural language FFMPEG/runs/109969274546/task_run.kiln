@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "109969274546",
+  "created_at": "2025-07-24T20:24:51.976760",
+  "created_by": "scosman",
+  "input": "Change a .wav to 24-bit FLAC for lossless archiving.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "275560746278",
+    "path": null,
+    "created_at": "2025-07-24T20:24:51.976735",
+    "created_by": "scosman",
+    "output": "To convert a .wav file to 24-bit FLAC for lossless archiving, you should specify the FLAC codec with a bit depth of 24 bits per sample. FLAC inherently supports lossless compression and preserving the 24-bit depth ensures higher audio fidelity compared to common 16-bit FLAC files.\n\nKey points:\n- Use `-c:a flac` to specify FLAC encoding.\n- Use `-sample_fmt s32` or `-sample_fmt s24` to set the sample format; `s24` is the proper 24-bit PCM format (note: 24-bit is packed in 32 bits, so `s32` can sometimes be used, but `s24` is preferred when supported).\n- Use `-compression_level` (0–12) to trade off encoding speed vs compression efficiency; 5 is a good default.\n- Preserve all audio channels and metadata by default.\n- Confirm original audio is 24-bit or higher; converting 16-bit source to 24-bit increases file size without quality gain, but it does no harm.\n\nExample command assumes input.wav is at least 24-bit:\n\n```bash\nffmpeg -i input.wav -c:a flac -compression_level 5 -sample_fmt s24 output.flac\n```\n\nThis command converts the WAV to FLAC while preserving 24-bit audio depth and applying moderate compression for archival quality.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 286,
+    "total_tokens": 876,
+    "cost": 0.0006936
+  },
+  "model_type": "task_run"
+}

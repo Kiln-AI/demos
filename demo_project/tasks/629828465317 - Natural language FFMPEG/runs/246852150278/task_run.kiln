@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "246852150278",
+  "created_at": "2025-07-24T18:11:36.856599",
+  "created_by": "scosman",
+  "input": "Make `input.mkv` accessible for web streaming. Convert it to `output.mp4` with a focus on compatibility with Edge and ensuring a height of 480 pixels.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Optimizing Encoding for Browser Compatibility"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "808022889197",
+    "path": null,
+    "created_at": "2025-07-24T18:11:36.856572",
+    "created_by": "scosman",
+    "output": "To optimize input.mkv for web streaming with high compatibility (including with Microsoft Edge), convert it to MP4 using H.264 video and AAC audio codecs. The video will be resized to a height of 480 pixels (keeping aspect ratio). The -movflags +faststart option places metadata at the start, enabling instant playback while downloading (“fast start”).\n\n- -vf scale=-2:480 rescales the video to 480 pixels in height, keeping the width proportional (and divisible by 2 for codec compatibility).\n- -c:v libx264 uses the H.264 codec, supported by all modern browsers including Edge.\n- -crf 23 gives a good quality-to-size tradeoff; adjust lower for higher quality.\n- -preset medium is balanced for encoding speed and compression.\n- -pix_fmt yuv420p ensures maximum compatibility.\n- -c:a aac -b:a 128k ensures standard browser audio support.\n- -movflags +faststart places MP4 headers at the start for web streaming.\n\n```bash\nffmpeg -i input.mkv -vf scale=-2:480 -c:v libx264 -preset medium -crf 23 -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nAssumptions:\n- Stereo audio assumed; if multichannel audio is present, standard browsers will downmix.\n- Default frame rate and other stream parameters retained. Adjust as necessary for advanced needs.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 611,
+    "output_tokens": 308,
+    "total_tokens": 919,
+    "cost": 0.003686
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "212383676405",
+  "created_at": "2025-07-24T18:11:07.668333",
+  "created_by": "scosman",
+  "input": "How to blur the background of a video while keeping the subject in focus?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Advanced FFmpeg Video Filters"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "233390217153",
+    "path": null,
+    "created_at": "2025-07-24T18:11:07.668301",
+    "created_by": "scosman",
+    "output": "To blur the background while keeping the subject in focus, you’ll need to create a mask that distinguishes the subject from the background. If you don’t already have a subject mask (e.g., from semantic segmentation), you can use ffmpeg’s background removal filter (using AI-based segmentation, available in more recent ffmpeg builds with libavfilter compiled with \"removelogo\" or \"background keying\"), but generally you’ll need either a static mask image, a green screen, or can rely on chroma-key for simple backgrounds.\n\nHere’s a high-level ffmpeg command using the background keying filter for a green screen, which keeps a person in focus and blurs whatever is keyed out (the background):\n\n- The first chain separates the subject using chroma keying (assuming green screen).\n- The background is blurred with `boxblur`.\n- Both streams are combined using the mask from chroma keying.\n\nIf you already have a binary mask video or image (white = subject, black = background), adapt the code to use `-i mask.mp4` and blend using `alphamerge` or `overlay`.\n\nExample (with green screen):\n\n```bash\nffmpeg -i input.mp4 -filter_complex \"\n[0:v]chromakey=0x00FF00:0.1:0.0[fg]; \\\n [0:v]boxblur=10:1[bg]; \\\n [fg][bg]overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2:format=auto,format=yuv420p\n\" output_blur.mp4\n```\n\nExplanation:\n- `chromakey=0x00FF00:0.1:0.0` removes green (`0x00FF00`), creating transparent areas where the background was.\n- `[0:v]boxblur=10:1` creates a blurred version of the entire video.\n- The `overlay` merges the sharp subject (`fg`) over the blurred background (`bg`).\n\n**Assumptions:**\n- The subject is shot against a green screen.\n- If there’s no green screen, you’ll need a pre-computed mask or an external segmentation tool to create one before using ffmpeg.\n\nFor more advanced AI segmentation (without green screen), you’d preprocess in external tools (like `rembg`, `mediapipe`, etc.), and then blend subject and blurred background as above.\n\nLet me know if you have a subject mask instead of a green screen!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 505,
+    "total_tokens": 1095,
+    "cost": 0.00522
+  },
+  "model_type": "task_run"
+}

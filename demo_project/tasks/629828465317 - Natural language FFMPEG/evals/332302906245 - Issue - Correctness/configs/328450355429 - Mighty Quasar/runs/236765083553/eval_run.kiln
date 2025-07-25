@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "236765083553",
+  "created_at": "2025-07-24T22:10:31.282245",
+  "created_by": "scosman",
+  "dataset_id": "197670641177",
+  "task_run_config_id": "293392130654",
+  "eval_config_eval": false,
+  "input": "Please stabilize my shaky video `bumpy_ride.mp4`. Use the `deshake` filter.",
+  "output": "To stabilize your shaky video with the `deshake` filter in ffmpeg, you'll apply `vfnodrop=all` and `minjudder=6` settings. The `deshake` filter corrects jittery and shaky footage by detecting and smoothing out unwanted camera motion (judder and shake). \n\n- `vfnodrop=all` prevents dropping frames when stabilizing.\n- `minjudder=6` reduces the frequency of stabilization, so only large and impactful camera movements are corrected. Adjust this value for your content.\n- If significant lens distortion is present, consider adding the `unsharp=15:15:0.8` filter for visual sharpening (can be skipped or adjusted as needed).\n\nThe following command demonstrates basic deshake stabilization:\n\n```bash\nffmpeg -i bumpy_ride.mp4 -vf \"deshake=vfnodrop=all:minjudder=6\" -c:a copy output_stabilized.mp4\n```\n\nExplanation:\n- If you want to remove motion blur (common after stabilization), you can apply the `zscale=gammaステンシル`:gamma=2.2,zscale=inv_srgb` filter in combination.\n- `-c:a copy` copies the audio stream without re-encoding to preserve quality; you can re-encode audio by specifying `-c:a aac -b:a 128k` if necessary.\n- Ensure the output container uses MP4 or MOV, which support visual metadata.\n\nIf your shaky movements are subtle, you might need to adjust `minjudder` accordingly. Often `3`–`8` works well for small jitters. If stabilization is extreme, consider video editing software first. \n\n**Assumptions:**\n- Source video is `bumpy_ride.mp4`.\n- You’re ok with re-encoding video (`libx264`) and copying audio.\n- Basic lens sharpness is acceptable.\n\n```bash\nffmpeg -i bumpy_ride.mp4 -vf \"deshake=vfnodrop=all:minjudder=6\" -c:v libx264 -crf 21 -preset medium -c:a copy output_stabilized.mp4\n```\n\nYou can tweak the parameters as needed based on preference or your source footage.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does not contain the issue described in the issue description. The command it produced appears to be correctly formatted for the task of stabilizing a shaky video using the `deshake` filter, and it also includes appropriate parameters to achieve stability. It does not seem to generate a command with errors that would prevent it from working correctly.\n\n2) The model's output is not similar to the example of a failing output. The command produced by the model contains valid options and does not include any nonexistent parameters like the `extra_fast` preset in the failure example. \n\n3) The command produced does not break any requirements dictated in the man page for ffmpeg. All options used in the command (like `-vf \"deshake=vfnodrop=all:minjudder=6\"` and `-c:a copy`) are consistent with valid ffmpeg syntax and parameters based on the provided man page information. The output is correctly structured and follows the required order of specifying input and output files.\n\n4) Since the output of the model does not contain the issues mentioned and it generates a valid command that matches the requirements from the user, it should pass evaluation."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 466,
+    "output_tokens": 473,
+    "total_tokens": 939,
+    "cost": 0.0
+  },
+  "model_type": "eval_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "752854510612",
+  "created_at": "2025-07-24T18:08:49.650631",
+  "created_by": "scosman",
+  "input": "Help me convert a video for playback on an old DVD player, using MPEG-2 encoding and AC3 audio.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Common Video Codecs and Their Uses"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "352896233398",
+    "path": null,
+    "created_at": "2025-07-24T18:08:49.650606",
+    "created_by": "scosman",
+    "output": "To make a video compatible with most old DVD players, it should be encoded with the MPEG-2 video codec and AC3 (Dolby Digital) audio, typically packaged in a .mpg or .vob container. DVD-Video expects a maximum resolution of 720x480 (NTSC) or 720x576 (PAL) at specific frame rates. Here, I’ll assume NTSC (720x480 at 29.97 fps); modify for PAL if needed.\n\nKey settings:\n- Video: MPEG-2 encoding with a moderate bitrate (e.g., 6000k).\n- Audio: AC3 at 192k bitrate, stereo.\n- Container: MPEG-PS (.mpg).\n- Aspect ratio: Set to 4:3 or 16:9 as appropriate.\n- Interlacing: Many DVDs are interlaced; you can enable it with `-flags +ildct+ilme` if the source is progressive.\n\nExample command for NTSC DVD compatibility:\n\n```bash\nffmpeg -i input.mp4 -target ntsc-dvd -c:v mpeg2video -b:v 6000k -maxrate 8000k -minrate 2000k -bufsize 1835k -c:a ac3 -b:a 192k -ar 48000 -ac 2 -aspect 4:3 output.mpg\n```\n\nExplanation:\n- `-target ntsc-dvd` applies standard DVD constraints (codec, resolution, frame rate).\n- `-c:v mpeg2video` explicitly selects MPEG-2 encoding.\n- `-b:v`, `-maxrate`, `-minrate`, `-bufsize` control video quality and compliance.\n- `-c:a ac3 -b:a 192k -ar 48000 -ac 2` sets AC3 audio at DVD-compliant settings.\n- `-aspect 4:3` sets standard DVD aspect (use `16:9` if your source is widescreen).\n\nFor PAL, change `-target ntsc-dvd` to `-target pal-dvd` and resolution/frame rate will adjust accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 441,
+    "total_tokens": 1041,
+    "cost": 0.004728
+  },
+  "model_type": "task_run"
+}

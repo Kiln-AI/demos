@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "197138165609",
+  "created_at": "2025-07-24T18:13:01.514640",
+  "created_by": "scosman",
+  "input": "How can I convert a GIF with different frame durations into a constant frame rate video while retaining all colors?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "320312221003",
+    "path": null,
+    "created_at": "2025-07-24T18:13:01.514600",
+    "created_by": "scosman",
+    "output": "To convert a GIF with variable frame durations to a constant frame rate (CFR) video while retaining all colors:\n\n- Use **-filter_complex \"[0:v]fps=XX,split[s0][s1]\"** to resample to your desired CFR (replace XX with your target fps, e.g., 25 or 30).\n- Use **-c:v libx264 -crf 18 -preset slow -pix_fmt yuv444p** to retain maximum color fidelity (yuv444p preserves all color channels; libx264 is used for wide compatibility).\n- For **true lossless color**, you can use **-c:v ffv1** or **-c:v libx264rgb -crf 0 -preset slow -pix_fmt rgb24**, but these produce very large files.\n- GIFs are usually paletted; specify **-pix_fmt yuv444p** (H.264) or **-pix_fmt rgb24** (x264rgb or ffv1) for better color retention compared to default yuv420p.\n\nHere is a practical example converting a GIF to a constant 30 fps video with high color fidelity using H.264 (yuv444p):\n\n```bash\nffmpeg -i input.gif -filter_complex \"[0:v]fps=30\" -c:v libx264 -crf 18 -preset slow -pix_fmt yuv444p output.mp4\n```\n\n**For true lossless RGB (much larger file):**\n\n```bash\nffmpeg -i input.gif -filter_complex \"[0:v]fps=30\" -c:v ffv1 -pix_fmt rgb24 output.avi\n```\n\n**Assumptions:**\n- Replace `30` in `fps=30` with your desired constant frame rate.\n- You want to retain the original GIF's color fidelity as much as possible.\n- For web usage, the first example is preferable; for archiving or further processing, the lossless option is best.\n",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 409,
+    "total_tokens": 1004,
+    "cost": 0.004462
+  },
+  "model_type": "task_run"
+}

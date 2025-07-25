@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "104068256718",
+  "created_at": "2025-07-24T20:26:43.307654",
+  "created_by": "scosman",
+  "input": "How do I re-encode all .mkv files in a folder to have a maximum bitrate of 2 Mbps while retaining the original audio?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "766732270895",
+    "path": null,
+    "created_at": "2025-07-24T20:26:43.307628",
+    "created_by": "scosman",
+    "output": "To batch re-encode all `.mkv` files in a folder with a maximum video bitrate of 2 Mbps (2000 kbps) while keeping the original audio streams intact, you can use a shell loop combined with `ffmpeg`. The key points are:\n\n- Use a video bitrate limit of 2000k to cap the bitrate.\n- Copy audio streams without re-encoding (`-c:a copy`) to preserve original quality.\n- Use `-c:v libx264` to re-encode video with the desired bitrate.\n- Optionally, include `-preset` to control compression speed/quality tradeoff.\n- Overwrite files safely or output to a separate folder to avoid data loss.\n\nHere is a robust bash script example that processes all `.mkv` files in the current directory, encoding video to max 2 Mbps and copying audio streams:\n\n```bash\nfor f in *.mkv; do\n  ffmpeg -i \"$f\" -c:v libx264 -b:v 2000k -maxrate 2000k -bufsize 4000k -c:a copy \"reencoded_$f\"\ndone\n```\n\nExplanation:\n- `-b:v 2000k` sets target bitrate.\n- `-maxrate 2000k` and `-bufsize 4000k` help control bitrate spikes.\n- `-c:a copy` copies audio exactly without re-encoding.\n- Outputs new files prefixed with \"reencoded_\" to avoid overwriting original files.\n\nIf you want to overwrite the originals after confirming output quality, you can modify accordingly or move the new files back.\n\nIf you want to use CRF with a bitrate constraint (two-pass or constrained quality), let me know.\n\n---\n\nComplete command for batch in one script snippet:\n\n```bash\nfor f in *.mkv; do\n  ffmpeg -i \"$f\" -c:v libx264 -b:v 2000k -maxrate 2000k -bufsize 4000k -c:a copy \"reencoded_$f\"\ndone\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 425,
+    "total_tokens": 1028,
+    "cost": 0.0009212
+  },
+  "model_type": "task_run"
+}

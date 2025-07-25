@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "406707661079",
+  "created_at": "2025-07-24T18:10:52.382435",
+  "created_by": "scosman",
+  "input": "I want to add a watermark to my video at the bottom right corner. Can you write a command for that?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Advanced FFmpeg Video Filters"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "107860512683",
+    "path": null,
+    "created_at": "2025-07-24T18:10:52.382410",
+    "created_by": "scosman",
+    "output": "To add a watermark to a video at the bottom right corner, use the overlay filter. Assume your main video is input.mp4 and your watermark image is watermark.png.\n\nThe overlay filter positions the watermark. The offsets (x, y) should ensure the image is ‘flush’ to the bottom right, but not cut off: use \n- x=main_w-overlay_w-10 (10 pixels from the right edge)\n- y=main_h-overlay_h-10 (10 pixels from the bottom edge)\n\nThis command preserves original codecs unless you specify otherwise.\n\n```bash\nffmpeg -i input.mp4 -i watermark.png -filter_complex \"overlay=W-w-10:H-h-10\" -c:a copy output.mp4\n```\n\n**Explanation:**\n- -i input.mp4: the main video.\n- -i watermark.png: the watermark image.\n- -filter_complex \"overlay=W-w-10:H-h-10\": places watermark 10 pixels from the bottom and right.\n- -c:a copy: copies audio without re-encoding.\n\n**Assumptions:** watermark.png has transparency (alpha channel) for clean overlay and you want the watermark visible throughout the entire video. If you have specific codec/quality needs, these can be added.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 255,
+    "total_tokens": 853,
+    "cost": 0.003236
+  },
+  "model_type": "task_run"
+}

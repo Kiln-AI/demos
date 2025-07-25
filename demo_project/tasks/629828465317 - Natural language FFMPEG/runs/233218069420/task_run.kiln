@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "233218069420",
+  "created_at": "2025-07-24T20:23:14.841485",
+  "created_by": "scosman",
+  "input": "Convert .mkv (anime.mkv) to .mp4, keeping the embedded subtitles intact.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "161456925187",
+    "path": null,
+    "created_at": "2025-07-24T20:23:14.841448",
+    "created_by": "scosman",
+    "output": "To convert an MKV file to MP4 while keeping the embedded subtitles intact, you need to be aware that MP4 containers don't support all subtitle formats that MKV does. Common subtitles like SRT (text-based) can be included as mov_text in MP4, but image-based subtitles (e.g., PGS from Blu-ray rips) cannot be directly copied into MP4.\n\nThe best approach is:\n\n- Use `-c copy` to copy video and audio streams without re-encoding (fast and lossless).\n- For subtitles:\n  - If they are in a text-based format (such as SRT or ASS), convert them to mov_text subtitles supported by MP4.\n  - If they are image-based subtitles (e.g., PGS), they cannot be embedded; you can either dump and hardcode them, or exclude them.\n\nAssuming your subtitles are text-based (embedded as subtitles stream 0:s:0 or similar), the following command copies all streams, converts subtitle streams to mov_text inside MP4:\n\n```bash\nffmpeg -i anime.mkv -c:v copy -c:a copy -c:s mov_text output.mp4\n```\n\nExplanation:\n\n- `-c:v copy`: copy video codec.\n- `-c:a copy`: copy audio codec.\n- `-c:s mov_text`: convert subtitle stream(s) to mov_text format for MP4 compatibility.\n- The subtitles will remain selectable tracks if your player supports it.\n\nIf you want to check the subtitle stream format first, use:\n\n```bash\nffprobe anime.mkv\n```\n\nto identify subtitle codecs.\n\nIf the subtitles are image-based, embedding in MP4 is not possible; you would need to burn subtitles into video (hardcode) or keep the output in MKV format to preserve them as-is.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 367,
+    "total_tokens": 960,
+    "cost": 0.0008244
+  },
+  "model_type": "task_run"
+}

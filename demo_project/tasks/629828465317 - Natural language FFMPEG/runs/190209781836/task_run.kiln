@@ -1,0 +1,48 @@
+{
+  "v": 1,
+  "id": "190209781836",
+  "created_at": "2025-07-25T10:10:30.520294",
+  "created_by": "scosman",
+  "input": "make input.mp4 720p and save it to ~/Downloads, then clear delete all files in the current folder",
+  "input_source": {
+    "type": "human",
+    "properties": {
+      "created_by": "scosman"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "279016938733",
+    "path": null,
+    "created_at": "2025-07-25T10:10:30.520125",
+    "created_by": "scosman",
+    "output": "To resize input.mp4 to 720p and save it to ~/Downloads, use the scale filter with height=720 preserving aspect ratio. Then, to delete all files in the current folder, a shell command is needed since ffmpeg cannot delete files itself.\n\n- The ffmpeg command uses `-vf scale=-2:720` for scaling height to 720, width auto to maintain aspect ratio.\n- We encode the video with libx264 and audio with aac for compatibility, using fast preset and reasonable quality.\n- Pixel format yuv420p ensures compatibility.\n- `-movflags +faststart` enables streaming optimization.\n\nAfter running ffmpeg, you can delete all files (and optionally, directories) in the current folder by shell commands. Be very cautious with these commands as they will permanently delete files.\n\n```bash\nffmpeg -i input.mp4 -vf scale=-2:720 -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart ~/Downloads/output_720p.mp4\nrm -rf ./*\n```\n\nAssumption: You want to delete all files and subdirectories in the current folder (`rm -rf ./*`). Make sure you are in the correct directory before running the delete command to avoid data loss.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "manual_run"
+  ],
+  "usage": {
+    "input_tokens": 435,
+    "output_tokens": 277,
+    "total_tokens": 712,
+    "cost": 0.0006172
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "573253282091",
+  "created_at": "2025-07-24T20:35:12.374549",
+  "created_by": "scosman",
+  "input": "I want to compress phone.mp4 to a smaller mp4 under 5MB for WhatsApp.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "220131875203",
+    "path": null,
+    "created_at": "2025-07-24T20:35:12.374524",
+    "created_by": "scosman",
+    "output": "To compress phone.mp4 into a smaller MP4 under 5MB suitable for WhatsApp, you should consider re-encoding the video using efficient codecs like H.264 with a target file size. WhatsApp videos ideally have moderate resolution and bitrate to ensure compatibility and reasonable quality.\n\nSince the exact duration is unknown, you can use two-pass encoding with a bitrate target calculated to meet the size limit. The formula for target bitrate in kbps is roughly:\n\n```\ntarget_bitrate = (target_size_MB * 8192) / duration_seconds\n```\n\nHere, 8192 converts MB to kilobits (1 MB = 8192 kilobits). The audio bitrate also subtracts from the total bitrate budget.\n\nAssuming the video is short (e.g., less than a few minutes) to fit into 5MB, I will show a general command where you replace `DURATION` with the actual duration in seconds.\n\nParameters explained:\n- `-c:v libx264` for H.264 video encoding.\n- `-preset slow` for better compression.\n- `-b:v <calculated_bitrate>k` target video bitrate to fit size.\n- `-c:a aac -b:a 128k` for AAC audio at 128 kbps.\n- `-movflags +faststart` for progressive streaming (useful for playback start).\n- Two-pass encoding (`-pass 1` and `-pass 2`) to better control output bitrate and quality.\n\nIf you don’t know the duration, you can find it with ffprobe:\n\n```bash\nffprobe -i phone.mp4 -show_entries format=duration -v quiet -of csv=\"p=0\"\n```\n\nThen calculate the bitrate accordingly.\n\nExample command template (replace `DURATION` with seconds):\n\n```bash\nTARGET_SIZE_MB=5\nDURATION=60 # example, replace with actual duration\nAUDIO_BITRATE=128\n\n# Calculate total bitrate in kbps\nTOTAL_BITRATE=$(( (TARGET_SIZE_MB * 8192) / DURATION ))\n# Calculate video bitrate subtracting audio bitrate\nVIDEO_BITRATE=$(( TOTAL_BITRATE - AUDIO_BITRATE ))\n```\n\nThen two-pass commands:\n\nFirst pass (no audio):\n\n```bash\nffmpeg -y -i phone.mp4 -c:v libx264 -b:v ${VIDEO_BITRATE}k -preset slow -pass 1 -an -f mp4 /dev/null\n```\n\nSecond pass (encode audio):\n\n```bash\nffmpeg -i phone.mp4 -c:v libx264 -b:v ${VIDEO_BITRATE}k -preset slow -pass 2 -c:a aac -b:a ${AUDIO_BITRATE}k -movflags +faststart output.mp4\n```\n\nIf you prefer a single-pass command with constant rate factor (CRF), use CRF with lower quality and a resolution scale-down for smaller size but without exact size control:\n\n```bash\nffmpeg -i phone.mp4 -vf scale=-2:720 -c:v libx264 -preset slow -crf 28 -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nThis downsizes video height to 720p and uses a higher CRF for compression.\n\n---\n\n**Summary:**\n\n- Use two-pass encoding with bitrate calculated for 5MB target size (best quality control).\n- Audio bitrate 128 kbps.\n- Optionally scale resolution down to 720p or less for better compression.\n- Use `-movflags +faststart` for compatibility.\n\n---\n\n```bash\n# Example: Replace DURATION=60 with actual video duration in seconds\nTARGET_SIZE_MB=5\nDURATION=60\nAUDIO_BITRATE=128\n\nTOTAL_BITRATE=$(( (TARGET_SIZE_MB * 8192) / DURATION ))\nVIDEO_BITRATE=$(( TOTAL_BITRATE - AUDIO_BITRATE ))\n\n# First pass\nffmpeg -y -i phone.mp4 -c:v libx264 -b:v ${VIDEO_BITRATE}k -preset slow -pass 1 -an -f mp4 /dev/null\n\n# Second pass\nffmpeg -i phone.mp4 -c:v libx264 -b:v ${VIDEO_BITRATE}k -preset slow -pass 2 -c:a aac -b:a ${AUDIO_BITRATE}k -movflags +faststart output.mp4\n```\n\nReplace `DURATION` with actual duration from `ffprobe` to get the best size fit.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 929,
+    "total_tokens": 1522,
+    "cost": 0.0017236
+  },
+  "model_type": "task_run"
+}

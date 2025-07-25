@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "966659968203",
+  "created_at": "2025-07-24T22:10:22.613029",
+  "created_by": "scosman",
+  "dataset_id": "186965238061",
+  "task_run_config_id": "293392130654",
+  "eval_config_eval": false,
+  "input": "I have a video file with multiple audio tracks and I want to map the third audio stream to the output, but keep the original video. The input file is movie.mkv",
+  "output": "To output the video without re-encoding and map the third audio stream (index typically 2) from the input, use the -map option to select the video stream and the third audio stream. This approach copies audio and video without re-encoding, saving CPU and preserving quality.\n\nKey options:\n- -map 0:v:0 maps the first video stream (commonly 0:v:0). For multiple videos, add more -map for each video stream.\n- -map 0:a:2 maps the third audio stream (0:a:2 means the third audio stream in input file).\n- -c copy copies both streams without re-encoding.\n- -f concat for manifest-based output if you want a progressive download MP4 or MOV (if .ts isn't supported).\n- For MKV output, just -c copy is sufficient.\n\nHere's the command for MKV output:\n\n```bash\nffmpeg -i movie.mkv -map 0:v:0 -map 0:a:2 -c copy output.mkv\n```\n\nThis will output movie.mkv with the original video and third audio mapped through.\n\nIf you prefer MP4 output (or progressive download):\n\n```bash\nffmpeg -i movie.mkv -map 0:v:0 -map 0:a:2 -c copy -f mp4 output.mp4\n```\n\nIf you want to explicitly seek third audio stream by index:\n\n```bash\nffmpeg -i movie.mkv -map 0:v:0 -map 0:a:2 -c copy output.mp4\n```\n\nThis will correctly copy only the video and third audio stream. Adjust parameters for multiple streams or if the MP4 container encoding doesn’t support copy.\n\nLet me know if you need to include subtitles, change container, or want to re-mux differently!",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) **Issue Evaluation**: The output does not contain the issue described. The command produced by the model correctly maps the desired streams (original video and the third audio stream) and doesn't attempt to re-encode the original video, which meets the user requirements. The explanation detail is also appropriate. \n\n2) **Comparison to Failure Example**: The model's output does not resemble the failure example. The command correctly uses `-map` options to access specific streams and does not include nonexistent parameters, which would lead to failure. \n\n3) **Man Page Compliance**: The command adheres to the specifications set out in the FFmpeg man page. The usage of `-map` for both the video and audio streams, as well as `-c copy`, is correct for copying streams without re-encoding. No conflicts or inaccurate parameters are present in the command.\n\n4) **Overall Assessment**: The model's output successfully generates a valid FFmpeg command, providing a detailed and accurate explanation of its components full fill user request correctly without violating any guidelines. The output successfully meets all evaluation criteria, confirming its correctness and fidelity to the task requirements. \n\n**Conclusion**: The output passes the evaluation."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 479,
+    "output_tokens": 372,
+    "total_tokens": 851,
+    "cost": 0.0
+  },
+  "model_type": "eval_run"
+}

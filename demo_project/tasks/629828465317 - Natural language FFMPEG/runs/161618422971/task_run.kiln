@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "161618422971",
+  "created_at": "2025-07-24T20:40:01.390026",
+  "created_by": "scosman",
+  "input": "Extracting a frame at a certain timestamp gives black or blurry images due to non-keyframes. How to get sharp frame at 01:23:45.123?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "324860936887",
+    "path": null,
+    "created_at": "2025-07-24T20:40:01.389930",
+    "created_by": "scosman",
+    "output": "Extracting a sharp frame from a specific timestamp can be tricky if the frame at that exact timestamp is a non-keyframe (inter-frame), as ffmpeg by default seeks to the nearest keyframe before the requested time and outputs that frame, leading to blurred or black images.\n\nTo get a sharp frame exactly at 01:23:45.123, you can use the following method:\n\n1. Use the `-ss` input seeking *before* `-i` (input) to perform a fast seek very close to the target timestamp but slightly before (e.g., 1-2 seconds earlier). This ensures ffmpeg starts decoding near the target timestamp.\n\n2. Then, specify the output timestamp seeking after input, e.g., with `-ss` after input or with the `-frames:v 1` to grab exactly one frame at the precise timestamp inside the decoded frames.\n\n3. Use `-accurate_seek` (default in newer ffmpeg) and `-noaccurate_seek` carefully to balance speed and accuracy.\n\n4. Use `-vsync 0` to avoid frame duplication or dropping.\n\nHere’s a robust command that seeks fast to 2 seconds before the target, then decodes frame-exactly at the precise timestamp:\n\n```bash\nffmpeg -ss 01:23:43 -i input.mp4 -ss 0.123 -frames:v 1 -q:v 2 output.jpg\n```\n\nExplanation:\n\n- The first `-ss 01:23:43` before `-i` seeks input quickly to 2 seconds before 01:23:45.123.\n- The second `-ss 0.123` after `-i` seeks 123 milliseconds forward from the position 01:23:43, now reaching exactly 01:23:45.123.\n- `-frames:v 1` extracts exactly one frame.\n- `-q:v 2` sets the quality for MJPEG (JPEG) output (lower is better; 2 is high quality).\n- Output file is a single image `output.jpg`.\n\nThis method ensures ffmpeg decodes frames starting close to your target timestamp, and then accurately extracts the exact frame you want, avoiding blurry or black frames due to seeking non-keyframes directly.\n\nIf your input file uses codecs and containers supporting frame-accurate seeking, this is the best practice approach.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 608,
+    "output_tokens": 488,
+    "total_tokens": 1096,
+    "cost": 0.001024
+  },
+  "model_type": "task_run"
+}

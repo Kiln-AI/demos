@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "211773396929",
+  "created_at": "2025-07-24T20:27:46.145450",
+  "created_by": "scosman",
+  "input": "How do I convert a PAL (25fps) video to NTSC (29.97fps) correctly?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "121239926640",
+    "path": null,
+    "created_at": "2025-07-24T20:27:46.145424",
+    "created_by": "scosman",
+    "output": "To convert a PAL (25fps) video to NTSC (29.97fps) properly, you need to handle both frame rate conversion and possibly adjust the audio to avoid pitch or sync issues.\n\nKey points:\n- Use the `fps` filter to change the frame rate from 25 to 30000/1001 (~29.97fps).\n- The `-r` output option sets the container’s frame rate.\n- For smooth motion, ffmpeg will automatically do frame duplication or frame blending as needed.\n- Audio adjustment: speed up the audio slightly to sync with the new video duration using the `atempo` filter. The factor is 25/29.97 ≈ 0.833, but this will slow down. To speed up, use the reciprocal 29.97/25 ≈ 1.199. However, speeding audio by 1.199 can introduce artifacts, so consider using a higher-quality resampling or time stretching method if needed.\n- Alternatively, just keep audio as is if syncing is handled elsewhere or minor drift is acceptable.\n- Use codecs and formats suitable for your use case; here, I’ll assume you want to keep the same codecs for simplicity.\n\nHere's an example command that converts the frame rate and adjusts the audio tempo to keep sync:\n\n```bash\nffmpeg -i input_pal.mp4 -vf \"fps=30000/1001\" -af \"atempo=1.199\" -r 30000/1001 -c:v libx264 -preset medium -crf 20 -c:a aac -b:a 192k output_ntsc.mp4\n```\n\nExplanation:\n- `-vf \"fps=30000/1001\"` converts frames from 25fps to 29.97fps video stream.\n- `-af \"atempo=1.199\"` speeds up audio by ~19.9% to maintain sync with faster video (adjust carefully as larger factors may degrade audio quality—if needed, chain atempo filters for better quality).\n- `-r 30000/1001` sets the container frame rate metadata to NTSC standard.\n- `-c:v libx264`, `-preset medium`, `-crf 20` re-encodes video with good quality.\n- `-c:a aac -b:a 192k` re-encodes audio.\n  \nIf audio quality degradation is noticeable, consider more advanced audio time stretching tools before or after the conversion. Also, this method assumes you want to precisely convert to 29.97fps NTSC for standard compatibility. Adjust bitrate, codecs, or container as needed for your target device.\n\nIf you want to preserve audio pitch exactly during speed change (though sync might be off), you can experiment with `rubberband` audio filter (if ffmpeg is built with it):\n\n```bash\n-af \"rubberband=tempo=1.199\"\n```\n\nReplace `atempo` with `rubberband` for better audio pitch preservation.\n\nThis command provides a solid baseline for PAL to NTSC conversion task.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 628,
+    "total_tokens": 1224,
+    "cost": 0.0012432
+  },
+  "model_type": "task_run"
+}

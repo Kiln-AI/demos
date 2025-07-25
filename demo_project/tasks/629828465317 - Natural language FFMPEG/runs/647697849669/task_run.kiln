@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "647697849669",
+  "created_at": "2025-07-24T18:12:18.996267",
+  "created_by": "scosman",
+  "input": "What's the command to increase the playback speed of input.mp4 by 50% and output it as a new file?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Handling Large Media Files Efficiently"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "151669452704",
+    "path": null,
+    "created_at": "2025-07-24T18:12:18.996240",
+    "created_by": "scosman",
+    "output": "To increase playback speed by 50% (making the video play 1.5x faster), you need to modify both the video frame rate (presentation timestamps) and audio tempo.\n\n- For video, setpts=PTS/1.5 makes it play 1.5x faster.\n- For audio, atempo=1.5 increases audio speed 1.5x without changing the pitch.\n- This works efficiently for large files; ffmpeg processes the streams on-the-fly without decompressing the entire file into memory.\n- Assumes input and output are standard MP4 files.\n\n```bash\nffmpeg -i input.mp4 -vf \"setpts=PTS/1.5\" -filter:a \"atempo=1.5\" -c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 128k -movflags +faststart output_spedup.mp4\n```\n\n- `-preset veryfast` is recommended for large files to speed up encoding.\n- `-movflags +faststart` ensures the output is streamable.\n- `-crf 23` balances quality and file size.\n\nThis command efficiently increases speed and re-encodes both streams for compatibility.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 256,
+    "total_tokens": 856,
+    "cost": 0.003248
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "169447761843",
+  "created_at": "2025-07-24T20:38:28.122925",
+  "created_by": "scosman",
+  "input": "Combine two separate subs (main.srt, comments.srt) into one track for recording.mov before embedding.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "242954480503",
+    "path": null,
+    "created_at": "2025-07-24T20:38:28.122788",
+    "created_by": "scosman",
+    "output": "To combine two separate subtitle files (main.srt and comments.srt) into one subtitle track and embed it into recording.mov, you first need to merge the subtitles into a single subtitle file. Since ffmpeg does not directly support merging subtitle files, you can concatenate them manually or using scripting before embedding.\n\nHere is a step-by-step approach:\n\n1. **Merge Subtitle Files:**\n   - You can merge SRT files by adjusting the timecodes of the second subtitle (comments.srt) to appear after the first (main.srt).\n   - This requires knowing the duration of main.srt subtitles or the video duration to offset the comments.srt timestamps appropriately.\n   - Alternatively, you can merge subtitles by concatenating them with adjusted timecodes using subtitle processing tools or scripts.\n\n2. **Embed the Merged Subtitle Track:**\n   - After preparing a single combined `merged.srt` file, embed it as a subtitle track into the input video `recording.mov`.\n   - Use the `-c:s mov_text` codec (for MP4/MOV compatible subtitles).\n   - Use `-map` options to map the video, audio, and subtitle streams correctly.\n\n**Assuming you've created `merged.srt` with combined subtitles properly synchronized, here’s the ffmpeg command to embed it:**\n\n```bash\nffmpeg -i recording.mov -i merged.srt -c:v copy -c:a copy -c:s mov_text -map 0:v -map 0:a -map 1 -metadata:s:s:0 language=eng output.mov\n```\n\n**Explanation:**\n- `-i recording.mov` loads the video with audio streams.\n- `-i merged.srt` loads the merged subtitle file.\n- `-c:v copy -c:a copy` copies existing video and audio without re-encoding.\n- `-c:s mov_text` encodes subtitles in a format compatible with MOV containers.\n- `-map 0:v -map 0:a` selects the original video and audio streams.\n- `-map 1` selects the subtitle track from `merged.srt`.\n- `-metadata:s:s:0 language=eng` sets the subtitle language tag to English.\n- `output.mov` is the output file with embedded combined subtitles.\n\n---\n\n**If you need assistance merging the SRTs before embedding, please specify, and I can help create an adjusted combined subtitle file.**",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 493,
+    "total_tokens": 1088,
+    "cost": 0.0010268
+  },
+  "model_type": "task_run"
+}

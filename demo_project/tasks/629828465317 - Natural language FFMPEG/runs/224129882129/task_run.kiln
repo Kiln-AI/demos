@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "224129882129",
+  "created_at": "2025-07-24T20:38:02.566231",
+  "created_by": "scosman",
+  "input": "Convert teletext subtitles from DVB broadcast capture.ts into standalone SRT files.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "164981515151",
+    "path": null,
+    "created_at": "2025-07-24T20:38:02.566206",
+    "created_by": "scosman",
+    "output": "To extract teletext subtitles from a DVB broadcast capture (in .ts format) and convert them into standalone SRT subtitle files, you can use ffmpeg's subtitle stream extraction and the subtitle codec subrip (srt). Teletext subtitles are typically found in PIDs carrying DVB subtitles or teletext streams. ffmpeg can demux these subtitle streams and convert them properly.\n\nKey points and assumptions:\n- The input file is capture.ts.\n- The teletext subtitles are embedded in DVB teletext subtitle streams (stream type `dvb_teletext`).\n- We want the output as an SRT file (text subtitles), which requires decoding/processing the teletext data via ffmpeg.\n- If multiple teletext subtitle streams exist, you may want to extract each separately; here, we extract the first teletext subtitle stream by default.\n- The subtitles extracted will be standalone `.srt` subtitles compatible with most players.\n\nFirst, check the subtitle streams in the input (optional, to identify subtitle stream indexes):\n```bash\nffmpeg -i capture.ts\n```\nLook for `[0:x]` subtitle streams with codec `dvb_teletext`.\n\nThe command to extract and convert the first teletext subtitle stream to SRT:\n\n```bash\nffmpeg -i capture.ts -map 0:s:m:subtitle:dvb_teletext -c:s srt subtitles.srt\n```\n\nExplanation:\n- `-map 0:s:m:subtitle:dvb_teletext` selects teletext subtitle streams from input 0.\n- `-c:s srt` converts subtitle streams to SubRip (SRT) format.\n- Output file `subtitles.srt` is the extracted subtitle file.\n\nIf multiple teletext subtitle streams exist and you want to extract all, you can iterate or specify other indexes (like `-map 0:s:0` or `-map 0:s:1`).\n\n---\n\nIf teletext subtitles are embedded as bitmap-based DVB subtitles rather than proper teletext stream, you may need a different approach (e.g., decode subtitles via subtitle filters or use tools like `tesseract` for OCR). But for standard DVB teletext, the above should work.\n\n```bash\nffmpeg -i capture.ts -map 0:s:m:subtitle:dvb_teletext -c:s srt subtitles.srt\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 588,
+    "output_tokens": 479,
+    "total_tokens": 1067,
+    "cost": 0.0010016
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "589190283806",
+  "created_at": "2025-07-24T20:25:11.937887",
+  "created_by": "scosman",
+  "input": "I want to split a .mkv into two shorter .mkv files, but don't want to re-encode either part.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "191868076974",
+    "path": null,
+    "created_at": "2025-07-24T20:25:11.937862",
+    "created_by": "scosman",
+    "output": "To split an MKV file into two shorter MKV files without re-encoding, you can use ffmpeg's stream copy mode (`-c copy`). This copies the audio and video streams as-is without transcoding, which is very fast and preserves original quality.\n\nYou need to specify the start time (`-ss`) and the duration (`-t`) for each segment. Since MKV supports arbitrary splitting points, this method will work fine, but note that splitting might not be perfectly keyframe-accurate depending on input. For precise cutting, you might want to try keyframe alignment by adjusting the split times.\n\nAssuming you want to split at a specific timestamp (`split_time`), you would:\n\n1. Extract from start (0) to `split_time` as first file.\n2. Extract from `split_time` to end as second file.\n\nExample: Split at 00:10:00 (10 minutes).\n\n```bash\n# First segment: from start to 10 minutes\nffmpeg -i input.mkv -ss 0 -t 00:10:00 -c copy output_part1.mkv\n\n# Second segment: from 10 minutes to end\nffmpeg -i input.mkv -ss 00:10:00 -c copy output_part2.mkv\n```\n\nExplanation:\n- `-ss` before `-i` enables fast seeking, but can be less accurate for stream copy. Placing `-ss` after `-i` is slower but precise.\n- `-t` specifies segment duration.\n- `-c copy` copies streams without re-encoding.\n\nIf you want maximum accuracy in splitting, place `-ss` and `-t` after `-i` as shown above.\n\nReplace `00:10:00` with your desired split timestamp. If you have multiple split times, run separate commands for each segment accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 385,
+    "total_tokens": 988,
+    "cost": 0.0008572
+  },
+  "model_type": "task_run"
+}

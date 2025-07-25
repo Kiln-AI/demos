@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "197812588759",
+  "created_at": "2025-07-24T20:36:46.632699",
+  "created_by": "scosman",
+  "input": "Produce a quicktime .mov file where the video codec is DNxHD and audio is uncompressed PCM.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "207199474407",
+    "path": null,
+    "created_at": "2025-07-24T20:36:46.632583",
+    "created_by": "scosman",
+    "output": "To produce a QuickTime MOV file with DNxHD video and uncompressed PCM audio, you need to ensure the output container supports these codecs (which QuickTime does). DNxHD is a high-quality intermediate codec commonly used in professional workflows, and uncompressed PCM ensures lossless audio quality.\n\nKey points:\n- Use `-c:v dnxhd` to set the DNxHD codec.\n- DNxHD requires specific resolutions and bitrates to be valid; assuming a common HD resolution (e.g., 1920x1080) and bitrate 185Mbps for high quality.\n- Use `-profile:v dnxhd` or manually set bitrate with `-b:v`; this example uses bitrate.\n- Use `-c:a pcm_s16le` for uncompressed 16-bit PCM audio, which is widely compatible.\n- The output container is `.mov` to match QuickTime standards.\n\nIf your input resolution or frame rate differs, you might need to adjust DNxHD settings accordingly or scale the video.\n\n```bash\nffmpeg -i input.mp4 -c:v dnxhd -b:v 185M -vf scale=1920:1080 -r 30 -c:a pcm_s16le output.mov\n```\n\nExplanation:\n- `-b:v 185M`: sets video bitrate to 185 Mbps required by DNxHD HD 1080p at 30fps.\n- `-vf scale=1920:1080`: force the resolution to 1080p (adjust if your source differs).\n- `-r 30`: enforces 30 fps (adjust if needed).\n- `-c:a pcm_s16le`: chooses uncompressed PCM audio.\n- Output file is `.mov` container to support these codecs.\n\nAdjust input filename, resolution, frame rate, and DNxHD bitrate/profile depending on your source specifics.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 381,
+    "total_tokens": 977,
+    "cost": 0.000848
+  },
+  "model_type": "task_run"
+}

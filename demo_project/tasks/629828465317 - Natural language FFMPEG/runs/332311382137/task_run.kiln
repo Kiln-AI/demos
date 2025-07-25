@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "332311382137",
+  "created_at": "2025-07-24T18:10:08.193793",
+  "created_by": "scosman",
+  "input": "The video I'm working on is in a rare resolution of 1440x1080, and I need to resize it to 1280x720 without changing the video aspect ratio.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "226133727172",
+    "path": null,
+    "created_at": "2025-07-24T18:10:08.193762",
+    "created_by": "scosman",
+    "output": "To resize a video from 1440x1080 to fit within a 1280x720 frame without distorting its aspect ratio, you should scale the video to fit within the target dimensions while preserving the original aspect ratio, then pad with black bars (letterbox or pillarbox if needed) to reach exactly 1280x720.\n\nBest practice is to use the scale and pad filters together:\n\n- scale=w:h:force_original_aspect_ratio=decrease resizes the video to fit within 1280x720, preserving aspect ratio.\n- pad=1280:720:(ow-iw)/2:(oh-ih)/2 adds borders to fill the remainder to exactly 1280x720, centering the video.\n\nHere's the recommended command:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2\" -c:v libx264 -crf 18 -preset slow -c:a copy output_1280x720.mp4\n```\n\nExplanation of assumptions and parameters:\n\n- Assumed your input is input.mp4; change as needed.\n- crf 18 gives high quality output with reasonable file size; adjust lower for higher quality.\n- -c:a copy keeps the original audio.\n- You can omit -preset slow or increase speed as desired during export.\n\nThis ensures your video is exactly 1280x720 for compatibility while fully retaining the correct aspect ratio.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 613,
+    "output_tokens": 317,
+    "total_tokens": 930,
+    "cost": 0.003762
+  },
+  "model_type": "task_run"
+}

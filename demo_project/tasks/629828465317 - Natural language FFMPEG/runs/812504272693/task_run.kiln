@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "812504272693",
+  "created_at": "2025-07-23T11:27:35.716436",
+  "created_by": "scosman",
+  "input": "I need to transcode input.mp4 to AVI using the libvp9 codec with 2-pass encoding",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "claude_sonnet_4",
+      "model_provider": "anthropic",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Conversion with Incorrect Codecs"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "193929491880",
+    "path": null,
+    "created_at": "2025-07-23T11:27:35.716412",
+    "created_by": "scosman",
+    "output": "To transcode your MP4 to AVI using VP9 codec with 2-pass encoding, I'll use libvp9 for video encoding with the standard 2-pass approach for better quality optimization.\n\nFor 2-pass encoding:\n- First pass analyzes the video to gather statistics (-pass 1, output to /dev/null)\n- Second pass uses those statistics for optimal encoding (-pass 2)\n- -b:v sets the target bitrate (I'm assuming 2M for good quality)\n- -c:a libvorbis uses Vorbis audio codec which pairs well with VP9\n\n```bash\nffmpeg -i input.mp4 -c:v libvp9 -pass 1 -b:v 2M -f avi /dev/null && ffmpeg -i input.mp4 -c:v libvp9 -pass 2 -b:v 2M -c:a libvorbis output.avi\n```\n\nThis performs the first pass for analysis, then the second pass for the final encoding. The command assumes you want 2Mbps video bitrate - adjust as needed for your quality requirements.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "claude_sonnet_4",
+        "model_provider": "anthropic",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "function_calling",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_243159560313",
+    "eval_correctness"
+  ],
+  "usage": {
+    "input_tokens": 998,
+    "output_tokens": 267,
+    "total_tokens": 1265,
+    "cost": 0.006999
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "251197073325",
+  "created_at": "2025-07-24T18:11:49.689324",
+  "created_by": "scosman",
+  "input": "Change my .mts file to a .ogv that maintains quality but is efficient for streaming in educational platforms accessed via the web.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Optimizing Encoding for Browser Compatibility"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "223978971054",
+    "path": null,
+    "created_at": "2025-07-24T18:11:49.689299",
+    "created_by": "scosman",
+    "output": "To convert your .mts file to an .ogv (Ogg Video), which is widely supported on web educational platforms (typically using Theora video and Vorbis audio codecs), you should:\n\n- Use libtheora for video (-c:v libtheora) and libvorbis for audio (-c:a libvorbis).\n- Set a quality scale for Theora (0–10, higher is better; 7–8 is a good balance for web).\n- Choose an appropriate audio bitrate (e.g., 128k for intelligibility).\n- Optimize for streaming with -movflags faststart equivalent (in .ogv, files are natively streamable, but use -metadata if you need additional cues).\n- Scale to preserve the original resolution unless you wish to resize.\n\nHere is the recommended command:\n\n```bash\nffmpeg -i input.mts -c:v libtheora -q:v 7 -c:a libvorbis -b:a 128k -pix_fmt yuv420p output.ogv\n```\n\n**Explanation of key parameters:**\n- `-c:v libtheora`: Uses the Theora video codec, compatible with most browsers for .ogv playback.\n- `-q:v 7`: Sets video quality to 7 (out of 10)—adjust higher or lower if necessary.\n- `-c:a libvorbis -b:a 128k`: Encodes audio with Vorbis at 128 kbps for clarity in spoken content.\n- `-pix_fmt yuv420p`: Ensures best browser compatibility.\n- No resizing (`scale`), so original quality/resolution is kept; add `-vf scale=-2:720` to target 720p.\n\n**Assumption:** The educational platform supports OGV playback and original resolution is acceptable. Adjust `-q:v` or add `-vf scale=…` if you need to further optimize file size or resolution for bandwidth.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 395,
+    "total_tokens": 997,
+    "cost": 0.004364
+  },
+  "model_type": "task_run"
+}

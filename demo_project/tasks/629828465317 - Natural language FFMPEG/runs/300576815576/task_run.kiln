@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "300576815576",
+  "created_at": "2025-07-24T20:38:31.679482",
+  "created_by": "scosman",
+  "input": "Embed a subtitle track but prevent users from turning it off in the final mp4.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "308068122588",
+    "path": null,
+    "created_at": "2025-07-24T20:38:31.679459",
+    "created_by": "scosman",
+    "output": "To embed subtitles into an MP4 video such that users cannot turn them off, you need to \"burn\" or \"hardcode\" the subtitles into the video itself rather than embedding them as a separate selectable subtitle track. Hardcoding renders the subtitles as part of the video frames, making them always visible and unremovable.\n\nKey points:\n- Use the `subtitles` filter to burn subtitles onto the video.\n- This requires the subtitle file (e.g., .srt) as input.\n- The output will have no separate subtitle track since it is image-composited on the frames.\n- Choose appropriate encoding options to keep a good balance between quality and file size.\n\nExample assumes your subtitle file is `subs.srt` and your input video is `input.mp4`.\n\n```bash\nffmpeg -i input.mp4 -vf \"subtitles=subs.srt\" -c:v libx264 -preset slow -crf 18 -c:a copy output.mp4\n```\n\nExplanation:\n- `-vf \"subtitles=subs.srt\"` overlays subtitles onto the video.\n- `-c:v libx264`, `-preset slow`, and `-crf 18` encode video with H.264 codec at high quality.\n- `-c:a copy` copies the audio stream without re-encoding.\n- The output `output.mp4` will have subtitles permanently visible with no way to disable them.\n\nIf your subtitles contain styling (SSA/ASS format), burning them in preserves the styles better than SRT. You would just replace `subs.srt` with your `.ass` file.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 328,
+    "total_tokens": 918,
+    "cost": 0.0007608
+  },
+  "model_type": "task_run"
+}

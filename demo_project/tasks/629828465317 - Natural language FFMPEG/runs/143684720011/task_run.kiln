@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "143684720011",
+  "created_at": "2025-07-24T20:40:12.811886",
+  "created_by": "scosman",
+  "input": "I have a file with multiple audio language tracks. How do I select only French and set it as the default in the output MP4?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "278107703531",
+    "path": null,
+    "created_at": "2025-07-24T20:40:12.811858",
+    "created_by": "scosman",
+    "output": "To select only the French audio track from a file with multiple language tracks and set it as the default in the output MP4, you need to:\n\n- Identify the French audio stream (usually by language metadata \"fra\" or \"fre\").\n- Map only the video and the French audio stream to the output.\n- Set the French audio stream disposition as default, and others as not default (in this case, only one audio stream is output).\n- Use a typical codec suitable for MP4 containers, like H.264 for video and AAC for audio.\n- Use `-movflags +faststart` for better streaming compatibility.\n\nAssuming input file is `input.mkv` and you want output as `output.mp4`.\n\nFirst, you can list streams and their languages with:\n\n```bash\nffmpeg -i input.mkv\n```\n\nLook for the French audio stream index (e.g., `Stream #0:2( fra): Audio`).\n\nThen use `-map` options to select video and French audio stream by index, and `-disposition:a:0 default` to mark the French audio as default.\n\nExample command:\n\n```bash\nffmpeg -i input.mkv -map 0:v -map 0:m:language:fra -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -disposition:a:0 default -movflags +faststart output.mp4\n```\n\nExplanation:\n- `-map 0:v` selects all video streams from input 0.\n- `-map 0:m:language:fra` selects all audio streams with the language metadata 'fra' (French).\n- `-disposition:a:0 default` sets the first mapped audio stream as the default.\n- `-c:v libx264` and `-c:a aac` encode video and audio appropriately.\n- `-preset medium` and `-crf 23` set encoding quality/speed tradeoff.\n- `-movflags +faststart` enables progressive streaming.\n\nThis assumes there is only one French audio track. If multiple French audio tracks exist and you want only a specific one, you may need to specify by exact stream index.\n\nIf your software doesn't recognize `-map 0:m:language:fra`, fallback to check stream index manually and map like `-map 0:2` (replace 2 with your French audio stream index).\n\nThis method ensures only French audio is kept and is the default track in the output MP4. The other audio tracks are omitted. \n\n```bash\nffmpeg -i input.mkv -map 0:v -map 0:m:language:fra -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -disposition:a:0 default -movflags +faststart output.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 594,
+    "total_tokens": 1196,
+    "cost": 0.0011912
+  },
+  "model_type": "task_run"
+}

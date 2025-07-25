@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "220133338290",
+  "created_at": "2025-07-24T18:12:48.441296",
+  "created_by": "scosman",
+  "input": "I uploaded a JPEG file, but it seems like it's being interpreted as a video file by other software. Can you tell me how to tackle this?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "307125329688",
+    "path": null,
+    "created_at": "2025-07-24T18:12:48.441264",
+    "created_by": "scosman",
+    "output": "If a JPEG (.jpg) file is being interpreted as a video file, it’s likely either misnamed (e.g., a frame extracted from a video but still referenced with a .jpg extension), or you need to enforce the image type for compatibility. To convert or re-encode the problematic JPEG to a standard, compliant JPEG format, you can use ffmpeg to read and rewrite the image, ensuring it follows baseline JPEG standards.\n\nThis reads the original file and outputs a new, clean JPEG:\n\n```bash\nffmpeg -y -i input.jpg -vf format=rgb24 -q:v 2 output.jpg\n```\n\n**Explanation:**\n- -i input.jpg: Specifies the input file.\n- -vf format=rgb24: Ensures the image is in standard RGB color space.\n- -q:v 2: Sets JPEG quality (2 = high quality, 1 = highest, 31 = lowest); 2 is a good default.\n- output.jpg: The corrected output image.\n\n**Assumptions:**  \n- Your file is not actually a video with a .jpg extension; it’s a real JPG but potentially malformed or with headers confusing other software.\n- If the file is truly a video misnamed as .jpg, you can extract the first frame as a JPG image:\n\n```bash\nffmpeg -i input.jpg -frames:v 1 output.jpg\n```\n\nUse the first command for a standard JPEG re-encode. If ffmpeg reads multiple frames, your input is likely a video, and in that case, use the second command to get a still image.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 323,
+    "total_tokens": 927,
+    "cost": 0.003792
+  },
+  "model_type": "task_run"
+}

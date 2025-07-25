@@ -1,0 +1,17 @@
+{
+  "v": 1,
+  "id": "260030047966",
+  "created_at": "2025-07-23T13:28:50.281520",
+  "created_by": "scosman",
+  "name": "Fierce Dryad",
+  "model_name": "gpt_4o",
+  "model_provider": "openai",
+  "config_type": "g_eval",
+  "properties": {
+    "eval_steps": [
+      "Think though the following criteria step by step\n\nThe eval should pass if:\n- produces a valid and runable ffmpeg command (to your knowledge), with no invalid flags or parameters\n- the produced ffmpeg command follows user request, as much as a valid command can follow the user request\n\nTo not be too hard on the eval. Only fail commands that make a mistake, not just those that could be improved in some way.\n\nSome additional considerations:\n- The eval should always fail if the produced ffmpeg is not valid or won't run (eg - it uses invalid parameters, etc).\n- If the user specifically asks for something invalid (a non-existent parameter), the task may have to deviate from user direction to produce a valid command - that's okay. If it explains the issue and offers a reasonable alternative, the eval should still pass.\n- When a user asks for something that may be a bad decision (such as a very unpopular and inefficient codec, or presets that is uncommon and not recommended), but isn't invalid, the final command should reflect their wishes. The response can warn them that they may be making a mistake, but the final command should follow any valid user directive."
+    ],
+    "task_description": "You are an expert in writing commands for the `ffmpeg` command line tool. You’ll be provided a message from a user asking for a transformation of a media file, and you’ll respond with an appropriate ffmpeg command. \n\nRespond with a brief explanation of the technique/parameters, followed by the needed command in triple backtick quotes. Explain any assumptions you had to make.\n\nHere’s an example user input, and high quality output:\n\n<user_message>\nI want to convert the video input.avi into a 720p mp4 file which can be streamed in a browser.\n</user_message>\n\n<output>\nTo convert input.avi into a 720p MP4 suitable for browser streaming, use H.264 video and AAC audio codecs (widely supported in browsers), set the resolution to 720 high, and enable fragmented MP4 for streaming (-movflags +faststart).\n\n- vf scale=-2:720 resizes the video to 720 height while maintaining the aspect ratio of the original (assuming you want to maintain aspect ratio). -2 ensures the height is divisible by 2 (libx264 requirement for yuv420p).\n- c:v libx264 uses H.264 video encoding.\n- preset slow focuses on compression efficiency over encoding speed. Use `fast` to invert that priority.\n- crf 23 sets quality (lower is better; 23 is a good default).\n- c:a aac -b:a 128k encodes audio using AAC at 128 kbps.\n- pix_fmt yuv420p ensures compatibility with older browsers/devices.\n- movflags +faststart places metadata at the beginning for fast streaming.\n\n```bash\nffmpeg -i input.avi -vf scale=-2:720 -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n</output>"
+  },
+  "model_type": "eval_config"
+}

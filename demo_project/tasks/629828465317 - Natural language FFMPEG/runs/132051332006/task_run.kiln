@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "132051332006",
+  "created_at": "2025-07-24T20:39:33.900768",
+  "created_by": "scosman",
+  "input": "The file input.mp4 is silent — there's no audio stream — but I need to add a silent 48kHz stereo AAC track for broadcast requirements.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "286806835748",
+    "path": null,
+    "created_at": "2025-07-24T20:39:33.900742",
+    "created_by": "scosman",
+    "output": "To add a silent 48kHz stereo AAC audio track to a silent video file, you can generate an audio stream of silence using the `anullsrc` filter. This filter creates silent audio with specified parameters, which we then encode as AAC. We map the original video stream and the generated audio stream, setting the output codec for video as copy (to avoid re-encoding) and audio as AAC with 48kHz sample rate and stereo channels to meet broadcast requirements.\n\nKey details:\n- `-f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000` generates silent stereo audio at 48kHz.\n- `-c:v copy` copies the video stream without re-encoding.\n- `-c:a aac -b:a 128k` encodes audio as AAC at 128 kbps (a standard quality for broadcast).\n- `-shortest` ensures that the output duration matches the shortest input stream, avoiding excess silence if audio is longer.\n\n```bash\nffmpeg -i input.mp4 -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 -c:v copy -c:a aac -b:a 128k -shortest output_with_silence.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 605,
+    "output_tokens": 264,
+    "total_tokens": 869,
+    "cost": 0.0006644
+  },
+  "model_type": "task_run"
+}

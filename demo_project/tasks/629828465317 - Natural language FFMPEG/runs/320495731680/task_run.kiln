@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "320495731680",
+  "created_at": "2025-07-24T20:38:42.297698",
+  "created_by": "scosman",
+  "input": "How can I batch transcode all videos in a folder to use the H.265 codec, lowering their bitrate to 2 Mbps?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "184784416731",
+    "path": null,
+    "created_at": "2025-07-24T20:38:42.297672",
+    "created_by": "scosman",
+    "output": "To batch transcode all videos in a folder to H.265 codec (HEVC) with a target bitrate of 2 Mbps, you can use a shell loop (e.g., `bash`) that processes each file individually with ffmpeg. This approach automates transcoding, ensuring each file is encoded with libx265 at 2 Mbps bitrate.\n\nKey points:\n- `-c:v libx265` selects the H.265 video codec.\n- `-b:v 2M` sets the target video bitrate to 2 Mbps.\n- `-c:a aac -b:a 128k` re-encodes audio to AAC at 128 kbps for wide compatibility.\n- `-preset medium` is a balanced encoding speed/quality choice for libx265.\n- Output filenames are suffixed with `_h265` to avoid overwriting originals.\n\nExample assumes input videos have extensions like .mp4, .mkv, .avi; adjust the glob pattern as needed for your files.\n\nHere is a robust bash snippet for the batch operation:\n\n```bash\n#!/bin/bash\n\n# Create an output folder for transcoded videos\nmkdir -p transcoded\n\n# Loop over video files (adjust extensions as needed)\nfor input in *.{mp4,mkv,avi}; do\n  # Check if the file exists (in case no files match the pattern)\n  [ -e \"$input\" ] || continue\n\n  # Get the filename without extension\n  filename=\"${input%.*}\"\n\n  # Define output filename in the transcoded folder\n  output=\"transcoded/${filename}_h265.mp4\"\n\n  # Run ffmpeg to transcode to H.265 with 2 Mbps video bitrate\n  ffmpeg -i \"$input\" -c:v libx265 -b:v 2M -preset medium -c:a aac -b:a 128k \"$output\"\ndone\n```\n\nExplanation:\n- This script reads all videos matching the pattern.\n- It creates an output directory to keep files organized.\n- Converts each file to H.265 with 2 Mbps bitrate.\n- Saves converted files with a modified name to avoid overwriting.\n- Adjust extensions and parameters to your specific needs.\n\nThis method is suitable for Unix-like environments. For Windows, a PowerShell or batch script would be needed instead.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 472,
+    "total_tokens": 1073,
+    "cost": 0.0009956
+  },
+  "model_type": "task_run"
+}

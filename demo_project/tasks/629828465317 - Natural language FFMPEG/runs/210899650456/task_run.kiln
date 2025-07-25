@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "210899650456",
+  "created_at": "2025-07-24T20:23:29.969367",
+  "created_by": "scosman",
+  "input": "Extract a specific audio stream (e.g., \"eng\") from foreign.mkv, output eng.mp3.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "144598065004",
+    "path": null,
+    "created_at": "2025-07-24T20:23:29.969341",
+    "created_by": "scosman",
+    "output": "To extract a specific audio stream by language tag (e.g., \"eng\") from a Matroska file (foreign.mkv) and convert it to MP3, you first need to identify the stream with the English audio. Using ffmpeg's stream selection with `-map` allows targeting the desired track.\n\nHere is the best approach:\n\n- Use `-map` with a stream selector to pick the audio stream with the language metadata tag \"eng\".\n- Convert it directly to MP3 with `-c:a libmp3lame` codec.\n- Use `-vn` to discard video streams.\n- Optionally set a typical MP3 bitrate, e.g., 192k.\n\nAssumptions:\n\n- The English audio stream in foreign.mkv has the metadata language set to \"eng\".\n- You want the output as mp3 audio only (no video).\n\n```bash\nffmpeg -i foreign.mkv -map 0:m:language:eng -c:a libmp3lame -b:a 192k -vn eng.mp3\n```\n\nExplanation:\n\n- `-map 0:m:language:eng` selects the audio stream in input 0 with the \"eng\" language tag.\n- `-c:a libmp3lame` encodes audio to MP3.\n- `-b:a 192k` sets audio bitrate (good quality).\n- `-vn` disables video output.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 290,
+    "total_tokens": 887,
+    "cost": 0.0007028
+  },
+  "model_type": "task_run"
+}

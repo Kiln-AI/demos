@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "327243441645",
+  "created_at": "2025-07-24T20:38:07.272170",
+  "created_by": "scosman",
+  "input": "Produce a video from original_with_subs.mp4 with burnt subtitles at bottom margin, and custom yellow text color.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "253782863924",
+    "path": null,
+    "created_at": "2025-07-24T20:38:07.272152",
+    "created_by": "scosman",
+    "output": "To burn subtitles into a video with custom text color using ffmpeg, you can use the `subtitles` filter with styling options. The `force_style` parameter allows customization such as setting the text color. Positioning at the bottom is default for subtitles, but you can control it precisely using the `MarginV` style.\n\n- `subtitles=original_with_subs.mp4` means the subtitles are extracted from the embedded subtitles stream in the input video.\n- `force_style='PrimaryColour=&H0000FFFF,MarginV=40'`:\n  - `PrimaryColour` expects a hex color in &HAABBGGRR format where alpha channel is `AA`.\n    - For opaque yellow color, the value is `&H0000FFFF`: `00` alpha (fully opaque), then blue = 0x00, green = 0xFF, red = 0xFF.\n  - `MarginV=40` shifts the subtitles 40 pixels from the bottom margin (adjustable as needed).\n- `-c:a copy` copies original audio stream without re-encoding.\n\nAssumptions: The input video `original_with_subs.mp4` contains embedded subtitles in a format compatible with ffmpeg subtitle filter (e.g., SRT or ASS subtitle track).\n\n```bash\nffmpeg -i original_with_subs.mp4 -vf \"subtitles=original_with_subs.mp4:force_style='PrimaryColour=&H0000FFFF,MarginV=40'\" -c:a copy output_burnt_subs.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 319,
+    "total_tokens": 915,
+    "cost": 0.0007488
+  },
+  "model_type": "task_run"
+}

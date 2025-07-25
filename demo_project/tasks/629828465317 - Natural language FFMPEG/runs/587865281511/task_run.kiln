@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "587865281511",
+  "created_at": "2025-07-24T20:37:44.635336",
+  "created_by": "scosman",
+  "input": "I want to mux subtitles (subs.ass) and video (show.mp4) together as a single mkv, keeping both original and new subtitles.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "365788001431",
+    "path": null,
+    "created_at": "2025-07-24T20:37:44.635309",
+    "created_by": "scosman",
+    "output": "To mux the subtitles file `subs.ass` into the video file `show.mp4` while keeping all original subtitles, and save as a single MKV container, you can use ffmpeg’s stream copying for video, audio, and existing subtitles, and add the new subtitle stream. MKV supports multiple subtitle tracks natively, so all will be preserved.\n\nKey points:\n- `-c copy` copies all streams without re-encoding for a fast and lossless mux.\n- `-map 0` includes all streams from the input video (`show.mp4`), including existing subtitles.\n- `-map 1` adds all streams from the second input file (`subs.ass`), which contains the new subtitle track.\n- Use `-c:s` for subtitles codec; for `.ass` subtitles, copy is possible, so we use `-c:s:1 copy` assuming the new subtitle is the second subtitle stream.\n- Specify output container `.mkv` for subtitle compatibility and stream muxing.\n\nAssumption:  \n- `subs.ass` contains one subtitle stream.\n- `show.mp4` may have zero or more streams, including audio and subtitles.\n- Subtitle codec in `.ass` can be copied.\n\n```bash\nffmpeg -i show.mp4 -i subs.ass -map 0 -map 1 -c copy output.mkv\n```\n\nThis command copies all streams from `show.mp4` plus the subtitle from `subs.ass` into `output.mkv` without re-encoding, preserving quality and metadata, and combining original and new subtitles in a single MKV file.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 327,
+    "total_tokens": 930,
+    "cost": 0.0007644
+  },
+  "model_type": "task_run"
+}

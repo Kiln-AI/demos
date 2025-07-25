@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "183403602039",
+  "created_at": "2025-07-24T20:27:54.720697",
+  "created_by": "scosman",
+  "input": "How do I generate a waveform visualization video from an audio file?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "858265200591",
+    "path": null,
+    "created_at": "2025-07-24T20:27:54.720672",
+    "created_by": "scosman",
+    "output": "To generate a waveform visualization video from an audio file with ffmpeg, you can use the `showwaves` or `showwavespic` filter family. `showwaves` creates a moving waveform video, while `showwavespic` generates a static waveform image. For a video, `showwaves` is appropriate.\n\nKey parameters:\n- `s=hd720` sets the output video resolution to 1280x720.\n- `mode=line` draws the waveform line style (alternatives are `point` or `cline`).\n- `colors=white` sets the waveform color. You can customize this (e.g., `blue`, `green`).\n- `rate=30` sets video frame rate.\n\nWe combine audio input and waveform filter output into a video with the audio stream copied for playback.\n\nHere is a command that generates a 720p waveform video from input audio `input.mp3`, encoding with H.264 for video and copying audio:\n\n```bash\nffmpeg -i input.mp3 -filter_complex \"showwaves=s=1280x720:mode=line:rate=30:colors=white\" -c:v libx264 -preset fast -crf 18 -c:a copy -pix_fmt yuv420p -movflags +faststart output_waveform.mp4\n```\n\nAssumptions:\n- Input file is `input.mp3`.\n- Output is 1280x720 waveform video in MP4 container.\n- Audio is copied without re-encoding to preserve quality.\n- Video is encoded with H.264 for compatibility.\n- Crf 18 for high quality video.\n- `pix_fmt yuv420p` for broad compatibility.\n- `-movflags +faststart` for fast web playback.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 587,
+    "output_tokens": 356,
+    "total_tokens": 943,
+    "cost": 0.0008044
+  },
+  "model_type": "task_run"
+}

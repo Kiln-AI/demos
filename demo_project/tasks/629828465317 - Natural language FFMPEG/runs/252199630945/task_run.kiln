@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "252199630945",
+  "created_at": "2025-07-24T20:40:18.450627",
+  "created_by": "scosman",
+  "input": "Transcoding a video file but skipping encode if output already exists and is newer than input.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "301656826706",
+    "path": null,
+    "created_at": "2025-07-24T20:40:18.450605",
+    "created_by": "scosman",
+    "output": "To transcode a video file but skip the process if the output file already exists and is newer than the input file, you'll need to perform a file timestamp comparison before running ffmpeg since ffmpeg itself does not have built-in logic to skip transcoding based on file modification times.\n\nA common approach involves using shell scripting (e.g., in bash) to check the modification times and only run ffmpeg if the input is newer or the output file is missing.\n\nHere is an example bash snippet that demonstrates this best practice:\n\n- `-nt` operator checks if the input file is newer than the output.\n- `! -f output.mp4` checks if output file does not exist.\n- The ffmpeg command is executed only if either condition is true.\n\nAssuming a simple conversion that transcodes `input.mkv` to `output.mp4` with H.264 video and AAC audio:\n\n```bash\nif [ ! -f output.mp4 ] || [ input.mkv -nt output.mp4 ]; then\n  ffmpeg -i input.mkv -c:v libx264 -preset slow -crf 23 -c:a aac -b:a 128k -movflags +faststart output.mp4\nelse\n  echo \"Output is up to date; skipping transcoding.\"\nfi\n```\n\nThis logic ensures efficient transcoding without unnecessary work.\n\nExplanation of ffmpeg command parameters for quality and compatibility:\n\n- `-c:v libx264`: encode video in H.264.\n- `-preset slow`: better compression efficiency.\n- `-crf 23`: good quality setting.\n- `-c:a aac -b:a 128k`: AAC audio at 128kbps.\n- `-movflags +faststart`: optimize MP4 for progressive streaming.\n\nThis approach can be adapted as needed for other codecs or container formats.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 378,
+    "total_tokens": 970,
+    "cost": 0.0008416
+  },
+  "model_type": "task_run"
+}

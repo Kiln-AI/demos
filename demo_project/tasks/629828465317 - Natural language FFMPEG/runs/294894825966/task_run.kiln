@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "294894825966",
+  "created_at": "2025-07-24T20:38:24.660035",
+  "created_by": "scosman",
+  "input": "Extract multiple subtitle streams by language from documentary.mkv, save as separate files.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "195774895363",
+    "path": null,
+    "created_at": "2025-07-24T20:38:24.660010",
+    "created_by": "scosman",
+    "output": "To extract multiple subtitle streams by language from documentary.mkv and save each as a separate file, you first need to identify which subtitle streams correspond to which languages. Then, you can extract them by specifying the stream index for each language-specific subtitle.\n\n- Use `ffprobe` to identify subtitle streams and their language metadata.\n- Use `-map` to select each subtitle stream by index.\n- Save subtitles preserving their original format (e.g., SRT, PGS).\n- Filename suffixes indicate language for clarity.\n\nAssuming the subtitle streams have language metadata tagged correctly (e.g., \"eng,\" \"spa,\" etc.), here is the workflow:\n\n1. Run ffprobe command to list subtitle streams with language info:\n```bash\nffprobe -v error -select_streams s -show_entries stream=index:stream_tags=language -of csv=p=0 documentary.mkv\n```\n\nSuppose this outputs:\n```\n2,eng\n3,spa\n4,fre\n```\n\n2. Extract each subtitle stream into separate files:\n\n```bash\nffmpeg -i documentary.mkv -map 0:s:0 subs_eng.srt \\\n       -map 0:s:1 subs_spa.srt \\\n       -map 0:s:2 subs_fre.srt\n```\n\nIf the subtitles are not in SRT format but in another format like PGS (bitmap subtitles), use the appropriate extension (.sup) for output filenames.\n\nIn a more general and clear way for multiple subtitle streams:\n\n```bash\nffmpeg -i documentary.mkv -map 0:s:<index> subs_<language>.<ext>\n```\n\nReplace `<index>` with stream index, `<language>` with language code, and `<ext>` with subtitle format extension.\n\nHere is an example extracting three subtitle streams:\n\n```bash\nffmpeg -i documentary.mkv -map 0:s:0 subs_eng.srt -map 0:s:1 subs_spa.srt -map 0:s:2 subs_fre.srt\n```\n\nThis command extracts subtitle streams 0,1,2 (as counted only among subtitle streams) into separate files named with language codes.\n\nIf you only want to extract a few languages and don't know their subtitle indexes, you can inspect with ffprobe first, then adapt.\n\n---\n\n**Summary:** Use ffprobe to find subtitle stream indexes by language, then run ffmpeg with -map to extract each subtitle to its own file. This method preserves individual subtitle streams cleanly and clearly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 589,
+    "output_tokens": 510,
+    "total_tokens": 1099,
+    "cost": 0.0010516
+  },
+  "model_type": "task_run"
+}

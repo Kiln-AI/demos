@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "769911573829",
+  "created_at": "2025-07-23T12:01:00.495828",
+  "created_by": "scosman",
+  "dataset_id": "186965238061",
+  "task_run_config_id": "233610573558",
+  "eval_config_eval": false,
+  "input": "I have a video file with multiple audio tracks and I want to map the third audio stream to the output, but keep the original video. The input file is movie.mkv",
+  "output": "To map the third audio stream from a multi-track file like `movie.mkv` to the output while keeping the original video stream intact, you need to feed `ffmpeg` the video stream as the source for the output video's video codec, use the `-map` options to select the desired audio stream, and ensure the video codec settings match your preferences. For these tasks, we'll use the H.264 video codec and AAC audio codec, and we'll keep the original video's YV12 compatibility with the `-pix_fmt yuv420p` argument.\n\nAssuming you want the output file named `output.mp4` and you would like to maintain the original video's quality, here is the command:\n\n```bash\nffmpeg -i movie.mkv -map 0:v -c:v libx264 -pix_fmt yuv420p -map 0:a:3 -c:a aac -b:a 128k -ac 2 output.mp4\n```\n\nExplanation of the command:\n\n- `-i movie.mkv`: Specifies the input file.\n- `-map 0:v`: Maps the first (original) video stream from the input.\n- `-c:v libx264`: Sets H.264 video encoding.\n- `-pix_fmt yuv420p`: Sets the pixel format as YUV 420 to maintain compatibility.\n- `-map 0:a:3`: Maps the third audio stream from the input. (Change `3` to the correct index if the third audio stream is different.)\n- `-c:a aac`: Sets AAC as the audio codec.\n- `-b:a 128k`: Sets the audio bitrate to 128 kbps.\n- `-ac 2`: Sets the number of audio channels to 2, which is the standard for stereo audio.\n- `output.mp4`: Specifies the output file name.\n\nReplace the bitrate and codec settings as per your quality and compatibility requirements. Note that the audio stream indices start from 0, so `3` refers to the third audio stream.",
+  "intermediate_outputs": {
+    "chain_of_thought": "Let's break down the evaluation step-by-step according to the provided criteria:\n\n1) **Does the model's output contain the issue described?**\n   - The command provided by the model maps the third audio track correctly (`-map 0:a:3`) and keeps the original video stream intact (`-map 0:v`). It uses valid encoding settings (`-c:v libx264` and `-c:a aac`). The command appears to fulfill the user's requirement by mapping only the specified audio track while preserving the video, and therefore does not contain the issue described in the prompt.\n\n2) **Is the model's output similar to this example of a failing output?**\n   - The command produced by the model is not similar to the failing output example (`ffmpeg -I input.avi -preset extra_fast output.mp4`). The provided command correctly uses `-i` to specify the input file and does not contain any invalid options or parameters. Thus, it does not exhibit the characteristics of a failing output.\n\n3) **Does the command break any requirements dictated in the man page?**\n   - The command adheres to the requirements set out in the ffmpeg man page. It specifies both input (`-i movie.mkv`) and output parameters correctly, maps the video and audio streams appropriately, and uses the required codecs and pixel format without violating the syntax or options outlined in the documentation. Therefore, it aligns well with the expected command structure dictated by the man page.\n\n4) **Final Verdict:**\n   - The model's output does not contain the issue described. It does not resemble a failing output example and does conform to the requirements dictated by the ffmpeg man page. Therefore, it successfully generates a valid ffmpeg command that matches the user's requirements, leading to a positive evaluation of the model's performance in this instance."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 441,
+    "output_tokens": 419,
+    "total_tokens": 860,
+    "cost": 0.00006395
+  },
+  "model_type": "eval_run"
+}

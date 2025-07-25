@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "149427048848",
+  "created_at": "2025-07-24T20:35:58.192237",
+  "created_by": "scosman",
+  "input": "I want to convert a vertical video to landscape (1280x720) by adding blurred background.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "107897049268",
+    "path": null,
+    "created_at": "2025-07-24T20:35:58.192211",
+    "created_by": "scosman",
+    "output": "To convert a vertical video to a 1280x720 landscape resolution while keeping the original video centered and filling the background with a blurred version of the same video, you can use ffmpeg’s filter_complex with the following steps:\n\n- Scale the original video to fit height=720 while maintaining aspect ratio (width will be less than 1280 for vertical videos).\n- Create a blurred background by scaling the video to 1280x720 and applying a boxblur filter.\n- Overlay the scaled original video over the blurred background, centered horizontally.\n\nThis method keeps the original video content unscaled except for fitting height, fills the output frame with a visually coherent blurred background, and results in a standard 720p landscape video.\n\n```bash\nffmpeg -i input.mp4 -filter_complex \"\n[0:v]scale=-2:720[scaled];\n[0:v]scale=1280:720,boxblur=luma_radius=20:luma_power=1:chroma_radius=20:chroma_power=1[bg];\n[bg][scaled]overlay=(W-w)/2:(H-h)/2\n\" -c:a copy -c:v libx264 -preset slow -crf 20 -pix_fmt yuv420p output_1280x720_blurbg.mp4\n```\n\nExplanation:\n- `scale=-2:720` scales the main video to height=720 and adjusts width automatically to maintain aspect ratio (-2 makes width divisible by 2).\n- `scale=1280:720,boxblur=...` creates the blurred background at the full 720p resolution.\n- `overlay=(W-w)/2:(H-h)/2` centers the scaled original video on the blurred background.\n- `-c:a copy` copies the audio directly without re-encoding.\n- `libx264` encoder with `preset slow` and `crf 20` gives a good balance of quality and file size.\n- `pix_fmt yuv420p` for broad compatibility.\n\nAssumptions:\n- The input video is vertical and its height is greater than width.\n- You want to keep the audio unchanged.\n- Output is an MP4 file using H.264 video encoding appropriate for most platforms.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 454,
+    "total_tokens": 1048,
+    "cost": 0.000964
+  },
+  "model_type": "task_run"
+}

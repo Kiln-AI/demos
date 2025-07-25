@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "345960334873",
+  "created_at": "2025-07-24T20:39:39.620156",
+  "created_by": "scosman",
+  "input": "I want to trim a segment from a video without re-encoding, but my start point lands on a non-keyframe. How do I address this?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "856575606795",
+    "path": null,
+    "created_at": "2025-07-24T20:39:39.620133",
+    "created_by": "scosman",
+    "output": "When you trim a video segment without re-encoding using `-c copy`, ffmpeg can only cut accurately at keyframes because it copies the stream data directly. If your start time falls on a non-keyframe, ffmpeg will seek backward to the closest previous keyframe, which may lead to a slightly earlier start than requested.\n\nTo address this:\n\n1. **Accurate trimming but with re-encoding:** Use the `-ss` parameter **before** specifying the input to enable accurate seeking, and perform re-encoding on the start segment to ensure exact cutting. This is the most precise way but involves re-encoding (which costs CPU and quality).\n\n2. **Fast trimming with direct stream copy:** Use `-ss` **after** input to allow stream copy, but the start will snap to the nearest preceding keyframe, potentially cutting earlier than desired.\n\n3. **Keyframe alignment:** If you want strictly no re-encoding but need exact start, consider remuxing or re-encoding the segment, or use GOP-aware editing tools that re-encode only a small portion around the cut point.\n\n**Recommendation for best balance:** If minimal re-encoding is acceptable, do a two-step approach:\n\n- First do lossless cutting with stream copy to get close to the desired start.\n- Then re-encode only the first few seconds to ensure the segment starts exactly where you want.\n\nHere’s an example command to trim accurately by re-encoding only the necessary part:\n\n```bash\nffmpeg -ss 00:01:23 -i input.mp4 -t 00:00:10 -c:v libx264 -c:a aac -preset fast -crf 23 output.mp4\n```\n\nExplanation:\n- `-ss 00:01:23` before `-i` tells ffmpeg to seek more accurately (slower).\n- `-t 00:00:10` sets the duration of the trimmed segment.\n- `-c:v libx264 -c:a aac` re-encodes video and audio to ensure exact trimming.\n- `-preset fast -crf 23` balance between encoding speed and quality.\n\nIf strictly no re-encoding is desired and start time must be exact, that's generally not possible due to keyframe dependencies; you must accept approximate start or re-encode.\n\n---\n\n**Summary:**\n- Trimming without re-encoding only works accurately on keyframes.\n- For exact cuts on non-keyframe times, re-encoding is necessary at least on that part.\n- Use `-ss` before input for accurate seeking and accept re-encoding.\n- Use `-ss` after input for fast copy and approximate trimming.\n\n---\n\n**Example of fast copy with approximate trimming (start aligned to keyframe):**\n\n```bash\nffmpeg -i input.mp4 -ss 00:01:23 -t 00:00:10 -c copy output.mp4\n```\n\nThis will be faster, but the start may be off if 00:01:23 is not a keyframe timestamp.\n\n---\n\nIn practice, it’s good to verify your keyframe intervals in the input video (`ffprobe` can help) and choose the approach based on your needs for precision vs. speed and quality.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 605,
+    "output_tokens": 666,
+    "total_tokens": 1271,
+    "cost": 0.0013076
+  },
+  "model_type": "task_run"
+}

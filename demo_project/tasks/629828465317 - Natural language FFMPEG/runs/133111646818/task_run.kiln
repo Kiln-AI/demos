@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "133111646818",
+  "created_at": "2025-07-24T20:26:11.606608",
+  "created_by": "scosman",
+  "input": "Re-time subtitles during burn-in to correct for a gradual video delay.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "856109004917",
+    "path": null,
+    "created_at": "2025-07-24T20:26:11.606556",
+    "created_by": "scosman",
+    "output": "To re-time subtitles during burn-in to correct for gradual video delay, you can use ffmpeg's `subtitles` filter with the `force_style` and `si` options to shift subtitle timestamps or use an external modified subtitles file.\n\nHowever, ffmpeg does not directly support gradual time shifting in subtitle filters. To apply a gradual delay correction, you usually need to preprocess the subtitles externally (e.g., using a script to modify subtitle timestamps with a linear time correction).\n\nAlternatively, for a gradual shift correction, you can use the `ass` filter combined with ffmpeg's `setpts` filter as a workaround by adjusting the subtitle rendering timestamps.\n\nA practical approach is:\n\n1. Use an external tool or script to re-time subtitles (e.g., using `ffsubsync` or subtitle editing software that supports timing curves).\n2. Then burn the re-timed subtitles into the video with ffmpeg.\n\nIf you want to do it entirely in ffmpeg, you can use the `ass` filter with `modify.ssa` subtitle files but to implement gradual delay, you would need to edit the .ass file timing manually.\n\nHere's an example command for burning subtitles after external re-timing:\n\n```bash\nffmpeg -i input.mp4 -vf \"ass=retimed_subtitles.ass\" -c:v libx264 -crf 23 -preset medium -c:a copy output_burned.mp4\n```\n\nIf you want to shift subtitles timing by a fixed delay (not gradual), ffmpeg supports `subtitles` filter with `si` option like `si=1000` to delay 1000 ms (but this is constant, not gradual).\n\n---\n\nSummary:\n\n- For gradual delay correction: first preprocess subtitles timing externally.\n- Then burn them in using `ass` filter.\n\nAssumptions:\n\n- The input video is input.mp4, subtitles are in ASS format.\n- Gradual delay correction is not natively supported in ffmpeg filters; external processing is recommended.\n\n---\n\nExample preprocessing with `ffsubsync` (external tool):\n\n```bash\nffsubsync original_subs.srt -i input.mp4 -o retimed_subs.ass --linear-syncronizer \"start=0:0, end=duration:desired_shift\"\n```\n\nAfter you get `retimed_subs.ass`, burn subtitles:\n\n```bash\nffmpeg -i input.mp4 -vf \"ass=retimed_subs.ass\" -c:v libx264 -crf 23 -preset medium -c:a copy output_burned.mp4\n```\n\nThis is the best practice approach for gradual subtitle re-timing with burning.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 587,
+    "output_tokens": 538,
+    "total_tokens": 1125,
+    "cost": 0.0010956
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "247742582460",
+  "created_at": "2025-07-24T20:38:32.881162",
+  "created_by": "scosman",
+  "input": "Keep all subtitle positioning/cues from fancy.ass when embedding into anime_clip.mkv.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "614902147762",
+    "path": null,
+    "created_at": "2025-07-24T20:38:32.881121",
+    "created_by": "scosman",
+    "output": "To embed subtitles from a fancy.ass file into an MKV while preserving all positioning, styling, and cue timing, you want to include the `.ass` subtitles as a subtitle stream without burning them into the video. This maintains the full subtitle fidelity and allows players to render the original styling and positioning.\n\nKey points:\n- Use `-c:s copy` or in this case better to let FFmpeg pass the subtitle stream without re-encoding.\n- Input the `.ass` file as a separate input and map it as a subtitle stream.\n- Use Matroska container (`.mkv`) that supports soft subtitles with formatting.\n- Make sure to use `-map` options explicitly to include all video, audio, and subtitle streams.\n- Do not burn in subtitles if you want to preserve positioning and cues intact.\n\nAssuming:\n- The video and audio streams are in `anime_clip.mkv`.\n- The subtitle file is `fancy.ass`.\n- You want to keep all existing streams and add the subtitle as an additional track.\n\nHere is an example command that preserves all existing streams and adds the `.ass` subtitle:\n\n```bash\nffmpeg -i anime_clip.mkv -i fancy.ass -map 0 -map 1 -c copy -c:s ass output.mkv\n```\n\nExplanation:\n- `-i anime_clip.mkv` inputs the original video+audio.\n- `-i fancy.ass` inputs the styled subtitle file.\n- `-map 0` maps all streams from the first input (video, audio, subtitles if any).\n- `-map 1` maps all streams from subtitle input (the `.ass` file).\n- `-c copy` copies all streams' codecs without re-encoding by default.\n- `-c:s ass` forces the subtitle codec for the second input's subtitles to ASS subtitle codec, which preserves styling and positioning.\n- `output.mkv` writes out the new MKV file with embedded subtitles.\n\nThis keeps the subtitle formatting intact, allowing players compatible with `.ass` subtitles to render cues as intended. If you want to remove existing subtitles and only keep `fancy.ass`, adjust the `-map` accordingly.\n\nIf your FFmpeg build has some limitation with `-c:s ass`, you can also simply use `-c:s copy` if the subtitle is already in ASS format. But explicitly specifying `-c:s ass` ensures proper handling.\n\nThis approach avoids burning subtitles into video and keeps subtitle track selectable in compatible players.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 507,
+    "total_tokens": 1097,
+    "cost": 0.0010472
+  },
+  "model_type": "task_run"
+}

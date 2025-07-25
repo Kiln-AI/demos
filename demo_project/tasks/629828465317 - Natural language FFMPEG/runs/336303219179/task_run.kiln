@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "336303219179",
+  "created_at": "2025-07-24T20:26:37.231209",
+  "created_by": "scosman",
+  "input": "Show me a way to convert all .mp3s in a folder to mono audio, keeping them as .mp3s.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "357541281952",
+    "path": null,
+    "created_at": "2025-07-24T20:26:37.231181",
+    "created_by": "scosman",
+    "output": "To batch convert all .mp3 files in a folder to mono audio while keeping them as .mp3 files, you can use a loop in a shell (e.g., bash). The key ffmpeg parameter is `-ac 1` which forces the audio channels to 1 (mono). We will copy the metadata and encode with a decent quality preset.\n\nHere’s a high-quality approach and explanation:\n- `-ac 1`: sets audio channels to mono.\n- Use `-c:a libmp3lame` for MP3 encoding, which is the standard MP3 encoder for ffmpeg.\n- Use `-qscale:a 2` to specify VBR quality for good quality (~190 kbps) instead of fixed bitrate for better audio vs size tradeoff.\n- Keep the original filename but add a suffix or overwrite carefully (example shows adding `_mono` to avoid overwriting).\n- This can be run in bash or any POSIX environment.\n\nExample bash script to process all `.mp3` files in the current directory:\n\n```bash\nfor f in *.mp3; do\n  ffmpeg -i \"$f\" -ac 1 -c:a libmp3lame -qscale:a 2 \"${f%.mp3}_mono.mp3\"\ndone\n```\n\nExplanation:\n- Iterates over each `.mp3` file.\n- Converts to mono with high-quality MP3 encoding.\n- Saves new file with `_mono` appended before `.mp3`.\n- This avoids overwriting originals and allows verification before replacing originals if desired.\n\nIf you want to overwrite the originals after verifying, you can modify the script accordingly. For safe batch processing, it’s recommended to output new files first.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 347,
+    "total_tokens": 947,
+    "cost": 0.0007952
+  },
+  "model_type": "task_run"
+}

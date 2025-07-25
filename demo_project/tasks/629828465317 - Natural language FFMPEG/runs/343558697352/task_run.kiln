@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "343558697352",
+  "created_at": "2025-07-24T18:07:48.142828",
+  "created_by": "scosman",
+  "input": "How can I reduce the file size of a .mp4 video without significantly losing quality?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Video Conversion Techniques"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "184208123575",
+    "path": null,
+    "created_at": "2025-07-24T18:07:48.142767",
+    "created_by": "scosman",
+    "output": "To reduce the file size of an .mp4 video while maintaining good quality, you can re-encode the video with a more efficient bitrate or use the CRF (Constant Rate Factor) method with the H.264 codec. Using CRF around 23 achieves a good balance between quality and file size; lower values mean higher quality but larger files. The libx264 encoder and AAC audio codec are widely compatible, and yuv420p pixel format ensures playback compatibility.\n\nHere’s a recommended command:\n\n- -c:v libx264 uses the H.264 codec.\n- -crf 23 sets quality (lower is better; values from 18–28 are typical).\n- -preset slower compresses more efficiently (use medium/fast/slower as needed).\n- -c:a aac -b:a 128k keeps good audio quality at a moderate bitrate.\n- -movflags +faststart helps for web playback.\n\n```bash\nffmpeg -i input.mp4 -c:v libx264 -crf 23 -preset slow -c:a aac -b:a 128k -movflags +faststart -pix_fmt yuv420p output_smaller.mp4\n```\n\nAssumptions:\n- The input file is named input.mp4.\n- Output will be output_smaller.mp4.\n- Adjust the -crf value (lower = better quality, larger file; higher = smaller file, more quality loss) as needed for your requirements.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 299,
+    "total_tokens": 891,
+    "cost": 0.003576
+  },
+  "model_type": "task_run"
+}

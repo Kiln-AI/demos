@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "109194029051",
+  "created_at": "2025-07-24T20:27:38.927724",
+  "created_by": "scosman",
+  "input": "Can you extract subtitles from a .mkv file, if they are present as a separate stream?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "300325541174",
+    "path": null,
+    "created_at": "2025-07-24T20:27:38.927698",
+    "created_by": "scosman",
+    "output": "Yes, you can extract subtitles from an MKV file if they are stored as a separate subtitle stream. The best practice is first to identify the subtitle stream(s) in the file using ffprobe or ffmpeg, then extract the desired subtitle stream into an external subtitle file, preserving the original format (e.g., .srt, .ass).\n\nSteps:\n1. Use ffprobe to list all streams and find the subtitle stream index and codec.\n2. Use ffmpeg to extract the subtitle stream by specifying `-map` for the subtitle stream and copying it without re-encoding (`-c:s copy`).\n\nExample assumes subtitles are in the first subtitle stream (`0:s:0`). You should adjust the stream index based on the ffprobe output.\n\n```bash\n# Step 1: Check subtitle streams\nffprobe -i input.mkv -show_streams -select_streams s -loglevel error\n\n# Example output might show subtitles at stream index 2:\n# [STREAM]\n# index=2\n# codec_type=subtitle\n# codec_name=srt\n# ...\n\n# Step 2: Extract the subtitle stream (assuming stream 0:s:0) to subtitles.srt\nffmpeg -i input.mkv -map 0:s:0 -c:s copy subtitles.srt\n```\n\nExplanation:\n- `-map 0:s:0` selects the first subtitle stream from the input file.\n- `-c:s copy` copies the subtitle stream as is, without re-encoding.\n- The output file extension (here `.srt`) should match the subtitle codec format to ensure proper saving.\n\nIf multiple subtitle streams exist, repeat extraction command with other subtitle stream indices (e.g., `0:s:1`, etc.) or extract all at once by multiple `-map` commands and naming outputs accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 373,
+    "total_tokens": 967,
+    "cost": 0.0008344
+  },
+  "model_type": "task_run"
+}

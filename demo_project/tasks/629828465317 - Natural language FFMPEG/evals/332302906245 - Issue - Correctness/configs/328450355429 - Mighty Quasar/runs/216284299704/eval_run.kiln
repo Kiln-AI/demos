@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "216284299704",
+  "created_at": "2025-07-24T22:29:29.723476",
+  "created_by": "scosman",
+  "dataset_id": "186965238061",
+  "task_run_config_id": "127263284610",
+  "eval_config_eval": false,
+  "input": "I have a video file with multiple audio tracks and I want to map the third audio stream to the output, but keep the original video. The input file is movie.mkv",
+  "output": "To keep the original video stream and only remap the third audio stream from movie.mkv, you can use stream mapping in ffmpeg. \n\n- `-map 0:v` selects all video streams from input 0 (your input file). This ensures the output keeps all video streams as-is.\n- `-map 0:a:2` selects the third audio stream (indexing starts at 0) from input 0. This pulls only that audio stream into the output.\n- By default, ffmpeg will copy the streams unless you specify re-encoding. To preserve the original data without quality loss, use `-c copy`.\n  \nIf you want just video and that specific audio in the output container, this command is sufficient. The output format is determined by the file extension, so saving to `.mkv` preserves the formats.\n\nHere’s the command:\n\n```bash\nffmpeg -i movie.mkv -map 0:v -map 0:a:2 -c copy output.mkv\n```\n\nThis command outputs `output.mkv` containing all the original video streams plus only the third audio stream from the input, without any re-encoding.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does not contain the issue described. The ffmpeg command it generated correctly maps the original video stream while selecting the third audio stream and retains the original quality by specifying `-c copy`. The command aligns with the user's request to keep the original video and only output the specified audio stream.\n\n2) The model's output is not similar to the example of a failing output provided. The issue with the failure example is that it incorrectly uses a non-existent preset. In this case, the model provided a valid ffmpeg command that follows the correct syntax and parameters, so it adheres to the requirements specified.\n\n3) The command does not break any requirements dictated in the ffmpeg man page. It follows the correct order of options and applies the appropriate flags for stream mapping and copying streams without re-encoding. All parameters used conform to what is outlined in the man page regarding input and output file handling, as well as stream mapping.\n\n4) The model's output does not contain the issue described. It successfully generated a command that meets the user's requirements without any errors or invalid commands. Therefore, it passes this evaluation."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 447,
+    "output_tokens": 238,
+    "total_tokens": 685,
+    "cost": null
+  },
+  "model_type": "eval_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "813040387183",
+  "created_at": "2025-07-24T18:09:11.961134",
+  "created_by": "scosman",
+  "input": "I want to change the speed of my video, slowmo.mp4, to make it twice as slow.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Commands for Video Editing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "113057436988",
+    "path": null,
+    "created_at": "2025-07-24T18:09:11.961108",
+    "created_by": "scosman",
+    "output": "To slow down your video to half its original speed (i.e., make it play twice as slow), you need to adjust both the video and audio streams:\n\n- For the video, use the setpts filter with a value of 2.0*PTS, which stretches the presentation timestamps to twice their original value (slowing it down).\n- For the audio, use the atempo audio filter. atempo only supports values between 0.5 and 2.0 per filter. To halve the speed (x0.5 speed), set atempo=0.5.\n\nKeep in mind: If you want to preserve audio pitch, this approach works; for larger slow-downs, chain multiple atempo filters as needed.\n\nHere’s the appropriate ffmpeg command:\n\n```bash\nffmpeg -i slowmo.mp4 -filter_complex \"[0:v]setpts=2.0*PTS[v];[0:a]atempo=0.5[a]\" -map \"[v]\" -map \"[a]\" slowmo_twice_as_slow.mp4\n```\n\nAssumption: The input has both video and audio. If there’s no audio, you can skip the audio filter.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 242,
+    "total_tokens": 839,
+    "cost": 0.00313
+  },
+  "model_type": "task_run"
+}

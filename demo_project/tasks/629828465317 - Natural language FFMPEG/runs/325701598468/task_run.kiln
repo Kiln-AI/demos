@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "325701598468",
+  "created_at": "2025-07-24T18:09:34.948382",
+  "created_by": "scosman",
+  "input": "I need to turn the video promo.mp4 into a 1080p MKV that streams well online.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Streamlining Video Files for Web Streaming"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "165896176380",
+    "path": null,
+    "created_at": "2025-07-24T18:09:34.948324",
+    "created_by": "scosman",
+    "output": "To convert promo.mp4 into a 1080p MKV optimized for web streaming:\n\n- Use the H.264 codec for maximum compatibility and efficient compression.\n- Resize the video to 1920x1080 (1080p) using -vf scale=1920:1080. If you want to preserve the original aspect ratio and just make the height 1080, use scale=-2:1080 instead.\n- Use AAC audio (-c:a aac) for compatibility, noting that MKV also supports other codecs if desired.\n- -movflags +faststart places metadata at the start for smoother streaming, which works for MP4 and also recent web implementations of MKV.\n- -pix_fmt yuv420p ensures broad playback compatibility.\n- -crf 23 is a good default balance of quality and compression, but you can adjust as needed.\n- For best streaming, consider segmenting or using adaptive streaming formats (e.g., DASH/HLS) for large-scale web deployment, but for a single file, this is sufficient.\n\nAssuming you want fixed 1080p with H.264 and AAC in MKV:\n\n```bash\nffmpeg -i promo.mp4 -vf scale=1920:1080 -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.mkv\n```\n\nThis command will create a 1080p MKV file with settings to help ensure smooth web streaming.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 316,
+    "total_tokens": 915,
+    "cost": 0.003726
+  },
+  "model_type": "task_run"
+}

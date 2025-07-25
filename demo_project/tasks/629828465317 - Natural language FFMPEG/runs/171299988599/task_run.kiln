@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "171299988599",
+  "created_at": "2025-07-24T20:35:12.402037",
+  "created_by": "scosman",
+  "input": "Transcode a 3D SBS.mp4 to a 2D 1080p .mp4 file.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "134889649054",
+    "path": null,
+    "created_at": "2025-07-24T20:35:12.402017",
+    "created_by": "scosman",
+    "output": "To transcode a 3D side-by-side (SBS) video into a 2D 1080p MP4 file, the process involves extracting only one side (usually the left or right half) of the original SBS frame and then resizing it to 1920x1080.\n\nKey steps:\n- Use the crop filter to select half of the width (since SBS frames have both left and right images side by side).\n- Resize the cropped half to 1920x1080 using the scale filter.\n- Use H.264 video codec for wide compatibility and AAC for audio.\n- Use `-movflags +faststart` for better streaming experience.\n- Set pixel format to yuv420p for broad device compatibility.\n\nAssuming the input video has a horizontal resolution twice that of the desired 1080p width (i.e., 3840x1080 for a full SBS frame), cropping width will be half that (1920).\n\nHere’s the command:\n\n```bash\nffmpeg -i \"3D SBS.mp4\" -vf \"crop=iw/2:ih:0:0,scale=1920:1080\" -c:v libx264 -preset slow -crf 20 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output_2D_1080p.mp4\n```\n\nExplanation of options:\n- `crop=iw/2:ih:0:0`: Takes the left half of the frame (iw = input width, ih = input height).\n- `scale=1920:1080`: Resizes the cropped video to 1920x1080.\n- `-preset slow` and `-crf 20`: Encode with a good balance of quality and compression.\n- `-c:a aac -b:a 128k`: Encode audio as AAC with 128kbps bitrate.\n- `-pix_fmt yuv420p`: Ensures compatibility with most players and devices.\n- `-movflags +faststart`: Moves metadata to the start for streaming friendliness.\n\nIf you prefer the right eye view instead, change the crop’s x offset from 0 to `iw/2`:\n`crop=iw/2:ih:iw/2:0`",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 472,
+    "total_tokens": 1068,
+    "cost": 0.0009936
+  },
+  "model_type": "task_run"
+}

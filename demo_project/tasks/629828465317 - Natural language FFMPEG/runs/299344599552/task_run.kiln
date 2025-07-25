@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "299344599552",
+  "created_at": "2025-07-23T11:30:30.764968",
+  "created_by": "scosman",
+  "input": "Convert this video to use both libx264 and libx265 codecs simultaneously for maximum compatibility across all devices.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "claude_sonnet_4",
+      "model_provider": "anthropic",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Output Format with Conflicting Parameters"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "322698609766",
+    "path": null,
+    "created_at": "2025-07-23T11:30:30.764941",
+    "created_by": "scosman",
+    "output": "To convert a video using both libx264 and libx265 codecs simultaneously, you can use ffmpeg's mapping feature to create multiple output streams with different codecs in the same file. This approach ensures maximum compatibility by providing fallback options for different devices.\n\nThe command uses:\n- `-map 0:v` twice to create two video streams from the same source\n- `-c:v:0 libx264` for the first video stream (wider compatibility)\n- `-c:v:1 libx265` for the second video stream (better compression)\n- `-tag:v:0 avc1` and `-tag:v:1 hev1` to properly tag the streams\n- Both streams will be available for playback depending on device capabilities\n\n```bash\nffmpeg -i input.mp4 -map 0:v -map 0:v -map 0:a -c:v:0 libx264 -c:v:1 libx265 -tag:v:0 avc1 -tag:v:1 hev1 -c:a aac -movflags +faststart output.mp4\n```\n\nThis creates a single MP4 file containing both H.264 and H.265 video streams, allowing devices to automatically select the most appropriate codec for playback.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "claude_sonnet_4",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "function_calling",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_243159560313",
+    "eval_correctness"
+  ],
+  "usage": {
+    "input_tokens": 994,
+    "output_tokens": 300,
+    "total_tokens": 1294,
+    "cost": 0.007482000000000001
+  },
+  "model_type": "task_run"
+}

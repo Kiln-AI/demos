@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "507921190126",
+  "created_at": "2025-07-24T20:36:52.722894",
+  "created_by": "scosman",
+  "input": "Convert 'film.avi' to a 4K ProRes MOV file, with 10-bit color.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "189398139211",
+    "path": null,
+    "created_at": "2025-07-24T20:36:52.722875",
+    "created_by": "scosman",
+    "output": "To convert `film.avi` to a 4K ProRes MOV file with 10-bit color, you want to:\n\n- Resize or scale the video to 4K resolution (3840x2160).\n- Use the Apple ProRes codec (`prores_ks` or `prores`) with 10-bit color depth. ProRes supports 10-bit color natively.\n- Use a pixel format that supports 10-bit, such as `yuv422p10le`.\n- Output to a MOV container, which is standard for ProRes.\n- Keep audio stream as is or re-encode to a high-quality PCM or AAC depending on input.\n\nAssuming you want 3840x2160 resolution, if the source has a different aspect ratio, this command will scale to fit 3840 width and preserve the aspect ratio unless you specifically want to force 16:9 or crop.\n\nHere is the recommended command:\n\n```bash\nffmpeg -i film.avi -vf scale=3840:2160 -c:v prores_ks -profile:v 3 -pix_fmt yuv422p10le -c:a pcm_s16le film_4k_prores.mov\n```\n\nExplanation:\n- `-vf scale=3840:2160` scales video to exactly 4K UHD (3840x2160).\n- `-c:v prores_ks` uses the x264-derived ProRes encoder, recommended for flexibility and 10-bit support.\n- `-profile:v 3` corresponds to ProRes 422 HQ, a high-quality profile supporting 10-bit.\n- `-pix_fmt yuv422p10le` ensures 10-bit 4:2:2 color space compatible with ProRes.\n- `-c:a pcm_s16le` encodes audio as uncompressed PCM 16-bit which is common for MOV files; you can change to `copy` if the source audio is fine.\n- Output filename uses `.mov` extension, standard for ProRes.\n\nIf you prefer to keep original audio without re-encoding, replace `-c:a pcm_s16le` with `-c:a copy`.\n\nThis command balances quality and compatibility for professional workflows using ProRes 10-bit encoding at 4K resolution.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 464,
+    "total_tokens": 1060,
+    "cost": 0.0009808
+  },
+  "model_type": "task_run"
+}

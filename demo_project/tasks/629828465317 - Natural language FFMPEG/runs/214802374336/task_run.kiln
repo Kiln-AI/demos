@@ -1,0 +1,48 @@
+{
+  "v": 1,
+  "id": "214802374336",
+  "created_at": "2025-07-25T09:05:31.265829",
+  "created_by": "scosman",
+  "input": "make this video slow motion",
+  "input_source": {
+    "type": "human",
+    "properties": {
+      "created_by": "scosman"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "186612745769",
+    "path": null,
+    "created_at": "2025-07-25T09:05:31.265799",
+    "created_by": "scosman",
+    "output": "To create a slow-motion video from input.mp4, you can use the setpts filter in ffmpeg which adjusts the presentation timestamp of every packet after decoding, effectively slowing down the video playback. The speed is controlled by the input rate.\n\nKey points:\n- The input rate option (e.g. input_rate=0.5) halves the input frame rate, so set it to a smaller number (e.g., 0.25, 0.125) to double, triple, etc. the playback speed.\n- `setpts` with the input rate multiplied by the desired duration factor can also be used but is less accurate since it depends on input frame rate, so we usually control input rate first.\n- When speed-based re-encoding is slower than seeking in the source, a frame-accurate slowmotion can be achieved by seeking the input first then transposing the frames (e.g. frame_aspect_ratio=invert).\n\nAssuming you want to double the playback speed, use the input rate option:\n\n```bash\nffmpeg -i input.mp4 -t 0.5 -vf \"setpts=PTS*input_rate\" -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p output_slowmotion.mp4\n```\n\nExplanation:\n- `-t 0.5` ensures only the input duration is considered; adjusting the `-t` duration can change the output length accordingly.\n- Use `-c:v` codec `libx264` with `-preset slow` for reasonable quality-compression tradeoff.\n- `-pix_fmt yuv420p` for best compatibility.\n- You may further fine-tune `input_rate`, `-crf`, or repeat filters for desired effect.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "2891944478265::629828465317::581894650194",
+        "model_provider": "kiln_fine_tune",
+        "prompt_id": "fine_tune_prompt::2891944478265::629828465317::581894650194",
+        "structured_output_mode": "json_instructions",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "manual_run"
+  ],
+  "usage": {
+    "input_tokens": 414,
+    "output_tokens": 352,
+    "total_tokens": 766,
+    "cost": 0.0
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "211215213818",
+  "created_at": "2025-07-24T20:24:21.163842",
+  "created_by": "scosman",
+  "input": "Resize function.mov to 1080x1080 for Instagram feed square post.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "229653472886",
+    "path": null,
+    "created_at": "2025-07-24T20:24:21.163817",
+    "created_by": "scosman",
+    "output": "To resize `function.mov` to a 1080x1080 square resolution for Instagram feed posts, you need to scale and crop or pad the video while maintaining the aspect ratio to avoid distortion. Since the target is a square, the best practice is to first scale the video so the smaller dimension matches 1080 pixels, then crop or pad the other dimension to 1080 pixels.\n\nHere, we'll use the `scale` filter with the `crop` filter to center crop the video after scaling, ensuring no distortion.\n\n- `scale=1080:1080:force_original_aspect_ratio=decrease` scales the video so that both width and height fit within 1080x1080, preserving aspect ratio.\n- `pad=1080:1080:(ow-iw)/2:(oh-ih)/2` pads the video to a 1080x1080 frame if the original video has a smaller dimension after scaling.\n- Alternatively, you can crop instead of pad if you want to zoom and fill 1080x1080 entirely.\n\nAssuming you prefer a center-cropped square:\n\n```bash\nffmpeg -i function.mov -vf \"scale=1080:1080:force_original_aspect_ratio=increase,crop=1080:1080\" -c:a copy -c:v libx264 -preset medium -crf 23 -pix_fmt yuv420p function_1080x1080.mp4\n```\n\nExplanation:\n- `force_original_aspect_ratio=increase` scales the video so the smaller side is ≥1080 to avoid letterboxing.\n- `crop=1080:1080` extracts a centered 1080x1080 square from the scaled video.\n- `-c:a copy` copies audio stream as is.\n- `-c:v libx264` encodes with H.264.\n- `-preset medium` balances encoding speed and quality.\n- `-crf 23` provides good quality.\n- `-pix_fmt yuv420p` ensures compatibility across players and devices.\n\nThis will produce a square 1080x1080 video optimized for Instagram feed posts.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 440,
+    "total_tokens": 1030,
+    "cost": 0.00094
+  },
+  "model_type": "task_run"
+}

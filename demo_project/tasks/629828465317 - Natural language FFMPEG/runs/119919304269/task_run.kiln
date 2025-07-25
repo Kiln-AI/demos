@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "119919304269",
+  "created_at": "2025-07-24T20:39:23.947500",
+  "created_by": "scosman",
+  "input": "What’s the ffmpeg command for batch changing sample rate to 44.1kHz for all .wav files in a directory?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "251473499543",
+    "path": null,
+    "created_at": "2025-07-24T20:39:23.947477",
+    "created_by": "scosman",
+    "output": "To batch change the sample rate to 44.1 kHz for all `.wav` files in a directory, you can use a shell loop that processes each file individually with ffmpeg. The key points are:\n\n- Use `-ar 44100` to set the audio sample rate to 44.1 kHz.\n- Maintain the rest of the audio parameters and encoding without re-encoding if possible to preserve quality (`-c:a pcm_s16le` is common for WAV, but you can omit if you want ffmpeg’s default WAV encoding).\n- Save output files with a distinguishable name (e.g., appending `_44k`) or overwrite originals carefully.\n- Use a script or command line loop to automate this for all `.wav` files.\n\nAssuming a Bash shell on Linux/macOS, here is a best-practice approach that converts each `.wav` file, outputs to a new file with `_44k` suffix to avoid overwriting originals accidentally:\n\n```bash\nfor f in *.wav; do\n  ffmpeg -i \"$f\" -ar 44100 -c:a pcm_s16le \"${f%.wav}_44k.wav\"\ndone\n```\n\nExplanation:\n- `for f in *.wav; do ... done` loops over all `.wav` files in the current directory.\n- `-ar 44100` sets sample rate to 44.1 kHz.\n- `-c:a pcm_s16le` explicitly selects 16-bit signed PCM WAV encoding which is standard.\n- `\"${f%.wav}_44k.wav\"` takes the input filename, strips `.wav`, and appends `_44k.wav` to create a new output filename.\n\nThis approach is safe, clear, and easy to modify for other batch audio conversions. If you want to overwrite originals (be cautious!), replace the output filename with `\"$f\"`.\n\nIf you prefer Windows PowerShell or CMD, let me know and I can provide adjusted commands.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 401,
+    "total_tokens": 1002,
+    "cost": 0.000882
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "207684690256",
+  "created_at": "2025-07-24T20:25:19.325266",
+  "created_by": "scosman",
+  "input": "My .mkv file has a non-standard time base. Can I remux to .mp4 and ensure proper playback in VLC?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "110540892755",
+    "path": null,
+    "created_at": "2025-07-24T20:25:19.325242",
+    "created_by": "scosman",
+    "output": "When remuxing a file with a non-standard time base to MP4, you want to avoid re-encoding but ensure timestamps are correctly processed for proper playback. Using ffmpeg’s stream copy mode (-c copy) will keep the original codecs intact and avoid quality loss. However, some containers (like MP4) prefer standard time bases and timestamp handling.\n\nKey points to ensure proper playback in VLC:\n\n- Use `-c copy` to do stream copy and avoid re-encoding.\n- Use the `-fflags +genpts` flag to regenerate presentation timestamps (PTS) if the original file has non-standard or missing PTS. This can fix timestamps and ensure smooth playback.\n- Use `-movflags +faststart` to move the metadata to the beginning of the MP4 file, which helps with progressive playback in players like VLC.\n- Specify the output as .mp4 (e.g., output.mp4).\n\nThis command assumes the input mkv file’s streams are compatible with the MP4 container (e.g., H.264 video, AAC audio). If codecs aren’t compatible, re-encoding might be necessary.\n\n```bash\nffmpeg -fflags +genpts -i input.mkv -c copy -movflags +faststart output.mp4\n```\n\nThis will remux the MKV to MP4 with corrected timestamps and optimized metadata placement for VLC playback.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 281,
+    "total_tokens": 885,
+    "cost": 0.0006912
+  },
+  "model_type": "task_run"
+}

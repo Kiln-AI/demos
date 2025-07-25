@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "219963361379",
+  "created_at": "2025-07-24T18:09:01.852725",
+  "created_by": "scosman",
+  "input": "How can I de-interlace an old video cassette capture input.vob into a smoother progressive format?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Commands for Video Editing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "199337945294",
+    "path": null,
+    "created_at": "2025-07-24T18:09:01.852694",
+    "created_by": "scosman",
+    "output": "To de-interlace an interlaced video (common with old video cassette captures) and create a smoother progressive video, use ffmpeg’s built-in yadif (Yet Another DeInterlacing Filter), which is widely recommended for achieving good balance between speed and quality. The output format can remain as MPEG-2 (VOB) or be converted; here, I'll use MP4 with H.264 for better compatibility unless you specify otherwise.\n\n- The filter -vf yadif applies the yadif deinterlacer.\n- -c:v libx264 encodes video as H.264.\n- -crf 18 is a high-quality constant rate factor; you can adjust (lower = better).\n- -preset slow gives better compression (you can use faster presets).\n- -c:a aac -b:a 128k transcodes audio to AAC.\n- -pix_fmt yuv420p ensures maximum compatibility.\n\n```bash\nffmpeg -i input.vob -vf yadif -c:v libx264 -crf 18 -preset slow -c:a aac -b:a 128k -pix_fmt yuv420p output_progressive.mp4\n```\n\nThis will produce a high-quality progressive (deinterlaced) MP4 from your interlaced VOB cassette capture. If you want to keep the original format, use -c:v mpeg2video and -c:a copy instead. Let me know if you prefer another output format!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 299,
+    "total_tokens": 894,
+    "cost": 0.003582
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "221624259166",
+  "created_at": "2025-07-24T20:39:28.681526",
+  "created_by": "scosman",
+  "input": "I want to re-encode all my home movies to VP9/webm for YouTube upload in one batch. What would a suitable ffmpeg command look like?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "469557411664",
+    "path": null,
+    "created_at": "2025-07-24T20:39:28.681497",
+    "created_by": "scosman",
+    "output": "To batch re-encode all your home movies to VP9 in WebM format for YouTube upload, you want a command that:\n\n- Uses the VP9 codec with good quality-to-size balance (`-c:v libvpx-vp9`).\n- Uses a good constant quality mode with variable bitrate (`-crf` controls quality, around 30 is reasonable, and `-b:v 0` enables constant quality mode).\n- Uses 2-pass encoding for better quality/size tradeoff (optional, but recommended especially for longer videos).\n- Uses `-c:a libopus` (or `-c:a libvorbis`) for audio, with a decent audio bitrate (like 128k).\n- Sets output container to WebM (`.webm`).\n- Respects the original resolution and frame rate by default, unless you want to specify resizing.\n  \nFor batch processing, you can run a loop in a shell script (bash example), assuming your input files are named `*.mp4` or any other extension.\n\nHere’s a high-quality example of a one-pass VP9 encoding command for a single file:\n\n```bash\nffmpeg -i input.mp4 -c:v libvpx-vp9 -crf 30 -b:v 0 -c:a libopus -b:a 128k output.webm\n```\n\nFor batch processing multiple files in bash (assuming `*.mp4`), here’s a script snippet doing one-pass encoding for each file:\n\n```bash\nfor f in *.mp4; do\n  ffmpeg -i \"$f\" -c:v libvpx-vp9 -crf 30 -b:v 0 -c:a libopus -b:a 128k \"${f%.*}.webm\"\ndone\n```\n\nIf you want two-pass encoding for better size/quality, you should run two commands per file. Here’s a batch example for two-pass:\n\n```bash\nfor f in *.mp4; do\n  ffmpeg -y -i \"$f\" -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 1 -an -f null /dev/null\n  ffmpeg -i \"$f\" -c:v libvpx-vp9 -b:v 0 -crf 30 -pass 2 -c:a libopus -b:a 128k \"${f%.*}.webm\"\ndone\n```\n\n**Assumptions:**\n\n- Your home movies are in `.mp4` format; change `*.mp4` and input accordingly.\n- You have enough processing time — VP9 encoding is slow; two-pass doubles encoding time but yields better results.\n- You want good quality and YouTube compatibility.\n- If your shell is Windows PowerShell or CMD, syntax will differ.\n\n---\n\n### Summary\n\n- `-c:v libvpx-vp9`: VP9 video encoder\n- `-crf 30`: quality level; lower means better quality but bigger files\n- `-b:v 0`: enables constant quality mode (variable bitrate)\n- `-c:a libopus`: modern audio codec WebM supports widely\n- `-b:a 128k`: audio bitrate\n- Two-pass improves quality vs file size ratio but doubles encoding time.\n\n---\n\n### Example final batch command (one-pass):\n\n```bash\nfor f in *.mp4; do\n  ffmpeg -i \"$f\" -c:v libvpx-vp9 -crf 30 -b:v 0 -c:a libopus -b:a 128k \"${f%.*}.webm\"\ndone\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 607,
+    "output_tokens": 747,
+    "total_tokens": 1354,
+    "cost": 0.001438
+  },
+  "model_type": "task_run"
+}

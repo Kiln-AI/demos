@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "267321208490",
+  "created_at": "2025-07-23T13:13:39.857734",
+  "created_by": "scosman",
+  "dataset_id": "975726493071",
+  "task_run_config_id": null,
+  "eval_config_eval": true,
+  "input": "I want to merge video from stream 2 and audio from stream 7 of my input file multi_track.mp4 into a single output file",
+  "output": "To merge specific streams from a multi-track file, you'll use the `-map` parameter to select which streams to include in the output. This allows you to pick specific video and audio tracks from files with multiple streams.\n\nThe `-map` parameter uses zero-based indexing, so stream 2 is the third stream and stream 7 is the eighth stream in the file. The format is `-map input_file_index:stream_index`.\n\n```bash\nffmpeg -i multi_track.mp4 -map 0:2 -map 0:7 -c copy output.mp4\n```\n\nThis command maps stream 2 (video) and stream 7 (audio) from the input file, using `-c copy` to avoid re-encoding for faster processing while maintaining quality.",
+  "intermediate_outputs": {
+    "reasoning": "**My Analysis of the `ffmpeg` Command**\n\nOkay, here's my breakdown of how I'm approaching this. The user wants to pull a specific video and audio stream from a `multi_track.mp4` file and combine them into a new `output.mp4` file. Pretty standard remuxing task.\n\nFirst, I need to understand how `ffmpeg` handles stream selection. The key is the `-map` option. From my experience and knowledge, `-map` uses zero-based indexing, which I need to keep in mind. The user specified \"stream 2\" for video and \"stream 7\" for audio. This means stream index 2 and stream index 7, which corresponds to the third and eighth streams, respectively. I also know that if I don't specify the stream type, `ffmpeg` chooses the type automatically.\n\nNow, based on the user's explicit mention of \"video from stream 2\" and \"audio from stream 7,\" I'm reasonably confident in assuming that stream 2 *is* video and stream 7 *is* audio. No need for more verbose selectors like `-map 0:v:2` or `-map 0:a:7`.\n\nKnowing this, I constructed the command. `-map 0:2` selects the video stream at index 2 (the third stream), and `-map 0:7` selects the audio stream at index 7 (the eighth stream).\n\nThen, to avoid unnecessary re-encoding and preserve quality, I used `-c copy`. This tells `ffmpeg` to simply copy the existing codecs into the new container (`.mp4` in this case), making the process fast and lossless. It keeps the quality the user specified in their input file.\n\nThe resulting command is:\n\n`ffmpeg -i multi_track.mp4 -map 0:2 -map 0:7 -c copy output.mp4`\n\nI'm confident this will work as expected. It's a straightforward application of `ffmpeg`'s `-map` and `-c copy` functionalities, following best practices for this type of remuxing operation."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 1002,
+    "output_tokens": 177,
+    "total_tokens": 1179,
+    "cost": 0.005661
+  },
+  "model_type": "eval_run"
+}

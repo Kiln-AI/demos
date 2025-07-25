@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "956858303848",
+  "created_at": "2025-07-24T20:39:27.805309",
+  "created_by": "scosman",
+  "input": "Is there a way to create contact sheet image collages of all videos in a directory, one png per video, using ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "223023664059",
+    "path": null,
+    "created_at": "2025-07-24T20:39:27.805283",
+    "created_by": "scosman",
+    "output": "Yes, you can automate the creation of contact sheet image collages (thumbnails arranged in a grid) for all videos in a directory using a shell loop combined with ffmpeg's `select` and `tile` filters. The key points and best practices are:\n\n- Use `ffmpeg`'s `select='not(mod(n,interval))'` filter to pick frames evenly spaced throughout the video.\n- The `scale` filter can resize frames to a resolution suitable for the contact sheet.\n- The `tile` filter arranges frames into a grid—specify number of columns and rows (e.g., 5x5).\n- Use `-frames:v 1` to output only one image (the contact sheet).\n- Automate by iterating over video files in your directory with a shell script (bash example shown).\n- Keep filenames clean by replacing spaces or special chars if needed (optional depending on filenames).\n- Use a conventional output naming pattern like `filename-contactsheet.png`.\n\nHere’s an example bash script that you can run in the directory containing your videos. It creates contact sheets of 25 thumbnails (5x5 grid) at 320x180 each, spacing frames evenly throughout each video, and outputs one PNG per video.\n\n```bash\n#!/bin/bash\n# Batch process all video files (adjust extensions if needed)\nfor video in *.{mp4,mkv,avi,mov,flv}; do\n  # Skip if no files found for the pattern\n  [[ -e \"$video\" ]] || continue\n  \n  # Extract basename without extension\n  base=\"${video%.*}\"\n\n  # Probe for the number of frames and duration to calculate frame interval\n  frames=$(ffprobe -v error -select_streams v:0 -count_frames \\\n    -show_entries stream=nb_read_frames -of default=nokey=1:noprint_wrappers=1 \"$video\")\n\n  if [[ \"$frames\" == \"N/A\" ]]; then\n    # For some formats, nb_read_frames can be N/A, fallback to duration and fps\n    duration=$(ffprobe -v error -show_entries format=duration -of default=nokey=1:noprint_wrappers=1 \"$video\")\n    fps=$(ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of default=nokey=1:noprint_wrappers=1 \"$video\")\n    # Calculate approximate number of frames: duration * fps\n    # r_frame_rate returns fraction like 30000/1001, evaluate it:\n    eval \"fpsval=$fps\"\n    frames=$(awk \"BEGIN {print int($duration * $fpsval)}\")\n  fi\n\n  # Number of thumbnails: 25 (5x5)\n  thumbs=25\n\n  # Calculate interval to pick frames evenly spaced\n  # interval = total_frames / thumbs, but avoid 0 or less\n  interval=$((frames / thumbs))\n  if (( interval < 1 )); then interval=1; fi\n\n  # Generate contact sheet\n  ffmpeg -hide_banner -loglevel error -i \"$video\" \\\n    -vf \"select='not(mod(n\\,${interval}))',scale=320:180,tile=5x5\" \\\n    -frames:v 1 \"${base}-contactsheet.png\"\n\n  echo \"Created contact sheet for: $video -> ${base}-contactsheet.png\"\ndone\n```\n\n### Explanation:\n\n- The script loops over all videos with extensions mp4, mkv, avi, mov, flv.\n- It uses `ffprobe` to get the total frame count (or estimates it using duration and fps if unavailable).\n- Calculates frame interval based on total frames divided by desired thumbnail count.\n- `select='not(mod(n\\,interval))'` picks every `interval`-th frame.\n- Frames are scaled to 320x180 and arranged in a 5x5 tile grid.\n- Outputs a single PNG file per video named `originalname-contactsheet.png`.\n- `-loglevel error` suppresses most ffmpeg messages for cleaner output.\n- The script gracefully skips the pattern if no matching files are found.\n\nYou can customize:\n\n- The grid size in `tile=5x5` and number of thumbnails.\n- Thumbnail resolution in `scale=320:180`.\n- Video file extensions and output directory.\n\nThis approach is a best practice for batch processing contact sheets with ffmpeg in an automated and reproducible way.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 917,
+    "total_tokens": 1518,
+    "cost": 0.0017076
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "244042106663",
+  "created_at": "2025-07-24T20:24:44.346462",
+  "created_by": "scosman",
+  "input": "Convert a bunch of .ogg voice files to standard .wav for use with legacy equipment.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "127264297495",
+    "path": null,
+    "created_at": "2025-07-24T20:24:44.346338",
+    "created_by": "scosman",
+    "output": "To convert multiple .ogg voice files to standard .wav format suitable for legacy equipment, you want to ensure:\n\n- PCM signed 16-bit little-endian audio (-c:a pcm_s16le) which is widely compatible with legacy hardware.\n- A common sample rate such as 44100 Hz if the original sample rate varies or is too high.\n- Batch processing can be done using a shell loop or a command that processes all .ogg files in a directory.\n\nHere’s an example using a bash loop that converts every .ogg file in the current directory to .wav:\n\n```bash\nfor f in *.ogg; do\n  ffmpeg -i \"$f\" -ar 44100 -ac 1 -c:a pcm_s16le \"${f%.ogg}.wav\"\ndone\n```\n\nExplanation:\n- `-ar 44100` sets the sample rate to 44.1 kHz (adjust if needed).\n- `-ac 1` converts audio to mono, often desirable for voice files and compatibility with legacy devices.\n- `-c:a pcm_s16le` specifies uncompressed WAV audio format.\n- `\"${f%.ogg}.wav\"` changes the file extension from .ogg to .wav conserving the base name.\n\nMake sure you run this in a shell environment where your .ogg files reside. This approach scales easily for many files.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 275,
+    "total_tokens": 867,
+    "cost": 0.0006768
+  },
+  "model_type": "task_run"
+}

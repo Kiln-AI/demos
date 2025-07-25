@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "269178044017",
+  "created_at": "2025-07-24T18:12:54.440113",
+  "created_by": "scosman",
+  "input": "I need to convert an MKV video with multi-language audio tracks to an MP4 file but keep only the English track and subtitles.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "322414760416",
+    "path": null,
+    "created_at": "2025-07-24T18:12:54.440088",
+    "created_by": "scosman",
+    "output": "To convert an MKV video with multiple language tracks into an MP4, keeping only the English audio and English subtitles:\n\n- Use ffmpeg's stream selection syntax to pick English tracks: `-map 0:v:0` selects the first video stream, `-map 0:a:m:language:eng` picks the English audio, and `-map 0:s:m:language:eng` picks English subtitles.\n- The `-c:v copy` and `-c:a copy` options will stream-copy the video and audio, preserving quality and saving processing time. If you need re-encoding, replace `copy` with the desired codec (e.g., `aac`).\n- For the subtitles, since MP4 only supports certain subtitle formats (like mov_text), re-encode subtitles with `-c:s mov_text`.\n- The `-movflags +faststart` flag improves streaming compatibility.\n\nAssumptions:\n\n- The MKV has standard language tags (`language=eng`) for English audio and subtitle tracks.\n- You want to include soft (selectable) subtitles rather than burning them in.\n\nHere's the command:\n\n```bash\nffmpeg -i input.mkv -map 0:v:0 -map 0:a:m:language:eng -map 0:s:m:language:eng -c:v copy -c:a copy -c:s mov_text -movflags +faststart output.mp4\n```\n\nIf you want to burn in (hardcode) the subtitles instead, use this alternate command (this will require re-encoding the video):\n\n```bash\nffmpeg -i input.mkv -map 0:v:0 -map 0:a:m:language:eng -filter_complex \"[0:v:0][0:s:m:language:eng]overlay\" -c:v libx264 -c:a copy -movflags +faststart output.mp4\n```\n\nBut typically, soft (selectable) subtitles are preferred with MP4 for compatibility and flexibility.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 407,
+    "total_tokens": 1008,
+    "cost": 0.004458
+  },
+  "model_type": "task_run"
+}

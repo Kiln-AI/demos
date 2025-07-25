@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "321799573118",
+  "created_at": "2025-07-24T20:22:54.857581",
+  "created_by": "scosman",
+  "input": "Please convert my file movie.mkv to an mp4 file.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "121022132358",
+    "path": null,
+    "created_at": "2025-07-24T20:22:54.857545",
+    "created_by": "scosman",
+    "output": "To convert your `movie.mkv` file to an MP4 format, you can use `ffmpeg` to copy the existing video and audio streams if they are compatible with MP4 (e.g., H.264 for video and AAC for audio). This method is fast and preserves quality because it avoids re-encoding. If the codecs are not compatible, re-encoding will be necessary.\n\nAssuming compatibility, here is a command that copies streams into an MP4 container with faststart for better streaming support:\n\n```bash\nffmpeg -i movie.mkv -c:v copy -c:a copy -movflags +faststart movie.mp4\n```\n\nIf you want to ensure compatibility by re-encoding to widely supported codecs (H.264 video and AAC audio), here is a safe fallback:\n\n```bash\nffmpeg -i movie.mkv -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -movflags +faststart movie.mp4\n```\n\nExplanation:\n- `-c:v copy -c:a copy` copies streams without re-encoding (fastest).\n- `-movflags +faststart` places MP4 metadata at the beginning for progressive streaming.\n- The second command uses `libx264` and `aac` encoding for broad compatibility.\n- `-preset medium` balances encoding speed and quality.\n- `-crf 23` is a good default quality for H.264.\n- Audio bitrate is set to 128 kbps.\n\nChoose copying if your existing codecs are compatible; otherwise, use the re-encoding command.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 586,
+    "output_tokens": 330,
+    "total_tokens": 916,
+    "cost": 0.0007624
+  },
+  "model_type": "task_run"
+}

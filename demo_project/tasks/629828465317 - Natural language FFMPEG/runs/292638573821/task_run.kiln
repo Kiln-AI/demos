@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "292638573821",
+  "created_at": "2025-07-24T20:37:51.625219",
+  "created_by": "scosman",
+  "input": "Replace existing subtitle track in film.mp4 with a new srt file.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "104257540965",
+    "path": null,
+    "created_at": "2025-07-24T20:37:51.625193",
+    "created_by": "scosman",
+    "output": "To replace the existing subtitle track in film.mp4 with a new SRT subtitle file, you need to explicitly map the video and audio streams from the original file while excluding the original subtitles, then add the new subtitles from the SRT file. The subtitles should be converted into the desired subtitle codec (commonly mov_text for MP4 containers).\n\nKey points:\n- Use `-map` to select streams (video and audio) from film.mp4.\n- Use `-map` to add the new subtitle from the SRT file.\n- Encode subtitles using `-c:s mov_text` to embed in MP4.\n- Copy video and audio streams without re-encoding (`-c:v copy -c:a copy`) to preserve quality and speed up the process.\n\nAssumptions:\n- The new subtitles are in `new_subs.srt`.\n- You want to keep the original video and audio codecs without re-encoding.\n- The container is MP4, so subtitles must use the mov_text codec.\n\n```bash\nffmpeg -i film.mp4 -i new_subs.srt -map 0:v -map 0:a -map 1 -c:v copy -c:a copy -c:s mov_text -metadata:s:s:0 language=eng output.mp4\n```\n\nExplanation:\n- `-map 0:v` and `-map 0:a` maps video and audio from film.mp4.\n- `-map 1` adds subtitle stream from new_subs.srt.\n- `-c:v copy` and `-c:a copy` avoid re-encoding video and audio.\n- `-c:s mov_text` encodes the subtitle stream in the MP4-compatible mov_text format.\n- `-metadata:s:s:0 language=eng` sets the language metadata for the subtitles track (optional but recommended for players). Adjust language code as needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 588,
+    "output_tokens": 383,
+    "total_tokens": 971,
+    "cost": 0.000848
+  },
+  "model_type": "task_run"
+}

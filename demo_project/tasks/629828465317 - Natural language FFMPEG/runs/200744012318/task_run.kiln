@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "200744012318",
+  "created_at": "2025-07-24T18:12:31.925189",
+  "created_by": "scosman",
+  "input": "I need to invert the colors of a video, but the output has rainbow effects. How can this issue be fixed or avoided?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "134055063913",
+    "path": null,
+    "created_at": "2025-07-24T18:12:31.925135",
+    "created_by": "scosman",
+    "output": "When inverting colors in a video with ffmpeg, using the eq filter (e.g., -vf eq=invert=1) often creates rainbow or color banding artifacts, especially if the pixel format is not set to yuv420p or when the format conversion is automatic and introduces color subsampling errors.\n\nTo avoid rainbow effects after color inversion:\n\n- Use the negate filter (which is specifically for proper color inversion).\n- Force the pixel format to yuv420p for maximum compatibility and correct color representation.\n- If you're already using negate, make sure you’re not outputting to formats (like yuv422p or yuv444p) that might not be supported well by your player.\n\nAssumption: Your input is typical video like input.mp4 and your output should be broadly compatible and artifact-free.\n\nHere’s the recommended command:\n\n```bash\nffmpeg -i input.mp4 -vf \"negate\" -c:v libx264 -pix_fmt yuv420p -c:a copy output_inverted.mp4\n```\n\nExplanation of parameters:\n- -vf \"negate\" inverts the colors cleanly without introducing rainbow artifacts.\n- -c:v libx264 sets the video codec to H.264 for best compatibility/quality.\n- -pix_fmt yuv420p ensures pixel format is compatible and avoids color issues.\n- -c:a copy copies the original audio stream.\n\nIf your video still shows color issues, verify the player and consider exporting to a different format or rewrapping.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 306,
+    "total_tokens": 906,
+    "cost": 0.003648
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "326122365232",
+  "created_at": "2025-07-24T20:25:33.175124",
+  "created_by": "scosman",
+  "input": "Is it possible to extract embedded fonts from a .mkv file using stream copy or does it need a different tool?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "211459949675",
+    "path": null,
+    "created_at": "2025-07-24T20:25:33.175101",
+    "created_by": "scosman",
+    "output": "Embedded fonts in MKV files are stored in attachment streams, which can be extracted using ffmpeg's stream copy feature without re-encoding. This means you don't need a different tool; ffmpeg can directly extract embedded font attachments by copying the attachment streams to separate files. \n\nThe general approach is:\n- Identify the font attachment streams in the MKV container using `ffprobe` or `ffmpeg -i`.\n- Use ffmpeg with `-c copy` to stream copy the attachment stream you want to extract, specifying the stream using `-map`.\n- Output the extracted attachment to a font file with the appropriate extension (.ttf, .otf, etc.).\n\nHere is how you can do it step by step:\n\n1. List all streams, including attachments:\n```bash\nffmpeg -i input.mkv\n```\nLook for streams labeled as \"Attachment,\" which typically include font files, and note their stream IDs (like `0:2`).\n\n2. Extract a particular attachment stream (for example, stream 2):\n```bash\nffmpeg -i input.mkv -map 0:2 -c copy extracted_font.ttf\n```\nReplace `0:2` with the correct stream index of the attachment, and `extracted_font.ttf` with the desired filename and correct extension.\n\nThis technique uses stream copying (`-c copy`), so no re-encoding occurs, making extraction fast and lossless.\n\nIf there are multiple fonts you want to extract, repeat the command with each attachment stream index.\n\nIn summary: yes, extracting embedded fonts is possible with `ffmpeg` using stream copy — no need for an external tool. Just locate the font attachment streams and copy them out as files. \n\nExample command:\n\n```bash\nffmpeg -i input.mkv -map 0:2 -c copy font1.ttf\n```\n\nAssuming stream 0:2 is a font attachment.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 389,
+    "total_tokens": 990,
+    "cost": 0.0008628
+  },
+  "model_type": "task_run"
+}

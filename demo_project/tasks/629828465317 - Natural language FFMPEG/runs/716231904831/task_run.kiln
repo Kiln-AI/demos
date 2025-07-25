@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "716231904831",
+  "created_at": "2025-07-24T20:36:21.219393",
+  "created_by": "scosman",
+  "input": "How do I upscale an old 352x240 clip to 1280x720 with noticeable detail retention?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "967352568007",
+    "path": null,
+    "created_at": "2025-07-24T20:36:21.219326",
+    "created_by": "scosman",
+    "output": "To upscale a 352x240 video clip to 1280x720 with noticeable detail retention, you want to use a high-quality scaling algorithm rather than a simple bilinear or bicubic scaling. A good choice is the \"lanczos\" rescaling filter, which provides sharp and detailed upscaling.\n\nAdditionally:\n- Use the `-vf scale=1280:720:flags=lanczos` filter to set the resolution and specify the lanczos scaling.\n- Use a reasonably high-quality encoder setting to preserve detail (e.g., for H.264 use `-preset slow` and a low CRF value like 18 to 20).\n- Set pixel format to `yuv420p` for compatibility, especially if targeting wider playback devices.\n- Include audio copy or re-encode as needed.\n\nAssuming your input is named `input.mp4` and you want to output `output_720p.mp4`:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=1280:720:flags=lanczos\" -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output_720p.mp4\n```\n\nThis command:\n- Uses libx264 codec with a `slow` preset for better compression and quality trade-off.\n- Uses CRF 18, which is visually high quality (lower CRF means better quality).\n- Applies lanczos filter for improved upscaling detail.\n- Encodes audio to AAC at a moderate bitrate.\n- Moves metadata at the start for fast streaming.\n\nIf you want even better upscaling quality (at the cost of additional processing time), you can explore AI-based upscalers outside of ffmpeg or other advanced filters like `zscale` or `waifu2x` (if you have relevant ffmpeg builds). But for standard ffmpeg usage, lanczos is a solid choice.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 407,
+    "total_tokens": 1003,
+    "cost": 0.0008896
+  },
+  "model_type": "task_run"
+}

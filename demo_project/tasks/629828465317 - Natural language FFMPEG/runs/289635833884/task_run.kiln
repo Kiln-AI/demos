@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "289635833884",
+  "created_at": "2025-07-24T18:10:37.462980",
+  "created_by": "scosman",
+  "input": "I need to remove background noise from an audio file named input.wav and save it as denoised.wav.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Command Line Techniques for Audio Enhancement"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "491110981897",
+    "path": null,
+    "created_at": "2025-07-24T18:10:37.462931",
+    "created_by": "scosman",
+    "output": "To reduce background noise in an audio file with ffmpeg, you can use the high quality afftdn (Adaptive Frequency domain Filter for Denoising) audio filter. This filter uses spectral noise subtraction, which is effective for steady or consistent noise. For more advanced noise profiles, specialized tools like Audacity or iZotope RX are preferred, but afftdn works well for command line jobs.\n\nHere’s how you can apply it:\n\n- afftdn defaults to mode=nr (noise reduction), suitable for background noise.\n- You can adjust the noise reduction strength using nr (default is 12dB, higher = more aggressive, e.g., nr=20).\n- Save the output as a WAV file to preserve quality.\n\nExample command:\n\n```bash\nffmpeg -i input.wav -af afftdn=nf=-30 nr=20 denoised.wav\n```\n\n- The parameter nf=-30 sets the noise floor to -30 dB; adjust as needed to tune aggressiveness.\n- nr=20 applies stronger noise reduction than default.\n\nAssumption: The input audio is stereo/mono PCM WAV. For the best result, listen and tweak nr/nf values according to your file’s noise level.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 247,
+    "total_tokens": 845,
+    "cost": 0.003172
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "313158851289",
+  "created_at": "2025-07-24T20:40:14.983766",
+  "created_by": "scosman",
+  "input": "Converting a 10-bit HDR HEVC video to an SDR H.264, ensuring proper color mapping and gamma.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "113863423668",
+    "path": null,
+    "created_at": "2025-07-24T20:40:14.983650",
+    "created_by": "scosman",
+    "output": "To convert a 10-bit HDR HEVC video to SDR H.264 properly, you need to apply tone mapping and color space conversion from HDR (BT.2020 PQ, typically) to SDR (BT.709 with gamma). This involves:\n\n- Using `zscale` filter to convert from BT.2020 PQ (HDR10) to BT.709 SDR color primaries and transfer characteristics.\n- Applying tone mapping with `tonemap=hable` or another operator to preserve details and map HDR luminance to SDR range.\n- Converting pixel format to 8-bit `yuv420p` for broad compatibility with H.264.\n- Encoding video with libx264 at an appropriate CRF for quality.\n- Encoding audio as aac or copying depending on the source.\n\nAssumptions:\n- The HDR source is PQ (HDR10) in BT.2020 color space.\n- You want H.264 main profile SDR output for maximum compatibility.\n- Audio is kept as is by default (copy), modify if re-encoding is needed.\n\nExample command:\n\n```bash\nffmpeg -i input_hdr_hevc.mkv -vf \"zscale=t=linear:npl=100,tonemap=hable,zscale=p=bt709:t=bt709:m=bt709:r=tv,format=yuv420p\" -c:v libx264 -crf 18 -preset slow -c:a copy output_sdr_h264.mp4\n```\n\nExplanation of filters:\n- `zscale=t=linear:npl=100`: Convert PQ to linear light with nominal peak luminance (100 nits SDR target).\n- `tonemap=hable`: Apply Hable tone mapping curve.\n- `zscale=p=bt709:t=bt709:m=bt709:r=tv`: Convert color primaries, transfer, matrix coefficients to BT.709 and limited range (\"tv\").\n- `format=yuv420p`: Convert to 8-bit 4:2:0 for compatibility.\n\nAdjust `-crf` for desired quality (lower for higher quality). Use `-preset slow` or `medium` depending on speed/quality balance.\n\nThis approach ensures proper HDR to SDR conversion with color and gamma handled correctly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 453,
+    "total_tokens": 1051,
+    "cost": 0.000964
+  },
+  "model_type": "task_run"
+}

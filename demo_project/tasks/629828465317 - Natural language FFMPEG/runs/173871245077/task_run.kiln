@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "173871245077",
+  "created_at": "2025-07-24T20:37:55.776826",
+  "created_by": "scosman",
+  "input": "Export all subtitle timings from presentation.mkv into a plain text CSV showing start/end times and text.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "886435415620",
+    "path": null,
+    "created_at": "2025-07-24T20:37:55.776801",
+    "created_by": "scosman",
+    "output": "To extract subtitle timings and text from a video like presentation.mkv into a plain text CSV, you can use ffmpeg to first dump the subtitles into a standard subtitle format (e.g., SRT), then process that to convert it into CSV.\n\nHowever, ffmpeg alone cannot directly export subtitles as CSV; it can extract subtitles as a subtitle file (SRT or ASS). Then, you can parse the subtitles file into CSV using scripting or specialized tools.\n\nAssuming you want a simple CSV with columns: start_time, end_time, text, here’s a two-step approach:\n\n1. Extract subtitles from the MKV to a SubRip (.srt) file using ffmpeg.\n2. Convert the .srt to CSV using a minimal Python script or a known tool (not shown here).\n\nBelow is how to extract the subtitles from presentation.mkv assuming you want all subtitle streams or just the first subtitle stream (usually 0:s:0):\n\n```bash\nffmpeg -i presentation.mkv -map 0:s:0 subtitles.srt\n```\n\nExplanation:\n- `-map 0:s:0` selects the first subtitle stream from the input.\n- `subtitles.srt` will contain the subtitles in SRT format with start/end times and text.\n\nIf you need all subtitle streams extracted separately, you could adjust `-map` accordingly.\n\nIf the original subtitles are in a format ffmpeg can’t export as SRT, you might consider using `ffmpeg` with `-c:s srt` codec to convert subtitles to SRT.\n\nIf you want, here is a command that attempts to do that conversion explicitly:\n\n```bash\nffmpeg -i presentation.mkv -map 0:s:0 -c:s srt subtitles.srt\n```\n\nTo summarize, exporting subtitle timings and texts to CSV using only ffmpeg directly is not possible, but extracting a clean SRT is the best first step.\n\nIf you want, I can help by providing a sample Python script to convert the SRT contents to CSV format. Just let me know!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 420,
+    "total_tokens": 1013,
+    "cost": 0.0009092
+  },
+  "model_type": "task_run"
+}

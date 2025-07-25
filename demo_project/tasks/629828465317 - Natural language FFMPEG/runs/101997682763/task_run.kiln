@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "101997682763",
+  "created_at": "2025-07-24T20:24:58.607928",
+  "created_by": "scosman",
+  "input": "My .avi is laggy on my TV; convert it to H.264 in .mp4 container, same resolution.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "229258120081",
+    "path": null,
+    "created_at": "2025-07-24T20:24:58.607902",
+    "created_by": "scosman",
+    "output": "To convert your AVI video to an H.264-encoded MP4 file without changing the resolution, you should use libx264 for video encoding and copy the original audio stream if it's compatible, or re-encode it to AAC otherwise. This will ensure good playback compatibility on your TV and smooth decoding.\n\nKey points in the command:\n- `-c:v libx264`: selects the H.264 video codec.\n- We omit any scaling filter to keep the original resolution.\n- `-preset medium` offers a good balance between encoding speed and compression efficiency.\n- `-crf 23` controls quality; 23 is a reasonable default for good quality and file size.\n- `-c:a aac -b:a 128k` encodes audio to AAC at 128 kbps for wide compatibility.\n- `-pix_fmt yuv420p` ensures color format compatibility since some TVs require yuv420p for proper playback.\n- `-movflags +faststart` moves the MP4 metadata to the file start for smoother playback.\n\n```bash\nffmpeg -i input.avi -c:v libx264 -preset medium -crf 23 -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nThis command assumes your audio is not already AAC. If you want to copy the existing audio codec instead (for example, if it's already AAC), you could replace `-c:a aac -b:a 128k` with `-c:a copy` to avoid re-encoding audio.\n\nThis approach keeps the original resolution and should reduce lag on your TV by producing a more compatible and efficiently encoded MP4 file.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 351,
+    "total_tokens": 950,
+    "cost": 0.0008012
+  },
+  "model_type": "task_run"
+}

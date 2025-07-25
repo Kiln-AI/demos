@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "330768407344",
+  "created_at": "2025-07-24T18:08:46.008351",
+  "created_by": "scosman",
+  "input": "Create a low-resolution video output from my HD video using H.264, ensuring the file is below 10MB.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Common Video Codecs and Their Uses"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "205692205363",
+    "path": null,
+    "created_at": "2025-07-24T18:08:46.008291",
+    "created_by": "scosman",
+    "output": "To create a low-resolution (e.g., 426x240) video from your HD source using the H.264 codec and ensure the output file is below 10MB, you’ll want to:\n\n- Downscale the resolution using the scale filter.\n- Use H.264 compression for video and AAC for audio for compatibility.\n- Set the bitrate carefully (using -b:v) to keep the file under 10MB (10,000 kB), adjusting as necessary. \n- (Optionally) Limit the duration or compress audio more if needed for strict size constraints.\n\nAssumption: The input video is much longer than about 1-2 minutes, so video bitrate should be low to stay within 10MB. If the length is unknown, start with a low bitrate and adjust as needed.\n\nHere’s an example reducing to 240p, setting video bitrate at 300k and audio at 64k:\n\n```bash\nffmpeg -i input.mp4 -vf scale=426:240 -c:v libx264 -b:v 300k -preset veryfast -c:a aac -b:a 64k -movflags +faststart -preset fast output_lowres.mp4\n```\n\n- `-vf scale=426:240` resizes to 426x240 (low resolution, 240p).\n- `-b:v 300k` sets video bitrate to 300kbps.\n- `-b:a 64k` sets audio bitrate to 64kbps.\n- `-movflags +faststart` optimizes for playback.\n- Adjust values if the output is above/below 10MB or use a tool/script to iteratively reach the target filesize.\n\nTip: For very strict size, use `-fs 10M` (max filesize), but this can cut the video if limits are hit:\n\n```bash\nffmpeg -i input.mp4 -vf scale=426:240 -c:v libx264 -b:v 300k -preset veryfast -c:a aac -b:a 64k -movflags +faststart -fs 10M output_lowres.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 440,
+    "total_tokens": 1041,
+    "cost": 0.004722
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "175472117080",
+  "created_at": "2025-07-24T20:25:57.600046",
+  "created_by": "scosman",
+  "input": "Copy subtitle timings but change the content to another language.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "229378826264",
+    "path": null,
+    "created_at": "2025-07-24T20:25:57.600021",
+    "created_by": "scosman",
+    "output": "To copy subtitle timings but replace the subtitle text with another language, you need to extract the subtitle stream's timings while providing a new subtitle file in the target language to be muxed back into the video. The original timings are preserved by reusing the subtitle stream's timing information, but the actual text is replaced.\n\nAssuming you already have the translated subtitles as an external subtitle file (.srt, .ass, etc.) aligned to the original timing, you can mux the new subtitle file into the video while copying the original video and audio streams directly (to avoid re-encoding).\n\nHere’s the approach:\n\n- Use `-c:v copy -c:a copy` to avoid re-encoding video and audio.\n- Use `-c:s mov_text` (if outputting MP4) or just copy the subtitle codec if supported, to embed the new subtitles.\n- Provide the translated subtitle file as an input and map it as the subtitle stream.\n- The subtitle timings must have been preserved in the subtitle file itself; ffmpeg will read and embed those directly.\n\nExample: Replace the embedded subtitles in input.mkv with translated_subtitles.srt and save a new file output.mkv keeping video and audio unchanged.\n\n```bash\nffmpeg -i input.mkv -i translated_subtitles.srt -map 0:v -map 0:a -map 1 -c:v copy -c:a copy -c:s srt output.mkv\n```\n\nExplanation:\n\n- `-map 0:v` maps the video from the first input (input.mkv).\n- `-map 0:a` maps the audio from the first input.\n- `-map 1` maps the entire second input, i.e., the subtitle file translated_subtitles.srt.\n- `-c:v copy` copies video without re-encoding.\n- `-c:a copy` copies audio without re-encoding.\n- `-c:s srt` encodes subtitle stream using the SRT subtitle codec (if output supports it). If you want to embed subtitles as a particular format (e.g., mov_text for MP4 or ASS for MKV), adjust accordingly.\n\nIf the container or player expects a different subtitle format, you can convert subtitles with ffmpeg filters or tools like `ffsubsync` externally.\n\n**Assumptions:**\n\n- The translated subtitle file is synced and correctly timed.\n- The container supports the subtitle codec.\n- You want to keep video and audio streams unchanged.\n\nIf you want subtitles as a separate file rather than muxed, you can just deliver the new .srt file separately.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 584,
+    "output_tokens": 527,
+    "total_tokens": 1111,
+    "cost": 0.0010768
+  },
+  "model_type": "task_run"
+}

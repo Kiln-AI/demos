@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "643663117534",
+  "created_at": "2025-07-24T20:36:36.187486",
+  "created_by": "scosman",
+  "input": "How can I resize a video to the closest valid YouTube HD format, like 720p or 1080p?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "422338199065",
+    "path": null,
+    "created_at": "2025-07-24T20:36:36.187458",
+    "created_by": "scosman",
+    "output": "To resize a video to the closest valid YouTube HD format like 720p (1280x720) or 1080p (1920x1080), you want to scale the video while maintaining its aspect ratio, then pad or crop as necessary to fit exactly into one of these standard resolutions.\n\nBest practice is to:\n- Determine which target resolution (720p or 1080p) is closest to the original.\n- Scale the video so that its height fits the target height exactly and width is adjusted to maintain the aspect ratio.\n- If width after scaling does not match the exact HD width, pad with black bars or crop center to get the exact resolution.\n- Use scaling filters with `-vf` and ensure width and height are divisible by 2 (required for many codecs).\n\nSince `ffmpeg` does not automatically pick closest presets, an example approach is to scale and letterbox/pillarbox to the target resolution:\n\nExample: Scaling to 720p with letterboxing/pillarboxing:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale='if(gt(a,1280/720),1280,-2)':'if(gt(a,1280/720),-2,720)',pad=1280:720:(ow-iw)/2:(oh-ih)/2\" -c:a copy output_720p.mp4\n```\n\nExplanation:\n- `a` is the input aspect ratio.\n- The `scale` filter sets width to 1280 if the input aspect ratio is wider than 16:9, else height to 720.\n- The other dimension `-2` means auto-adjust to preserve aspect ratio and ensure divisibility by 2.\n- The `pad` filter adds black bars so that output is exactly 1280x720.\n- Audio is copied without re-encoding (`-c:a copy`).\n\nFor 1080p (1920x1080), replace 1280 & 720 with 1920 & 1080 respectively.\n\nAssuming you want to automatically pick 720p or 1080p based on input height, you might script it outside of ffmpeg, but this example shows how to do it for a fixed target.\n\n---\n\n**Example to resize to 1080p with letterboxing:**\n\n```bash\nffmpeg -i input.mp4 -vf \"scale='if(gt(a,1920/1080),1920,-2)':'if(gt(a,1920/1080),-2,1080)',pad=1920:1080:(ow-iw)/2:(oh-ih)/2\" -c:a copy output_1080p.mp4\n```\n\nThis approach guarantees the output is exactly HD resolution accepted by YouTube while preserving the original video’s aspect ratio and preventing distortion. Padding helps avoid cropping important parts of the video.\n\nIf you want to crop instead of padding, a different filter approach is needed.\n\n---\n\n# Summary Command for 720p YouTube HD with aspect ratio preservation and padding:\n```bash\nffmpeg -i input.mp4 -vf \"scale='if(gt(a,1280/720),1280,-2)':'if(gt(a,1280/720),-2,720)',pad=1280:720:(ow-iw)/2:(oh-ih)/2\" -c:a copy output_720p.mp4\n```\n\nReplace input/output filenames as needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 700,
+    "total_tokens": 1299,
+    "cost": 0.0013596
+  },
+  "model_type": "task_run"
+}

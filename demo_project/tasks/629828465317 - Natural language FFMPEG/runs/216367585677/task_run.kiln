@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "216367585677",
+  "created_at": "2025-07-23T11:28:20.714800",
+  "created_by": "scosman",
+  "input": "I need to apply noise reduction, color correction, and sharpening filters in sequence to clean up an old video file.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "claude_sonnet_4",
+      "model_provider": "anthropic",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Filter Chains with Syntax Errors"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "832535239373",
+    "path": null,
+    "created_at": "2025-07-23T11:28:20.714776",
+    "created_by": "scosman",
+    "output": "To clean up an old video file, you'll want to chain multiple filters using ffmpeg's filter graph syntax. This involves noise reduction (using bm3d or hqdn3d), color correction (with curves or colorbalance), and sharpening (using unsharp filter).\n\nFor noise reduction, I'll use hqdn3d which is effective for temporal and spatial noise. Color correction can be done with eq filter for basic adjustments, and unsharp for sharpening. These filters need to be chained properly in sequence.\n\n```bash\nffmpeg -i input.avi -vf \"hqdn3d=4:3:6:4.5,eq=contrast=1.2:brightness=0.1:saturation=1.1,unsharp=5:5:1.0:5:5:0.5\" -c:v libx264 -preset medium -crf 20 -c:a copy output.mp4\n```\n\nWait, let me correct that - the unsharp filter syntax I used has incorrect parameters. The unsharp filter should use proper syntax with luma and chroma parameters separated by colons, but I mixed up the parameter order and count.\n\n```bash\nffmpeg -i input.avi -vf \"hqdn3d=4:3:6:4.5,eq=contrast=1.2:brightness=0.1:saturation=1.1,unsharp=5:5:1.0:5:5:0.0\" -c:v libx264 -preset medium -crf 20 -c:a copy output.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "claude_sonnet_4",
+        "model_provider": "anthropic",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "function_calling",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_243159560313",
+    "eval_correctness"
+  ],
+  "usage": {
+    "input_tokens": 995,
+    "output_tokens": 372,
+    "total_tokens": 1367,
+    "cost": 0.008565
+  },
+  "model_type": "task_run"
+}

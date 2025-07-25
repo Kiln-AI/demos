@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "297895510209",
+  "created_at": "2025-07-24T20:37:29.221593",
+  "created_by": "scosman",
+  "input": "Is there a way to copy the video stream from a DVD VOB file into MP4 without encoding?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "220709240489",
+    "path": null,
+    "created_at": "2025-07-24T20:37:29.221568",
+    "created_by": "scosman",
+    "output": "Yes, you can remux (stream copy) the video stream from a DVD VOB file to an MP4 container without re-encoding by using the `-c:v copy` parameter. This tells ffmpeg to copy the video codec bitstream directly. However, you must ensure the video codec inside the VOB is compatible with MP4 containers. DVDs typically use MPEG-2 video, which is not supported in MP4 containers. Thus, copying MPEG-2 video directly into MP4 will not work properly.\n\nIf your source VOB contains H.264 video (rare for DVDs but possible for some ripped/authoring scenarios), you can stream copy into MP4 without encoding. Otherwise, you usually need to re-encode the video or remux to a container supporting MPEG-2 (like MPEG-TS or MPG).\n\nAssuming your VOB has H.264 video you want to copy and the audio you want to copy as well, here is an example command:\n\n- `-c:v copy` copies the video stream without encoding.\n- `-c:a copy` copies the audio streams without encoding.\n- `-movflags +faststart` optimizes MP4 for streaming.\n\n```bash\nffmpeg -i input.vob -c:v copy -c:a copy -movflags +faststart output.mp4\n```\n\nIf your VOB’s video codec is MPEG-2, the safe workflow to keep the streams without re-encoding is usually remuxing into an MPEG-TS container:\n\n```bash\nffmpeg -i input.vob -c:v copy -c:a copy output.ts\n```\n\nSo, in summary:\n- Directly copying MPEG-2 video into MP4 is not compatible.\n- If the video stream is already compatible (e.g., H.264), you can copy as shown.\n- Otherwise, consider remuxing to MPEG-TS or re-encoding to H.264 for MP4.\n\nIf you provide details of the exact codec in your VOB, I can tailor the command.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 413,
+    "total_tokens": 1011,
+    "cost": 0.0009
+  },
+  "model_type": "task_run"
+}

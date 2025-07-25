@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "100609632852",
+  "created_at": "2025-07-24T20:40:01.760821",
+  "created_by": "scosman",
+  "input": "I'm combining two videos side by side, but they have very different aspect ratios and lengths. How to handle scaling/padding and syncing?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "464481287905",
+    "path": null,
+    "created_at": "2025-07-24T20:40:01.760796",
+    "created_by": "scosman",
+    "output": "When combining two videos side by side with different aspect ratios and lengths, you want to ensure the following:\n\n1. **Scaling and padding:** Each video should be scaled to a target height (or width) while maintaining its aspect ratio, then padded to the exact same dimensions so they align properly side by side. Typically, pick a fixed output height for both, scale width proportionally, and then pad width or height so both videos have identical frame sizes.\n\n2. **Syncing lengths:** If the videos have different lengths, you need to decide how to handle this:\n   - Loop the shorter video until it matches the longer.\n   - Trim the longer video to the shorter’s length.\n   - Pad silence/black frames to the shorter one to match the longer.\n\n   Here, I assume you'd like the output length to match the longer video, looping the shorter one to ensure continuous playback.\n\n3. **Combining side by side:** Use the `hstack` filter in ffmpeg.\n\n### Key steps in the command:\n\n- Use `scale` with `-1` for proportional scaling (e.g., scale both videos to 720p height).\n- Use `pad` to fix any dimension differences caused by aspect ratio.\n- Use the `loop` filter or `stream_loop` input option to loop the shorter video.\n- Use `setpts` to reset timestamps as needed.\n- Use `hstack` to join horizontally.\n\n### Example:\n\nAssuming:  \n- Input videos: video1.mp4, video2.mp4  \n- Target height: 720 pixels  \n- Output: side_by_side.mp4\n\n```bash\nffmpeg \\\n  -stream_loop -1 -i video1.mp4 \\\n  -i video2.mp4 \\\n  -filter_complex \"\\\n    [0:v]scale=-2:720,pad=ceil(iw/2)*2:720:(ow-iw)/2:(oh-ih)/2,setsar=1[v0]; \\\n    [1:v]scale=-2:720,pad=ceil(iw/2)*2:720:(ow-iw)/2:(oh-ih)/2,setsar=1[v1]; \\\n    [v0][v1]hstack=inputs=2[v]\" \\\n  -map \"[v]\" -c:v libx264 -preset slow -crf 22 -pix_fmt yuv420p \\\n  -shortest \\\n  side_by_side.mp4\n```\n\n### Explanation:\n\n- `-stream_loop -1 -i video1.mp4`: loops video1 infinitely (assuming this is the shorter video; if video2 is shorter, swap accordingly).\n- Both videos scaled to 720 height (`scale=-2:720`) maintaining aspect ratio. `-2` ensures width is divisible by 2.\n- `pad=ceil(iw/2)*2:720:(ow-iw)/2:(oh-ih)/2` pads width to even number divisible by 2 if needed so videos align perfectly, centering the original video.\n- `setsar=1` fixes aspect ratio metadata to avoid stretching.\n- `hstack=inputs=2` horizontally stacks the two processed video streams.\n- `-shortest` stops the output when the shortest input ends (after looping, effectively matches the longer video duration).\n- Encoding with `libx264` and reasonable quality settings.\n\n### Notes:\n\n- If you want audio merged or selected, more mapping is needed.\n- Make sure the shorter video goes to the input with `-stream_loop`.\n- Padding and scaling parameters can be adjusted depending on desired fixed width or height.\n\nThis approach will give a clean side-by-side video with both clips aligned, scaled properly, and synced in duration.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 764,
+    "total_tokens": 1365,
+    "cost": 0.0014628
+  },
+  "model_type": "task_run"
+}

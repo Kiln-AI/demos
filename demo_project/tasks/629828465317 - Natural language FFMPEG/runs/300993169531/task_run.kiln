@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "300993169531",
+  "created_at": "2025-07-24T20:39:55.438725",
+  "created_by": "scosman",
+  "input": "The file I want to convert is interlaced, but output needs to be progressive. How do I properly deinterlace it with high quality?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "105295345581",
+    "path": null,
+    "created_at": "2025-07-24T20:39:55.438689",
+    "created_by": "scosman",
+    "output": "To convert an interlaced video to a progressive format with high quality, you should apply a deinterlacing filter before encoding. The `yadif` (Yet Another DeInterlacing Filter) filter in ffmpeg is widely regarded for good quality deinterlacing and is recommended for this task.\n\nKey points:\n- The `-vf yadif=1` filter enables the deinterlacing in \"double frame rate\" mode (each field becomes its own frame), which preserves smooth motion, but if you want to keep the original frame rate, use `yadif=0`.\n- Use a high-quality codec setting to avoid losing detail after deinterlacing.\n- Ensure `pix_fmt yuv420p` for wide playback compatibility.\n- If encoding H.264, use appropriate `preset` and `crf` for quality/size tradeoff.\n\nHere’s an example command assuming you want to keep the original framerate:\n\n```bash\nffmpeg -i input_interlaced.mkv -vf yadif=0 -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k -pix_fmt yuv420p output_progressive.mp4\n```\n\nExplanation:\n- `-vf yadif=0` performs high-quality deinterlacing without doubling the frame rate.\n- `-c:v libx264` with `-preset slow` and `-crf 18` balances quality and compression (lower `crf` means higher quality).\n- `-c:a aac -b:a 192k` encodes audio in AAC 192 kbps.\n- `-pix_fmt yuv420p` ensures maximum compatibility on players.\n  \nIf you want smoother motion and can double the frame rate, change to `yadif=1`.\n\nThis approach properly deinterlaces while maintaining high quality.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 386,
+    "total_tokens": 990,
+    "cost": 0.0008592
+  },
+  "model_type": "task_run"
+}

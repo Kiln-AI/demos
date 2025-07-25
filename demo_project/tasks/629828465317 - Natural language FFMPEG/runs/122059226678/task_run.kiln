@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "122059226678",
+  "created_at": "2025-07-24T20:27:26.273689",
+  "created_by": "scosman",
+  "input": "I have a corrupt AVI file that plays but can't be opened in editing tools. Can you help repair it or re-mux it into another format?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "202807748928",
+    "path": null,
+    "created_at": "2025-07-24T20:27:26.273663",
+    "created_by": "scosman",
+    "output": "For corrupt AVI files that play but cannot be opened by editors, a common approach is to re-mux or re-encode the file to a more robust container or fix the indexing. Re-muxing can often fix container-level corruption by rewriting headers and indices without re-encoding, which preserves quality and is fast. If that doesn't work, re-encoding with error resilience is the fallback.\n\nHere are two approaches with ffmpeg:\n\n1. **Re-muxing to a new AVI or MP4**  \nThis copies the streams without re-encoding, which is quick and lossless. This often fixes container corruption or indexing issues.\n\n```bash\nffmpeg -err_detect ignore_err -i corrupt_input.avi -c copy fixed_output.avi\n```\nOr remux into an MP4 container, which might be more resilient:\n\n```bash\nffmpeg -err_detect ignore_err -i corrupt_input.avi -c copy -movflags +faststart fixed_output.mp4\n```\n\n- `-err_detect ignore_err` tells ffmpeg to be lenient with decoding errors.\n- `-c copy` copies streams without re-encoding.\n- `-movflags +faststart` optimizes MP4 files for streaming.\n\n2. **If re-muxing fails, re-encode with error resilience**  \nThis re-encodes video and audio, repairing issues at the cost of quality and encoding time:\n\n```bash\nffmpeg -err_detect ignore_err -i corrupt_input.avi -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k fixed_output.mp4\n```\n\n- `libx264` re-encodes video to H.264.\n- `-preset fast` balances encoding speed and efficiency.\n- `-crf 23` is a good default quality level.\n- Audio is encoded to AAC.\n\n**Assumptions:**  \n- The corruption is minor and ffmpeg can decode the input enough to remux or re-encode.  \n- You want either AVI or MP4 for output. MP4 is recommended for compatibility and streaming.  \n\nStart with the first method since it's faster and lossless, then try re-encoding if necessary.\n\n```bash\n# Method 1: Remux to AVI\nffmpeg -err_detect ignore_err -i corrupt_input.avi -c copy fixed_output.avi\n\n# Method 1 alternative: Remux to MP4\nffmpeg -err_detect ignore_err -i corrupt_input.avi -c copy -movflags +faststart fixed_output.mp4\n\n# Method 2: Re-encode if remuxing fails\nffmpeg -err_detect ignore_err -i corrupt_input.avi -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k fixed_output.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 586,
+    "total_tokens": 1190,
+    "cost": 0.0011792
+  },
+  "model_type": "task_run"
+}

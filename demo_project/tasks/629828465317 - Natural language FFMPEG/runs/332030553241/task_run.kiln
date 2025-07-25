@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "332030553241",
+  "created_at": "2025-07-24T20:25:49.337964",
+  "created_by": "scosman",
+  "input": "Embed Vietnamese subtitles (viet.srt) into a video and set the language flag appropriately.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "128452868016",
+    "path": null,
+    "created_at": "2025-07-24T20:25:49.337938",
+    "created_by": "scosman",
+    "output": "To embed Vietnamese subtitles from an SRT file into a video and set the language metadata properly, you can use the `-c:s mov_text` codec for MP4 containers or `-c:s srt` for MKV. The language flag is set via `-metadata:s:s:0 language=vie`. This embeds subtitles as a separate stream (soft subtitles), allowing toggling on/off in players that support it.\n\nAssuming your input is `input.mp4` and you want to create `output.mp4` with embedded Vietnamese subtitles, here is the recommended command:\n\n- `-i viet.srt` adds the subtitle file as a second input.\n- `-map` ensures mapping video, audio, and the subtitle streams properly.\n- `-c:v copy` and `-c:a copy` to avoid re-encoding video and audio.\n- `-c:s mov_text` encodes subtitles in MP4-compatible format.\n- `-metadata:s:s:0 language=vie` sets the subtitle track language to Vietnamese using the ISO 639-2 code.\n- `-disposition:s:s:0 default` optionally makes the subtitles track enabled by default.\n\n```bash\nffmpeg -i input.mp4 -i viet.srt -map 0:v -map 0:a -map 1:s \\\n  -c:v copy -c:a copy -c:s mov_text \\\n  -metadata:s:s:0 language=vie \\\n  -disposition:s:s:0 default \\\n  output.mp4\n```\n\nThis command assumes the input video has one video and one audio stream. If there are multiple streams, adjust the `-map` options accordingly. Using `mov_text` ensures subtitle compatibility with most players for MP4 files.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 358,
+    "total_tokens": 949,
+    "cost": 0.0008092
+  },
+  "model_type": "task_run"
+}

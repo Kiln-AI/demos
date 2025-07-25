@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "108033456334",
+  "created_at": "2025-07-24T18:09:27.068088",
+  "created_by": "scosman",
+  "input": "How do I encode a high-definition WMV video for web use, specifically targeting HTML5 video tag support?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Streamlining Video Files for Web Streaming"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "123266047064",
+    "path": null,
+    "created_at": "2025-07-24T18:09:27.068059",
+    "created_by": "scosman",
+    "output": "To prepare a high-definition WMV video for web use with HTML5’s `<video>` tag, encode to MP4 format using H.264 for video and AAC for audio—these are universally supported in modern browsers. To ensure smooth streaming and compatibility across devices, also use yuv420p pixel format and relocate MP4 metadata to the file’s start.\n\nAssuming your source is `input.wmv` and you’d like to retain full HD (1920x1080) while optimizing for web playback, use:\n\n- `-c:v libx264` for H.264 video encoding\n- `-preset fast` and `-crf 23` for good balance of quality and encoding speed; lower crf improves quality\n- `-c:a aac -b:a 128k` for AAC audio at reasonable bitrate\n- `-movflags +faststart` moves the moov atom for progressive streaming\n- `-vf scale=1920:1080` ensures output is 1080p (omit if you want to keep original HD dimension)\n- `-pix_fmt yuv420p` for broad device support\n\nHere’s the command:\n\n```bash\nffmpeg -i input.wmv -vf scale=1920:1080 -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nThis output MP4 will be compatible with the HTML5 video tag for streaming across modern browsers. If your video is already 1080p and you don’t want to force scaling, you may omit the `-vf scale=1920:1080`.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 354,
+    "total_tokens": 953,
+    "cost": 0.00403
+  },
+  "model_type": "task_run"
+}

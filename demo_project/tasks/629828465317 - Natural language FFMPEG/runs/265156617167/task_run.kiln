@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "265156617167",
+  "created_at": "2025-07-24T20:40:20.941633",
+  "created_by": "scosman",
+  "input": "Input has an odd framerate (e.g., 23.976) and the output container doesn't support it. How to round/fix this for compatibility?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "200542137638",
+    "path": null,
+    "created_at": "2025-07-24T20:40:20.941607",
+    "created_by": "scosman",
+    "output": "When the input video has a fractional or uncommon framerate like 23.976 fps, some output containers (e.g., AVI or certain MPEG formats) may not support it properly, leading to playback issues. To fix this, you can explicitly set a compatible framerate by rounding or converting it to a standard integer framerate such as 24 fps using the `-r` option in ffmpeg.\n\nKey points:\n- Use `-r 24` before or after `-i` to specify the desired framerate. Placing `-r` after `-i` tells ffmpeg to **output** at that framerate, resampling the frames accordingly.\n- If you want to **change the input framerate** (e.g., for filters), place it before `-i`, but usually output framerate adjustment is sufficient.\n- This avoids container compatibility problems by producing a standard framerate.\n- Note this may introduce slight speed or timing changes since 23.976 and 24 are close but not identical. For exact timing preservation, deeper frame rate conversion or filtering is needed, but this simple method is widely compatible.\n\nExample command that converts input to 24 fps output for compatible containers:\n\n```bash\nffmpeg -i input.mkv -r 24 -c:v libx264 -preset slow -crf 22 -c:a aac -b:a 128k output.mp4\n```\n\nExplanation:\n- `-i input.mkv`: input file with 23.976 fps.\n- `-r 24`: output framerate forced to 24 fps, fixing container incompatibility.\n- `-c:v libx264 -preset slow -crf 22`: encode video with H.264 at good quality/compression.\n- `-c:a aac -b:a 128k`: encode audio at 128 kbps AAC.\n- `output.mp4`: output container compatible with standard framerates.\n\nThis command assumes you want a widely supported mp4 with fixed framerate without complex frame rate manipulation. Adjust codecs and containers as needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 606,
+    "output_tokens": 422,
+    "total_tokens": 1028,
+    "cost": 0.0009176
+  },
+  "model_type": "task_run"
+}

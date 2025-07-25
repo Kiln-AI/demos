@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "590738384205",
+  "created_at": "2025-07-24T18:11:22.772906",
+  "created_by": "scosman",
+  "input": "I'd like to smooth out and stabilize my shaky camera footage, unstable_video.mkv. Can you generate a command for that?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Advanced FFmpeg Video Filters"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "212711359330",
+    "path": null,
+    "created_at": "2025-07-24T18:11:22.772880",
+    "created_by": "scosman",
+    "output": "To smooth and stabilize shaky footage using FFmpeg, you can use the vidstab filter suite, which works in two passes: first to analyze camera movement, and second to apply stabilization and optional smoothing. This process creates a temporary file with stabilization data.\n\n- Pass 1: Run vidstabdetect to generate a transforms.trf file that contains calculated camera motion info.\n- Pass 2: Apply vidstabtransform to stabilize, with smoothing. You can increase smoothing with the smoothing parameter (e.g., smoothing=30), which controls the number of frames used for smoothing out camera motion (higher values = smoother motion, but can cause more border cropping).\n\nAssuming you have vid.stab filters compiled with FFmpeg, here are the commands:\n\n```bash\n# Pass 1: Analyze camera motion\nffmpeg -i unstable_video.mkv -vf vidstabdetect=shakiness=5:accuracy=15:result=transforms.trf -f null -\n\n# Pass 2: Apply the stabilization and smoothing\nffmpeg -i unstable_video.mkv -vf vidstabtransform=smoothing=30:input=transforms.trf,cropdetect=24:16:0 -c:v libx264 -crf 20 -preset slow -c:a copy stabilized_video.mp4\n```\n\nKey parameters explained:\n- shakiness=5 (maximum allowed), accuracy=15 for detailed detection.\n- smoothing=30 for strong smoothing; adjust as needed.\n- cropdetect helps automatically crop borders created during stabilization.\n- -c:v libx264 -crf 20 encodes video with good quality.\n- -c:a copy preserves the original audio.\n\nMake sure the filter `vidstabdetect` and `vidstabtransform` are supported in your FFmpeg build. If not, you may need to install a version with vid.stab support.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 374,
+    "total_tokens": 974,
+    "cost": 0.004192
+  },
+  "model_type": "task_run"
+}

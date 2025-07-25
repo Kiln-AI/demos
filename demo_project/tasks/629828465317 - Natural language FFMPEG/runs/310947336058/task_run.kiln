@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "310947336058",
+  "created_at": "2025-07-24T20:25:56.862210",
+  "created_by": "scosman",
+  "input": "Increase subtitle display duration by 500 ms when burning subtitles.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "936832185445",
+    "path": null,
+    "created_at": "2025-07-24T20:25:56.862184",
+    "created_by": "scosman",
+    "output": "To increase subtitle display duration by 500 ms when burning subtitles into the video, you need to adjust the subtitle timestamps before filtering them onto the video. The typical `subtitles` filter in ffmpeg does not provide a direct option to shift subtitle times, but you can achieve this by first modifying the subtitle file to extend durations or offset start and end times.\n\nIf your subtitles are in a text-based format like `.srt`, you can preprocess them by adjusting timestamps (delaying the end time by 500 ms for each subtitle). However, if you want to do it fully in `ffmpeg`, you can use the `ass` subtitle format and use the `ass` filter with overrides or modify the subtitles externally before burning.\n\nHere’s an example approach assuming you have an `.ass` subtitle file or can convert your subtitles to `.ass`. You can edit the subtitle file with a script or use `ffmpeg` to burn subtitles with a time offset (shift). ffmpeg supports shifting subtitles via `force_style` or by shifting timestamps using `itsoffset`.\n\nHowever, because extending display duration by 500 ms implies increasing subtitle end times, shifting start times won't make the subtitle display longer. So, we should extend the subtitle end timing itself.\n\nOne practical approach:\n\n1. Use `ffmpeg` to extract the subtitles as `.srt`.\n2. Use a script (like a Python script) to add 500 ms to every subtitle's end time.\n3. Then burn the modified subtitles into the video.\n\nAlternatively, if the subtitle file is `.ass`, you can duplicate the subtitles ending time by reformatting the `.ass` with extended durations.\n\nIf you want to offset the subtitles start time by -0.5 seconds so that they appear 0.5 seconds sooner and thus last longer overall (if you assume fixed start and end times), then you can use `-itsoffset`.\n\nHere is an example command that burns subtitles with a 0.5-second offset (they appear sooner):\n\n```bash\nffmpeg -itsoffset 0.5 -i subtitles.srt -i input.mp4 -map 1:v -map 1:a -vf subtitles=subtitles.srt -c:v libx264 -c:a copy output.mp4\n```\n\nBut this only shifts the start time, not extend the duration.\n\n**Best practice for increase subtitle display duration:**\n\n- Modify subtitle file timings by adding 500 ms to the end time for each subtitle entry.\n- Then burn subtitles as normal.\n\nIf you want to burn subtitles directly and extend display time with `ffmpeg` only, no direct option.\n\nExample of burning subtitles from modified subtitle file:\n\n```bash\nffmpeg -i input.mp4 -vf subtitles=modified_subtitles.srt -c:v libx264 -c:a copy output.mp4\n```\n\n### Summary:\n- Increasing display duration requires modifying subtitle timings in the subtitle file.\n- Burn subtitles after modification with `subtitles` filter.\n  \nIf you want a quick ffmpeg-only workaround for shifting subtitles earlier or later (not increasing display time), you can use `-itsoffset`.\n\n---\n\n**Assumption:** You have the ability to preprocess subtitle files. If you want, I can provide a sample Python script snippet to adjust timings in `.srt` files.\n\n---\n\nIf you want to do an example with `ffmpeg` shifting subtitles earlier by 0.5 seconds (though this is not the same as increasing display duration), here is the command:\n\n```bash\nffmpeg -itsoffset 0.5 -i subtitles.srt -i input.mp4 -map 1:v -map 1:a -vf subtitles=subtitles.srt -c:v libx264 -c:a copy output.mp4\n```\n\nHowever, the best solution is to modify the subtitle file timings before burning.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 585,
+    "output_tokens": 777,
+    "total_tokens": 1362,
+    "cost": 0.0014772
+  },
+  "model_type": "task_run"
+}

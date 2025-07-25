@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "282687152772",
+  "created_at": "2025-07-24T18:07:52.477597",
+  "created_by": "scosman",
+  "input": "What's the command to trim the first 10 seconds and last 10 seconds from a video?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Video Conversion Techniques"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "289622097179",
+    "path": null,
+    "created_at": "2025-07-24T18:07:52.477568",
+    "created_by": "scosman",
+    "output": "To trim the first 10 seconds and last 10 seconds from a video, you first need to determine the total duration of the input. Then, you skip the first 10 seconds using the -ss parameter and copy up to (duration - 20) seconds (the middle of the video), excluding the first and last 10 seconds. You can use ffmpeg's -t parameter for the duration.\n\nHere's a best practice workflow:\n\n1. Use ffprobe to get the video duration.\n2. Use -ss to seek 10 seconds in, then -t to specify (duration - 20) seconds.\n\nIf your video is 120 seconds long, you want from 10 to 110 seconds (110 = 120 - 10).\n\nAssuming you know or determined the duration (\"$DURATION\") in seconds:\n\n- -ss 10 starts the output at 10s.\n- -t $(($DURATION - 20)) captures the next (duration - 20) seconds.\n- -c copy avoids re-encoding for fast processing (works when trimming at keyframes; otherwise, omit for re-encode).\n\nHere's how it looks:\n\n```bash\nffmpeg -ss 10 -i input.mp4 -t $((DURATION - 20)) -c copy output.mp4\n```\n\nTo fully automate, find the duration with ffprobe (Linux/Mac bash syntax):\n\n```bash\nDURATION=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 input.mp4)\nffmpeg -ss 10 -i input.mp4 -t $(echo \"$DURATION - 20\" | bc) -c copy output.mp4\n```\n\nFor a single command, assuming the input is 120 seconds:\n\n```bash\nffmpeg -ss 10 -i input.mp4 -t 110 -c copy output.mp4\n```\n\nIf you must re-encode for frame-accurate trimming:\n\n```bash\nffmpeg -ss 10 -i input.mp4 -t 100 -c:v libx264 -c:a aac output.mp4\n```\n\nReplace duration accordingly. This technique trims the first and last 10 seconds, keeping everything in between.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 462,
+    "total_tokens": 1055,
+    "cost": 0.004882
+  },
+  "model_type": "task_run"
+}

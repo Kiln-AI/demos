@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "265280817069",
+  "created_at": "2025-07-24T20:24:21.986173",
+  "created_by": "scosman",
+  "input": "Auto-scale gallery.mov to half its resolution, keeping aspect ratio and all streams (audio, subtitles).",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "663754386013",
+    "path": null,
+    "created_at": "2025-07-24T20:24:21.986149",
+    "created_by": "scosman",
+    "output": "To auto-scale the video stream in gallery.mov to half its resolution while preserving aspect ratio and keeping all other streams (audio, subtitles) intact, you can use the scale filter with expressions to calculate half the input width and height. The expression `iw` and `ih` represent input width and height, and dividing them by 2 halves the size. Adding `-2` ensures the dimensions are even numbers, which is necessary for many codecs.\n\nUsing `-c:a copy` and `-c:s copy` preserves (copies) audio and subtitle streams without re-encoding, avoiding quality loss and saving time.\n\n```bash\nffmpeg -i gallery.mov -vf \"scale=iw/2:ih/2\" -c:v libx264 -preset medium -crf 23 -c:a copy -c:s copy output_halfres.mov\n```\n\nExplanation:\n\n- `-vf \"scale=iw/2:ih/2\"`: Scales video to half width and height while preserving aspect ratio because the division is uniform for both dimensions.\n- `-c:v libx264 -preset medium -crf 23`: Re-encodes video using H.264 at reasonable quality and speed.\n- `-c:a copy -c:s copy`: Copies audio and subtitle streams without re-encoding.\n- Output file named `output_halfres.mov` to indicate half resolution.\n\nAssumption: The input file uses standard codec support; re-encoding video to H.264 for compatibility. If you want to keep the exact same codec for video, you can change or omit video codec settings accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 326,
+    "total_tokens": 920,
+    "cost": 0.0007592
+  },
+  "model_type": "task_run"
+}

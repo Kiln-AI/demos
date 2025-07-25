@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "339341152567",
+  "created_at": "2025-07-24T20:39:46.432080",
+  "created_by": "scosman",
+  "input": "My input.mov has constant frame rate, but output.mp4 is variable frame rate unexpectedly. How do I force constant frame rate?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "682844524275",
+    "path": null,
+    "created_at": "2025-07-24T20:39:46.432057",
+    "created_by": "scosman",
+    "output": "To ensure your output video has a constant frame rate (CFR) rather than a variable frame rate (VFR), you need to explicitly specify the output frame rate with the `-r` option in `ffmpeg`. Setting `-r` before the output file forces ffmpeg to encode the video at a fixed frame rate.\n\nA good practice is to specify the frame rate at the output (not input) side. Also, when remuxing or transcoding, sometimes you need to re-encode the video stream to enforce CFR. Just copying the stream may preserve VFR.\n\nAssuming your input.mov has a frame rate of 30 fps, you can force CFR at 30 fps in the output like this:\n\n```bash\nffmpeg -i input.mov -r 30 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nExplanation:\n- `-r 30` sets the output frame rate to a constant 30 fps.\n- `-c:v libx264` encodes the video with H.264.\n- `-preset medium` balances encoding speed and quality.\n- `-crf 23` is a reasonable quality setting.\n- `-c:a aac -b:a 128k` encodes audio in AAC at 128 kbps.\n- `-pix_fmt yuv420p` ensures compatibility.\n- `-movflags +faststart` enables streaming friendliness.\n\nIf you want to preserve the input fps but force constant frame rate, you could first check input fps with `ffprobe` or `ffmpeg -i input.mov`, then use that same fps number as `-r <fps>`.\n\nNote that setting `-r` before the input (`-r 30 -i input.mov`) is for frame rate input demuxing which is not your case here.\n\nThis method reliably converts VFR sources to CFR output. \n\nIf you want to keep the original frame rate without changing, and just force constant frame rate, retrieve input fps first and use that with `-r`.\n\nExample retrieving fps:\n```bash\nffprobe -v 0 -of csv=p=0 -select_streams v:0 -show_entries stream=r_frame_rate input.mov\n```\n\nThen use that fps for `-r`.\n\nExample final command enforcing CFR and encoding:\n```bash\nffmpeg -i input.mov -r 30 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nThis ensures output.mp4 is CFR at 30fps. \n\n---\n\nIf you want a quick try assuming input fps is 30 without re-encoding audio, you could do:\n\n```bash\nffmpeg -i input.mov -r 30 -c:v libx264 -preset medium -crf 23 -c:a copy -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nBut usually it's safer to re-encode audio for compatibility.\n\n---\n\nSummary: Use `-r` at the output to force a constant frame rate encoding. Always re-encode video when changing frame rate or converting from VFR to CFR.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 691,
+    "total_tokens": 1291,
+    "cost": 0.0013456
+  },
+  "model_type": "task_run"
+}

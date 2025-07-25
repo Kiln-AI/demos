@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "739581176736",
+  "created_at": "2025-07-24T20:35:05.473810",
+  "created_by": "scosman",
+  "input": "I have a 60fps file—make a version at 24fps as .mov.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "111069745411",
+    "path": null,
+    "created_at": "2025-07-24T20:35:05.473784",
+    "created_by": "scosman",
+    "output": "To convert a video to 24fps, you can use the `-r 24` option in ffmpeg, which forces the output frame rate to 24 frames per second. Since you want the output file in `.mov` format, we'll use a commonly compatible codec like ProRes or H.264 in a MOV container. ProRes is widely used for high-quality video editing workflows, but H.264 is more compressed and widely compatible for distribution.\n\nAssuming you want to preserve good quality with direct frame rate conversion:\n\n- `-r 24` sets the output frame rate to 24 fps.\n- Using `-c:v prores_ks` for ProRes encoding with good quality.\n- `-profile:v 3` corresponds to ProRes HQ (high quality).\n- `-c:a copy` to keep the original audio without re-encoding.\n- The MOV container is set by using `.mov` output file extension.\n\nIf you want a more compressed output, swap ProRes with H.264 (`-c:v libx264`) and add `-pix_fmt yuv420p` for compatibility.\n\nHere's the ProRes HQ example for high quality:\n\n```bash\nffmpeg -i input.mp4 -r 24 -c:v prores_ks -profile:v 3 -c:a copy output.mov\n```\n\nIf you prefer H.264 for a smaller output file:\n\n```bash\nffmpeg -i input.mp4 -r 24 -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p -c:a aac -b:a 128k output.mov\n```\n\nReplace `input.mp4` with your original file name.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 348,
+    "total_tokens": 940,
+    "cost": 0.0007936
+  },
+  "model_type": "task_run"
+}

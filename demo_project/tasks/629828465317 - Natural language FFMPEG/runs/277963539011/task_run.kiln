@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "277963539011",
+  "created_at": "2025-07-24T20:40:17.539340",
+  "created_by": "scosman",
+  "input": "I want to convert a PAL (25 fps) video to NTSC (29.97 fps), including audio pitch correction to avoid \"chipmunk\" sound.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "264028668116",
+    "path": null,
+    "created_at": "2025-07-24T20:40:17.539317",
+    "created_by": "scosman",
+    "output": "To convert a PAL video (25 fps) to NTSC (29.97 fps) while correcting audio pitch, you need to:\n\n1. Change the frame rate from 25 fps to 29.97 fps using the `-r` option for the output, which adjusts the video playback speed accordingly.\n2. Correct the audio pitch to avoid the chipmunk effect caused by speeding up the audio. Since increasing frame rate from 25 to 29.97 speeds up video by approximately 1.199 times (29.97/25), you also have to adjust audio speed without changing its pitch.\n3. Use the `atempo` filter on audio to adjust speed without changing pitch. However, `atempo` supports speed changes between 0.5 and 2.0 only, so you can directly apply an `atempo` factor of approximately 1.199.\n4. To precisely match NTSC standard frame rate (29.97 fps) you can resample to 30000/1001 fps which is the exact NTSC frame rate. \n\nThe command below assumes the input is named `input_pal.mkv` and outputs to `output_ntsc.mkv`. It re-encodes video to a widely compatible codec (H.264) and audio to AAC for compatibility. You can adjust encoding parameters as needed.\n\n```bash\nffmpeg -i input_pal.mkv -r 30000/1001 -filter:a \"atempo=1.199\" -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k -pix_fmt yuv420p output_ntsc.mkv\n```\n\nExplanation:\n\n- `-r 30000/1001`: sets output framerate to 29.97 fps (NTSC standard).\n- `-filter:a \"atempo=1.199\"`: speeds audio up by 1.199x to sync with video, preserving pitch.\n- `-c:v libx264 -preset slow -crf 18`: high-quality H.264 video encoding.\n- `-c:a aac -b:a 192k`: AAC audio at 192 kbps.\n- `-pix_fmt yuv420p`: ensures broad compatibility.\n\nThis approach changes the playback speed for both video and audio consistently, avoiding pitch distortion. If you want to keep the video duration exactly the same while converting frame rates, a more advanced motion interpolation would be necessary, but this method is straightforward and effective for most use cases.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 607,
+    "output_tokens": 517,
+    "total_tokens": 1124,
+    "cost": 0.00107
+  },
+  "model_type": "task_run"
+}

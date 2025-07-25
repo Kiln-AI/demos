@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "170430594410",
+  "created_at": "2025-07-24T20:39:44.330736",
+  "created_by": "scosman",
+  "input": "I have an odd video where width and height are not divisible by 2, and I get chroma subsampling errors with x264. How do I fix/crop?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "320119956549",
+    "path": null,
+    "created_at": "2025-07-24T20:39:44.330712",
+    "created_by": "scosman",
+    "output": "x264 requires both width and height to be divisible by 2 because of chroma subsampling constraints (e.g., YUV 4:2:0 format). To fix chroma subsampling errors with odd dimensions, you have two main options:\n\n1. **Crop the video to the nearest even dimensions.** Cropping is often preferred when you want to avoid scaling artifacts.\n2. **Scale the video to even dimensions.** This resizes the video but may slightly change the size/aspect ratio.\n\nA common practice is to auto-crop the video to the maximum even width and height divisible by 2. You can do this with the `crop` filter combined with `in_w`/`in_h` (input width/height) and forcing a crop to nearest even numbers using `floor` or `trunc` with arithmetic.\n\nHere is a command to crop to the floor of the width and height divisible by 2:\n\n```bash\nffmpeg -i input.mp4 -vf \"crop=iw - mod(iw\\,2):ih - mod(ih\\,2)\" -c:v libx264 -crf 23 -preset medium -c:a copy output.mp4\n```\n\nExplanation:\n- `crop=iw - mod(iw\\,2):ih - mod(ih\\,2)` subtracts 1 pixel if width or height is odd, making dimensions divisible by 2.\n- `-c:v libx264` encodes video with x264.\n- `-crf 23` controls quality (default good balance).\n- `-preset medium` balances encoding speed and quality.\n- `-c:a copy` copies audio without re-encoding.\n\nIf you prefer scaling, you can use:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=trunc(iw/2)*2:trunc(ih/2)*2\" -c:v libx264 -crf 23 -preset medium -c:a copy output.mp4\n```\n\nThis scales width and height to the nearest lower even number, preventing chroma subsampling errors.\n\nChoose cropping if you want to preserve the original resolution as much as possible but lose a pixel or two; or scaling if slight resizing is acceptable.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 609,
+    "output_tokens": 458,
+    "total_tokens": 1067,
+    "cost": 0.0009764
+  },
+  "model_type": "task_run"
+}

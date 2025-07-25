@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "694447386131",
+  "created_at": "2025-07-24T20:38:16.199289",
+  "created_by": "scosman",
+  "input": "Convert closed captions from video.mov to burned-in subtitles with customized background box.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "137999083694",
+    "path": null,
+    "created_at": "2025-07-24T20:38:16.199265",
+    "created_by": "scosman",
+    "output": "To burn closed captions into a video with a customized background box using `ffmpeg`, you need to extract the subtitles (closed captions), then render them as burned-in subtitles with styling including a background box.\n\nAssuming the closed captions are embedded as a subtitle stream (like \"mov_text\" or \"cea-608/708\") in `video.mov`, your steps are:\n\n- Use the subtitles filter (`subtitles=...`), specifying the input file and optionally styling.\n- To customize the background box behind subtitles, use ASS/SSA styling by converting the subtitles to ASS format and applying styling such as `BackColour` (background color), `BorderStyle`, and `Box`.\n\nIf the closed captions are embedded in a format that cannot be directly styled, you might first extract them to an ASS file, customize styles, then burn them in. However, ffmpeg can directly burn subtitles from a subtitles stream with the `-vf subtitles` filter when the subtitles are in a supported format.\n\nAssuming the subtitle stream in `video.mov` can be referenced directly and you want a semi-transparent black box behind the text, here is a command that:\n\n- Extracts the subtitles from the video file.\n- Burns them into the output video with a styled box behind them using an ASS style override.\n- Uses the `subtitles` filter with the `force_style` option to configure the background box.\n\nExample command:\n\n```bash\nffmpeg -i video.mov -vf \"subtitles=video.mov:force_style='BorderStyle=3,BackColour=&H80000000,Outline=0,Shadow=0,MarginV=10'\" -c:a copy output_burned.mp4\n```\n\nExplanation of parameters:\n\n- `-vf subtitles=video.mov`: Loads subtitles from `video.mov`. This assumes embedded subtitle stream is recognized by ffmpeg.\n- `force_style='...'`: Overrides ASS subtitle styling.\n  - `BorderStyle=3`: Draws a box (opaque or semi-transparent).\n  - `BackColour=&H80000000`: Background color in ASS format; `&HAA BB GG RR` hex format with alpha. `80` is approx 50% opacity black background.\n  - `Outline=0` & `Shadow=0`: Removes outline and shadow to keep only the box visible.\n  - `MarginV=10`: Vertical margin from the bottom.\n- `-c:a copy`: Copies original audio without re-encoding.\n\nIf your closed captions are CEA-608/708 (close captions) embedded as a data stream rather than true subtitles, you may first need to extract subtitles or convert them using external tools, or use `ccextract` to extract subtitles first.\n\nIf you want to extract subtitles first to a file and then burn them in with styling, here is a recommended two-step approach:\n\n1. Extract subtitles to an ASS file (if possible):\n\n```bash\nffmpeg -i video.mov -map 0:s:0 subtitles.ass\n```\n\n2. Edit `subtitles.ass` to include your box styling or specify the style in the ASS header `[V4+ Styles]` section, then burn them in:\n\n```bash\nffmpeg -i video.mov -vf \"ass=subtitles.ass\" -c:a copy output_burned.mp4\n```\n\nThis gives you full control over the subtitle appearance including the background box.\n\n---\n\n**Summary:**\n\nIf embedded subtitles are directly accessible:\n\n```bash\nffmpeg -i video.mov -vf \"subtitles=video.mov:force_style='BorderStyle=3,BackColour=&H80000000,Outline=0,Shadow=0,MarginV=10'\" -c:a copy output_burned.mp4\n```\n\nIf needing full control:\n\n```bash\nffmpeg -i video.mov -map 0:s:0 subtitles.ass\n# Edit subtitles.ass manually to style background box\nffmpeg -i video.mov -vf \"ass=subtitles.ass\" -c:a copy output_burned.mp4\n```\n\nThis approach ensures closed captions are converted and burned in with customized background boxes.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 588,
+    "output_tokens": 836,
+    "total_tokens": 1424,
+    "cost": 0.0015728
+  },
+  "model_type": "task_run"
+}

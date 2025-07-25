@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "314204089587",
+  "created_at": "2025-07-23T11:49:21.375665",
+  "created_by": "scosman",
+  "dataset_id": "646630545953",
+  "task_run_config_id": null,
+  "eval_config_eval": true,
+  "input": "My file `archive.mkv` has three audio tracks. I need to extract the second audio track and the main video track into a new file `output.mp4` without re-encoding anything.",
+  "output": "To extract the second audio track and main video track without re-encoding, you'll use stream mapping with the `-map` option and copy codecs to avoid transcoding. This preserves quality and processes much faster since no encoding occurs.\n\n- `-map 0:v:0` selects the first (main) video stream\n- `-map 0:a:1` selects the second audio stream (0-indexed, so index 1 is the second track)\n- `-c copy` copies both video and audio streams without re-encoding\n- The output container MP4 will remux the streams\n\n```bash\nffmpeg -i archive.mkv -map 0:v:0 -map 0:a:2 -c copy output.mp4\n```",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) Yes, the model's output contains the issue described in the issue description. The command it generated includes the incorrect audio track selection `-map 0:a:2`, while the user requested the extraction of the second audio track, which should be `-map 0:a:1`. This is a critical mistake that impacts the command's correctness and means it would not fulfill the user's request as intended.\n\n2) The model's output does not resemble the failure example given. The command generated does not contain any syntactically incorrect options or invalid option names. Nonetheless, it does contain a logical error stemming from the incorrect stream mapping.\n\n3) The command produced by the model does not break any requirements dictated in the man page for `ffmpeg`. Although it showcases valid options structured in compliance with `ffmpeg`'s syntax, the specific mapping for audio streams is incorrect, which is a significant functionality error rather than a technical or syntactic one.\n\n4) Given the analysis above, the model's output contains the issue described because it generates an incorrect mapping command that will not extract the specified audio track as intended. Therefore, it fails on that aspect."
+  },
+  "scores": {
+    "correctness": 0.0
+  },
+  "task_run_usage": {
+    "input_tokens": 1045,
+    "output_tokens": 171,
+    "total_tokens": 1216,
+    "cost": 0.0057
+  },
+  "model_type": "eval_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "245645677256",
+  "created_at": "2025-07-24T20:39:10.768397",
+  "created_by": "scosman",
+  "input": "How can I automate removing all video tracks but keeping just the audio for each .mkv or .mp4 file?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "577576996674",
+    "path": null,
+    "created_at": "2025-07-24T20:39:10.768371",
+    "created_by": "scosman",
+    "output": "To automate removing all video tracks while keeping only audio tracks for multiple .mkv or .mp4 files, you can use a script that leverages ffmpeg's stream selection feature.\n\nKey points:\n- Use `-map 0:a` to select all audio streams from the input.\n- Use `-c copy` to copy the audio streams without re-encoding, preserving quality and speed.\n- This process will discard any video and subtitle streams.\n- The output file can retain the container format of the original (`.mkv` or `.mp4`).\n\nHere is an example bash command that processes a single file:\n\n```bash\nffmpeg -i input.mkv -map 0:a -c copy output.mka\n```\n\nHowever, since you want to automate batch processing for multiple `.mkv` and `.mp4` files, here is a high-quality bash script snippet that:\n\n- Iteratively processes each file of the given extensions in the current directory.\n- Outputs the audio-only file, preserving original extension to `.mka` for `.mkv` inputs (because audio-only mkv container is `.mka`), and `.m4a` for `.mp4` inputs to correctly reflect audio-only.\n- Avoids overwriting by checking target filename.\n- Reports errors if no audio streams found.\n\n```bash\n#!/bin/bash\n\nshopt -s nullglob\n\nfor file in *.mkv *.mp4; do\n  # Determine output extension based on input container:\n  if [[ $file == *.mkv ]]; then\n    outfile=\"${file%.*}.mka\"\n  elif [[ $file == *.mp4 ]]; then\n    outfile=\"${file%.*}.m4a\"\n  else\n    continue\n  fi\n\n  # Check if the file contains audio streams\n  has_audio=$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 \"$file\")\n\n  if [ -z \"$has_audio\" ]; then\n    echo \"No audio streams found in $file, skipping.\"\n    continue\n  fi\n\n  # Avoid overwriting existing files\n  if [ -e \"$outfile\" ]; then\n    echo \"Output file $outfile already exists, skipping $file.\"\n    continue\n  fi\n\n  echo \"Processing $file --> $outfile (audio only)\"\n  ffmpeg -i \"$file\" -map 0:a -c copy \"$outfile\"\ndone\n```\n\n### Explanation:\n- `ffprobe` is used to ensure the input contains audio streams.\n- `-map 0:a` selects all audio streams.\n- `-c copy` copies audio streams without re-encoding.\n- The script respects file extensions, generating `.mka` for `.mkv` and `.m4a` for `.mp4` inputs for clarity and compatibility.\n- This script can be saved as `extract_audio.sh`, given execution permission (`chmod +x extract_audio.sh`), and run in the folder containing your media files.\n\nThis approach is robust for batch processing to strip video streams and retain audio only.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 632,
+    "total_tokens": 1230,
+    "cost": 0.0012504
+  },
+  "model_type": "task_run"
+}

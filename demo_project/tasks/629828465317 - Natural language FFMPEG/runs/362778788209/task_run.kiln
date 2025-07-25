@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "362778788209",
+  "created_at": "2025-07-24T20:36:25.482535",
+  "created_by": "scosman",
+  "input": "In ffmpeg, how do you prevent upscaling a video beyond its original resolution?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "316677829334",
+    "path": null,
+    "created_at": "2025-07-24T20:36:25.482511",
+    "created_by": "scosman",
+    "output": "To prevent upscaling a video beyond its original resolution in ffmpeg, you can use the `min()` function within the `scale` filter to limit the scaling dimensions. This technique ensures the output width and height never exceed the input's original width and height, thus avoiding quality loss that comes with upscaling.\n\nFor example, if you want to scale video to a maximum width of 1280 and maximum height of 720, but only downscale if the original resolution is larger, use:\n\n- `scale=w='min(1280,iw)':h='min(720,ih)'`\n  \nHere, `iw` and `ih` are the input's original width and height, respectively. The `min()` function picks the lesser between the target dimension and input dimension, effectively preventing upscaling.\n\nA typical full command assuming you want to limit resolution to 1280x720 while preventing upscaling would be:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=w='min(1280,iw)':h='min(720,ih)'\" -c:a copy output.mp4\n```\n\nThis keeps the audio stream as is (`-c:a copy`) and re-encodes only the video with scaling constrained by the input resolution.\n\nIf you want to maintain aspect ratio properly while limiting maximum dimensions without upscaling, use this slightly more advanced expression:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale='if(gt(iw/ih,1280/720),min(1280,iw),-2)':'if(gt(iw/ih,1280/720),-2,min(720,ih))'\" -c:a copy output.mp4\n```\n\nThis compares input aspect ratio with 1280/720 and scales width or height based on that, using `-2` to automatically calculate the other dimension preserving aspect ratio, but only downscaling if needed.\n\n**In summary:**\n- Use `min()` inside the scale filter expressions to prevent upscaling.\n- Use `-2` for automatic dimension calculation preserving aspect ratio.\n- Adjust target max resolution to suit your requirements.\n\nThis approach ensures your output video never exceeds the original resolution, avoiding unnecessary quality loss.\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=w='min(1280,iw)':h='min(720,ih)'\" -c:a copy output.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 499,
+    "total_tokens": 1091,
+    "cost": 0.0010352
+  },
+  "model_type": "task_run"
+}

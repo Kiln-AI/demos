@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "988383932055",
+  "created_at": "2025-07-24T20:24:18.211770",
+  "created_by": "scosman",
+  "input": "Crop interview.mp4 to a 4:3 ratio at 640x480.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "266303485536",
+    "path": null,
+    "created_at": "2025-07-24T20:24:18.211746",
+    "created_by": "scosman",
+    "output": "To crop and scale a video to a 4:3 aspect ratio at a resolution of 640x480, you can use the `crop` filter to select a portion of the original video with the 4:3 ratio, and then scale it to 640x480 if needed. If the original video is already larger or has a different aspect ratio, cropping ensures you remove unwanted parts, and scaling adjusts the final output size to the exact resolution.\n\nAssuming the original video's dimensions are larger than 640x480, we will:\n- Use the `crop` filter to extract a centered 4:3 area. The expression `min(iw\\,ih*4/3)` calculates the crop width or height to maintain 4:3 ratio.\n- Use the `scale` filter to resize the cropped area to 640x480.\n- Keep original audio as-is.\n\n```bash\nffmpeg -i interview.mp4 -vf \"crop='min(iw,ih*4/3)':'min(ih,iw*3/4)',scale=640:480\" -c:a copy output_4_3_640x480.mp4\n```\n\nExplanation:\n- `crop='min(iw,ih*4/3)':'min(ih,iw*3/4)'` crops the video to the largest possible 4:3 rectangle centered within the original frame.\n- `scale=640:480` resizes the cropped video to the requested resolution of 640x480.\n- `-c:a copy` copies the original audio stream without re-encoding.\n- The output file is named `output_4_3_640x480.mp4`.\n\nIf you want to explicitly center the crop, `crop` defaults to centered cropping when width and height expressions are used without specifying x and y offsets. This command maintains best quality by avoiding unnecessary re-encoding of audio and uses a widely compatible MP4 container.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 395,
+    "total_tokens": 986,
+    "cost": 0.0008684
+  },
+  "model_type": "task_run"
+}

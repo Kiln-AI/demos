@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "114542403742",
+  "created_at": "2025-07-24T20:25:45.994393",
+  "created_by": "scosman",
+  "input": "Render input.mov with two subtitle tracks, English and Spanish, burned into separate output files.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "292045924373",
+    "path": null,
+    "created_at": "2025-07-24T20:25:45.994367",
+    "created_by": "scosman",
+    "output": "To create two separate output videos from `input.mov`, each with a different subtitle track burned in (English and Spanish), you need to use `ffmpeg` twice with the `subtitles` filter specifying the corresponding subtitle track. Burning subtitles means the subtitles are rendered directly into the video frames, making them always visible.\n\nAssumptions:\n- The input file `input.mov` contains embedded subtitles for English and Spanish.\n- The English subtitle track is the first subtitle stream (index 0:s:0).\n- The Spanish subtitle track is the second subtitle stream (index 0:s:1).\n- We want to keep the original video and audio codecs to avoid re-encoding unless needed for subtitles burning (note that subtitles burning forces re-encoding of video).\n- Output files will be named `output_english.mov` and `output_spanish.mov`.\n\nTo burn subtitles, you can either refer directly to the subtitle stream or extract and use an external subtitle file. For embedded subtitles in MOV, `ffmpeg` supports referencing them directly via `-vf subtitles=input.mov:si=0` where `si` is the subtitle stream index.\n\nHere are the commands:\n\n```bash\nffmpeg -i input.mov -vf \"subtitles=input.mov:si=0\" -c:a copy output_english.mov\nffmpeg -i input.mov -vf \"subtitles=input.mov:si=1\" -c:a copy output_spanish.mov\n```\n\nExplanation:\n- `-vf subtitles=input.mov:si=0` burns the first subtitle stream (English).\n- `-vf subtitles=input.mov:si=1` burns the second subtitle stream (Spanish).\n- `-c:a copy` copies audio without re-encoding.\n  \nIf you want to specify video codec and quality explicitly (recommended for better control), you can add `-c:v libx264 -crf 23 -preset medium` similarly for both commands.\n\nExample with explicit re-encoding:\n\n```bash\nffmpeg -i input.mov -vf \"subtitles=input.mov:si=0\" -c:v libx264 -preset medium -crf 23 -c:a copy output_english.mov\nffmpeg -i input.mov -vf \"subtitles=input.mov:si=1\" -c:v libx264 -preset medium -crf 23 -c:a copy output_spanish.mov\n```\n\nThis approach ensures high quality burned-in subtitles for each language in separate files.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 500,
+    "total_tokens": 1091,
+    "cost": 0.0010364
+  },
+  "model_type": "task_run"
+}

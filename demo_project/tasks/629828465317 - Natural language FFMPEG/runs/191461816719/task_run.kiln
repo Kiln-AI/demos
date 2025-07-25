@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "191461816719",
+  "created_at": "2025-07-24T18:12:07.903779",
+  "created_by": "scosman",
+  "input": "Trim the first 20 minutes from a large video documentary.mkv and save the rest as an MP4 file.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Handling Large Media Files Efficiently"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "284635473645",
+    "path": null,
+    "created_at": "2025-07-24T18:12:07.903750",
+    "created_by": "scosman",
+    "output": "To efficiently trim the first 20 minutes (i.e., start from 00:20:00) of documentary.mkv and save the remaining video as an MP4, use the -ss (start time) option before -i for fast seeking (especially helpful with large files), and specify the codecs for broad compatibility. This approach avoids re-encoding if both input and output codecs are compatible, but here, to guarantee MP4 compatibility and browser support, we'll convert to H.264 (libx264) video and AAC audio.\n\n- -ss 00:20:00 tells ffmpeg to start reading from 20 minutes into the file.\n- -c:v libx264 and -c:a aac specify video and audio codecs for MP4.\n- -preset fast and -crf 23 provide a good quality/speed balance.\n- -movflags +faststart enables fast streaming.\n- -map 0 ensures all streams are kept.\n\nAssumption: You want a compatible and streamable MP4. If you want to \"copy\" streams for speed (where possible), replace codec options with -c copy, but decoding/re-encoding ensures maximum compatibility.\n\n```bash\nffmpeg -ss 00:20:00 -i documentary.mkv -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart -map 0 trimmed_documentary.mp4\n```\n\nThis will efficiently trim and convert the large file, preserving quality and maximizing compatibility for later use.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 324,
+    "total_tokens": 923,
+    "cost": 0.00379
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "988286059693",
+  "created_at": "2025-07-24T20:26:13.130485",
+  "created_by": "scosman",
+  "input": "Burn right-to-left subtitles (Arabic) with correct font support into a video.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "177164266446",
+    "path": null,
+    "created_at": "2025-07-24T20:26:13.130461",
+    "created_by": "scosman",
+    "output": "To burn right-to-left (RTL) subtitles such as Arabic into a video with correct font support, you need to use the `subtitles` filter with the `force_style` option specifying a font that supports Arabic script and ensuring the subtitle rendering engine supports RTL properly.\n\nKey points:\n\n- Use `-vf \"subtitles=filename.srt:force_style='Fontname=YourArabicFont'\"` to specify a font with proper Arabic support. Replace `YourArabicFont` with the actual font name installed on your system, e.g., \"Amiri\", \"Arial\", or \"Tahoma\" if they support Arabic.\n- The subtitles filter uses libass internally, which supports RTL and complex scripts if the font supports it.\n- For correct rendering, make sure your subtitle file is in UTF-8 encoding.\n- If your font is not in a standard location, you can specify a fontconfig path or use ASS subtitle format with embedded styles to guarantee correct typography.\n- If you have a `.ass` subtitles file with RTL and style info, that is better to use than `.srt`.\n\nExample assumes you have:\n- `input.mp4` video\n- `subs.srt` Arabic subtitles UTF-8 encoded\n- Installed font named `Amiri` that supports Arabic\n\n```bash\nffmpeg -i input.mp4 -vf \"subtitles=subs.srt:force_style='Fontname=Amiri'\" -c:a copy output.mp4\n```\n\nThis command burns the subtitles directly onto the video. Audio is copied without re-encoding.\n\nIf you want to specify the fontfile manually (e.g., a TTF font file), you would need to convert your subtitles to `.ass` format with the proper font style referencing the fontfile, as ffmpeg's `subtitles` filter does not have an option to directly specify a font file path.\n\nIn summary, using an `.ass` subtitles file with embedded RTL styling and specified font is the most reliable way. For `.srt`, ensure UTF-8 encoding and specify a font supporting Arabic using `force_style`.\n\nExample with an `.ass` file (recommended):\n\n```bash\nffmpeg -i input.mp4 -vf \"subtitles=subs.ass\" -c:a copy output.mp4\n```\n\nMake sure `subs.ass` has proper styling and RTL script support.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 589,
+    "output_tokens": 475,
+    "total_tokens": 1064,
+    "cost": 0.0009956
+  },
+  "model_type": "task_run"
+}

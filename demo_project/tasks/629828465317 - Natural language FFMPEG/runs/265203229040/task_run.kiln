@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "265203229040",
+  "created_at": "2025-07-24T20:24:49.892384",
+  "created_by": "scosman",
+  "input": "I have video in .flv format (Sorenson Spark). Codecs/command to convert for Apple TV playback?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "199418187629",
+    "path": null,
+    "created_at": "2025-07-24T20:24:49.892359",
+    "created_by": "scosman",
+    "output": "To convert a Sorenson Spark (.flv) video for Apple TV playback, you should use the widely supported H.264 video codec and AAC audio codec in an MP4 container. Apple TV requires the video to be encoded with H.264 Baseline, Main, or High profile (High is recommended for better quality), and audio as AAC. The output must be in a format compatible with Apple TV's supported resolutions and pixel formats. Using \"faststart\" allows for progressive streaming.\n\nKey points:\n- Use `libx264` with `-profile:v high` and `-level 4.0` or higher for Apple TV compatibility.\n- Use AAC audio with an appropriate bitrate.\n- Ensure pixel format is `yuv420p`, compatible with Apple devices.\n- Use `-movflags +faststart` to optimize for streaming and seekability.\n- Optionally scale the video if you want to limit resolution (Apple TV supports up to 1080p or 4K depending on model, but 1080p is generally safe).\n\nHere is a command assuming input.flv is your source and output.mp4 will be compatible for Apple TV playback:\n\n```bash\nffmpeg -i input.flv -c:v libx264 -profile:v high -level 4.0 -preset slow -crf 20 -c:a aac -b:a 160k -movflags +faststart -pix_fmt yuv420p output.mp4\n```\n\nExplanation:\n- `-c:v libx264`: encodes video to H.264.\n- `-profile:v high` and `-level 4.0`: ensures compatibility with Apple TV hardware decoders.\n- `-preset slow`: balances encoding speed and compression efficiency.\n- `-crf 20`: good quality (lower CRF = better quality).\n- `-c:a aac -b:a 160k`: AAC audio at 160 kbps.\n- `-movflags +faststart`: relocates metadata for streaming.\n- `-pix_fmt yuv420p`: pixel format for Apple devices.\n\nIf you know the source resolution is higher than 1080p and want to downscale, add `-vf scale=-2:1080` before the video codec.\n\nThis command provides a good balance of quality and compatibility tailored for Apple TV playback.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 479,
+    "total_tokens": 1077,
+    "cost": 0.0010056
+  },
+  "model_type": "task_run"
+}

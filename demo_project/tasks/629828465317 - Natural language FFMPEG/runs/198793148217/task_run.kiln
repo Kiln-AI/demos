@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "198793148217",
+  "created_at": "2025-07-24T20:34:48.543767",
+  "created_by": "scosman",
+  "input": "I have a .ts broadcast file. Make it a .mp4 for easier editing.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "124289988178",
+    "path": null,
+    "created_at": "2025-07-24T20:34:48.543741",
+    "created_by": "scosman",
+    "output": "To convert a .ts (MPEG-TS) broadcast file to .mp4 for easier editing, it is best to re-mux if the codecs are supported by MP4 (e.g., H.264 video and AAC audio). Re-muxing is faster and preserves quality because it doesn't re-encode. However, if re-muxing is not possible due to unsupported codecs, re-encoding will be necessary.\n\nSince you didn't specify codecs, I'll assume the .ts file contains compatible codecs for direct stream copy. This approach is ideal for editing as it keeps the original video/audio quality intact and speeds up the process.\n\nHere is the command to re-mux:\n\n```bash\nffmpeg -i input.ts -c copy -bsf:a aac_adtstoasc output.mp4\n```\n\nExplanation:\n- `-c copy`: copies the audio and video streams without re-encoding.\n- `-bsf:a aac_adtstoasc`: converts AAC audio from ADTS to ASC format, required for MP4 container compatibility.\n- `input.ts`: your source file.\n- `output.mp4`: the resulting MP4 file which is easier to edit.\n\nIf your .ts contains codecs incompatible with MP4, you can re-encode with:\n\n```bash\nffmpeg -i input.ts -c:v libx264 -preset medium -crf 22 -c:a aac -b:a 128k output.mp4\n```\n\nThis will ensure broad compatibility with editing software, but takes longer and could lose some quality.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 315,
+    "total_tokens": 906,
+    "cost": 0.0007404
+  },
+  "model_type": "task_run"
+}

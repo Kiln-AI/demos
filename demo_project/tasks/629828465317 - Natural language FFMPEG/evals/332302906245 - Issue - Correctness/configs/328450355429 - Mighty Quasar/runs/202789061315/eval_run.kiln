@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "202789061315",
+  "created_at": "2025-07-23T16:54:16.710906",
+  "created_by": "scosman",
+  "dataset_id": "284320497859",
+  "task_run_config_id": "262229054254",
+  "eval_config_eval": false,
+  "input": "I want to stack two videos vertically. Put `top_video.mp4` on top of `bottom_video.mp4`, and save it as `stacked.mp4`.",
+  "output": "To stack videos vertically, use the vstack filter which concatenates frames on the vertical axis. Both videos need to have the same width to stack properly, so the scale2ref filter resizes the bottom video to match the top video before stacking. Default audio handling is to keep the audio from the first input only (`top_video.mp4`).\n\n- [0:v][1:v]scale2ref[top][bottom] - scales the bottom video to match the width of the top video\n- [top][bottom]vstack=inputs=2[v] - vertically stacks the videos\n- map \"[v]\" uses the stacked video stream\n- map 0:a? maps the audio from the first input (including audio only if it exists - the ? makes it safe if there's no audio)\n- c:v libx264 and c:a aac ensure standard H.264/AAC encoding for MP4\n- crf 23 and -preset medium provide good balance of quality and speed\n\n```bash\nffmpeg -i top_video.mp4 -i bottom_video.mp4 -filter_complex \"[0:v][1:v]scale2ref[top][bottom];[top][bottom]vstack=inputs=2[v]\" -map \"[v]\" -map 0:a? -c:v libx264 -crf 23 -preset medium -c:a aac stacked.mp4\n```",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does not contain the issue described in the issue_description. The command it generated is valid within the context of FFmpeg and aligns with the user's request to stack two videos vertically. The command includes all necessary parameters and does not contain any recognizable mistakes.\n\n2) The model's output is not similar to the failure_example. The command generated does not contain any invalid preset names or incorrect option usage that would render it non-functional. It correctly employs filters and mapping in a manner that should work as intended.\n\n3) The command does not break any requirements dictated by the ffmpeg man page. It properly utilizes the `scale2ref` filter, which is a valid filter for matching the width of videos before stacking them. Additionally, it follows the correct format and order of options as described in the man page, ensuring the command's integrity.\n\n4) Considering the above points, the model's output does not contain any issues and adheres to FFmpeg's specifications. Therefore, it should pass the evaluation."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 440,
+    "output_tokens": 285,
+    "total_tokens": 725,
+    "cost": 0.00021895
+  },
+  "model_type": "eval_run"
+}

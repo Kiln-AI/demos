@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "280467582320",
+  "created_at": "2025-07-24T18:10:04.609520",
+  "created_by": "scosman",
+  "input": "I need to convert a video recorded at 25fps to 24fps for a cinematic look. Please use a codec that maintains high quality.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "329299146057",
+    "path": null,
+    "created_at": "2025-07-24T18:10:04.609494",
+    "created_by": "scosman",
+    "output": "To convert a video from 25fps to 24fps for a cinematic effect, you can use frame rate conversion with ffmpeg's -r option. For high quality, use the ProRes codec (for intermediate work or editing) or H.264 with a high bitrate (for delivery). ProRes is lossless-ish and widely used in professional workflows. For most users, ProRes is a good choice; if you need a smaller file, switch to H.264 with a low CRF.\n\nHere's how to convert and encode with ProRes:\n\n- -r 24 sets the output frame rate to 24fps.\n- -vf \"fps=24\" makes sure ffmpeg properly adjusts timing and handles dropped/duplicated frames smoothly.\n- -c:v prores_ks uses the high quality ProRes codec.\n- -profile:v 3 sets ProRes HQ for best quality.\n- -c:a copy copies the original audio without recompression.\n\n```bash\nffmpeg -i input.mp4 -vf \"fps=24\" -c:v prores_ks -profile:v 3 -r 24 -c:a copy output.mov\n```\n\nIf file size is a concern and you're fine with H.264:\n\n```bash\nffmpeg -i input.mp4 -vf \"fps=24\" -c:v libx264 -crf 18 -preset slow -pix_fmt yuv420p -r 24 -c:a aac -b:a 320k output.mp4\n```\n\nAssumptions:\n- Input file is input.mp4.\n- Output is output.mov (ProRes) or output.mp4 (H.264).\n- Original audio is kept unchanged (\"copy\").\n- For full cinematic look, also consider adjusting motion blur (advanced), but standard frame rate conversion often suffices.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 605,
+    "output_tokens": 370,
+    "total_tokens": 975,
+    "cost": 0.00417
+  },
+  "model_type": "task_run"
+}

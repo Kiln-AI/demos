@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "139236505473",
+  "created_at": "2025-07-24T20:23:26.116978",
+  "created_by": "scosman",
+  "input": "Normalize the loudness of podcast.wav to -16 LUFS, output as normalized.wav.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "233618713247",
+    "path": null,
+    "created_at": "2025-07-24T20:23:26.116955",
+    "created_by": "scosman",
+    "output": "To normalize the loudness of `podcast.wav` to -16 LUFS, you can use the `loudnorm` filter in ffmpeg. This filter implements EBU R128 loudness normalization, which is a standard for measuring and adjusting perceived loudness. \n\nThe process involves two passes to accurately measure and apply gain:\n\n1. First pass: Measures the loudness statistics of the input file.\n2. Second pass: Adjusts the audio gain to achieve the target loudness (-16 LUFS).\n\nAlternatively, you can do a single-pass approximate normalization by setting `I=-16` in the filter and using `linear=true` for gain adjustment, but two-pass is more accurate.\n\nHere, I provide a single command that runs a two-pass loudness normalization using ffmpeg's `loudnorm` filter with print format as JSON between passes.\n\n### Explanation:\n\n- `loudnorm=I=-16:TP=-1.5:LRA=11:print_format=summary` measures loudness targets:\n  - `I=-16` targets integrated loudness at -16 LUFS.\n  - `TP=-1.5` limits true peak to -1.5 dBTP.\n  - `LRA=11` limits loudness range to 11 LU.\n  - `print_format=summary` prints loudness stats.\n\n- Then you use the measured parameters in the second pass for accurate normalization with `measured_I`, `measured_TP`, `measured_LRA`, and `measured_thresh`.\n\nBecause this requires reading stats from the first pass, a script or two-step command is normally necessary.\n\n---\n\n### Simple one-pass command (approximate, faster):\n\n```bash\nffmpeg -i podcast.wav -af loudnorm=I=-16:TP=-1.5:LRA=11:linear=true:print_format=summary -ar 48000 -ac 2 -c:a pcm_s16le normalized.wav\n```\n\nExplanation:\n- `-af loudnorm=I=-16:TP=-1.5:LRA=11:linear=true` applies single-pass loudness normalization targeting -16 LUFS.\n- `-ar 48000` sets sample rate to 48 kHz (standard for podcasts).\n- `-ac 2` ensures stereo output.\n- `-c:a pcm_s16le` uses 16-bit WAV format codec.\n- Output file is `normalized.wav`.\n\n---\n\n### Recommended two-pass method outline:\n\nStep 1: Analyze loudness and get stats:\n```bash\nffmpeg -i podcast.wav -af loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json -f null -\n```\n\nThis outputs loudness stats in JSON that you should extract (e.g., `measured_I`, `measured_TP`, etc.).\n\nStep 2: Normalize using the measured stats manually:\n\n```bash\nffmpeg -i podcast.wav -af loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=...:measured_TP=...:measured_LRA=...:measured_thresh=...:offset=... -ar 48000 -ac 2 -c:a pcm_s16le normalized.wav\n```\n\n(replace `...` with values from Step 1)\n\n---\n\nFor most use cases, the single pass command is a good balance of quality and simplicity.\n\n```bash\nffmpeg -i podcast.wav -af loudnorm=I=-16:TP=-1.5:LRA=11:linear=true:print_format=summary -ar 48000 -ac 2 -c:a pcm_s16le normalized.wav\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 755,
+    "total_tokens": 1348,
+    "cost": 0.0014452
+  },
+  "model_type": "task_run"
+}

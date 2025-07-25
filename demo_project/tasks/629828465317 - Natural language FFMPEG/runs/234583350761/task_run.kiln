@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "234583350761",
+  "created_at": "2025-07-24T20:23:24.682190",
+  "created_by": "scosman",
+  "input": "Replace the audio of video.mp4 with narration.wav, output video_narration.mp4.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "203321144236",
+    "path": null,
+    "created_at": "2025-07-24T20:23:24.682158",
+    "created_by": "scosman",
+    "output": "To replace the audio track of video.mp4 with narration.wav, you want to copy the video stream as-is (to avoid re-encoding and preserve quality) while encoding or copying the new audio stream from narration.wav, ensuring the streams are properly synced.\n\nKey points:\n- Use `-i` twice to input both video and audio files.\n- Use `-map` to select the video stream from the first input and audio stream from the second input.\n- Use `-c:v copy` to avoid re-encoding the video.\n- Use `-c:a` to encode audio into a suitable format (usually AAC for MP4 containers).\n- Keep audio and video streams in sync with default behavior unless explicit adjustments are needed.\n- Use `-shortest` to make the output interval the shortest of the two inputs (important if audio and video durations differ).\n\n```bash\nffmpeg -i video.mp4 -i narration.wav -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 192k -shortest video_narration.mp4\n```\n\nExplanation:\n- `-map 0:v:0` selects the first input's (video.mp4) video stream.\n- `-map 1:a:0` selects the second input's (narration.wav) audio stream.\n- `-c:v copy` copies video stream without re-encoding.\n- `-c:a aac` encodes audio to AAC codec for compatibility with MP4.\n- `-b:a 192k` sets audio bitrate to 192kbps for good quality.\n- `-shortest` stops output at the shortest input to avoid trailing silence or black frames if audio and video lengths differ.\n\nThis approach assumes narration.wav is a single audio track and compatible sample rate/format for AAC encoding. If not, ffmpeg will perform necessary resampling/formatting.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 394,
+    "total_tokens": 988,
+    "cost": 0.000868
+  },
+  "model_type": "task_run"
+}

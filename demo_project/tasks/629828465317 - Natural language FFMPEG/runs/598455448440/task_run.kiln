@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "598455448440",
+  "created_at": "2025-07-24T20:25:15.814511",
+  "created_by": "scosman",
+  "input": "I want to remove an unwanted audio track from a .mkv file, keeping just the main one.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "288557439694",
+    "path": null,
+    "created_at": "2025-07-24T20:25:15.814481",
+    "created_by": "scosman",
+    "output": "To remove an unwanted audio track from an MKV file while keeping the main audio track intact, you should use stream copying to avoid re-encoding and preserve quality. First, identify which audio stream is the main one you want to keep (usually stream 0:1 or similar), then select that audio stream along with all other desired streams (like video and subtitles). The `-map` option specifies which streams to include, and `-c copy` performs stream copying.\n\nAssuming the first video stream (0:v:0) and the main audio stream (e.g., 0:a:0) are to be kept, and you want to discard other audio streams, the command looks like:\n\n```bash\nffmpeg -i input.mkv -map 0:v:0 -map 0:a:0 -c copy output.mkv\n```\n\nIf you have subtitles or other data streams you want to keep, add them with additional `-map` options (e.g., `-map 0:s?` for subtitles if present).\n\nThis approach avoids re-encoding, retaining the original quality and speeds up processing. Make sure to confirm the stream indices with `ffprobe` or `ffmpeg -i input.mkv` before running.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 255,
+    "total_tokens": 853,
+    "cost": 0.0006472
+  },
+  "model_type": "task_run"
+}

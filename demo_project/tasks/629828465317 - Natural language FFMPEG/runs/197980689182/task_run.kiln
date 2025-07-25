@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "197980689182",
+  "created_at": "2025-07-24T20:28:02.663598",
+  "created_by": "scosman",
+  "input": "I want to change the aspect ratio of a video from 4:3 to 16:9 without stretching. What's the process?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "126647719881",
+    "path": null,
+    "created_at": "2025-07-24T20:28:02.663572",
+    "created_by": "scosman",
+    "output": "To change the aspect ratio of a video from 4:3 to 16:9 without stretching the content, you typically need to add black bars (pillarboxing or letterboxing) to either the sides or top and bottom, depending on the source and target aspect ratios. This preserves the original image without distortion.\n\nIn this case, since you're going from a 4:3 (1.33:1) aspect ratio to 16:9 (1.78:1), you need to fit the 4:3 video inside a 16:9 frame by widening the canvas and adding black bars on the left and right sides (pillarbox). The steps are:\n\n1. Calculate the target width and height based on the desired 16:9 frame height or width.\n2. Scale the original video to height or width that fits inside 16:9 without distortion.\n3. Add black bars (padding) horizontally to reach the full 16:9 width.\n\nAssuming you want to keep the original height and extend the width:\n\n- Keep the original height (say H) and calculate the new width W = H * 16/9.\n- Scale the input to height H, width -1 (which automatically calculates width proportionally).\n- Pad horizontally to reach W.\n\nHere's a command that assumes your input video is named `input.mp4` and you want to output a 16:9 video with the original height kept and black bars added on sides:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=-1:ih,pad=iw+(ih*16/9 - iw):ih:(oh - ow)/2:0\" -c:a copy output_pillarbox.mp4\n```\n\nExplanation of the filter chain:\n\n- `scale=-1:ih` scales the width automatically to keep the original height.\n- `pad=width:height:x:y` adds black pixels; width is increased to `ih*16/9` which is the 16:9 width for original height.\n- `(oh - ow)/2` centers the original video horizontally in the new canvas.\n\nBecause `pad` accepts only integer values, use `expr` for calculating dimensions in filter_complex.\n\nA more precise and compatible version explicitly calculates exact sizes:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=-1:ih,pad=ceil(ih*16/9/2)*2:ih:(ow-iw)/2:0\" -c:a copy output_pillarbox.mp4\n```\n\nNotes:\n\n- `ceil(ih*16/9/2)*2` ensures the output width is divisible by 2 (required by many codecs).\n- `pad` centers the video horizontally.\n- `-c:a copy` copies audio without re-encoding.\n\nAdjust the scale/pad parameters if you want to fix width and add bars top and bottom (letterboxing) instead.\n\nIf your input video has variable height or you want to force a fixed 16:9 resolution (e.g., 1280x720), another approach is:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=ih*4/3:ih, pad=1280:720:(ow - iw)/2:(oh - ih)/2\" -c:a copy output_16_9.mp4\n```\n\nBut the original provided example better preserves input height and simply adds pillar boxes.\n\n---\n\n**Summary:** Adding black bars (padding) on sides to fit the original 4:3 video into a 16:9 frame without stretching by scaling and padding through ffmpeg filters.\n\n---\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=-1:ih,pad=ceil(ih*16/9/2)*2:ih:(ow-iw)/2:0\" -c:a copy output_16_9_pillarbox.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 798,
+    "total_tokens": 1399,
+    "cost": 0.0015172
+  },
+  "model_type": "task_run"
+}

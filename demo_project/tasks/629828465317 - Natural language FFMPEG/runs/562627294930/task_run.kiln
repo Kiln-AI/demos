@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "562627294930",
+  "created_at": "2025-07-24T18:08:35.353942",
+  "created_by": "scosman",
+  "input": "Can you convert a .mov file to an MKV format with the VP9 codec?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Common Video Codecs and Their Uses"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "140071566839",
+    "path": null,
+    "created_at": "2025-07-24T18:08:35.353884",
+    "created_by": "scosman",
+    "output": "To convert a .mov file to an MKV container using the VP9 codec, you should use the libvpx-vp9 encoder for video. The audio can be encoded with Opus (recommended for MKV/VP9) or Vorbis.\n\nHere’s a command using VP9 for video and Opus for audio:\n\n- -c:v libvpx-vp9 uses the VP9 codec for video, targeting broad compatibility and good compression.\n- -b:v 2M sets the video bitrate to 2 Mbps (adjust as needed for your quality/size preference).\n- -c:a libopus encodes audio using the Opus codec, which is well-supported in MKV containers.\n- -b:a 128k sets the audio bitrate (adjust as needed).\n- input.mov is your source file; output.mkv is the target.\n\n```bash\nffmpeg -i input.mov -c:v libvpx-vp9 -b:v 2M -c:a libopus -b:a 128k output.mkv\n```\n\nAssumptions:\n\n- Your FFmpeg build supports the libvpx-vp9 and libopus codecs (common in most distributions).\n- You want reasonably good quality (2 Mbps video, 128 kbps audio), and compatibility with most players that support MKV/VP9.\n- No need to copy any streams directly (full transcode).\n\nYou can increase the -b:v value for higher quality, or use -crf 30 for constant quality mode with VP9 if you prefer variable bitrate:\n\n```bash\nffmpeg -i input.mov -c:v libvpx-vp9 -crf 30 -b:v 0 -c:a libopus -b:a 128k output.mkv\n```\n(crf 30 is a decent starting point; lower = better quality, higher = more compression.)",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 381,
+    "total_tokens": 976,
+    "cost": 0.004238
+  },
+  "model_type": "task_run"
+}

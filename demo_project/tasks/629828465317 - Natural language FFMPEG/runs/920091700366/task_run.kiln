@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "920091700366",
+  "created_at": "2025-07-24T20:38:24.765248",
+  "created_by": "scosman",
+  "input": "Convert DVD VobSub format subtitles (idx/sub) from dvd_rip.mkv into soft SRT and mux into a new mkv.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "128810044199",
+    "path": null,
+    "created_at": "2025-07-24T20:38:24.765227",
+    "created_by": "scosman",
+    "output": "To convert DVD VobSub subtitles (IDX/SUB) embedded in a Matroska file (mkv) into soft (selectable) SRT subtitles and mux them back into a new MKV, the process involves two main steps:\n\n1. Extract the VobSub subtitles from the source mkv (if not already extracted).\n2. Use a dedicated tool like `ffmpeg` combined with `ffmpeg`'s `-scodec` conversion (if subtitles are embedded as VobSub) or a third-party tool like `vobsub2srt` (external to ffmpeg) for accurate OCR-based subtitle extraction. Because ffmpeg does not natively convert VobSub bitmap subtitles to SRT text subtitles (OCR conversion), a specialized tool is required for this step. However, if you already have the VobSub subtitles as external `.idx`/`.sub` files, you can convert them using tools like `ffms2` plugin or `ffmpeg` with some decompiling scripts.\n\nFor a pure ffmpeg approach to mux existing external SRT subtitles once obtained, here's a general workflow assuming you have already converted idx/sub to srt externally (using OCR tools):\n\n- Extract VobSub subtitles:\n\n```bash\nffmpeg -i dvd_rip.mkv -map 0:s:0 dvd_subtitles.idx\n```\n(assuming subtitle stream 0:s:0 is the VobSub stream you want)\n\n- Convert VobSub (idx/sub) to SRT: Use external tool like `vobsub2srt dvd_subtitles.idx` (not ffmpeg)\n\n- Mux SRT subtitles back into mkv with video/audio:\n\n```bash\nffmpeg -i dvd_rip.mkv -i dvd_subtitles.srt -c copy -map 0:v -map 0:a -map 1:s -metadata:s:s:0 language=eng dvd_rip_softsubs.mkv\n```\n\nExplanation:\n\n- `-i dvd_rip.mkv` input video\n- `-i dvd_subtitles.srt` input soft subtitles\n- `-c copy` copies all streams without re-encoding to preserve quality\n- `-map` selects streams explicitly: video and audio from first input, subtitles from second input\n- `-metadata:s:s:0 language=eng` sets subtitle language tag\n\n---\n\nBecause ffmpeg can’t do the idx/sub → srt conversion natively (it lacks OCR), the above shows best practice:\n\n- Extract VobSub subtitles from the mkv if you don't have external files\n- Use specialized OCR tools for conversion to SRT\n- Remux soft SRT subtitles back into the mkv with ffmpeg using `-map` and `-c copy`\n\nHere's the muxing command assuming you already have `dvd_subtitles.srt`:\n\n```bash\nffmpeg -i dvd_rip.mkv -i dvd_subtitles.srt -c copy -map 0:v -map 0:a -map 1:s -metadata:s:s:0 language=eng dvd_rip_softsubs.mkv\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 636,
+    "total_tokens": 1238,
+    "cost": 0.0012584
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "101264365202",
+  "created_at": "2025-07-24T20:25:40.905486",
+  "created_by": "scosman",
+  "input": "Extract only forced subtitles from a Blu-ray playlist stream.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "320378627268",
+    "path": null,
+    "created_at": "2025-07-24T20:25:40.905462",
+    "created_by": "scosman",
+    "output": "To extract only forced subtitles from a Blu-ray playlist using ffmpeg, you need to identify the subtitle streams that contain the \"forced\" flag. Blu-ray subtitle streams often have metadata indicating whether they are forced, but ffmpeg does not provide a direct filter for this in one step. The common approach is:\n\n1. Use ffprobe or ffmpeg to list all subtitle streams along with their metadata to find which subtitle streams have the forced flag.\n2. Once you identify the subtitle stream index(es) marked as forced, extract only those streams.\n\nHere's a high-level way to do it assuming you already know the forced subtitle stream index (for example, subtitle stream 3):\n\n- Use `-map` to select the subtitle stream.\n- Use `-c:s copy` to copy the subtitle stream without re-encoding.\n- Use a suitable container that supports subtitle streams or extract subtitle into .sup or .mkv container.\n\nSince Blu-ray subtitles are often PGS (Presentation Graphic Stream), the output format should be `.sup` or `.mkv`.\n\nExample: Extract forced subtitle stream 3 from playlist.mpls and save to forced_subs.sup\n\n```bash\nffmpeg -i \"bluray:playlist.mpls\" -map 0:s:3 -c:s copy forced_subs.sup\n```\n\nIf you want to extract into MKV container preserving the forced subtitle:\n\n```bash\nffmpeg -i \"bluray:playlist.mpls\" -map 0 -c copy -scodec copy -map -0:s -map 0:s:3 forced_only.mkv\n```\n\nExplanation:\n\n- `\"bluray:playlist.mpls\"` specifies the Blu-ray playlist input.\n- `-map 0:s:3` selects the subtitle stream with index 3 (you must replace it with the actual forced subtitle index).\n- `-c:s copy` copies subtitles without re-encoding.\n- In the MKV example, `-map 0` maps all streams, then `-map -0:s` removes all subtitle streams, then `-map 0:s:3` adds back only forced subtitles, effectively keeping only forced ones.\n- `-c copy` copies all streams as is.\n- `-scodec copy` is synonymous with `-c:s copy`.\n\n**Important:** To find which subtitle streams are forced, run:\n\n```bash\nffprobe -hide_banner -show_streams -select_streams s \"bluray:playlist.mpls\"\n```\n\nand look for `forced=1` or similar metadata in subtitle streams.\n\n---\n\n# Summary command to extract forced subtitles given you know the stream index:\n\n```bash\nffmpeg -i \"bluray:playlist.mpls\" -map 0:s:<forced_subtitle_index> -c:s copy forced_subs.sup\n```\n\nReplace `<forced_subtitle_index>` with the actual stream number found via ffprobe.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 584,
+    "output_tokens": 590,
+    "total_tokens": 1174,
+    "cost": 0.0011776
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "294942021856",
+  "created_at": "2025-07-24T20:26:03.313888",
+  "created_by": "scosman",
+  "input": "Embed two subtitle files (sub1.ass, sub2.srt) and set display order.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "542622835464",
+    "path": null,
+    "created_at": "2025-07-24T20:26:03.313862",
+    "created_by": "scosman",
+    "output": "To embed two subtitle files (`sub1.ass` and `sub2.srt`) into a video and specify their display order, you can use the `-itsoffset` option to adjust the subtitle timing if you want to stagger their appearance, or simply map them in the order you want within the container. However, most players will display subtitles one track at a time, and their display order is generally controlled by the player rather than the container.\n\nIf you want to embed both subtitles as separate subtitle streams in one output file, you can map them explicitly. Here we assume you want both subtitles added as separate selectable subtitle tracks, with `sub1.ass` as the first subtitle stream and `sub2.srt` as the second.\n\nHere is an example command embedding both subtitles as separate subtitle streams into an MP4 container (MKV supports subtitles better, but MP4 is commonly used; note MP4 containers support only MOV_TEXT subtitles, so if you want to preserve format, MKV is recommended):\n\n- `-i input.mp4` is the input video.\n- `-i sub1.ass` and `-i sub2.srt` are the subtitle inputs.\n- `-map 0:v` and `-map 0:a` map the original video and audio streams.\n- `-map 1` and `-map 2` map subtitle files as subtitle streams.\n- `-c:v copy -c:a copy` copy video and audio without re-encoding.\n- `-c:s` sets subtitles codec; `mov_text` is necessary for MP4, for MKV `copy` can be used to keep original subtitle formats.\n\nIf you want to embed both subtitles in an MKV container and keep their original formats to allow subtitle display order and user selection:\n\n```bash\nffmpeg -i input.mp4 -i sub1.ass -i sub2.srt \\\n-map 0:v -map 0:a -map 1 -map 2 \\\n-c:v copy -c:a copy -c:s copy \\\noutput.mkv\n```\n\nIf you must produce MP4, you must convert subtitles to MOV_TEXT, losing styling on ASS:\n\n```bash\nffmpeg -i input.mp4 -i sub1.ass -i sub2.srt \\\n-map 0:v -map 0:a -map 1 -map 2 \\\n-c:v copy -c:a copy -c:s mov_text output.mp4\n```\n\nNote: Subtitle display order is generally controlled by the media player UI or the order of subtitle streams. You can use metadata to rename or number subtitle streams to influence selection.\n\nIf you want to burn both subtitles in hardcoded order on the video, you're limited to overlaying subtitles one after another (e.g., show sub1 during some timespan, then show sub2). This is much more complex and requires filters and time selection.\n\nFor soft subs, mapping like above is best.\n\n---\n\n```bash\nffmpeg -i input.mp4 -i sub1.ass -i sub2.srt -map 0:v -map 0:a -map 1 -map 2 -c:v copy -c:a copy -c:s copy output.mkv\n```\n\nThis command embeds two subtitle streams in an MKV container preserving original subtitle formats and order.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 672,
+    "total_tokens": 1264,
+    "cost": 0.001312
+  },
+  "model_type": "task_run"
+}

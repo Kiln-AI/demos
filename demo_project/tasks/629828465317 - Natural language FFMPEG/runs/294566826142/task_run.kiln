@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "294566826142",
+  "created_at": "2025-07-24T20:24:16.145964",
+  "created_by": "scosman",
+  "input": "I want to create a 1280x1280 square video from my 1920x1080 landscape file poster.mp4, centered and cropped.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "419421935894",
+    "path": null,
+    "created_at": "2025-07-24T20:24:16.145935",
+    "created_by": "scosman",
+    "output": "To create a 1280x1280 square video from a 1920x1080 input by cropping and centering, the best approach is to first center-crop the input video to a square region, then scale it (if needed) to 1280x1280.\n\nSince your input is 1920x1080 (wider than tall), we need to crop the height-wise dimension to 1080 (the smaller side), then crop the width from 1920 to 1080 centered, resulting in a 1080x1080 square crop. After that, scale this 1080x1080 crop up to 1280x1280.\n\nUsing the `crop` filter with `in_w` and `in_h` variables allows dynamic calculation of the center crop position.\n\n- crop=1080:1080:(in_w-1080)/2:0 crops a 1080x1080 area centered horizontally.\n- scale=1280:1280 scales the cropped area to the target size.\n- We copy audio as-is, and keep the original encoding parameters for a lossless workflow or you can adjust codecs as needed.\n\nHere's the command applying this logic:\n\n```bash\nffmpeg -i poster.mp4 -vf \"crop=1080:1080:(in_w-1080)/2:0,scale=1280:1280\" -c:a copy output_1280x1280.mp4\n```\n\nIf you want to re-encode video for better compression or compatibility:\n\n```bash\nffmpeg -i poster.mp4 -vf \"crop=1080:1080:(in_w-1080)/2:0,scale=1280:1280\" -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k output_1280x1280.mp4\n```\n\nThis will crop a centered square from the original wide video, then scale it to a 1280 square resolution, suitable for display or social media use.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 605,
+    "output_tokens": 420,
+    "total_tokens": 1025,
+    "cost": 0.000914
+  },
+  "model_type": "task_run"
+}

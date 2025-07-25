@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "269826717027",
+  "created_at": "2025-07-24T20:24:33.976063",
+  "created_by": "scosman",
+  "input": "Can you convert a 2160x3840 8K vertical video to 1920x1080 horizontal, centering the important part?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "325603270774",
+    "path": null,
+    "created_at": "2025-07-24T20:24:33.976038",
+    "created_by": "scosman",
+    "output": "To convert a 2160x3840 vertical video (which is ultra-high vertical resolution, approximately 4K width × 8K height) into a 1920x1080 horizontal video while centering the important area, you need to both scale and crop intelligently.\n\nHere’s the approach:\n\n1. Since the input is very tall and narrow (portrait), and the output is wide and short (landscape 16:9), you must:\n   - Scale the input down so that the height matches or exceeds 1080 pixels, but keep the aspect ratio the same.\n   - Crop the width to 1920 pixels, centering the crop horizontally (i.e., take the middle 1920 pixels).\n2. Use the `scale` filter to resize the input video height to 1080 while preserving aspect ratio.\n3. Use the `crop` filter to cut out 1920 width by 1080 height, centered horizontally.\n4. Optionally convert to a widely compatible pixel format (yuv420p) for playback compatibility.\n\nAssuming the “important part” is centered vertically and horizontally, the crop filter uses `x=(iw-1920)/2` to center horizontally and `y=0` since the entire height matches the target of 1080 after scaling.\n\nHere's the ffmpeg command:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=-1:1080,crop=1920:1080:(iw-1920)/2:0\" -c:a copy -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p output_1920x1080.mp4\n```\n\nExplanation:\n\n- `scale=-1:1080`: scale height to 1080 and width automatically to maintain aspect ratio. Since input is 2160x3840, scaling height to 1080 will result in width ≈ (2160/3840)*1080 = 607.5, so width will be 608 which is less than 1920. This means cropping width=1920 is impossible because the scaled width is smaller than 1920.\n\nSo the approach above needs adjustment because scaling height to 1080 makes width too narrow.\n\nBetter approach: first scale width to 1920, then crop height to 1080 centered vertically.\n\nCalculate scale width=1920, height is scaled accordingly:\n\nNew height = (3840 / 2160)*1920 = approx 3413 pixels (very tall)\n\nThen crop height 1080 centered vertically:\n\n- `crop=1920:1080:0:(ih-1080)/2`\n\nRevised ffmpeg command:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=1920:-1,crop=1920:1080:0:(ih-1080)/2\" -c:a copy -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p output_1920x1080.mp4\n```\n\nSummary:\n\n- `scale=1920:-1` scales width to 1920 and height proportionally.\n- `crop=1920:1080:0:(ih-1080)/2` crops 1080 pixels vertically, centered.\n- `-c:a copy` copies audio without reencoding.\n- `-c:v libx264 -preset slow -crf 18`: high-quality H.264 video encode.\n- `-pix_fmt yuv420p` ensures compatibility.\n\nThis approach preserves horizontal details (width=1920) and extracts the central vertical portion to fit 1080 height.\n\nIf the important part is not centered vertically, manual adjustments to `y` crop offset may be necessary. But centering is a good default assumption.\n\n---\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=1920:-1,crop=1920:1080:0:(ih-1080)/2\" -c:a copy -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p output_1920x1080.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 851,
+    "total_tokens": 1455,
+    "cost": 0.0016032
+  },
+  "model_type": "task_run"
+}

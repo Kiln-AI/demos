@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "289779688986",
+  "created_at": "2025-07-24T18:11:29.048298",
+  "created_by": "scosman",
+  "input": "Transform `input.mpg` into `output.mp4` with a focus on compatibility with older versions of Safari. Maintain a resolution of 480p, please.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Optimizing Encoding for Browser Compatibility"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "204873690639",
+    "path": null,
+    "created_at": "2025-07-24T18:11:29.048255",
+    "created_by": "scosman",
+    "output": "To ensure maximum compatibility with older versions of Safari, you should encode your MP4 using H.264 video (Baseline or Main profile, but avoid High) and AAC audio in the MP4 container. The pixel format should be yuv420p for broadest support. For 480p, the standard resolution is 854x480 for widescreen content. Adding -profile:v main limits to the Main profile, which boosts compatibility with older Safari versions.\n\nHere’s a breakdown:\n- -vf scale=854:480 forces 480p resolution (widescreen).\n- -c:v libx264 specifies H.264 encoding.\n- -profile:v main ensures better compatibility (Safari before v10 struggles with High profile).\n- -pix_fmt yuv420p mandates compatible pixel format.\n- -c:a aac -b:a 128k uses AAC audio at 128 kbps.\n- -movflags +faststart places metadata early for fast streaming.\n- -level 3.1 suits older devices.\n\n```bash\nffmpeg -i input.mpg -vf scale=854:480 -c:v libx264 -profile:v main -level 3.1 -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nAssumption: Input is progressive scan (not interlaced); if interlaced, consider adding -vf \"yadif,scale=854:480\" for deinterlacing.\n",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 609,
+    "output_tokens": 306,
+    "total_tokens": 915,
+    "cost": 0.003666
+  },
+  "model_type": "task_run"
+}

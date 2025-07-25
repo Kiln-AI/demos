@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "683702400369",
+  "created_at": "2025-07-24T18:11:32.857336",
+  "created_by": "scosman",
+  "input": "I want to turn `input.3gp` into a 720p MP4 file for browser compatibility. Can you help?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Optimizing Encoding for Browser Compatibility"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "257173965650",
+    "path": null,
+    "created_at": "2025-07-24T18:11:32.857309",
+    "created_by": "scosman",
+    "output": "Absolutely! To convert input.3gp to a browser-friendly MP4 at 720p, you should use the H.264 video codec and the AAC audio codec, which are both universally supported in browsers. Scaling will ensure a max 720-pixel height while maintaining aspect ratio.\n\nKey parameters:\n- -vf scale=-2:720 resizes the video to a height of 720 pixels, automatically setting the width to preserve aspect ratio and ensure it's even (needed for using yuv420p).\n- -c:v libx264 uses the H.264 video codec.\n- -preset medium for a good balance of speed and quality.\n- -crf 23 for good visual quality vs. file size.\n- -c:a aac and -b:a 128k for AAC audio at 128 kbps (very compatible).\n- -pix_fmt yuv420p to maximize compatibility.\n- -movflags +faststart so browsers start playback instantly.\n\n```bash\nffmpeg -i input.3gp -vf scale=-2:720 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nThis will create output.mp4 optimized for playback in all major web browsers.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 271,
+    "total_tokens": 873,
+    "cost": 0.003372
+  },
+  "model_type": "task_run"
+}

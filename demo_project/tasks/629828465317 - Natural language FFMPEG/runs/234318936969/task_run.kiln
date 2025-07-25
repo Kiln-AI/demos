@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "234318936969",
+  "created_at": "2025-07-24T20:36:56.522619",
+  "created_by": "scosman",
+  "input": "Change my video from h264 to h265, keeping bitrate at 4Mbps and using two-pass encoding.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "184316581018",
+    "path": null,
+    "created_at": "2025-07-24T20:36:56.522583",
+    "created_by": "scosman",
+    "output": "To convert a video from H.264 to H.265 (HEVC) while maintaining a target bitrate of 4 Mbps using two-pass encoding, you need to run ffmpeg twice:\n\n- The first pass analyzes the video, generating a stats file without producing an output file.\n- The second pass performs the actual encoding, using the stats file for optimal bitrate allocation.\n\nKey parameters:\n- `-c:v libx265` selects the H.265 encoder.\n- `-b:v 4M` sets the target video bitrate at 4 Mbps.\n- `-pass 1` and `-pass 2` enable two-pass encoding.\n- `-preset medium` balances encoding speed and compression efficiency (adjustable).\n- `-an` disables audio during the first pass to speed up processing (audio will be encoded in second pass).\n- `-c:a copy` keeps the original audio stream during the second pass (you can re-encode audio if desired).\n- `-f mp4` is specified in the first pass to avoid writing output video.\n- Ensure to use the same output filename in both passes.\n\nAssuming your input file is `input.mp4` and output is `output.mp4`.\n\n```bash\n# First pass: analyze video, no audio, no output video file\nffmpeg -y -i input.mp4 -c:v libx265 -b:v 4M -preset medium -pass 1 -an -f mp4 /dev/null\n\n# Second pass: encode video and copy audio\nffmpeg -i input.mp4 -c:v libx265 -b:v 4M -preset medium -pass 2 -c:a copy output.mp4\n```\n\nNote:\n- The `-y` option overwrites any existing files without prompt.\n- On Windows, replace `/dev/null` with `NUL`.\n- You can change `-preset` to `slow` or `fast` depending on your need for quality vs speed.\n- If desired, re-encode audio instead of copying it by replacing `-c:a copy` with, for example, `-c:a aac -b:a 128k`.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 443,
+    "total_tokens": 1039,
+    "cost": 0.0009472
+  },
+  "model_type": "task_run"
+}

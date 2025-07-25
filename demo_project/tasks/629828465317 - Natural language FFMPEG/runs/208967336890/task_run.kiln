@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "208967336890",
+  "created_at": "2025-07-24T20:36:10.220084",
+  "created_by": "scosman",
+  "input": "Is it possible to rescale a video using the lanczos filter for higher quality?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "129573537885",
+    "path": null,
+    "created_at": "2025-07-24T20:36:10.220039",
+    "created_by": "scosman",
+    "output": "Yes, you can rescale a video using the Lanczos filter in ffmpeg, which is known for producing high-quality scaling results, especially when enlarging videos. Lanczos resampling uses a sinc function approximation that provides sharper images with less ringing and aliasing compared to simpler filters like bilinear or bicubic.\n\nIn ffmpeg, you specify the scaling filter with `-vf scale` and set the `flags` option to `lanczos`, like this: `scale=width:height:flags=lanczos`. You can set either width or height to -1 to automatically preserve the aspect ratio.\n\nHere’s an example command that rescales a video to 1080p (1920x1080) using the Lanczos filter. It also uses the libx264 codec with a good quality CRF value, and AAC audio, assuming you want to output a standard MP4 file:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=1920:1080:flags=lanczos\" -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 128k -movflags +faststart output_1080p_lanczos.mp4\n```\n\nExplanation:\n\n- `-vf \"scale=1920:1080:flags=lanczos\"` applies the Lanczos filter for high-quality rescaling to exactly 1920x1080.\n- `-c:v libx264` uses the H.264 video codec for broad compatibility.\n- `-preset slow` optimizes encoding for better compression/quality trade-off.\n- `-crf 18` produces visually lossless quality (lower than 23 is higher quality).\n- `-c:a aac -b:a 128k` encodes audio in AAC at 128 kbps.\n- `-movflags +faststart` enables progressive start for streaming.\n\nIf you want to keep the original aspect ratio but resize by height, you can specify `scale=-2:1080:flags=lanczos`, where `-2` automatically calculates width divisible by 2 for codec requirements.\n\nThis method ensures you get the best quality upscaling/downscaling using ffmpeg’s Lanczos filter.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 458,
+    "total_tokens": 1049,
+    "cost": 0.0009692
+  },
+  "model_type": "task_run"
+}

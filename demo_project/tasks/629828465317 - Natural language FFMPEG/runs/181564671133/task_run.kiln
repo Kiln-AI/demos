@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "181564671133",
+  "created_at": "2025-07-24T18:08:59.474376",
+  "created_by": "scosman",
+  "input": "What's the ffmpeg command to adjust the playback speed of my clip.mp4 to be twice as fast?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Commands for Video Editing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "269985077993",
+    "path": null,
+    "created_at": "2025-07-24T18:08:59.474350",
+    "created_by": "scosman",
+    "output": "To double the playback speed of a video (i.e., make it play twice as fast), you need to speed up both the video and audio streams. For the video, adjust the setpts filter. For audio, use atempo. Note that atempo only supports values between 0.5 and 2.0, so doubling (speeding up) is allowed directly.\n\nHere’s an example using both filters:\n\n- setpts=0.5*PTS makes every video frame's presentation time half as long, doubling speed.\n- atempo=2.0 doubles the speed of the audio.\n- -c:v libx264 and -c:a aac specify output codecs for broad compatibility.\n\n```bash\nffmpeg -i clip.mp4 -filter:v \"setpts=0.5*PTS\" -filter:a \"atempo=2.0\" -c:v libx264 -c:a aac -movflags +faststart clip_fast.mp4\n```\n\nAssumptions: Your clip has one video and one audio stream; output should be compatible for general playback. If your atempo were >2.0 (e.g., 4x speed), you’d need to chain multiple atempos, like atempo=2.0,atempo=2.0.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 265,
+    "total_tokens": 861,
+    "cost": 0.003312
+  },
+  "model_type": "task_run"
+}

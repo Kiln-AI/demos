@@ -1,0 +1,52 @@
+{
+  "v": 1,
+  "id": "151630768384",
+  "created_at": "2025-07-23T11:39:34.805782",
+  "created_by": "scosman",
+  "input": "Convert input.mov to a GIF with 60fps and make sure it loops infinitely with perfect quality.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "claude_sonnet_4",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "219184715492",
+    "path": null,
+    "created_at": "2025-07-23T11:39:34.805737",
+    "created_by": "scosman",
+    "output": "To convert input.mov to a GIF with 60fps and infinite looping, I'll use a two-pass approach with a palette for better quality. The fps filter sets the frame rate, loop=-1 enables infinite looping, and generating a custom palette ensures optimal colors.\n\n- fps=60 sets the output frame rate to 60fps\n- palettegen creates an optimized color palette from the source video\n- paletteuse applies the generated palette for better quality\n- loop=-1 sets infinite looping\n- The two-pass approach (generate palette, then use it) produces much better quality than direct conversion\n\n```bash\nffmpeg -i input.mov -vf \"fps=60,scale=320:-1:flags=lanczos,palettegen\" palette.png\nffmpeg -i input.mov -i palette.png -lavfi \"fps=60,scale=320:-1:flags=lanczos[x];[x][1:v]paletteuse\" -loop=-1 output.gif\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "claude_sonnet_4",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "function_calling",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_690983396887",
+    "eval_correctness"
+  ],
+  "usage": {
+    "input_tokens": 995,
+    "output_tokens": 232,
+    "total_tokens": 1227,
+    "cost": 0.006465
+  },
+  "model_type": "task_run"
+}

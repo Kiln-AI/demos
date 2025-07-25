@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "102333390465",
+  "created_at": "2025-07-24T20:27:05.272071",
+  "created_by": "scosman",
+  "input": "How do I batch change all mkv subtitles to UTF-8 encoding with ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "734659764265",
+    "path": null,
+    "created_at": "2025-07-24T20:27:05.272046",
+    "created_by": "scosman",
+    "output": "To batch convert all subtitles in MKV files to UTF-8 encoding using ffmpeg, you need to extract subtitles, re-encode them to UTF-8, and then remux them back into the MKV. ffmpeg cannot change subtitle text encoding in-place, so you have to do this process for every MKV file and subtitle track.\n\nAssuming you want to convert all subtitle streams inside each MKV file to UTF-8 and re-mux them, you can use a shell loop (e.g., bash) that:\n\n1. Extracts each subtitle stream.\n2. Converts its encoding to UTF-8 (using `iconv`).\n3. Creates a new MKV with the converted subtitles.\n\nHere is a high-level approach with an example bash script for Unix-like systems:\n\n- `ffprobe` identifies subtitle streams.\n- `ffmpeg` extracts subtitles in their native format.\n- `iconv` converts subtitle files encoding to UTF-8.\n- `mkvmerge` (part of MKVToolNix) remuxes original video and audio with the corrected subtitles.\n\n**Note**: This method requires `mkvmerge` and `iconv`. Also, subtitle format matters (e.g., SRT, ASS). This example assumes SRT subtitles but can be adapted.\n\nExample bash automation script to batch convert subtitles inside all MKVs in a folder:\n\n```bash\n#!/bin/bash\n\nshopt -s nullglob\n\nfor file in *.mkv; do\n    echo \"Processing '$file'...\"\n\n    # Create a temporary working directory\n    tmpdir=$(mktemp -d)\n    cd \"$tmpdir\"\n\n    # Extract subtitle streams info (indices and codec)\n    mapfile -t sub_streams < <(ffprobe -v error -select_streams s -show_entries stream=index,codec_name -of csv=p=0 \"$OLDPWD/$file\")\n\n    # Copy video and audio streams as-is\n    # We'll remux later with corrected subtitles\n    ffmpeg -i \"$OLDPWD/$file\" -map 0:v -map 0:a -c copy \"$OLDPWD/${file%.mkv}_no_subs.mkv\"\n\n    # For each subtitle stream\n    i=0\n    declare -a new_subs=()   # To hold new subtitle file names for mkvmerge\n\n    for entry in \"${sub_streams[@]}\"; do\n        # Parse stream index and codec\n        sub_idx=${entry%,*}\n        codec=${entry#*,}\n\n        # Extract subtitle using ffmpeg (in a text format, e.g. srt)\n        # If codec is srt, extract to .srt; if ass, extract to .ass\n        if [[ \"$codec\" == \"subrip\" ]]; then\n            ext=srt\n        elif [[ \"$codec\" == \"ass\" || \"$codec\" == \"ssa\" ]]; then\n            ext=ass\n        else\n            echo \"Skipping subtitle stream $sub_idx with unsupported codec '$codec'\"\n            ((i++))\n            continue\n        fi\n\n        subfile=\"sub_${i}.${ext}\"\n        ffmpeg -i \"$OLDPWD/$file\" -map 0:s:$sub_idx -c:s copy \"$subfile\"\n\n        # Convert subtitle file to UTF-8\n        conv_subfile=\"sub_${i}_utf8.${ext}\"\n        iconv -f ISO-8859-1 -t UTF-8//TRANSLIT \"$subfile\" > \"$conv_subfile\"\n\n        new_subs+=(\"$conv_subfile\")\n\n        ((i++))\n    done\n\n    # If no subtitles converted, restore original file or keep no_subs\n    if [ ${#new_subs[@]} -eq 0 ]; then\n        echo \"No supported subtitles found to convert in '$file'. Skipping remux.\"\n        cd \"$OLDPWD\"\n        rm -r \"$tmpdir\"\n        continue\n    fi\n\n    # Use mkvmerge to mux video/audio with new UTF-8 subtitles\n    # - Tracks (video/audio) from no_subs.mkv; subtitles from converted files\n    out_file=\"${file%.mkv}_utf8subs.mkv\"\n    cmd=(mkvmerge -o \"$OLDPWD/$out_file\" --no-subtitles \"$OLDPWD/${file%.mkv}_no_subs.mkv\")\n\n    # Add each converted subtitle file\n    for sub in \"${new_subs[@]}\"; do\n        cmd+=(--language 0:eng \"$sub\")  # Assuming English; adjust as needed\n    done\n\n    # Run mkvmerge command\n    \"${cmd[@]}\"\n\n    # Clean up\n    cd \"$OLDPWD\"\n    rm -r \"$tmpdir\"\ndone\n```\n\n### Explanation and assumptions:\n- This script iterates over all MKV files in the current directory.\n- It extracts subtitle streams and their codecs.\n- It only processes \"subrip\" (SRT) and ASS type subtitles; other types are skipped.\n- It assumes original subtitle encoding is ISO-8859-1; change `iconv` source encoding as needed based on your files.\n- It requires `iconv` and `mkvmerge` installed on your system.\n- It recreates MKV files with UTF-8 subtitles appended and original video/audio streams copied directly.\n- Converted files are saved as `<originalname>_utf8subs.mkv`.\n\nThis is a robust, automation-friendly approach to batch re-encoding subtitle streams to UTF-8 in MKV files. Adjust source encodings, subtitle languages, and container options as needed for your specific scenario.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 1155,
+    "total_tokens": 1747,
+    "cost": 0.0020848
+  },
+  "model_type": "task_run"
+}

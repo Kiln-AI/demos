@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "247893163255",
+  "created_at": "2025-07-24T20:35:53.753862",
+  "created_by": "scosman",
+  "input": "How do I convert a square 800x800 video to a 16:9 aspect ratio without stretching?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "332465265998",
+    "path": null,
+    "created_at": "2025-07-24T20:35:53.753828",
+    "created_by": "scosman",
+    "output": "To convert a square 800x800 video to a 16:9 aspect ratio without stretching, you want to change the aspect ratio by adding padding (letterboxing or pillarboxing) rather than scaling the image unevenly. This preserves the original video content proportions.\n\nSince the original video is square (800x800), to make it 16:9 (for example, 1280x720 or 1280x720), you can:\n\n1. Scale the video to fit within a 16:9 box without stretching (e.g., scale to width 1280, height less than or equal to 720).\n2. Add black bars (padding) to fill the rest of the frame to the full 16:9 dimensions.\n\nThis approach uses `scale` with aspect ratio preservation and then `pad` filters combined.\n\nExample: scale the 800x800 video to 1280x720, preserving ratio and padding with black bars on top and bottom or sides as needed.\n\nHere is an example command that:\n\n- Scales the video to fit 1280x720 inside a 16:9 box while keeping aspect ratio.\n- Pads the output to exactly 1280x720 with black bars to maintain 16:9 without distortion.\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=w=1280:h=720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2\" -c:a copy output_16_9.mp4\n```\n\nExplanation:\n- `scale=w=1280:h=720:force_original_aspect_ratio=decrease` scales the video to fit within width=1280 and height=720 while maintaining the aspect ratio (so here, it will scale to 720x720).\n- `pad=1280:720:(ow-iw)/2:(oh-ih)/2` pads the scaled video to 1280x720 centering it horizontally and vertically (in this case, adding black bars on left and right).\n- `-c:a copy` copies audio without re-encoding.\n\nThis creates a 16:9 video with no distortion and original content preserved with black bars on sides.\n\nIf you want a different resolution for the 16:9 frame, just adjust the scale and pad dimensions accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 480,
+    "total_tokens": 1076,
+    "cost": 0.0010064
+  },
+  "model_type": "task_run"
+}

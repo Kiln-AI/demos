@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "281551560120",
+  "created_at": "2025-07-24T20:27:29.477421",
+  "created_by": "scosman",
+  "input": "How do I increase the playback speed of a video by 2x, but keep the audio pitch the same?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "180768674631",
+    "path": null,
+    "created_at": "2025-07-24T20:27:29.477311",
+    "created_by": "scosman",
+    "output": "To increase the playback speed of a video by 2x while keeping the audio pitch unchanged, you need to speed up the video frames and simultaneously adjust the audio tempo without altering its pitch.\n\n- For video: Use `setpts=0.5*PTS` in the `-vf` (video filter) option to double the playback speed (PTS = Presentation Time Stamp; halving it speeds playback).\n- For audio: Use the `atempo=2.0` filter, which changes audio speed by 2x. This filter preserves the original pitch while speeding up playback.\n- If the input has multiple audio streams or complex audio, you may need to chain multiple `atempo` filters because `atempo` supports tempo changes only between 0.5 and 2.0 per instance. For 2x, a single `atempo=2.0` filter is sufficient.\n\nHere is the command assuming your input is `input.mp4` and output is `output.mp4`:\n\n```bash\nffmpeg -i input.mp4 -vf \"setpts=0.5*PTS\" -filter:a \"atempo=2.0\" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k output.mp4\n```\n\nExplanation of options:\n- `-vf \"setpts=0.5*PTS\"` speeds up video by 2x.\n- `-filter:a \"atempo=2.0\"` speeds up audio by 2x maintaining pitch.\n- `-c:v libx264 -preset fast -crf 23` encodes video efficiently.\n- `-c:a aac -b:a 128k` encodes audio in AAC at 128 kbps.\n  \nThis produces a video file playing twice as fast with audio pitch intact.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 379,
+    "total_tokens": 976,
+    "cost": 0.0008452
+  },
+  "model_type": "task_run"
+}

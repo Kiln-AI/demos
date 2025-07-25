@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "127656048518",
+  "created_at": "2025-07-24T20:36:27.386626",
+  "created_by": "scosman",
+  "input": "Can I use ffmpeg to resize a video by percentage, for example, 50% smaller?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "288148417678",
+    "path": null,
+    "created_at": "2025-07-24T20:36:27.386601",
+    "created_by": "scosman",
+    "output": "Yes, you can resize a video by a percentage using ffmpeg by applying a scaling filter with expressions based on the input width (iw) and input height (ih). To make a video 50% smaller, you scale the width and height to 50% of their original size.\n\n- Use the `scale` video filter with parameters `iw*0.5` and `ih*0.5` to reduce width and height by 50%.\n- Using expressions allows flexibility for videos of any resolution.\n- Make sure to keep the output dimensions divisible by 2 for codec compatibility; you can use the `-2` trick to achieve this, but since we're using expressions we should ensure also even values using an `floor` or `ceil` function combined with multiplication.\n\nA recommended approach is to use the `scale` filter like this:\n\n```bash\n-vf \"scale=iw*0.5:ih*0.5\"\n```\n\nBut sometimes that can result in odd dimensions, so it's best practice to round and ensure even numbers, for example:\n\n```bash\n-vf \"scale=2*trunc(iw*0.5/2):2*trunc(ih*0.5/2)\"\n```\n\nThis rounds down to the nearest even number.\n\nHere’s a full example command to resize input.mp4 to 50% of the original resolution:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=2*trunc(iw*0.5/2):2*trunc(ih*0.5/2)\" -c:a copy output_resized.mp4\n```\n\nExplanation:\n\n- `-i input.mp4`: input file.\n- `-vf \"scale=2*trunc(iw*0.5/2):2*trunc(ih*0.5/2)\"`: scale video to 50% of input width and height, rounded down to nearest even number.\n- `-c:a copy`: copy audio without re-encoding.\n- `output_resized.mp4`: output file.\n\nThis ensures the output video has dimensions exactly 50% smaller than original, maintaining aspect ratio, and avoids encoding issues caused by odd dimension numbers.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 454,
+    "total_tokens": 1048,
+    "cost": 0.000964
+  },
+  "model_type": "task_run"
+}

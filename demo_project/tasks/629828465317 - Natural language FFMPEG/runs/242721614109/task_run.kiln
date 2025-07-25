@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "242721614109",
+  "created_at": "2025-07-24T18:10:44.405685",
+  "created_by": "scosman",
+  "input": "Can you crop a video, input.mp4, to remove the final 60 seconds and save it as trimmed.mp4?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Command Line Techniques for Audio Enhancement"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "287841478210",
+    "path": null,
+    "created_at": "2025-07-24T18:10:44.405660",
+    "created_by": "scosman",
+    "output": "To trim the final 60 seconds from input.mp4, you first need to determine the video's duration, then subtract 60 seconds to get the desired output length. ffmpeg’s -t option specifies duration. Here, I'll use ffprobe to get the total duration, but if you know it already, you can substitute it directly.\n\nAssuming you want to automate this in a script (best practice), here’s how you can do it:\n\n1. Use ffprobe to get video duration (in seconds).\n2. Subtract 60 seconds for the new duration.\n3. Use ffmpeg with -t to keep only the new duration.\n\nHere's how you might do it on the command line (bash):\n\n```bash\nDURATION=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 input.mp4)\nTRIM_DURATION=$(echo \"$DURATION - 60\" | bc)\nffmpeg -i input.mp4 -t $TRIM_DURATION -c copy trimmed.mp4\n```\n\n- ffprobe extracts total video duration.\n- bc subtracts 60 seconds for the trim.\n- ffmpeg with -t $TRIM_DURATION stops encoding at the correct timestamp.\n- -c copy copies streams without re-encoding for speed and quality.\n\nIf you already know the exact length in seconds (e.g., original is 300s, so use -t 240), or want a manual ffmpeg command and the video is, say, 5 minutes (300 seconds):\n\n```bash\nffmpeg -i input.mp4 -t 240 -c copy trimmed.mp4\n```\n\nAdjust 240 to your video's total duration minus 60.\n\nAssumptions:\n- You want a lossless cut (stream copy, no re-encoding).\n- Your source does not have complex editing needs (e.g., precise frame cutting). If exact frame accuracy is needed, consider omitting -c copy to re-encode.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 403,
+    "total_tokens": 1004,
+    "cost": 0.004426
+  },
+  "model_type": "task_run"
+}

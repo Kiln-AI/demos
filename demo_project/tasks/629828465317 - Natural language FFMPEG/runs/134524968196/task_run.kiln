@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "134524968196",
+  "created_at": "2025-07-24T20:37:59.641018",
+  "created_by": "scosman",
+  "input": "Re-encode movie_with_subs.mkv such that both video and subtitles are compressed to save space.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "335572733695",
+    "path": null,
+    "created_at": "2025-07-24T20:37:59.640994",
+    "created_by": "scosman",
+    "output": "To re-encode a video file with embedded subtitles while compressing both video and subtitle streams, you need to:\n\n- Re-encode the video using a modern codec like H.264 (libx264) with appropriate compression settings.\n- If audio is present and you want to save space, re-encode audio as well (commonly using AAC).\n- Convert subtitle streams to a compressed subtitle codec if possible. For MKV, subtitles are often in text formats (like SRT or ASS) or image-based (like PGS). Compressible text subtitles can be converted to MOV_TEXT or VTT for better compression in MP4, but MKV supports compressed subtitles less commonly.\n- For text subtitles in MKV, you can keep the original track but use UTF-8 encoding or convert to SRT or ASS if needed.\n- For image subtitles like PGS, those are already compressed bitmap subtitles with limited compression options. You can optionally remove them or keep them as is.\n- To compress subtitles in MKV, a common method is to encode subtitles as ASS with compression or compress the subtitles track using subtitle-specific tools outside ffmpeg. ffmpeg itself does not offer explicit compression options for subtitles beyond changing formats.\n- If goal is to reduce file size, the best is to re-encode the video with a good CRF value, re-encode audio to efficient codec, and either convert subtitles to text-based (e.g., mov_text or srt) or burn subtitles into the video.\n\nAssuming the subtitles are text-based (SRT/ASS) inside MKV and you want to keep them soft (selectable) but compressed efficiently, one approach is to encode video and audio with strong compression and keep subtitles as they are or convert subtitle codec to ASS for size saving. If subtitles are image-based, you may want to remove them or keep as is.\n\nHere is an example command which:\n- Re-encodes video to H.264 with CRF 23 (reasonable compression).\n- Re-encodes audio to AAC with 128k bitrate.\n- Copies subtitles that are text-based or converts subtitles to ASS subtitle format to reduce size.\n- Maps all streams.\n\nIf you want subtitles to stay selectable, we re-map and convert subtitles to ASS for better compression.\n\n```bash\nffmpeg -i movie_with_subs.mkv -map 0 -c:v libx264 -preset slow -crf 23 -c:a aac -b:a 128k -c:s ass output_compressed.mkv\n```\n\nExplanation:\n- `-map 0` preserves all streams (video, audio, subtitles).\n- `-c:v libx264 -preset slow -crf 23` compresses video effectively.\n- `-c:a aac -b:a 128k` compress audio.\n- `-c:s ass` converts all subtitle streams to ASS subtitles, which tend to have better compression compared to some other subtitle formats inside MKV.\n- Output container remains MKV for full codec support.\n\nIf you want to keep subtitles in original format without re-encoding, use `-c:s copy` but it won't compress subtitle streams.\n\nIf subtitles are image-based (PGS), `-c:s ass` will fail or convert incorrectly; then keeping `-c:s copy` is safer but no compression happens on subtitles.\n\nThis command balances video+audio compression and converts subtitles to a compressed text subtitle format when possible.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 698,
+    "total_tokens": 1292,
+    "cost": 0.0013544
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "243222646222",
+  "created_at": "2025-07-23T13:53:28.079248",
+  "created_by": "scosman",
+  "dataset_id": "153302441002",
+  "task_run_config_id": "183247626776",
+  "eval_config_eval": false,
+  "input": "I want to map the video from stream 0:3 and audio from stream 0:5 of my file source.mkv to create a new file called edited.mp4",
+  "output": "You can use the -map option to select specific streams from your input file. In your case, you want the video from stream 0:3 and the audio from stream 0:5.\n\n- -map 0:3 selects the video stream.\n- -map 0:5 selects the audio stream.\n- Change container to mp4, which generally needs H.264 video and AAC audio, so you may need to re-encode:\n    - -c:v libx264: Encode video to H.264 if not already.\n    - -c:a aac: Encode audio to AAC.\n    - -movflags +faststart for browser streaming compatibility.\n\nAssumption: The streams you want aren't already in MP4-compatible codecs, so re-encoding is done.\n\n```bash\nffmpeg -i source.mkv -map 0:3 -map 0:5 -c:v libx264 -c:a aac -movflags +faststart edited.mp4\n```\nIf your streams are already H.264 and AAC, you can use `-c copy` for both:\n\n```bash\nffmpeg -i source.mkv -map 0:3 -map 0:5 -c copy -movflags +faststart edited.mp4\n```\nReplace as needed depending on your source codecs.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) **Does the model's output contain the issue described?**\nThe model's output does not contain the issue described in the evaluation criteria. The generated `ffmpeg` command is appropriate and correctly utilizes the `-map` option to select specific streams, which aligns with the user's request. The explanation given for the use of specific parameters is also accurate. The output should work correctly based on the user's requirements.\n\n2) **Is the model's output similar to this example of a failing output?**\nNo, the model's output is not similar to the provided example of a failing output. The command generated properly utilizes recognized `ffmpeg` options without using any nonexistent or incorrect parameters. It is constructed accurately to fulfill the user's request.\n\n3) **Does the command break any requirements dictated in the manual page for ffmpeg?**\nNo, the command generated does not break any requirements set forth in the `ffmpeg` man page. It adheres to the proper syntax and usage of options mentioned in the documentation. The command employs valid stream mapping, codec options, and fast-start flags as intended.\n\n4) **Conclusion**\nBased on this evaluation, the model's output passes as it correctly generates a valid `ffmpeg` command that meets the user's requirements without issues. The command applies the rules dictated by the `ffmpeg` documentation correctly."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 447,
+    "output_tokens": 271,
+    "total_tokens": 718,
+    "cost": 0.0030619999999999996
+  },
+  "model_type": "eval_run"
+}

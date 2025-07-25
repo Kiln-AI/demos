@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "256237943869",
+  "created_at": "2025-07-24T20:38:53.451340",
+  "created_by": "scosman",
+  "input": "How can I automate splitting all videos in a folder into 10-minute segments using ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "330895274660",
+    "path": null,
+    "created_at": "2025-07-24T20:38:53.451317",
+    "created_by": "scosman",
+    "output": "To automate splitting all videos in a folder into 10-minute segments using ffmpeg, you can write a shell script (bash for Linux/macOS or PowerShell for Windows) that loops through each video file and runs ffmpeg with segmenting options.\n\nKey points in the ffmpeg command:\n- `-f segment` specifies segmenting mode.\n- `-segment_time 600` sets segment duration in seconds (10 minutes = 600 seconds).\n- `-reset_timestamps 1` resets timestamps at the beginning of each segment to avoid time overlap issues.\n- Output filename should include a pattern (like `%03d`) to number segments.\n\nBelow is an example bash script for Linux/macOS users assuming all videos are in the current directory, with extensions `.mp4` (you can modify extensions as needed).\n\n```bash\n#!/bin/bash\n\n# Folder containing videos; use current directory or replace with desired path\nINPUT_DIR=\"./\"\n# Output directory for segments\nOUTPUT_DIR=\"./segments\"\nmkdir -p \"$OUTPUT_DIR\"\n\n# Loop through all mp4 files (adjust pattern for other file types)\nfor filepath in \"$INPUT_DIR\"/*.mp4; do\n  filename=$(basename -- \"$filepath\")\n  name=\"${filename%.*}\"\n  \n  # Run ffmpeg to split into 10-min segments\n  ffmpeg -i \"$filepath\" -c copy -map 0 -f segment -segment_time 600 -reset_timestamps 1 \\\n    \"$OUTPUT_DIR/${name}_part_%03d.mp4\"\ndone\n```\n\nExplanation:\n- `-c copy` copies streams without re-encoding for speed and no quality loss.\n- `-map 0` includes all streams (video, audio, subtitles if any).\n- This approach is efficient and preserves the original quality.\n- Segments will be named with `_part_000.mp4`, `_part_001.mp4`, etc.\n- Creates a `segments/` output folder to keep segments organized.\n\nIf you want to handle various formats or include subfolders, the script can be adjusted accordingly. For Windows PowerShell, the logic is similar but script syntax differs.\n\nThis batch approach automates ffmpeg over multiple files, enabling easy large-scale video segmenting without manual intervention.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 455,
+    "total_tokens": 1048,
+    "cost": 0.0009652
+  },
+  "model_type": "task_run"
+}

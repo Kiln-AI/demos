@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "468831832772",
+  "created_at": "2025-07-24T20:25:10.959997",
+  "created_by": "scosman",
+  "input": "How can I merge an .mp3 and an .mp4 into a single .mp4 file without re-encoding either stream?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "196794750544",
+    "path": null,
+    "created_at": "2025-07-24T20:25:10.959903",
+    "created_by": "scosman",
+    "output": "To merge an .mp3 audio file with an .mp4 video file into a single .mp4 container without re-encoding, you can use stream copy mode (`-c copy`). This copies the audio and video streams directly into the output container, preserving original quality and minimizing processing time.\n\nKey points:\n- `-i video.mp4 -i audio.mp3` specifies input files.\n- `-c copy` copies all streams without re-encoding.\n- `-map` options specify exactly which streams to include in the output. Here, video from the first input and audio from the second.\n- Output container is `.mp4`, which supports the video and audio codecs (assuming your .mp3 audio is compatible with MP4 container; most players handle it fine, but AAC audio is more common. If incompatible, muxing might fail or playback issues could occur.)\n\n```bash\nffmpeg -i video.mp4 -i audio.mp3 -c copy -map 0:v:0 -map 1:a:0 output.mp4\n```\n\nThis command assumes:\n- Your video.mp4 has one video stream.\n- Your audio.mp3 has one audio stream.\n- You want to keep the original video stream from video.mp4 and replace or add the audio from audio.mp3.\n\nIf the video already has an audio stream, this will discard it and replace with the audio from the .mp3. If you want to keep both, adjust the `-map` options accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 303,
+    "total_tokens": 907,
+    "cost": 0.0007264
+  },
+  "model_type": "task_run"
+}

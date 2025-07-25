@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "430032568364",
+  "created_at": "2025-07-24T19:13:27.921052",
+  "created_by": "scosman",
+  "dataset_id": "423614201433",
+  "task_run_config_id": "166999835520",
+  "eval_config_eval": false,
+  "input": "Can you double the speed of `fast_forward.mp4` but keep the original audio pitch?",
+  "output": "To double the playback speed of fast_forward.mp4 while preserving the original audio pitch, you need to speed up both video and audio, and use the atempo audio filter to adjust speed without affecting pitch. The atempo filter supports tempo changes between 0.5 and 2.0 per filter; for larger changes, multiple atempos can be chained, but here, 2.0x is within range for a single filter.\n\nHere’s what each option does:\n- setpts=0.5*PTS doubles video speed (PTS = presentation timestamp).\n- atempo=2.0 doubles audio speed while keeping pitch constant.\n- -map ensures that both video and audio are correctly selected.\n- -c:v libx264 and -c:a aac re-encode streams for compatibility.\n- -movflags +faststart for smoother streaming/playback (optional, but good practice for mp4 files).\n- -preset veryfast for faster encoding (optional, adjust as needed).\n\n```bash\nffmpeg -i fast_forward.mp4 -filter_complex \"[0:v]setpts=0.5*PTS[v];[0:a]atempo=2.0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 128k -movflags +faststart fast_forward_doublespeed.mp4\n```\n\nThis command will output a video that plays twice as fast, with audio speed increased accordingly, but with the original pitch preserved. Adjust bitrate and preset as needed.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does not contain the issue described in the issue description. The command generated seems appropriate for the user’s request to double the speed of the video while preserving the audio pitch. It uses the correct filters and mappings as per FFmpeg's requirements.\n\n2) The model's output is not similar to the given failure example. It does not contain an invalid preset or option that does not exist. All the options used in the command are valid and correctly applied.\n\n3) The command generated does not break any requirements dictated in the FFmpeg man page. The options used (like `setpts`, `atempo`, `-map`, `-c:v`, `-c:a`, etc.) are correctly applied and do not conflict with the expected usage of FFmpeg.\n\n4) Considering the above, the model's output should pass as it does not contain the issue described, and the command generated is valid and works correctly."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 431,
+    "output_tokens": 324,
+    "total_tokens": 755,
+    "cost": null
+  },
+  "model_type": "eval_run"
+}

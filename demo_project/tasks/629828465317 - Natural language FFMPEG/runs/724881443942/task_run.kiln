@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "724881443942",
+  "created_at": "2025-07-24T20:27:17.597225",
+  "created_by": "scosman",
+  "input": "I want to extract only the center channel (if present) from all 5.1 audio files in a folder, saving as mono wavs.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "211032966445",
+    "path": null,
+    "created_at": "2025-07-24T20:27:17.597137",
+    "created_by": "scosman",
+    "output": "To extract the center channel from all 5.1 audio files in a folder and save them as mono WAV files, you can use a batch loop in your shell. The center channel is typically channel 3 in a 5.1 layout (channels ordered as front-left, front-right, center, LFE, rear-left, rear-right). Using `-map_channel` you can select just that channel.\n\nKey points:\n- Assumes files have a 6-channel layout consistent with 5.1.\n- Extracts center channel (channel 2 in zero-based indexing) from input audio.\n- Converts output to mono WAV format.\n- Processes all compatible files in a folder.\n- Keeps filenames consistent by appending `_center`.\n\nExample is for a Bash shell on Linux/macOS. You can adjust for Windows batch or PowerShell as needed.\n\n```bash\nfor input in *.mkv *.mp4 *.mov *.avi; do\n  [ -f \"$input\" ] || continue\n  output=\"${input%.*}_center.wav\"\n  ffmpeg -i \"$input\" -map_channel 0.0.2 -c:a pcm_s16le -y \"$output\"\ndone\n```\n\nExplanation:\n- `-map_channel 0.0.2` maps the 3rd channel (center) from the first input stream (index 0).\n- `-c:a pcm_s16le` encodes audio as 16-bit PCM WAV.\n- `-y` overwrites existing files without prompt.\n- The loop tries common video file extensions; modify the glob pattern to match your files.\n- You can add `-loglevel error` to reduce output verbosity if desired.\n\nIf your 5.1 audio is in standalone audio files (e.g., `.wav` or `.flac`), modify the glob accordingly.\n\nThis script is a robust automation approach to batch extract center channels from multiple files.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 390,
+    "total_tokens": 994,
+    "cost": 0.0008656
+  },
+  "model_type": "task_run"
+}

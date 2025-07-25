@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "352031624867",
+  "created_at": "2025-07-24T20:23:35.145740",
+  "created_by": "scosman",
+  "input": "Convert stereo audio rock.wav to dual-mono, output mono.wav.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "763560851394",
+    "path": null,
+    "created_at": "2025-07-24T20:23:35.145715",
+    "created_by": "scosman",
+    "output": "To convert a stereo audio file to dual-mono with ffmpeg, you essentially split the stereo channels into two identical mono channels instead of mixing them down to a single mono track. This keeps both the left and right channels in separate mono channels within the output file.\n\n- The `-filter_complex \"channelsplit=channel_layout=stereo\"` filter splits the stereo input into separate channels.\n- The `amerge=inputs=2` filter merges two mono inputs back into a two-channel stream.\n- The `pan=mono|c0=c0+c1` could be used if you wanted a single mono channel mixing both, but since the request is dual-mono (two mono channels, each having the original left and right), we duplicate/split the channels.\n- To map channels as dual-mono, you can use the `channelmap` or manually mix to two identical mono channels.\n\nHowever, ffmpeg does not have a standard \"dual-mono\" stereo file format, but you can create a stereo file where both channels carry the same mono content, or alternatively create a two-channel file with independent mono channels extracted from original stereo.\n\nFor the most straightforward dual-mono solution (creating a stereo file where each channel is identical and mono):\n\n```bash\nffmpeg -i rock.wav -filter_complex \"[0:a]channelsplit=channel_layout=stereo[FL][FR];[FL][FR]amerge=inputs=2,pan=stereo|c0=c0|c1=c0\" -c:a pcm_s16le mono.wav\n```\n\nHowever, the above forces both channels to left only, which is not what is asked. Instead, if you want the mono.wav output to contain two identical mono channels (dual-mono), a simpler approach is just to downmix stereo to mono twice and then combine as stereo with both channels identical.\n\nBut the user's request is output a mono file with dual-mono: with \"dual-mono\" meaning two mono channels, not stereo. Actually, \"dual-mono\" usually refers to two independent mono channels, each carrying one of the original stereo channels, but in one file. The user wants the output to be called mono.wav; likely a file with two mono tracks?\n\nFFmpeg does not support multiple audio streams as separate \"channels,\" but you can create a stereo file with both channels set individually if desired.\n\nTo meet the user’s request of converting stereo into a dual-mono WAV file (two mono channels, left channel in channel 1, right channel in channel 2), the command is as follows:\n\n```bash\nffmpeg -i rock.wav -filter_complex \"channelsplit=channel_layout=stereo[FL][FR]\" -map \"[FL]\" -map \"[FR]\" -c:a pcm_s16le mono.wav\n```\n\nBut this will output with two mono streams, which most players might just play as a single track or ignore the second.\n\nAlternatively, if you want to create a stereo file where each channel is mono, the following command:\n\n```bash\nffmpeg -i rock.wav -ac 2 -c:a pcm_s16le mono.wav\n```\n\nBut this is effectively just a stereo file.\n\nIn conclusion, the best interpretation is to split stereo into two mono channels but keep as a stereo file with two mono channels (dual-mono stereo). Here is the best practice command:\n\n```bash\nffmpeg -i rock.wav -ac 2 -filter_complex \"channelsplit=channel_layout=stereo[FL][FR];[FL]anull[a1];[FR]anull[a2]\" -map \"[a1]\" -map \"[a2]\" -c:a pcm_s16le mono.wav\n```\n\nThis ensures output is a two-channel WAV file, with each channel a mono track derived from original stereo.\n\n---\n\n**Summary**: This command takes the stereo input, splits channels, each channel remains mono, and then maps them as two separate channels in the output, resulting in a dual-mono stereo WAV output file called mono.wav.\n\n```bash\nffmpeg -i rock.wav -filter_complex \"channelsplit=channel_layout=stereo[FL][FR]\" -map \"[FL]\" -map \"[FR]\" -c:a pcm_s16le mono.wav\n```\n",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 589,
+    "output_tokens": 873,
+    "total_tokens": 1462,
+    "cost": 0.0016324
+  },
+  "model_type": "task_run"
+}

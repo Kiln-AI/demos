@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "666919310451",
+  "created_at": "2025-07-24T20:37:45.953245",
+  "created_by": "scosman",
+  "input": "Overlay hardcoded subtitles from captions.srt on top of training.mp4 but only for a specific section (timestamps 00:01:00 to 00:03:30).",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "330041670312",
+    "path": null,
+    "created_at": "2025-07-24T20:37:45.953220",
+    "created_by": "scosman",
+    "output": "To overlay hardcoded subtitles from captions.srt onto training.mp4 but only for the section between 00:01:00 and 00:03:30, you can use the subtitles filter with the \"enable\" option to limit the subtitle rendering to that time range. The timestamps are in seconds, so 00:01:00 equals 60 seconds, and 00:03:30 equals 210 seconds.\n\nKey points:\n\n- `subtitles=captions.srt` loads and renders the subtitles.\n- `enable='between(t,60,210)'` makes the subtitles visible only during the specified time interval.\n- The output video will have hardcoded subtitles burned in.\n- If you want only the section where subtitles appear (i.e., trimming video to that segment), you can use `-ss` and `-to`, but here it seems you want the full video with subtitles visible only between those times.\n- Use `-c:a copy` to copy audio without re-encoding.\n\nHere is the command:\n\n```bash\nffmpeg -i training.mp4 -vf \"subtitles=captions.srt:enable='between(t,60,210)'\" -c:a copy -c:v libx264 -preset medium -crf 23 output_hardsub.mp4\n```\n\nExplanation:\n\n- `-vf \"subtitles=captions.srt:enable='between(t,60,210)'\"` overlays subtitles only during 1 to 3.5 minutes.\n- Video is re-encoded with libx264 codec for compatibility and quality control.\n- Audio is copied as-is.\n- `-preset medium` balances encoding speed and compression efficiency.\n- `-crf 23` is a good quality starting point.\n\nThis creates a hardcoded subtitles video with subtitles only appearing on screen during the requested segment.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 609,
+    "output_tokens": 376,
+    "total_tokens": 985,
+    "cost": 0.0008452
+  },
+  "model_type": "task_run"
+}

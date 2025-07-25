@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "105642582979",
+  "created_at": "2025-07-24T20:25:32.514142",
+  "created_by": "scosman",
+  "input": "My .mov file has timecode data. Can I copy it into a .mkv container?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "630022199628",
+    "path": null,
+    "created_at": "2025-07-24T20:25:32.514088",
+    "created_by": "scosman",
+    "output": "To copy a .mov file containing timecode data into an .mkv container while preserving the timecode, you can use stream copy mode (`-c copy`) which avoids re-encoding. However, timecode handling can be container-specific: MOV containers often store timecode in metadata or dedicated tracks, while MKV supports timecode but may differ in how it's represented.\n\nFFmpeg usually transfers the timecode metadata when stream-copying if the codecs and metadata are compatible with the target container. If the timecode is stored as a dedicated track in MOV, MKV can keep it as well, provided you don't drop or remap streams.\n\nUse the following command to copy all streams and metadata, including timecode, from the MOV to MKV container without re-encoding:\n\n```bash\nffmpeg -i input.mov -c copy output.mkv\n```\n\nExplanation:\n- `-i input.mov` specifies the input file.\n- `-c copy` copies all streams exactly without re-encoding, preserving metadata and timecodes whenever possible.\n- `output.mkv` is the target Matroska container.\n\nIf you want to verify or inspect the timecode track or metadata, you can first check the streams and metadata with:\n\n```bash\nffprobe -show_streams -show_format input.mov\n```\n\nAssumptions:\n- The input MOV file's timecode track or metadata is compatible or convertible with MKV.\n- You're okay with copying all streams (video, audio, data) as-is.\n- No stream remapping is needed.\n\nIf timecode is deeply embedded in a proprietary way that MKV doesn't accept, further processing might be necessary, but for typical timecode tracks, this approach works.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 347,
+    "total_tokens": 944,
+    "cost": 0.000794
+  },
+  "model_type": "task_run"
+}

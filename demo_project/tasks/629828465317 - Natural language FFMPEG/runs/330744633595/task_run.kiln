@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "330744633595",
+  "created_at": "2025-07-24T20:26:20.877280",
+  "created_by": "scosman",
+  "input": "Detect subtitle language automatically and burn only French ones.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "543759320877",
+    "path": null,
+    "created_at": "2025-07-24T20:26:20.877225",
+    "created_by": "scosman",
+    "output": "To detect subtitle language automatically and burn only the French subtitles onto the video, you need to:\n\n1. Extract subtitle streams and use ffmpeg's `-lavfi` filter with `subtitles` and `metadata` to identify subtitle languages. However, ffmpeg alone does not provide automatic language detection by content; it relies on subtitle stream metadata (language tags).\n\n2. Assuming your input file contains subtitle streams with proper language metadata (e.g., `eng`, `fra`), you can use ffmpeg's stream selection filtering (`-map`) to pick the French subtitles automatically.\n\n3. Then, burn the French subtitles onto the video using the `subtitles` filter.\n\nIf the input has no language tags or untagged subtitles, proper language detection requires external tools or manual labeling, which ffmpeg doesn't perform.\n\nHere is a command that automatically selects the French subtitle stream (using the stream’s `-metadata:s:s:` language tag), and burns it into the video:\n\n```bash\nffmpeg -i input.mkv -filter_complex \"[0:v][0:s:m:language:fra]overlay\" -c:v libx264 -crf 23 -preset medium -c:a copy output.mp4\n```\n\nExplanation:\n\n- `[0:s:m:language:fra]` selects the subtitle stream with language tag 'fra' (ISO 639-2 code for French) automatically.\n\n- `overlay` (or more commonly, `subtitles`) is used to burn subtitles on video, but `overlay` is typically for overlaying images/video. Instead, the correct method is to use the `subtitles` filter with stream selection.\n\nA better, clearer approach:\n\n```bash\nffmpeg -i input.mkv -filter_complex \"subtitles=input.mkv:si=0:force_style='FontName=Arial,FontSize=24'\" -c:v libx264 -crf 23 -preset medium -c:a copy output.mp4\n```\n\nBut this statically uses subtitle stream index 0 (si=0).\n\nWe want to automatically select the French subtitle stream.\n\nUnfortunately, the `subtitles` filter does not support selecting stream by language, only by index.\n\nSo, the best method is:\n\nStep 1: extract the French subtitle stream index:\n\n```bash\nffprobe -loglevel error -select_streams s -show_entries stream=index:stream_tags=language -of csv=p=0 input.mkv\n```\n\nParse the output for the `fra` subtitle stream index (for example, stream 2).\n\nStep 2: burn subtitles by specifying si (subtitle index) same as that stream index:\n\n```bash\nffmpeg -i input.mkv -filter_complex \"subtitles=input.mkv:si=2\" -c:v libx264 -crf 23 -preset medium -c:a copy output.mp4\n```\n\nFor automation, a shell script can extract the French subtitle stream index and run the ffmpeg command.\n\nSummary:\n- ffmpeg does not automatically detect subtitles by spoken language when the metadata is missing.\n- When the subtitle stream has the correct 'language' tag (`fra`), you can programmatically locate its stream index with `ffprobe` and burn that subtitle stream using `subtitles` filter.\n\nAssuming the input.mkv has the French subtitle language tag, here is how to do everything in a single command in bash (Linux/macOS):\n\n```bash\n# Get French subtitle stream index\nf_sub_index=$(ffprobe -loglevel error -select_streams s -show_entries stream=index:stream_tags=language -of csv=p=0 input.mkv | grep ,fra$ | cut -d',' -f1)\n\n# Burn French subtitles onto video\nffmpeg -i input.mkv -filter_complex \"subtitles=input.mkv:si=${f_sub_index}\" -c:v libx264 -crf 23 -preset medium -c:a copy output.mp4\n```\n\nIf no French subtitle stream is found (`f_sub_index` is empty), you should handle that case appropriately.\n\n---\n\n### Explanation of parameters used:\n\n- `ffprobe` extracts stream data, filtering for subtitle streams with a 'language' tag of 'fra'.\n\n- `-filter_complex \"subtitles=input.mkv:si=N\"` burns subtitle stream number N from input.mkv onto the video.\n\n- `-c:v libx264 -crf 23 -preset medium` re-encodes video to H.264 with reasonable quality/encoding speed.\n\n- `-c:a copy` copies audio without re-encoding.\n\nThis method assumes subtitles are in a supported format (e.g., SRT, ASS, PGS) that ffmpeg's subtitles filter can read.\n\n---\n\nIf you want to burn hardcoded subtitles only when French ones exist, this scripted method is best. Pure ffmpeg command-line invocation cannot auto-detect language content inside subtitles. You must rely on metadata.\n\n---\n\n**In summary**, your best approach is to identify the French subtitle stream with ffprobe, then burn it using the `subtitles` filter. Here's a one-shot command assuming you know the French subtitle stream is stream 2:\n\n```bash\nffmpeg -i input.mkv -filter_complex \"subtitles=input.mkv:si=2\" -c:v libx264 -crf 23 -preset medium -c:a copy output.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 583,
+    "output_tokens": 1102,
+    "total_tokens": 1685,
+    "cost": 0.0019964
+  },
+  "model_type": "task_run"
+}

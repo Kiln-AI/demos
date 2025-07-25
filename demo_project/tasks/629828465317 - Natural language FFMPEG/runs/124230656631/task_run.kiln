@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "124230656631",
+  "created_at": "2025-07-24T20:24:05.350266",
+  "created_by": "scosman",
+  "input": "The horizontal timelapse.avi is 3840x1080. Please split it into two separate 1920x1080 videos.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "225822980973",
+    "path": null,
+    "created_at": "2025-07-24T20:24:05.350242",
+    "created_by": "scosman",
+    "output": "To split the 3840x1080 video into two separate 1920x1080 videos, we essentially need to crop the original video into two halves horizontally:\n\n- The first output crops the left half: starting at x=0, y=0, width=1920, height=1080.\n- The second output crops the right half: starting at x=1920, y=0, width=1920, height=1080.\n\nWe'll keep the video encoding parameters simple with a widely compatible codec (H.264) and reasonable quality settings.\n\nHere are two separate ffmpeg commands to produce each half as a separate video file:\n\n```bash\n# Left half (0-1919 pixels)\nffmpeg -i timelapse.avi -filter:v \"crop=1920:1080:0:0\" -c:v libx264 -preset medium -crf 23 -c:a copy timelapse_left.mp4\n\n# Right half (1920-3839 pixels)\nffmpeg -i timelapse.avi -filter:v \"crop=1920:1080:1920:0\" -c:v libx264 -preset medium -crf 23 -c:a copy timelapse_right.mp4\n```\n\nExplanation:\n\n- `crop=width:height:x:y` crops the video frame to the specified rectangle.\n- `-c:v libx264` encodes the output video with H.264 codec.\n- `-preset medium` balances encoding speed and compression.\n- `-crf 23` is a good default quality level (lower means better quality).\n- `-c:a copy` copies the audio stream directly without re-encoding since cropping doesn't affect audio.\n\nIf you want to output other formats or need different encoding parameters, feel free to specify.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 372,
+    "total_tokens": 975,
+    "cost": 0.0008364
+  },
+  "model_type": "task_run"
+}

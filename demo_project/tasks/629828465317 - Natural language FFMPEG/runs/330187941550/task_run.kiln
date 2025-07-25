@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "330187941550",
+  "created_at": "2025-07-24T18:09:53.242667",
+  "created_by": "scosman",
+  "input": "I have a 4K video but it needs to be polished for a 1080p display with 60fps. Could you advise an ffmpeg command?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "820830248548",
+    "path": null,
+    "created_at": "2025-07-24T18:09:53.242631",
+    "created_by": "scosman",
+    "output": "To downscale a 4K video to 1080p and convert its frame rate to 60fps for smooth playback on a 1080p/60 display, you should:\n\n- Use the scale video filter to resize to 1920x1080 pixels.\n- Set the output frame rate with the -r option.\n- Use high-quality H.264 encoding with libx264, setting the preset and crf for a good quality/size tradeoff.\n- Ensure the pixel format is yuv420p for broad device compatibility.\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=1920:1080\" -r 60 -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart output_1080p60.mp4\n```\n\nAssumptions:\n\n- The input is input.mp4; change as necessary.\n- -crf 18 produces visually lossless quality (adjust for your needs).\n- -preset slow balances encoding speed and compression efficiency (use fast if needed).\n- Audio is re-encoded to AAC at 192kbps for compatibility and good quality.\n- -movflags +faststart makes the file streamable. \n\nLet me know if you need hardware acceleration, HEVC, or any aspect ratio adjustments!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 609,
+    "output_tokens": 284,
+    "total_tokens": 893,
+    "cost": 0.00349
+  },
+  "model_type": "task_run"
+}

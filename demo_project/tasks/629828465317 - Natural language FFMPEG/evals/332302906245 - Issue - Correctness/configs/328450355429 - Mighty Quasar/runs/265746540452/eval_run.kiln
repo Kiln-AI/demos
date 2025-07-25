@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "265746540452",
+  "created_at": "2025-07-25T16:10:01.401007",
+  "created_by": "scosman",
+  "dataset_id": "220141351327",
+  "task_run_config_id": "113001528415",
+  "eval_config_eval": false,
+  "input": "I need to map the 7th video stream and 14th audio stream from my complex media file input.mov to create a single output",
+  "output": "To map specific streams from a complex input, use the `-map` option with zero-based stream indexing. The 7th video stream means index 6 (if counting only video streams), but ffmpeg stream indexing counts all streams globally. So if you want the 7th video stream regardless of audio, you find the stream with stream specifier `v:6`. Similarly, the 14th audio stream is `a:13`.\n\nThe command will map those particular streams and copy them to the output file. Assuming you want to keep codecs as is, you can use `-c copy` to avoid re-encoding.\n\n```bash\nffmpeg -i input.mov -map 0:v:6 -map 0:a:13 -c copy output.mov\n```\n\nExplanation:\n- `-map 0:v:6` selects the 7th video stream (index 6) from input 0.\n- `-map 0:a:13` selects the 14th audio stream (index 13) from input 0.\n- `-c copy` copies both streams without re-encoding.\n- Outputs to `output.mov` as a new file and won't modify input.mov.\n\nMake sure your input file actually contains at least that many streams. You can verify by running `ffmpeg -i input.mov` first.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) **Does the model's output contain the issue described?** \n   - The model's output correctly generates an `ffmpeg` command that maps the specified video and audio streams. There are no errors in the command, and it follows the user's requirement to map the 7th video stream (index 6) and the 14th audio stream (index 13).\n\n2) **Is the model's output similar to the example of a failing output?**\n   - No, the model's output is not similar to the failing output example provided. The command generated is valid, correctly structured, and adheres to the `ffmpeg` syntax rules.\n\n3) **Does the command break any requirements dictated in the man page?**\n   - The command does not break any requirements outlined in the `ffmpeg` man page. The options used (`-map`, `-c copy`) are all valid, and the indexing for the streams is appropriately applied.\n\n4) **Does the model's output contain the issue described?**\n   - The model's output passes all checks and does not contain any issues as described. The command should work correctly as intended, assuming the input file has the specified streams present. Therefore, it successfully meets the requirements set by the user."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 505,
+    "output_tokens": 274,
+    "total_tokens": 779,
+    "cost": 0.0006404
+  },
+  "model_type": "eval_run"
+}

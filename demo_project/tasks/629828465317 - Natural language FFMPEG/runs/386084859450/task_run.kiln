@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "386084859450",
+  "created_at": "2025-07-24T18:10:14.163544",
+  "created_by": "scosman",
+  "input": "Can you change my 16:9 video into a 1:1 square resolution while keeping the resolution above 720x720?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "499898361163",
+    "path": null,
+    "created_at": "2025-07-24T18:10:14.163517",
+    "created_by": "scosman",
+    "output": "To convert a 16:9 video to a 1:1 (square) aspect ratio with a resolution above 720x720, you should:\n\n- Decide on a target square resolution (e.g., 1080x1080 is a common and safe choice above 720x720).\n- Scale the video so that the shorter side fits the 1080 dimension while maintaining the original aspect ratio.\n- Center-crop the longer side to achieve the final 1080x1080 square frame.\n\nAssuming your input is input.mp4, here's how to do this:\n\n- -vf \"scale=1080:-1\" scales the video to 1080 pixels wide (if it's landscape); if the video is portrait, swap scale=-1:1080. This keeps the aspect ratio.\n- The next filter, crop=1080:1080, crops to a square from the center.\n- -c:a copy keeps the original audio as-is.\n\nHere's the ffmpeg command:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=1080:-1,crop=1080:1080\" -c:v libx264 -crf 23 -preset fast -c:a copy output_1to1.mp4\n```\n\nIf your video is portrait (taller than wide), use `scale=-1:1080` instead:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=-1:1080,crop=1080:1080\" -c:v libx264 -crf 23 -preset fast -c:a copy output_1to1.mp4\n```\n\nThis process ensures you get a square 1080x1080 output, preserving as much quality as possible and keeping the video in a widely supported format.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 366,
+    "total_tokens": 969,
+    "cost": 0.004134
+  },
+  "model_type": "task_run"
+}

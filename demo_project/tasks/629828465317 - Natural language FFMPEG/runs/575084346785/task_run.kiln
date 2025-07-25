@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "575084346785",
+  "created_at": "2025-07-24T20:26:54.623656",
+  "created_by": "scosman",
+  "input": "I'm looking to normalize the peak volume of all flac files in a folder to -1 dB. How can I do that?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "156663921483",
+    "path": null,
+    "created_at": "2025-07-24T20:26:54.623605",
+    "created_by": "scosman",
+    "output": "To batch normalize the peak volume of all FLAC files in a folder to -1 dB using ffmpeg, you can automate the process with a shell loop. The idea is to apply the `loudnorm` filter or a simpler volume filter using `-filter:a \"volume=...\"` but for peak normalization specifically, we focus on normalizing to a target peak at -1 dB.\n\nHowever, ffmpeg's `loudnorm` filter is designed for integrated loudness rather than exact peak normalization. For peak normalization, you can detect the max peak and then adjust gain accordingly.\n\nA practical approach is:\n1. For each FLAC, detect its maximum peak with ffmpeg's `volumedetect` filter.\n2. Calculate the needed gain to achieve -1 dB peak.\n3. Apply the gain with the `volume` filter.\n\nBelow is a bash script snippet to do this for all `.flac` files in the current folder:\n\n- Uses `ffmpeg -i file.flac -af volumedetect -f null /dev/null` to extract max volume.\n- Parses the max volume from stderr.\n- Calculates gain needed to reach -1 dBFS peak (which is -1.0 dB minus detected peak).\n- Applies the gain with a volume filter and saves the output as normalized files (you can overwrite or save separately).\n\nNote: This example assumes you are running on Linux/macOS with bash shell.\n\n```bash\nfor f in *.flac; do\n  # Extract max volume using volumedetect filter\n  max_volume=$(ffmpeg -i \"$f\" -af volumedetect -f null - 2>&1 | grep \"max_volume:\" | awk '{print $5}' | tr -d 'dB')\n  if [ -z \"$max_volume\" ]; then\n    echo \"Failed to get max volume for $f\"\n    continue\n  fi\n\n  echo \"File: $f, Max volume: $max_volume dB\"\n\n  # Calculate gain needed to reach -1 dB peak\n  gain=$(echo \"-1 - $max_volume\" | bc)\n  echo \"Applying gain of $gain dB\"\n\n  # Output filename - normalized version\n  output=\"normalized_$f\"\n\n  # Apply gain and create normalized file\n  ffmpeg -i \"$f\" -af \"volume=${gain}dB\" -c:a flac \"$output\"\ndone\n```\n\n**Explanation:**\n- `volumedetect` outputs max peak volume (e.g., -2.3 dB).\n- The gain is computed as the difference between the target peak (-1 dB) and the detected peak.\n- `volume` filter applies this gain to normalize peak loudness.\n- Output files are prefixed with `normalized_` so originals are preserved.\n\nIf overwriting is desired, replace `\"$output\"` with `\"$f\"` carefully, preferably after verifying correctness.\n\nThis approach is straightforward and efficient for batch peak normalization. It ensures the loudest peak will be at -1 dBFS after processing.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 628,
+    "total_tokens": 1229,
+    "cost": 0.0012452
+  },
+  "model_type": "task_run"
+}

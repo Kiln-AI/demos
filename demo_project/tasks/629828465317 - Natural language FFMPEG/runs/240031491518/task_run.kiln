@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "240031491518",
+  "created_at": "2025-07-24T20:24:08.065714",
+  "created_by": "scosman",
+  "input": "Reduce the resolution of cartoon.flv in half for width and height, and save the result as cartoon_small.mp4.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "110739473168",
+    "path": null,
+    "created_at": "2025-07-24T20:24:08.065691",
+    "created_by": "scosman",
+    "output": "To reduce the resolution of cartoon.flv by half in both width and height, you can use the `scale` video filter with expressions dividing the original width and height by 2. This ensures the aspect ratio is preserved.\n\n- `-vf \"scale=iw/2:ih/2\"`: scales the video by half using input width (`iw`) and input height (`ih`).\n- Using H.264 (`libx264`) ensures good quality and compatibility.\n- Encoding audio with AAC (`-c:a aac`) for broad support.\n- `-pix_fmt yuv420p` for maximum compatibility.\n- `-movflags +faststart` places metadata at the beginning to allow streaming before the full file is downloaded.\n\n```bash\nffmpeg -i cartoon.flv -vf \"scale=iw/2:ih/2\" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart cartoon_small.mp4\n```\n\nAssumption: We maintain the original aspect ratio by scaling both width and height by exactly half. Audio is re-encoded to AAC at 128 kbps for compatibility. The preset `fast` balances encoding speed and compression.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 262,
+    "total_tokens": 860,
+    "cost": 0.0006584
+  },
+  "model_type": "task_run"
+}

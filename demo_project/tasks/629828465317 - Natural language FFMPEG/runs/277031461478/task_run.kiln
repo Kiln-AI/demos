@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "277031461478",
+  "created_at": "2025-07-24T20:24:01.744110",
+  "created_by": "scosman",
+  "input": "There are black bars on my vlog.mp4 (letterboxed 1280x720). Crop them out to make it a standard 1280x544 (2.35:1).",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "177404612891",
+    "path": null,
+    "created_at": "2025-07-24T20:24:01.744086",
+    "created_by": "scosman",
+    "output": "To remove the black bars on your 1280x720 letterboxed vlog.mp4 and get a clean 1280x544 video with a 2.35:1 aspect ratio, you need to crop the black bars and resize the output to exactly 1280x544.\n\n- First, we calculate the crop height to 544 pixels (1280/2.35 ≈ 544).\n- Then, crop the vertical black bars by adjusting the y offset so the crop is centered vertically.\n- Using `crop=1280:544:0:(720-544)/2` crops width 1280, height 544, x=0 (no horizontal crop), and a vertical offset to center the crop.\n- We keep the resolution at 1280x544 without scaling, so the output is exactly as requested.\n- Use `-c:a copy` to keep the original audio without re-encoding.\n\nHere's the command to crop the video properly:\n\n```bash\nffmpeg -i vlog.mp4 -vf \"crop=1280:544:0:88\" -c:a copy output_2.35_1.mp4\n```\n\nExplanation:\n\n- 88 is calculated as (720 - 544) / 2 to center the crop vertically.\n- This removes the letterbox black bars evenly from top and bottom.\n- The output will be a 1280x544 video with a 2.35:1 aspect ratio, suitable for your requirement.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 612,
+    "output_tokens": 300,
+    "total_tokens": 912,
+    "cost": 0.0007248
+  },
+  "model_type": "task_run"
+}

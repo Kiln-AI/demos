@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "394097792242",
+  "created_at": "2025-07-24T20:35:11.534003",
+  "created_by": "scosman",
+  "input": "I have a video with multichannel audio. Convert it to stereo mp4.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "142527738506",
+    "path": null,
+    "created_at": "2025-07-24T20:35:11.533979",
+    "created_by": "scosman",
+    "output": "To convert a video with multichannel audio to an MP4 file with stereo audio, you need to downmix the audio channels to two (stereo) while keeping the video stream intact. The best practice is to use the `-ac 2` option, which tells ffmpeg to output 2 audio channels. Using a widely compatible video codec like H.264 and audio codec like AAC ensures broad support in MP4 format.\n\nHere’s a concise explanation of the key options:\n- `-c:v libx264`: encode video with H.264 codec for good compatibility.\n- `-c:a aac`: encode audio in AAC format, suitable for MP4.\n- `-ac 2`: force audio output to stereo by downmixing multichannel input.\n- `-movflags +faststart`: enables progressive streaming by placing metadata at the start of the file.\n\n```bash\nffmpeg -i input.mkv -c:v libx264 -c:a aac -ac 2 -b:a 192k -movflags +faststart output.mp4\n```\n\nAssumptions:\n- Input filename is `input.mkv` (replace as needed).\n- Audio bitrate `192k` provides good stereo audio quality.\n- If the input video codec is compatible, you can copy it with `-c:v copy` to speed up processing; otherwise re-encode with `libx264` for maximum compatibility.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 589,
+    "output_tokens": 291,
+    "total_tokens": 880,
+    "cost": 0.0007012
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "304062460156",
+  "created_at": "2025-07-24T22:30:29.120767",
+  "created_by": "scosman",
+  "dataset_id": "219122294515",
+  "task_run_config_id": "159052536756",
+  "eval_config_eval": false,
+  "input": "I need to select stream 15 for video and stream 22 for audio from my input file with many tracks called source.mkv",
+  "output": "To select stream 15 (the 15th video stream) and stream 22 (the 22nd audio stream) from source.mkv, use the `-map` option with the exact stream index.\n\n- `-map 0:v:15` selects the 15th video stream from the first input (`0`).\n- `-map 0:a:22` selects the 22nd audio stream from the same input.\n- Copying codecs without re-encoding defaults to `copy`, which is helpful for fast processing and avoids quality loss. You can re-encode if needed.\n\nUsing `-c copy` at the end allows stream copying without transcoding for a very fast output. If you want to ensure output contains those streams but retain original codecs, you can omit `-c copy` to re-encode.\n\nHere’s a command that selects exactly those streams and copies them without re-encoding:\n\n```bash\nffmpeg -i source.mkv -map 0:v:15 -map 0?a:22 -c copy output_with_specific_streams.mkv\n```\n\nExplanation:\n- `-map 0:v:15` selects the 15th video. The stream index starts at 0 (first stream), so there are no problems referencing any valid stream.\n- `-map 0?a:22` selects the 22nd audio stream from the same input (`0?a` means all audio streams).\n- `-c copy` means copy all streams as is (no re-encoding, very fast).\n\nIf you want to ensure those exact streams are extracted without re-encoding, this command extracts them without any transcoding. Otherwise, omit `-c copy` to re-encode all streams.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) Yes, the model's output contains an issue. The `-map` command for audio stream 22 uses `0?a:22`, which is incorrect. The correct syntax should be `0:a:22` (with a colon after `0` instead of a question mark). This mistake in the command could lead to an error when executed. Hence, it does not generate a command that works correctly.\n\n2) The output is somewhat similar to the failure example. While not exactly the same type of mistake as the `extra_fast` preset that does not exist, the erroneous use of a question mark instead of a colon also indicates a misunderstanding of the ffmpeg syntax that could result in a failure during execution.\n\n3) The command breaks requirements dictated in the man page due to the incorrect syntax for mapping the audio stream. The use of `0?a:22` is not recognized and will lead to an error.\n\n4) Therefore, the model's output does contain the issue described and fails to generate a correct and functional ffmpeg command for the user's request."
+  },
+  "scores": {
+    "correctness": 0.0
+  },
+  "task_run_usage": {
+    "input_tokens": 435,
+    "output_tokens": 344,
+    "total_tokens": 779,
+    "cost": 0.0
+  },
+  "model_type": "eval_run"
+}

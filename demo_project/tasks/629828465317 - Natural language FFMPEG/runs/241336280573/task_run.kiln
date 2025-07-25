@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "241336280573",
+  "created_at": "2025-07-24T20:28:02.877271",
+  "created_by": "scosman",
+  "input": "Can I transcode only a specific chapter of a DVD rip, not the whole movie?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "207091405779",
+    "path": null,
+    "created_at": "2025-07-24T20:28:02.877246",
+    "created_by": "scosman",
+    "output": "Yes, you can transcode only a specific chapter from a DVD rip using ffmpeg by seeking to the start time of the chapter and limiting the duration to the chapter length. DVDs typically do not store explicit chapter timestamps in rip files, so you need to know or find the start time and duration of the chapter you want. If you have these times, you can use `-ss` to seek to the chapter start and `-t` to set the duration. This avoids transcoding the whole video.\n\nIf your DVD rip is a single video file (like a VOB or an MKV with chapters), you can extract chapter start time and duration through `ffprobe` or a media player that shows chapters.\n\nKey points:\n- `-ss` before `-i` enables fast seeking (but might be less accurate).\n- `-ss` after `-i` provides frame-accurate seeking, recommended if you want precise chapter start.\n- `-t` sets the duration you want to transcode.\n- Use `-c:v` and `-c:a` for codecs of your choosing.\n\nExample: Extract chapter starting at 00:12:30 and lasting 3 minutes.\n\n```bash\nffmpeg -ss 00:12:30 -i dvd_rip.mkv -t 00:03:00 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k output_chapter.mp4\n```\n\nIf you want frame-accurate seeking:\n\n```bash\nffmpeg -i dvd_rip.mkv -ss 00:12:30 -t 00:03:00 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k output_chapter.mp4\n```\n\nAssumptions:\n- You know or can determine chapter start time and duration.\n- The DVD rip is a single file (not separate VOBs per chapter).\n- Seek accuracy needed drives whether to place `-ss` before or after input.\n- You want H.264/AAC encoding for good compatibility. Adjust codecs as needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 442,
+    "total_tokens": 1034,
+    "cost": 0.000944
+  },
+  "model_type": "task_run"
+}

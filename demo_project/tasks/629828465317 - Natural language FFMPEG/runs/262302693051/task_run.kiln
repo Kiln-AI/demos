@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "262302693051",
+  "created_at": "2025-07-24T20:25:11.487813",
+  "created_by": "scosman",
+  "input": "Is there a command to convert .vob files from a DVD to .mkv while copying all streams and including subtitles?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "152775509822",
+    "path": null,
+    "created_at": "2025-07-24T20:25:11.487779",
+    "created_by": "scosman",
+    "output": "To convert .vob files from a DVD to an MKV container while copying all streams (video, audio, subtitles) without re-encoding, you can use stream copy mode with `-c copy`. This preserves the original quality and codecs. The MKV container supports multiple audio and subtitle streams, making it suitable for DVDs that usually have multiple subtitle tracks in DVD subtitle format or possibly other formats.\n\nKey points:\n- Use `-c copy` to avoid re-encoding.\n- The DVD VOB files may contain multiple streams; ffmpeg by default copies all streams, but to be sure you can use `-map 0` to include all streams from the input.\n- Some DVD subtitles are in VobSub format stored as `.idx/.sub` pairs or embedded subtitles in VOB; ffmpeg can copy these as is.\n- Output file extension `.mkv` lets ffmpeg pick the Matroska container, which supports all these stream types.\n\nExample command:\n\n```bash\nffmpeg -i input.vob -map 0 -c copy output.mkv\n```\n\nExplanation:  \n- `-i input.vob` — input DVD video object file  \n- `-map 0` — includes all streams from the input in the output  \n- `-c copy` — copies all streams directly without re-encoding  \n- `output.mkv` — output container supporting multiple streams and subtitles  \n\nAssumption: The `.vob` file contains all desired streams. If multiple `.vob` files together make up the full title, consider concatenating or demuxing the whole title more robustly (e.g., using `dvdparanoia` or `ffmpeg` with DVD device input). However, for single VOB files, this command is sufficient for remuxing to MKV with subtitles.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 372,
+    "total_tokens": 974,
+    "cost": 0.000836
+  },
+  "model_type": "task_run"
+}

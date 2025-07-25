@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "320266094423",
+  "created_at": "2025-07-24T20:40:28.429290",
+  "created_by": "scosman",
+  "input": "Video file is copy-protected (encrypted). What error will ffmpeg give, and how to handle this gracefully in a script?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "167313307289",
+    "path": null,
+    "created_at": "2025-07-24T20:40:28.429183",
+    "created_by": "scosman",
+    "output": "When ffmpeg tries to process a copy-protected (encrypted) video file, it typically fails with errors related to unsupported codec or decryption failure. The specific message can vary depending on the encryption method, but a common error looks like:\n\n```\n[crypto] Unable to decrypt the file: Permission denied\n```\n\nor\n\n```\nCould not find codec parameters\n```\n\nor\n\n```\n[decode @ 0x...] Error while decoding stream #0:0: Could not decrypt content\n```\n\nSince ffmpeg does not natively support encrypted/protected content without proper keys or DRM support, it will abort the operation.\n\n---\n\n### How to handle this gracefully in a script\n\nYou can detect this error by checking ffmpeg's exit status and standard error message, then react accordingly.\n\nA best practice is:\n\n1. Run ffmpeg with error outputs captured.\n2. Parse the output for common encryption-related keywords.\n3. Use the exit code from ffmpeg to detect failure.\n4. Display a clear message or handle the error without crashing the script.\n\nExample bash snippet:\n\n```bash\nERROR_OUTPUT=$(ffmpeg -i protected_video.mp4 -f null - 2>&1)\nEXIT_CODE=$?\n\nif [ $EXIT_CODE -ne 0 ]; then\n    if echo \"$ERROR_OUTPUT\" | grep -qiE 'decrypt|permission denied|codec parameters'; then\n        echo \"Error: The input file appears to be copy-protected or encrypted. Processing aborted.\"\n    else\n        echo \"ffmpeg failed with an unexpected error:\"\n        echo \"$ERROR_OUTPUT\"\n    fi\nelse\n    echo \"ffmpeg completed successfully.\"\nfi\n```\n\n---\n\n### Explanation:\n\n- `-f null -` performs no actual output but forces decoding to detect problems early.\n- `2>&1` redirects stderr to stdout for easier capture.\n- `grep -qiE` searches case-insensitively for key error words typical for encryption issues.\n- The script handles the error gracefully rather than crashing or spamming raw ffmpeg logs.\n\nThis approach allows your script to identify encryption issues specifically and respond with a user-friendly message or fallback behavior.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 435,
+    "total_tokens": 1035,
+    "cost": 0.000936
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "110488666194",
+  "created_at": "2025-07-24T20:24:06.258321",
+  "created_by": "scosman",
+  "input": "Upscale micro.mp4 (200x150) to 1280x960, and save it as upscaled.mp4.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "915135226365",
+    "path": null,
+    "created_at": "2025-07-24T20:24:06.258292",
+    "created_by": "scosman",
+    "output": "To upscale micro.mp4 from 200x150 to 1280x960, use the scale filter with exact target dimensions. We will use the libx264 codec for high quality H.264 encoding, suitable for wide compatibility. The upscale may introduce some quality loss due to interpolation, so we use the \"lanczos\" scaling algorithm for better image quality. We'll also include AAC audio encoding for audio compatibility. The -movflags +faststart moves metadata to the file start to make playback start faster when streaming.\n\n- vf scale=1280:960 sets the exact upscale dimensions.\n- scale algorithm is controlled by the algorithm flag; lanczos is high-quality for upscaling.\n- c:v libx264 specifies H.264 codec.\n- preset slow prioritizes quality over encoding speed.\n- crf 18 offers visually lossless quality (lower CRF is better; typical values ~18-23).\n- c:a aac -b:a 128k encodes audio with AAC at 128 kbps.\n- pix_fmt yuv420p ensures broad playback compatibility.\n\n```bash\nffmpeg -i micro.mp4 -vf \"scale=1280:960:flags=lanczos\" -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart upscaled.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 288,
+    "total_tokens": 888,
+    "cost": 0.0007008
+  },
+  "model_type": "task_run"
+}

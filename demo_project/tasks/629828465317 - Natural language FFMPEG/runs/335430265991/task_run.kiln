@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "335430265991",
+  "created_at": "2025-07-23T11:30:30.175687",
+  "created_by": "scosman",
+  "input": "I need to resize my video to exactly 1920x1080 while also preserving the original aspect ratio and adding black bars if needed.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "claude_sonnet_4",
+      "model_provider": "anthropic",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Output Format with Conflicting Parameters"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "874214980763",
+    "path": null,
+    "created_at": "2025-07-23T11:30:30.175642",
+    "created_by": "scosman",
+    "output": "To resize your video to exactly 1920x1080 while preserving the original aspect ratio, you'll need to use the `scale` and `pad` filters. The scale filter will resize the video proportionally to fit within 1920x1080, and pad will add black bars to reach the exact dimensions.\n\nI'll use the scale filter with `force_original_aspect_ratio=decrease` to ensure the video fits within the target size while maintaining aspect ratio, then pad it to exactly 1920x1080 with black bars.\n\n```bash\nffmpeg -i input.avi -vf \"scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:black\" -c:v libx264 -preset medium -crf 23 -c:a copy output.mp4\n```\n\nWait, I notice there's an issue with this command. The `force_original_aspect_ratio` parameter doesn't work the way I described it with the pad filter. Let me provide the correct approach:\n\n```bash\nffmpeg -i input.avi -vf \"scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:-1:-1:black\" -c:v libx264 -preset medium -crf 23 -c:a copy output.mp4\n```\n\nThis will:\n- Scale the video to fit within 1920x1080 while preserving aspect ratio\n- Add black padding to reach exactly 1920x1080 dimensions\n- Use H.264 encoding with medium preset and CRF 23 for good quality\n- Copy the audio stream without re-encoding",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "claude_sonnet_4",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "function_calling",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_243159560313",
+    "eval_correctness"
+  ],
+  "usage": {
+    "input_tokens": 999,
+    "output_tokens": 396,
+    "total_tokens": 1395,
+    "cost": 0.008937
+  },
+  "model_type": "task_run"
+}

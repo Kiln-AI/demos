@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "324041468318",
+  "created_at": "2025-07-24T18:07:56.568691",
+  "created_by": "scosman",
+  "input": "I need to change the audio track of a .mp4 video with a new .aac audio file.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Video Conversion Techniques"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "241821714173",
+    "path": null,
+    "created_at": "2025-07-24T18:07:56.568666",
+    "created_by": "scosman",
+    "output": "To replace the audio track of an MP4 video with a new AAC audio file, you can use ffmpeg to copy the video stream (avoiding re-encoding) and map in the new .aac audio. The -map option allows you to explicitly choose the video from the original MP4 and the audio from the AAC file.\n\nAssumptions:\n- input.mp4 is your source video.\n- newaudio.aac is your replacement audio track.\n- The AAC file is properly encoded and matches the duration of the video (for best results).\n\nHere’s the recommended command:\n\n```bash\nffmpeg -i input.mp4 -i newaudio.aac -c:v copy -c:a copy -map 0:v:0 -map 1:a:0 -shortest output.mp4\n```\n\nExplanation:\n- -i input.mp4: Load the source video.\n- -i newaudio.aac: Load the new audio file.\n- -c:v copy: Copy the video stream without re-encoding.\n- -c:a copy: Copy the AAC audio stream without re-encoding.\n- -map 0:v:0: Select the video stream from the first input.\n- -map 1:a:0: Select the audio stream from the second input.\n- -shortest: Output stops when the shortest stream ends (prevents errors if audio/video lengths don’t perfectly match).\n\nThis will create a new MP4 with your original video and replacement AAC audio.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 299,
+    "total_tokens": 894,
+    "cost": 0.003582
+  },
+  "model_type": "task_run"
+}

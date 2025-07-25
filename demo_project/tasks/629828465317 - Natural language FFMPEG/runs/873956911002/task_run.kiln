@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "873956911002",
+  "created_at": "2025-07-24T18:12:58.844650",
+  "created_by": "scosman",
+  "input": "I have a audio file in WAV format that I need to convert into an OGG file, but with two channels swapped. Could you assist?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "765925674528",
+    "path": null,
+    "created_at": "2025-07-24T18:12:58.844623",
+    "created_by": "scosman",
+    "output": "To convert a WAV audio file to OGG format and swap the left and right channels, you can use the pan audio filter in ffmpeg. The pan filter allows you to redefine the channel mapping, which lets us swap the stereo channels.\n\n- The pan=\"stereo|c0=c1|c1=c0\" argument tells ffmpeg:\n  - stereo: output format (2 channels)\n  - c0=c1: left output channel (c0) gets input channel 1 (original right)\n  - c1=c0: right output channel (c1) gets input channel 0 (original left)\n- The codec libvorbis is used for OGG audio encoding.\n- The -q:a 5 sets the quality of the encoding (5 is a good trade-off; valid values: 0–10).\n\nHere's the command:\n\n```bash\nffmpeg -i input.wav -af \"pan=stereo|c0=c1|c1=c0\" -c:a libvorbis -q:a 5 output.ogg\n```\n\nAssumptions:\n- Your input WAV is a standard stereo file (2 channels).\n- Adjust the quality (-q:a",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "cost": null
+  },
+  "model_type": "task_run"
+}

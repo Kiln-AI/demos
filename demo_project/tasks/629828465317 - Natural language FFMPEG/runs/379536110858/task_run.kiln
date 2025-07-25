@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "379536110858",
+  "created_at": "2025-07-24T20:23:21.766656",
+  "created_by": "scosman",
+  "input": "Add 2 seconds of silence at the start of speech.wav and save as padded.wav.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "140694411402",
+    "path": null,
+    "created_at": "2025-07-24T20:23:21.766595",
+    "created_by": "scosman",
+    "output": "To add 2 seconds of silence at the beginning of the audio file speech.wav, you can generate a silent audio segment of 2 seconds with the same sample rate and channel layout as the input, then concatenate this silence with the original audio.\n\nKey points:\n- `anullsrc` generates silent audio.\n- `-t 2` limits silence to 2 seconds.\n- Matching sample rate and channel layout ensures seamless concatenation.\n- Use `concat` filter to join silence and original audio.\n- Output is saved to padded.wav.\n\nAssuming speech.wav uses a common sample rate (e.g., 44100 Hz) and stereo channels, but we will extract those parameters dynamically using `ffprobe` to ensure perfect matching.\n\nHere is the ffmpeg command:\n\n```bash\nffmpeg -i speech.wav -f lavfi -t 2 -i anullsrc=channel_layout=stereo:sample_rate=44100 -filter_complex \"[1:a][0:a]concat=n=2:v=0:a=1[out]\" -map \"[out]\" padded.wav\n```\n\nIf you want to be sure to match the exact channel layout and sample rate of speech.wav dynamically, you can use this slightly more advanced command (assuming bash shell):\n\n```bash\nSAMPLE_RATE=$(ffprobe -v error -select_streams a:0 -show_entries stream=sample_rate -of csv=p=0 speech.wav)\nCHANNELS=$(ffprobe -v error -select_streams a:0 -show_entries stream=channels -of csv=p=0 speech.wav)\nffmpeg -i speech.wav -f lavfi -t 2 -i anullsrc=channel_layout=stereo:sample_rate=${SAMPLE_RATE} -filter_complex \"[1:a][0:a]concat=n=2:v=0:a=1[out]\" -map \"[out]\" padded.wav\n```\n\nReplace `channel_layout=stereo` with the appropriate layout if you detect that speech.wav has a different channel setting (e.g., mono). The simple command assumes stereo 44100 Hz.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 423,
+    "total_tokens": 1016,
+    "cost": 0.000914
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "156564406465",
+  "created_at": "2025-07-24T20:27:39.580613",
+  "created_by": "scosman",
+  "input": "I want to add a silent audio track to a video that currently has no audio (so it uploads correctly to social media).",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "285159395328",
+    "path": null,
+    "created_at": "2025-07-24T20:27:39.580562",
+    "created_by": "scosman",
+    "output": "To add a silent audio track to a video with no audio, you can generate a silent audio stream using the `anullsrc` filter and then merge it with the original video. This method ensures the output video contains an audio track with no sound, which helps with social media platform compatibility.\n\nKey points of the command:\n- `-f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100` creates a silent stereo audio stream at 44.1 kHz, commonly supported.\n- `-shortest` makes the output duration match the shortest input (the video duration), so the silent audio stops at the end of the video.\n- `-c:v copy` copies the video stream without re-encoding, preserving quality and saving time.\n- `-c:a aac -b:a 128k` encodes the silent audio track in AAC at 128 kbps, a widely compatible audio format for social media.\n\nReplace `input.mp4` and `output.mp4` with your filenames as needed.\n\n```bash\nffmpeg -i input.mp4 -f lavfi -t $(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 input.mp4) -i anullsrc=channel_layout=stereo:sample_rate=44100 -c:v copy -c:a aac -b:a 128k -shortest output.mp4\n```\n\nFor convenience, the above uses `-t` with the video duration from `ffprobe` to generate exactly the needed length of silent audio. If your ffmpeg version supports it, you can alternatively use `-shortest` without specifying `-t`, as shown here:\n\n```bash\nffmpeg -i input.mp4 -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100 -c:v copy -c:a aac -b:a 128k -shortest output.mp4\n```\n\nThis approach cleanly adds silent audio while preserving the original video stream.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 427,
+    "total_tokens": 1026,
+    "cost": 0.0009228
+  },
+  "model_type": "task_run"
+}

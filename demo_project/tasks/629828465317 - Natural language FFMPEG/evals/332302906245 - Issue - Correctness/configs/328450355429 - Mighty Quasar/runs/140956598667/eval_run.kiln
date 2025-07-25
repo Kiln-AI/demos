@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "140956598667",
+  "created_at": "2025-07-23T12:01:10.941532",
+  "created_by": "scosman",
+  "dataset_id": "423614201433",
+  "task_run_config_id": "228772445193",
+  "eval_config_eval": false,
+  "input": "Can you double the speed of `fast_forward.mp4` but keep the original audio pitch?",
+  "output": "To double the speed of fast_forward.mp4 while preserving the original audio pitch, you'll need to speed up the video by 2x and use the atempo filter to double the audio speed without changing its pitch.\n\n- `setpts=0.5*PTS` speeds up the video by 2x (0.5 = 1/2, so half the presentation timestamps)\n- `atempo=2.0` doubles the audio playback speed while maintaining the original pitch (atempo preserves pitch unlike simply changing sample rate)\n- The video and audio streams are processed separately then combined\n\n```bash\nffmpeg -i fast_forward.mp4 -filter_complex \"[0:v]setpts=0.5*PTS[v];[0:a]atempo=2.0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -c:a aac output.mp4\n```\n\nNote: The atempo filter has a limit of 0.5-100.0x speed change. For more extreme speed changes, you'd need to chain multiple atempo filters (e.g., `atempo=2.0,atempo=2.0` for 4x speed).",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does not contain any mistakes in the ffmpeg command it generated. The provided command accurately doubles the speed of the video and preserves the original audio pitch according to the user's requirements.\n\n2) The model's output is not similar to the failure example provided. The command is appropriately structured and uses valid options and filters that are known to work in ffmpeg.\n\n3) After reviewing the ffmpeg man page, the command does not break any requirements dictated in the man page. All options and filters referenced in the model's output are correctly formatted and consistent with the expected functionality of ffmpeg.\n\n4) Since the model's output is correct in the command formation, it does not contain the issue described in the issue description. Thus, it should pass."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 493,
+    "output_tokens": 281,
+    "total_tokens": 774,
+    "cost": 0.005694
+  },
+  "model_type": "eval_run"
+}

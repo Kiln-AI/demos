@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "168601104633",
+  "created_at": "2025-07-24T20:39:10.916488",
+  "created_by": "scosman",
+  "input": "Is it possible to automatically batch add chapter markers every 5 minutes to each video in a folder using ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "213655723531",
+    "path": null,
+    "created_at": "2025-07-24T20:39:10.916421",
+    "created_by": "scosman",
+    "output": "Yes, it is possible to batch add chapter markers every 5 minutes to videos in a folder using a combination of ffmpeg and scripting (e.g., Bash for Linux/macOS or PowerShell for Windows). ffmpeg can include chapters by using a metadata file specifying chapter start times and titles.\n\n### Approach Overview:\n\n1. For each video in the folder:\n   - Determine its duration.\n   - Generate a metadata file specifying chapters every 5 minutes.\n   - Use `ffmpeg` to mux the chapters into the video without re-encoding (copy codecs), creating a new output file.\n\n### Key notes:\n\n- Chapters are specified in a metadata file with the format:\n  ```\n  ;FFMETADATA1\n  [CHAPTER]\n  TIMEBASE=1/1\n  START=0\n  END=300\n  title=Chapter 1\n  ```\n- `START` and `END` are in seconds; each chapter spans from START to END.\n- We must generate chapters every 300 seconds (5 minutes).\n- The output video is remuxed (`-c copy`) to avoid quality loss and long processing.\n\n---\n\n### Example Bash script (Linux/macOS) for batch processing:\n\n```bash\n#!/bin/bash\n\n# Directory containing videos\ninput_dir=\"./videos\"\noutput_dir=\"./output_chapters\"\nmkdir -p \"$output_dir\"\n\nfor input_file in \"$input_dir\"/*; do\n  # Get filename without extension\n  filename=$(basename -- \"$input_file\")\n  extension=\"${filename##*.}\"\n  filename=\"${filename%.*}\"\n\n  # Get duration in seconds (float)\n  duration=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"$input_file\")\n  duration=${duration%.*}  # convert to integer seconds by truncation\n\n  if [ -z \"$duration\" ]; then\n    echo \"Could not get duration for $input_file, skipping.\"\n    continue\n  fi\n\n  metadata_file=\"${output_dir}/${filename}_chapters.txt\"\n\n  # Start writing metadata file\n  {\n    echo \";FFMETADATA1\"\n    start=0\n    chapter_num=1\n\n    while [ \"$start\" -lt \"$duration\" ]; do\n      end=$(( start + 300 ))\n      if [ \"$end\" -gt \"$duration\" ]; then\n        end=$duration\n      fi\n      echo \"[CHAPTER]\"\n      echo \"TIMEBASE=1/1\"\n      echo \"START=${start}\"\n      echo \"END=${end}\"\n      echo \"title=Chapter $chapter_num\"\n      ((chapter_num++))\n      start=$end\n    done\n  } > \"$metadata_file\"\n\n  output_file=\"${output_dir}/${filename}_with_chapters.${extension}\"\n\n  # Remux video with chapters metadata\n  ffmpeg -i \"$input_file\" -i \"$metadata_file\" -map_metadata 1 -codec copy \"$output_file\"\n\n  echo \"Processed $input_file -> $output_file\"\ndone\n```\n\n---\n\n### Explanation:\n\n- `ffprobe` extracts video duration.\n- The script generates a metadata text file per video defining chapters every 5 minutes.\n- `ffmpeg` merges the chapter metadata into the video container without re-encoding.\n- This preserves original quality and speeds up processing.\n- Outputs are saved to `output_chapters` folder to keep original files.\n\nYou can adjust `input_dir` and `output_dir` as needed.\n\n---\n\nIf you want a PowerShell script for Windows or additional features like different chapter intervals or recursive folder processing, let me know!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 736,
+    "total_tokens": 1333,
+    "cost": 0.0014164
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "295859574360",
+  "created_at": "2025-07-24T18:12:27.307024",
+  "created_by": "scosman",
+  "input": "Can you guide me on adding a watermark image to a video such that it doesn't cause distortion in the video output?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "980867511783",
+    "path": null,
+    "created_at": "2025-07-24T18:12:27.306999",
+    "created_by": "scosman",
+    "output": "To add a watermark image to a video without causing distortion, you should avoid rescaling the original video or dramatically changing codec settings. Use the overlay filter to place the watermark—typically a transparent PNG—at your desired location (e.g., bottom-right). Ensure both video and watermark are in compatible formats; the watermark should ideally match or be smaller than the video dimensions and have an alpha channel (transparency).\n\nExample places watermark.png at the bottom-right, 10px from the corner. -c:v libx264 and -crf 18 provide high quality output; -preset veryfast is efficient without degrading quality.\n\n```bash\nffmpeg -i input.mp4 -i watermark.png -filter_complex \"overlay=W-w-10:H-h-10\" -c:v libx264 -preset veryfast -crf 18 -c:a copy output.mp4\n```\n\nExplanation:\n- -i watermark.png adds the overlay image.\n- -filter_complex \"overlay=W-w-10:H-h-10\" positions watermark 10px from right and bottom. W/H are video, w/h are watermark.\n- -c:v libx264 keeps high-quality, widely compatible H.264 encoding.\n- -crf 18 gives visually lossless output (you can use higher if you must reduce size).\n- -c:a copy preserves original audio without re-encoding.\n\nAssumption: watermark.png is a transparent PNG and sized appropriately for your video. Adjust overlay coordinates as needed for your preferred position.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 304,
+    "total_tokens": 901,
+    "cost": 0.003626
+  },
+  "model_type": "task_run"
+}

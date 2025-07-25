@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "334551501647",
+  "created_at": "2025-07-24T18:10:33.032463",
+  "created_by": "scosman",
+  "input": "I have a batch of audio files in .flac format and need to increase their volume by 5dB. What command can I use to do this efficiently?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Command Line Techniques for Audio Enhancement"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "190631291169",
+    "path": null,
+    "created_at": "2025-07-24T18:10:33.032437",
+    "created_by": "scosman",
+    "output": "To batch-increase the volume of your FLAC files by 5dB, you can use FFmpeg’s `-filter:a \"volume=5dB\"` option, which applies a 5dB gain. For batch processing, use a shell loop—here shown for bash. This command preserves the FLAC format and quality.\n\n**Key elements:**\n- `-filter:a \"volume=5dB\"`: increases audio by exactly 5dB.\n- `-c:a flac`: re-encodes using FLAC (lossless), preserving original audio fidelity.\n- Output files are named with `_louder.flac` appended.\n\n**Assumptions:**\n- All FLAC files are in your current directory.\n- You are using a Unix-like shell (bash); for Windows, a similar batch loop applies.\n- FLAC tags/metadata are retained by default.\n\n```bash\nfor f in *.flac; do ffmpeg -i \"$f\" -filter:a \"volume=5dB\" -c:a flac \"${f%.flac}_louder.flac\"; done\n```\n\n**Tip:** If you have subdirectories or need additional metadata preservation, you can enhance the loop or use `-map_metadata 0`.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 610,
+    "output_tokens": 258,
+    "total_tokens": 868,
+    "cost": 0.003284
+  },
+  "model_type": "task_run"
+}

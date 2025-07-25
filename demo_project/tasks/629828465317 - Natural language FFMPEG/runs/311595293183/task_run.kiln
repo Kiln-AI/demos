@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "311595293183",
+  "created_at": "2025-07-24T20:39:26.386623",
+  "created_by": "scosman",
+  "input": "How do I batch process a folder of videos to generate both a web-friendly MP4 and a low-resolution mobile version for each file?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "695465649076",
+    "path": null,
+    "created_at": "2025-07-24T20:39:26.386597",
+    "created_by": "scosman",
+    "output": "Batch processing a folder of videos to generate two outputs per input—a web-friendly MP4 and a low-res mobile version—can be efficiently done with a shell script looping through all video files. The approach uses ffmpeg commands with appropriate encoding settings, resolutions, and optimizations for streaming and mobile compatibility.\n\n### Key points for the two output versions:\n1. **Web-friendly MP4**:\n   - Codec: H.264 video (`libx264`), AAC audio for broad browser/device compatibility.\n   - Resolution: Keep original or resize if needed (example assumes original).\n   - Optimize for streaming: `-movflags +faststart`.\n   - Quality: Medium CRF for good quality/file size tradeoff.\n\n2. **Low-resolution mobile version**:\n   - Resolution: Lower height (e.g., 360p or 480p).\n   - Slightly higher CRF for smaller file size.\n   - Same codecs but possibly lower bitrate.\n\n### Example Bash script (assumes GNU/Linux/macOS shell):\n\n- Processes all videos with extensions `.mp4`, `.avi`, `.mov` in the input folder.\n- Outputs two files per input inside specified output folders (`web` and `mobile`).\n- Maintains original filenames with suffixes `_web` and `_mobile`.\n- Avoids re-encoding audio if possible (copy) unless audio codec unsupported.\n- Ensures output directories exist.\n\n```bash\n#!/bin/bash\n\ninput_dir=\"input_videos\"\noutput_web_dir=\"output_web\"\noutput_mobile_dir=\"output_mobile\"\n\nmkdir -p \"$output_web_dir\" \"$output_mobile_dir\"\n\nfor input_file in \"$input_dir\"/*.{mp4,avi,mov}; do\n  # Check if file exists to avoid glob expansion errors when no files match\n  [ -e \"$input_file\" ] || continue\n\n  base_name=$(basename \"$input_file\")\n  name=\"${base_name%.*}\"\n\n  # Web-friendly MP4\n  ffmpeg -i \"$input_file\" \\\n    -c:v libx264 -preset medium -crf 23 -movflags +faststart \\\n    -c:a aac -b:a 128k \\\n    -pix_fmt yuv420p \\\n    \"$output_web_dir/${name}_web.mp4\"\n\n  # Low-res mobile version (360p height, scale width automatically)\n  ffmpeg -i \"$input_file\" \\\n    -vf \"scale=-2:360\" \\\n    -c:v libx264 -preset faster -crf 28 -movflags +faststart \\\n    -c:a aac -b:a 96k \\\n    -pix_fmt yuv420p \\\n    \"$output_mobile_dir/${name}_mobile.mp4\"\n\ndone\n```\n\n### Explanation:\n- `scale=-2:360` ensures width auto-adjusts to maintain aspect ratio, rounded to even number.\n- Different `crf` values optimize quality/file size for each version.\n- `-preset medium` and `-preset faster` balance encode speed and compression efficiency.\n- Using AAC audio with bitrates matching typical streaming/mobile targets.\n- `-pix_fmt yuv420p` for widest compatibility.\n- `-movflags +faststart` places metadata at the beginning for progressive streaming.\n\nThis script can be adapted for Windows PowerShell or other environments by changing the loop syntax and path handling accordingly.\n\n---\n\nIf you want, I can help with a Windows batch script or a more complex solution that detects and preserves audio codecs automatically!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 710,
+    "total_tokens": 1311,
+    "cost": 0.0013764
+  },
+  "model_type": "task_run"
+}

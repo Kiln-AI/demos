@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "989515175313",
+  "created_at": "2025-07-24T20:36:59.312689",
+  "created_by": "scosman",
+  "input": "Input: .mp4 (HEVC video, AAC audio). Output: .webm with VP9 and Opus audio, retaining resolution.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "102449078640",
+    "path": null,
+    "created_at": "2025-07-24T20:36:59.312657",
+    "created_by": "scosman",
+    "output": "To convert an HEVC-encoded MP4 with AAC audio into a WebM file using VP9 video and Opus audio while retaining the original resolution, you should:\n\n- Copy the input video resolution without scaling (no -vf needed).\n- Use `libvpx-vp9` for VP9 video encoding, which offers good compression efficiency and quality.\n- Use `libopus` for Opus audio, which has excellent quality at low bitrates and is the standard audio codec for WebM.\n- Set a reasonable quality and speed balance using `-crf` (quality control) and `-b:v 0` for constant quality mode.\n- Use `-b:a` to control the Opus audio bitrate.\n- Optionally, set `-row-mt 1` and `-threads` to improve encoding speed on multi-core CPUs.\n- Use `-pix_fmt yuv420p` for compatibility.\n\nHere is a recommended command balancing quality and encoding speed:\n\n```bash\nffmpeg -i input.mp4 -c:v libvpx-vp9 -crf 30 -b:v 0 -row-mt 1 -threads 4 -pix_fmt yuv420p -c:a libopus -b:a 96k output.webm\n```\n\nAssumptions:\n- Input filename is `input.mp4`.\n- Four CPU threads are used; adjust `-threads` as needed.\n- Opus audio bitrate is set to 96 kbps for good quality.\n- No resolution change, so no scale filter applied.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 317,
+    "total_tokens": 920,
+    "cost": 0.0007484
+  },
+  "model_type": "task_run"
+}

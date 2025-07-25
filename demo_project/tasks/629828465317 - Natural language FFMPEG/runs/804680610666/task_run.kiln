@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "804680610666",
+  "created_at": "2025-07-24T20:39:04.922332",
+  "created_by": "scosman",
+  "input": "What’s the best way to batch reverse all video files in a folder using ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "451624442854",
+    "path": null,
+    "created_at": "2025-07-24T20:39:04.922259",
+    "created_by": "scosman",
+    "output": "To batch reverse all video files in a folder using `ffmpeg`, you can write a shell script (for example, in bash) that iterates over each video file, applies a reverse filter, and outputs the reversed video with a distinct filename. The key technique is to use the `-vf reverse` filter for the video stream and `-af areverse` filter for the audio stream to reverse both video and audio.\n\n**Best practices and notes:**\n- Process each file individually to avoid memory issues and to maintain clarity.\n- Be sure to specify output filenames to avoid overwriting your originals.\n- Use appropriate codecs (e.g., copy for video/audio if supported, or re-encode if filters are applied).\n- Check for supported file extensions or customize the extensions list in the script.\n- Handle spaces in filenames safely by using quotes.\n\nHere is an example bash script that processes all `.mp4` files in a folder, reverses them, and saves them with `_reversed` appended to the filename:\n\n```bash\n#!/bin/bash\n\nfor input in *.mp4; do\n  # Extract filename without extension\n  filename=\"${input%.*}\"\n  output=\"${filename}_reversed.mp4\"\n\n  echo \"Processing $input -> $output\"\n\n  ffmpeg -i \"$input\" -vf reverse -af areverse -c:v libx264 -preset veryfast -crf 18 -c:a aac -b:a 128k -movflags +faststart \"$output\"\ndone\n```\n\n**Explanation of parameters:**\n- `-vf reverse`: reverses the video frames.\n- `-af areverse`: reverses the audio samples.\n- `-c:v libx264 -preset veryfast -crf 18`: re-encode video with high quality and fast preset.\n- `-c:a aac -b:a 128k`: re-encode audio in AAC at 128 kbps.\n- `-movflags +faststart`: optimizes MP4 for progressive streaming.\n\n**Assumptions:**\n- All input files are `.mp4`. You can adjust the glob pattern for other video formats.\n- You want to re-encode because filters are applied (copying codecs with filters is generally not possible).\n- Running in a bash-compatible environment (Linux, macOS, or WSL on Windows).\n\nThis approach can be easily adapted for other extensions or customized for output folders, filenames, etc. Always test with a few files first!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 506,
+    "total_tokens": 1098,
+    "cost": 0.0010464
+  },
+  "model_type": "task_run"
+}

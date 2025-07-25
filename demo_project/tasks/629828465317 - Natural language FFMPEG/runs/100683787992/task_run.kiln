@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "100683787992",
+  "created_at": "2025-07-24T20:36:04.096027",
+  "created_by": "scosman",
+  "input": "Can ffmpeg scale a video so that either width or height fits inside a box, but doesn’t go over?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "334482567585",
+    "path": null,
+    "created_at": "2025-07-24T20:36:04.096002",
+    "created_by": "scosman",
+    "output": "Yes, ffmpeg can scale a video to fit inside a bounding box (maximum width and height) while preserving the aspect ratio and ensuring it does not exceed either dimension. This is typically done using the `scale` video filter with expressions that calculate the scaling factor based on both width and height constraints.\n\nThe common approach is to use the `scale` filter with `iw` (input width), `ih` (input height), and an expression that picks the scale to ensure the output fits within the box without exceeding it.\n\nFor example, to scale a video to fit inside a 1280x720 box (typical HD resolution) without exceeding either the width or height:\n\n- We calculate separate scaling factors for width (1280/iw) and height (720/ih).\n- We choose the minimum of these factors to ensure the scaled video fits inside the box.\n- We multiply the input dimensions by this scaling factor.\n- Output dimensions must be divisible by 2 for most codecs, so we use `floor(.../2)*2` to round down to the nearest even number.\n\nHere’s the ffmpeg command illustrating this approach:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale='if(gt(a,1280/720),1280, floor(720*a/2)*2)':'if(gt(a,1280/720), floor(1280/a/2)*2,720)'\" -c:a copy output.mp4\n```\n\nExplanation of expressions:\n\n- `a` is the input aspect ratio = `iw/ih`.\n- `1280/720` is the target box aspect ratio.\n- `if(gt(a,1280/720),1280, floor(720*a/2)*2)` decides the width:\n  - If input aspect ratio is greater than the box aspect ratio, width is set to max width (1280).\n  - Else width is scaled based on height (720 * aspect ratio).\n- `if(gt(a,1280/720), floor(1280/a/2)*2,720)` decides the height:\n  - If input aspect ratio is greater, height is scaled based on width.\n  - Else height is set to max height (720).\n\nThis logic ensures the output fits inside 1280x720 without exceeding either dimension, keeping the aspect ratio intact and dimensions even.\n\n---\n\nIf you want a more general command for fitting inside any box WxH (replace 1280 and 720 with your max width and height), the pattern is:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale='if(gt(a,MAX_W/MAX_H),MAX_W, floor((MAX_H*a)/2)*2)':'if(gt(a,MAX_W/MAX_H), floor((MAX_W/a)/2)*2,MAX_H)'\" -c:a copy output.mp4\n```\n\nReplace `MAX_W` and `MAX_H` with your desired maximum dimensions.\n\n---\n\nThis is a best practice method for scaling while maintaining aspect ratio and fitting inside a box in ffmpeg.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 621,
+    "total_tokens": 1218,
+    "cost": 0.0012324
+  },
+  "model_type": "task_run"
+}

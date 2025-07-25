@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "162059264155",
+  "created_at": "2025-07-24T20:39:55.897323",
+  "created_by": "scosman",
+  "input": "I want to encode a file to VP8 for legacy compatibility, but the input contains 10-bit video. How do I downconvert bit depth safely?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "193819989426",
+    "path": null,
+    "created_at": "2025-07-24T20:39:55.897297",
+    "created_by": "scosman",
+    "output": "VP8 only supports 8-bit video, so when encoding from a 10-bit source, you need to reduce the bit depth from 10-bit to 8-bit safely before encoding. This is typically done by converting the pixel format to a compatible 8-bit format, such as `yuv420p`, which is widely supported and ensures compatibility.\n\nFFmpeg can handle this conversion automatically with the `-pix_fmt yuv420p` option in the encoder. This both reduces bit depth and converts color space to planar 8-bit 4:2:0 chroma subsampling, which is standard for VP8 and ensures legacy compatibility.\n\nHere's how to do it:\n\n- Use `-c:v libvpx` to encode in VP8.\n- Use `-pix_fmt yuv420p` to force 8-bit pixel format (downconvert from 10-bit).\n- Optionally adjust quality and bitrate with `-b:v` or `-crf` (libvpx uses `-crf` and `-b:v` together for quality control).\n- Copy or re-encode audio as desired.\n\n```bash\nffmpeg -i input_10bit.mkv -c:v libvpx -pix_fmt yuv420p -b:v 1M -c:a libvorbis output_vp8.webm\n```\n\nExplanation:\n- `-pix_fmt yuv420p` safely converts from 10-bit to 8-bit.\n- `-b:v 1M` sets video bitrate to 1 Mbps (adjust as needed).\n- `libvorbis` audio is common with VP8 in WebM containers.\n- Output container is WebM (`.webm`), standard for VP8.\n\nThis approach ensures safe and compatible downconversion of bit depth for VP8 encoding.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 605,
+    "output_tokens": 369,
+    "total_tokens": 974,
+    "cost": 0.0008324
+  },
+  "model_type": "task_run"
+}

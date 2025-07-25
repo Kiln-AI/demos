@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "158673646078",
+  "created_at": "2025-07-25T10:10:58.313164",
+  "created_by": "scosman",
+  "dataset_id": "219122294515",
+  "task_run_config_id": "297487652142",
+  "eval_config_eval": false,
+  "input": "I need to select stream 15 for video and stream 22 for audio from my input file with many tracks called source.mkv",
+  "output": "<think>\n\n</think>\n\nTo extract and remux (or transcode) specific streams (video from stream 15, audio from stream 22) from a multi-track MKV file into an output file, you can use the `-map` flag to select the streams explicitly.\n\nAssuming you want to copy the streams without re-encoding (stream copy) for speed and perfect quality, use `-c copy`.\n\nIf you want to remux only selected streams:\n\n```bash\nffmpeg -i source.mkv -map 0:15 -map 0:22 -c copy output.mp4\n```\n\nKey points:\n- `-map 0:15` maps the 16th video stream (0-based indexing), and `-map 0:22` maps the 23rd audio stream.\n- `-c copy` performs stream copy, no re-encoding, for maximum speed.\n- Output container (mp4 here) must support the codecs.\n- Ensure the streams are video and audio (which they are in a well-tagged mkv).\n\nThis command assumes stream 15 is video and 22 is audio. If unsure (for example, if the streams are actually subtitle or other streams), check with:\n\n```bash\nffmpeg -i source.mkv\n```\n\nto confirm stream types and indexes.\n\nIf you want to transcode to a container like MP4, remuxing to MP4 may remap the codecs (e.g., switching to MP4 native codecs).",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) **Does the model's output contain the issue described?**\n\nThe model's output correctly uses the `-map` flags to select the specified video and audio streams from the input file. It also uses `-c copy` to indicate that the streams should be copied without re-encoding, which aligns with the user's request to extract specific streams. Therefore, it effectively meets the user's requirements.\n\nThe model's output does **not** contain the issue described in the issue description. \n\n2) **Is the model's output similar to this example of a failing output?**\n\nNo, the model's output does not resemble the example of a failing output. The command provided by the model, `ffmpeg -i source.mkv -map 0:15 -map 0:22 -c copy output.mp4`, is structured correctly, meaning it adheres to the expected syntax for `ffmpeg`. The provided command is valid and should function as intended given the specified streams exist.\n\n3) **Does the command break any requirements dictated in the man page?**\n\nThe command aligns with the guidelines provided in the man page for `ffmpeg`. The model properly employs the `-map` flag to specify which streams to include in the output, and it adheres to the proper format for indicating input and output files. There are no apparent violations of the requirements listed in the man page.\n\n4) **Considering the above, does the model's output contain the issue described?**\n\nThe output does not contain the issue described, as it generates a correct and valid `ffmpeg` command that should work as intended to extract the specified video and audio streams from the input file. Therefore, **the evaluation should conclude that it passes**."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 475,
+    "output_tokens": 310,
+    "total_tokens": 785,
+    "cost": 0.0
+  },
+  "model_type": "eval_run"
+}

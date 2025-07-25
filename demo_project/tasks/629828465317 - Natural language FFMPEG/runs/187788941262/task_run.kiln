@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "187788941262",
+  "created_at": "2025-07-24T20:24:04.168259",
+  "created_by": "scosman",
+  "input": "Convert a video input.mp4 to 360p resolution with a bitrate of 800k.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "151305403032",
+    "path": null,
+    "created_at": "2025-07-24T20:24:04.168234",
+    "created_by": "scosman",
+    "output": "To convert the video to 360p resolution with a specific bitrate of 800 kbps, you can use the scale filter to resize the video while preserving the aspect ratio, and set the video bitrate explicitly with `-b:v 800k`. Using `-vf scale=-2:360` will scale the height to 360 pixels and adjust the width to maintain the aspect ratio, ensuring width is divisible by 2 for compatibility. Encoding with libx264 ensures good compression and quality, while using `-preset medium` offers a balanced speed and compression efficiency. We'll also set the audio to AAC codec with a reasonable bitrate (128k) for compatibility.\n\n```bash\nffmpeg -i input.mp4 -vf scale=-2:360 -c:v libx264 -b:v 800k -preset medium -c:a aac -b:a 128k -pix_fmt yuv420p output_360p.mp4\n```\n\nExplanation of parameters:\n- `-vf scale=-2:360`: resizes video to 360 pixels height, width adjusted to maintain aspect ratio and divisible by 2.\n- `-c:v libx264`: encode video using H.264 codec.\n- `-b:v 800k`: set video bitrate to 800 kbps.\n- `-preset medium`: balance encoding speed and compression.\n- `-c:a aac -b:a 128k`: use AAC audio codec at 128 kbps.\n- `-pix_fmt yuv420p`: ensures compatibility with most devices and players.\n\nThis command produces a reasonably compressed 360p video suitable for streaming or playback on limited bandwidth networks.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 336,
+    "total_tokens": 929,
+    "cost": 0.0007748
+  },
+  "model_type": "task_run"
+}

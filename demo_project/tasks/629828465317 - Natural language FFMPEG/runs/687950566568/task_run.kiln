@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "687950566568",
+  "created_at": "2025-07-24T18:10:05.329643",
+  "created_by": "scosman",
+  "input": "What's the correct ffmpeg command to make 'concert.ts' a 2160p video but maintain 24fps for cinematic effect?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "224341880687",
+    "path": null,
+    "created_at": "2025-07-24T18:10:05.329591",
+    "created_by": "scosman",
+    "output": "To upscale a video to 2160p (4K, 3840x2160) and ensure a constant 24 fps frame rate for cinematic effect, use the scale filter and setfps filter in ffmpeg. This example uses libx264 for 4K H.264 encoding, which is widely supported. Replace with libx265 or other codecs if you prefer.\n\nAssumptions:\n- The original aspect ratio will be maintained, and the video will be upscaled so the height is 2160, with width scaled proportionally and padded to exactly 3840 if needed, to avoid distortion and meet the 2160p spec.\n- Audio is simply copied for demonstration; re-encode if needed.\n- If the source has a framerate >24fps, frames will be dropped. If <24fps, new frames added via duplication.\n\nCommand explanation:\n- `-vf` with `scale` and `pad` upscales while preserving aspect, then pads to 3840x2160 if necessary.\n- `-r 24` sets output frame rate.\n- `-c:v libx264 -preset slow -crf 18` offers high 4K quality at reasonable size.\n- `-pix_fmt yuv420p` ensures broad compatibility.\n- `-c:a copy` copies audio as-is.\n\n```bash\nffmpeg -i concert.ts \\\n-vf \"scale='min(3840,iw*2160/ih)':'min(2160,ih*3840/iw)',pad=3840:2160:(3840-iw*2160/ih)/2:(2160-ih*3840/iw)/2\" \\\n-r 24 -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p \\\n-c:a copy \\\nconcert_2160p24.mp4\n```\n\nThis will yield a UHD (2160p), 24fps video suitable for cinematic playback. Adjust `-crf` or codec as needed for your requirements.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 420,
+    "total_tokens": 1023,
+    "cost": 0.004566
+  },
+  "model_type": "task_run"
+}

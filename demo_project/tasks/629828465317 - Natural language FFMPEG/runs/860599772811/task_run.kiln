@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "860599772811",
+  "created_at": "2025-07-24T20:36:14.149715",
+  "created_by": "scosman",
+  "input": "How can I ensure the output video dimensions are both even numbers?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "276902096305",
+    "path": null,
+    "created_at": "2025-07-24T20:36:14.149688",
+    "created_by": "scosman",
+    "output": "Many video codecs require both width and height to be even numbers for proper encoding and playback compatibility. To ensure your output video's dimensions are even, you can use the `scale` video filter in ffmpeg with expressions that round the width and height to the nearest even number. \n\nA common technique uses the expression `2*trunc(iw/2)` and `2*trunc(ih/2)` which takes the input width (`iw`) and height (`ih`), divides by 2, truncates (rounds down) and then multiplies by 2, effectively forcing the dimensions to the largest even number less than or equal to the original.\n\nHere's an example command that rescales the input video to ensure both width and height are even numbers without changing their sizes if they're already even:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=2*trunc(iw/2):2*trunc(ih/2)\" -c:v libx264 -crf 23 -preset medium -c:a aac -b:a 128k output.mp4\n```\n\nExplanation:\n\n- `scale=2*trunc(iw/2):2*trunc(ih/2)` rounds down width and height to nearest even number.\n- `-c:v libx264` uses H.264 video encoding.\n- `-crf 23` is a good default quality.\n- `-preset medium` balances encoding speed and compression.\n- `-c:a aac -b:a 128k` encodes audio to AAC at 128 kbps.\n\nIf you want to resize the video to a new resolution while preserving aspect ratio and still ensuring even dimensions, you can adapt the scale filter accordingly with expressions like `-2` for width or height, but the essential step is to keep both dimensions even by rounding.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 587,
+    "output_tokens": 379,
+    "total_tokens": 966,
+    "cost": 0.0008412
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "269717700561",
+  "created_at": "2025-07-24T20:25:39.144905",
+  "created_by": "scosman",
+  "input": "Replace the subtitle track in input.mkv with newsubs.srt.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "258941655832",
+    "path": null,
+    "created_at": "2025-07-24T20:25:39.144880",
+    "created_by": "scosman",
+    "output": "To replace the subtitle track in input.mkv with the subtitles from newsubs.srt without re-encoding the video and audio streams, you can use stream copy mode for video and audio, and add the new subtitle file as a soft subtitle track.\n\nKey points:\n- `-c:v copy -c:a copy` copies video and audio streams to preserve original quality and avoid re-encoding.\n- `-c:s srt` specifies the subtitle codec for the new SRT subtitle file.\n- `-map` options are used to explicitly select video, audio, and the new subtitle streams.\n- `-disposition:s:0 default` sets the new subtitle track as the default subtitle track.\n- `-sn` disables existing subtitles in input to avoid duplicates.\n- This assumes you want to keep the first video and audio streams from the original input.\n\n```bash\nffmpeg -i input.mkv -i newsubs.srt -map 0:v:0 -map 0:a:0 -map 1:0 -c:v copy -c:a copy -c:s srt -disposition:s:0 default output.mkv\n```\n\nExplanation:\n- `-map 0:v:0` selects the first video stream from input.mkv.\n- `-map 0:a:0` selects the first audio stream from input.mkv.\n- `-map 1:0` selects the subtitle stream from newsubs.srt.\n- The output file output.mkv will have video, audio, and the new subtitle track only.\n- Existing subtitles in input are excluded by not mapping them. If you want to remove all subtitles you can also use `-sn` to disable subtitles globally, but the above mapping avoids it.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 587,
+    "output_tokens": 355,
+    "total_tokens": 942,
+    "cost": 0.0008028
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "156479354763",
+  "created_at": "2025-07-24T20:38:50.108689",
+  "created_by": "scosman",
+  "input": "I have a folder with videos with mixed rotation metadata. How can I batch apply the rotation so the videos are actually oriented upright?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "858799832054",
+    "path": null,
+    "created_at": "2025-07-24T20:38:50.108666",
+    "created_by": "scosman",
+    "output": "To batch correct mixed rotation metadata and physically rotate videos so they are upright, you need to read each video's rotation metadata, apply the corresponding rotation filter, and remove the rotation metadata to avoid further confusion.\n\nSince ffmpeg doesn't automatically batch-handle rotation metadata corrections, you need to script this operation. Here's a high-level approach using a bash script for Linux/macOS. The script:\n\n1. Reads rotation metadata via ffprobe.\n2. Decides which transpose/rotation filter to apply based on the metadata.\n3. Applies the filter to rotate the video physically.\n4. Removes rotation metadata by resetting it to zero.\n5. Saves the output, typically to a new folder or with a modified file name to avoid overwriting originals.\n\nThis ensures that videos are correctly oriented regardless of player rotation support.\n\n---\n\n### Explanation of key points:\n- `ffprobe` extracts the rotation metadata.\n- `-vf \"transpose=1\"` or `-vf \"transpose=2\"` or `-vf \"transpose=3\"` applies 90°, 270°, or 180° rotations physically.\n- For 180°, `transpose` can't apply 180°, so you combine two 90° transposes or use `rotate=PI`.\n- Reset rotation metadata to zero using `-metadata:s:v:0 rotate=0`.\n- Use `-c:a copy` to avoid re-encoding audio.\n- Use suitable video codec, e.g., libx264 if re-encoding is necessary, or `-c:v copy` if rotation metadata is zero and no filter applied.\n- The script processes all videos in a directory and writes them to an output folder.\n\n---\n\n### Example bash script:\n\n```bash\nmkdir -p output_videos\nfor f in *.mp4; do\n  echo \"Processing $f...\"\n  rotation=$(ffprobe -v error -select_streams v:0 -show_entries stream_tags=rotate \\\n           -of default=nw=1:nk=1 \"$f\")\n  \n  filter=\"\"\n  case \"$rotation\" in\n    90)\n      filter=\"transpose=1\"\n      ;;\n    180)\n      # 180 degrees rotation can be done by two transposes or rotate filter (pi radians)\n      filter=\"transpose=2,transpose=2\"\n      ;;\n    270)\n      filter=\"transpose=2\"\n      ;;\n    *)\n      filter=\"\"\n      ;;\n  esac\n\n  if [ -z \"$filter\" ]; then\n    # No rotation metadata or 0, just copy and remove rotate tag\n    ffmpeg -i \"$f\" -c copy -metadata:s:v:0 rotate=0 \"output_videos/$f\"\n  else\n    # Apply filter and remove rotation metadata\n    ffmpeg -i \"$f\" -vf \"$filter\" -metadata:s:v:0 rotate=0 -c:a copy -c:v libx264 -preset fast -crf 18 \"output_videos/$f\"\n  fi\ndone\n```\n\n---\n\n### Notes:\n- Adjust input glob `*.mp4` as needed (e.g., `*.mov`, `*.mkv`).\n- This script re-encodes video only when rotation is applied; otherwise it just copies streams.\n- The output video uses libx264 with high quality CRF 18; adjust CRF or preset as needed.\n- The audio is copied directly to save time.\n- Rotation metadata is forcibly cleared to zero so players no longer rotate the video again.\n- Make sure you have enough disk space for the outputs.\n- For Windows, a similar batch or PowerShell script would be required.\n\nThis approach automates batch processing of upright rotations removing dependency on rotation metadata interpretation during playback.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 752,
+    "total_tokens": 1352,
+    "cost": 0.0014432
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "273054114318",
+  "created_at": "2025-07-24T20:37:37.868828",
+  "created_by": "scosman",
+  "input": "Extract English subtitles from movie.mkv and save them in SRT format.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "101383698053",
+    "path": null,
+    "created_at": "2025-07-24T20:37:37.868811",
+    "created_by": "scosman",
+    "output": "To extract English subtitles from a Matroska (.mkv) file and save them as a standalone SubRip Subtitle (.srt) file, you need first to identify the subtitle stream corresponding to English. This can be done by inspecting the streams in the file, then using ffmpeg to extract that subtitle stream.\n\nSteps and explanations:\n\n1. **Inspect the subtitle streams**:\n   Use `ffmpeg -i movie.mkv` to list all streams and find the English subtitle stream. The subtitle stream typically has a tag like `[0:s:0]` with the language metadata `eng`.\n\n2. **Extract the subtitles**:\n   Use the `-map` option to select the specific subtitle stream by index or language tag, and copy it without re-encoding (`-c:s copy`) into an SRT file.\n\nAssumptions:\n- The English subtitle stream is in a format compatible with SRT (e.g., SubRip inside MKV).\n- You want only the English subtitle, so specify language or the exact stream index for robustness.\n- If the subtitles are in a different format (like PGS), ffmpeg can convert them to SRT by re-encoding.\n\nExample commands below assume the English subtitle stream is the first subtitle stream (`0:s:0`). Adjust the stream index accordingly after inspecting the streams.\n\n```bash\n# Inspect streams to find the English subtitle stream index and language\nffmpeg -i movie.mkv\n```\n\nOnce you identify the English subtitle stream index (replace `0:s:X` with the correct one), use:\n\n```bash\nmkdir -p output\nffmpeg -i movie.mkv -map 0:s:X -c:s srt output/english_subtitles.srt\n```\n\nIf you know the language tag is \"eng\", you can alternatively use:\n\n```bash\nffmpeg -i movie.mkv -map 0:m:language:eng -c:s srt output/english_subtitles.srt\n```\n\nThis command maps the subtitle stream with language metadata \"eng\" and converts it to SRT format.\n\nSummary command (assuming language tag \"eng\"):\n\n```bash\nffmpeg -i movie.mkv -map 0:m:language:eng -c:s srt english_subtitles.srt\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 588,
+    "output_tokens": 463,
+    "total_tokens": 1051,
+    "cost": 0.000976
+  },
+  "model_type": "task_run"
+}

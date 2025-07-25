@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "237786950888",
+  "created_at": "2025-07-24T18:09:09.488750",
+  "created_by": "scosman",
+  "input": "I have a video (clip.avi) and I want to add a watermark image (watermark.png) to the bottom right corner.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Commands for Video Editing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "309216204823",
+    "path": null,
+    "created_at": "2025-07-24T18:09:09.488723",
+    "created_by": "scosman",
+    "output": "To add a watermark image (watermark.png) to the bottom right corner of your video (clip.avi), you'll use the overlay filter in ffmpeg. The overlay's x and y parameters place the watermark 10 pixels away from the right and bottom edges, respectively. This ensures the watermark is not flush with the borders.\n\nHere’s the command and the explanation for each key parameter:\n\n- -i clip.avi specifies the input video.\n- -i watermark.png specifies the watermark image.\n- -filter_complex \"[0:v][1:v]overlay=W-w-10:H-h-10\" overlays the watermark at position (W-w-10, H-h-10) where:\n    - W and H are the width and height of the main video,\n    - w and h are the width and height of the watermark,\n    - Subtracting (w+10, h+10) positions the overlay 10 pixels from the bottom right.\n- -codec:a copy preserves the input audio stream without re-encoding.\n- -c:v libx264 -crf 23 -preset veryfast encodes the output with H.264 for broad compatibility.\n\n```bash\nffmpeg -i clip.avi -i watermark.png -filter_complex \"[0:v][1:v]overlay=W-w-10:H-h-10\" -c:v libx264 -crf 23 -preset veryfast -codec:a copy output_watermarked.mp4\n```\n\nAssumptions:\n\n- watermark.png is a PNG with transparency (alpha channel). If it's not, adjust as needed.\n- The watermark should be placed 10 pixels away from right and bottom edges. Modify these offsets as necessary.\n- You want to preserve the original audio and use H.264 for compatibility. Change -c:v, -crf, or -preset as needed for different codecs or qualities.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 378,
+    "total_tokens": 981,
+    "cost": 0.00423
+  },
+  "model_type": "task_run"
+}

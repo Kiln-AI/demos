@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "702685853861",
+  "created_at": "2025-07-23T11:45:40.083514",
+  "created_by": "scosman",
+  "dataset_id": "137388627865",
+  "task_run_config_id": null,
+  "eval_config_eval": true,
+  "input": "I have a file with 4 video streams and 6 audio streams. I need to select video stream 8 and audio stream 12 for my output file final.mp4",
+  "output": "To select specific streams from a multi-stream file, you use the `-map` parameter to specify which input streams to include in the output. This allows you to cherry-pick exactly which video and audio tracks you want.\n\nThe `-map` parameter uses the format `-map input_index:stream_type:stream_index` where stream indices start from 0. So to select video stream 8 and audio stream 12:\n\n```bash\nffmpeg -i input.mkv -map 0:v:8 -map 0:a:12 -c copy final.mp4\n```\n\nThis command:\n- `-map 0:v:8` selects video stream 8 from input 0\n- `-map 0:a:12` selects audio stream 12 from input 0  \n- `-c copy` copies the streams without re-encoding for faster processing\n\nI assumed your input file is named something like `input.mkv` since you didn't specify the filename, and used copy mode to preserve quality and speed up processing.",
+  "intermediate_outputs": {
+    "chain_of_thought": "Step-by-step evaluation:\n\n1) Does the model's output contain the issue described (a mistake in the ffmpeg command, or not matching user requirements)?\n- The user said they have a file with 4 video streams and 6 audio streams and want to select \"video stream 8\" and \"audio stream 12.\" On its face, this is inconsistent—if there are just 4 video and 6 audio streams, there cannot be a video stream 8 or audio stream 12 (since indices would be 0–3 and 0–5, respectively). However, the model took the user literally and used `-map 0:v:8` and `-map 0:a:12`. ffmpeg would error with “Stream specifier 'v:8' in -map matches no streams.” The generated command would not work for the input described.\n\n2) Is the model's output similar to this example of a failing output?\n- Yes, in the sense that it produces a command that would not work with the user's file as described (invalid stream indices), just like the failure example uses a bogus preset.\n\n3) Considering the above, does the model's output contain the issue described?\n- Yes, the output does contain the issue: the command it generates will not work correctly (invalid stream indices).\n\nFinal answer: **Fail**"
+  },
+  "scores": {
+    "correctness": 0.0
+  },
+  "task_run_usage": {
+    "input_tokens": 1009,
+    "output_tokens": 233,
+    "total_tokens": 1242,
+    "cost": 0.006522
+  },
+  "model_type": "eval_run"
+}

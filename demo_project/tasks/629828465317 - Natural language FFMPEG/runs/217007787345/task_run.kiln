@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "217007787345",
+  "created_at": "2025-07-24T20:38:27.801775",
+  "created_by": "scosman",
+  "input": "Burn two subtitle tracks (primary: srt, secondary: ass) onto comparison.mp4 in sequence for a comparison video.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "269886586195",
+    "path": null,
+    "created_at": "2025-07-24T20:38:27.801749",
+    "created_by": "scosman",
+    "output": "To burn two subtitle tracks sequentially (first the SRT, then the ASS) onto the video, you need to overlay one subtitle track after the other for the appropriate durations. Since ffmpeg can't directly \"switch\" burned-in subtitles during playback, the common approach is to create two video segments, each with one subtitle burned in, then concatenate them.\n\nHere's the step-by-step approach:\n\n1. Burn the SRT subtitles on the first part.\n2. Burn the ASS subtitles on the second part.\n3. Concatenate the two parts into one final video.\n\nAssumptions:\n- The durations for each subtitle segment are split equally (or you can specify durations).\n- The video codec and audio codec copying is assumed unless re-encoding is required (for burning subtitles, re-encoding is needed).\n- We assume the input video is named `comparison.mp4`.\n- Both subtitle files are named `subs1.srt` and `subs2.ass` respectively.\n- The output video is `output.mp4`.\n\nFirst, find the duration of the input video to split:\n\n```bash\nffprobe -v error -show_entries format=duration -of csv=p=0 comparison.mp4\n```\n\nSuppose the duration is D seconds.\n\nThen you can split D into two parts (D1 and D2), for example D1 = D/2 and D2 = D - D1.\n\nNow:\n\n**Step 1:** Create two segments with subtitles burned in.\n\n```bash\n# Create first half with SRT subtitles burned in\nffmpeg -i comparison.mp4 -ss 0 -t D1 -vf \"subtitles=subs1.srt\" -c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 128k part1.mp4\n\n# Create second half with ASS subtitles burned in\nffmpeg -i comparison.mp4 -ss D1 -t D2 -vf \"subtitles=subs2.ass\" -c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 128k part2.mp4\n```\n\n**Step 2:** Concatenate both parts.\n\nFor MP4 concatenation, the easiest way is to use TS muxing or use format concat if the codecs are the same.\n\nUsing TS intermediate files:\n\n```bash\nffmpeg -i part1.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts part1.ts\nffmpeg -i part2.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts part2.ts\nffmpeg -i \"concat:part1.ts|part2.ts\" -c copy -bsf:a aac_adtstoasc output.mp4\n```\n\n---\n\nFor convenience, you can automate the duration calculation and splitting in a shell script.\n\n---\n\n### Summary\n\nSince burning two subtitle tracks sequentially requires segmenting and concatenating, here's an example assuming the duration is 60 seconds (split into two 30-second parts):\n\n```bash\n# First half with SRT subtitles\nffmpeg -i comparison.mp4 -ss 0 -t 30 -vf \"subtitles=subs1.srt\" -c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 128k part1.mp4\n\n# Second half with ASS subtitles\nffmpeg -i comparison.mp4 -ss 30 -t 30 -vf \"subtitles=subs2.ass\" -c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 128k part2.mp4\n\n# Convert to TS for concatenation\nffmpeg -i part1.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts part1.ts\nffmpeg -i part2.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts part2.ts\n\n# Concatenate TS files\nffmpeg -i \"concat:part1.ts|part2.ts\" -c copy -bsf:a aac_adtstoasc output.mp4\n```\n\nThis method ensures each subtitle style is burned in for its segment, allowing a proper side-by-side comparison within a single video file.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 901,
+    "total_tokens": 1499,
+    "cost": 0.0016808
+  },
+  "model_type": "task_run"
+}

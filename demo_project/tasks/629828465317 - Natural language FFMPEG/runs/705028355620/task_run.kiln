@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "705028355620",
+  "created_at": "2025-07-24T18:10:14.137180",
+  "created_by": "scosman",
+  "input": "I have a movie shot at 24fps and need a duplicate at 48fps for converting it into a slow-motion clip without changing it visually.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "452490611235",
+    "path": null,
+    "created_at": "2025-07-24T18:10:14.137154",
+    "created_by": "scosman",
+    "output": "To create a 48fps duplicate from a 24fps source for smooth slow-motion processing (e.g., if you intend to slow it down to half speed later), you must interpolate frames, rather than simply duplicating them, for a natural look. Using the ffmpeg minterpolate filter achieves optical flow-based interpolation, generating new in-between frames for a fluid motion appearance.\n\n- -filter:v \"minterpolate=fps=48\": Uses motion interpolation to generate intermediate frames, yielding visually smooth 48fps output.\n- -vsync vfr: Ensures the output has a variable framerate if needed, but with interpolation this usually matches the set fps.\n- -c:a copy: Copies the audio stream intact. If you intend to stretch the video for slow-motion, later stretch the audio accordingly, or mute it, as it would get out of sync.\n\nAssumption: You want a 48fps video you can later slow down to 24fps for smooth slow-motion playback.\n\n```bash\nffmpeg -i input.mp4 -filter:v \"minterpolate=fps=48\" -c:a copy output_48fps.mp4\n```\n\nThis command will produce a visually correct 48fps version using frame interpolation, optimal for later slow-motion conversion.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 606,
+    "output_tokens": 257,
+    "total_tokens": 863,
+    "cost": 0.003268
+  },
+  "model_type": "task_run"
+}

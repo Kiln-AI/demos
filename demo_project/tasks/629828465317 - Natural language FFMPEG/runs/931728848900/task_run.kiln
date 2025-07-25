@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "931728848900",
+  "created_at": "2025-07-24T20:39:30.587563",
+  "created_by": "scosman",
+  "input": "I have a video that’s variable frame rate and I want to convert it to a constant 25 fps MOV, with ProRes codec, and keep as much quality as possible.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "117910295833",
+    "path": null,
+    "created_at": "2025-07-24T20:39:30.587524",
+    "created_by": "scosman",
+    "output": "To convert a variable frame rate video to a constant frame rate of 25 fps and encode it to an Apple ProRes MOV file with maximum quality, you need to:\n\n- Force the output frame rate to 25 fps using `-r 25`.\n- Use the `prores_ks` encoder, which is a high-quality ProRes encoder supported in ffmpeg.\n- Set the ProRes profile to `hq` (high quality) for near lossless quality.\n- Use `-vsync cfr` to ensure constant frame rate output to avoid timestamp issues.\n- Copy audio or re-encode if needed (default here will copy).\n\nThis command maintains maximum visual quality while ensuring the frame rate is the requested constant 25 fps and the container is MOV.\n\n```bash\nffmpeg -i input.mp4 -r 25 -c:v prores_ks -profile:v 3 -pix_fmt yuv422p10le -vsync cfr -c:a copy output.mov\n```\n\nExplanation:\n- `-r 25` sets the output frame rate.\n- `-c:v prores_ks` uses the ProRes encoder.\n- `-profile:v 3` sets the \"hq\" profile, optimal for high-quality.\n- `-pix_fmt yuv422p10le` is the native pixel format for ProRes HQ, preserving color and bit depth.\n- `-vsync cfr` ensures constant frame rate muxing.\n- `-c:a copy` copies the original audio stream to avoid quality loss and speed up processing.\n  \nAssumption: The input file is named `input.mp4`; you can replace it with your filename. If audio re-encoding or adjustments are needed, change the audio codec accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 610,
+    "output_tokens": 356,
+    "total_tokens": 966,
+    "cost": 0.0008136
+  },
+  "model_type": "task_run"
+}

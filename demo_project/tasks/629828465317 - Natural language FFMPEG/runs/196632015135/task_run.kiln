@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "196632015135",
+  "created_at": "2025-07-24T20:26:27.401675",
+  "created_by": "scosman",
+  "input": "How can I trim 10 seconds from the start of every .mov file in a directory and overwrite the originals?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "978815959145",
+    "path": null,
+    "created_at": "2025-07-24T20:26:27.401614",
+    "created_by": "scosman",
+    "output": "To batch-trim 10 seconds from the start of every `.mov` file in a directory and overwrite the originals, you can use a shell loop with `ffmpeg`'s `-ss` option for fast seeking. The `-ss 10` before `-i` enables input seeking, which is efficient for trimming from the start. Using `-c copy` allows stream copying without re-encoding for speed and quality preservation, but it only works if the format and codecs allow cutting at arbitrary points (keyframes). If you want exact trimming, re-encoding is required (slower but accurate).\n\nSince you want to overwrite the originals, the output needs to go to a temporary file first, then replace the original to avoid data loss if something goes wrong.\n\nHere's a robust bash script snippet for batch trimming, with safe overwrite:\n\n```bash\nfor f in *.mov; do\n  # Create temporary output filename\n  tmp=\"${f%.mov}_trimmed.mov\"\n  \n  # Trim 10 seconds from start using stream copy\n  ffmpeg -ss 10 -i \"$f\" -c copy -avoid_negative_ts 1 \"$tmp\"\n  \n  # If trimming succeeds, overwrite original\n  if [ $? -eq 0 ]; then\n    mv -f \"$tmp\" \"$f\"\n  else\n    echo \"Failed to process $f\"\n    rm -f \"$tmp\"\n  fi\ndone\n```\n\nExplanation:\n\n- `-ss 10` before `-i` enables fast seeking to 10 seconds.\n- `-c copy` copies streams without re-encoding.\n- `-avoid_negative_ts 1` helps fix timestamp issues when trimming.\n- Temporary files avoid corrupting originals in failure.\n- `mv -f` replaces original only if successful.\n\nIf you need frame-accurate trimming or your files' codecs or structure don't support stream copy cutting, replace `-c copy` with re-encoding parameters, for example:\n\n```bash\nffmpeg -ss 10 -i \"$f\" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k \"$tmp\"\n```\n\nThat will ensure exact cuts at the cost of longer processing and potential quality loss. For this batch automation, the stream copy method is recommended if it works with your files.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 481,
+    "total_tokens": 1078,
+    "cost": 0.0010084
+  },
+  "model_type": "task_run"
+}

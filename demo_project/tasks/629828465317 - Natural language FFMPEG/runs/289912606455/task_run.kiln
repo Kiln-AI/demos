@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "289912606455",
+  "created_at": "2025-07-24T18:11:39.721600",
+  "created_by": "scosman",
+  "input": "I need to convert my video file example.mov to a web-compatible format with H.265 video encoding for smaller file sizes.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Optimizing Encoding for Browser Compatibility"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "152915743777",
+    "path": null,
+    "created_at": "2025-07-24T18:11:39.721573",
+    "created_by": "scosman",
+    "output": "For optimal browser compatibility, the H.265 (HEVC) codec is more limited than H.264: as of 2024, most browsers (like Chrome, Firefox) do not support HEVC playback natively, but it is supported in Safari and Edge. If you specifically need H.265 for its efficiency and accept this limitation (e.g., targeting Safari users or hardware playback), use the MP4 container with HEVC video and AAC audio.\n\nHere’s an ffmpeg command for that:\n\n- -c:v libx265 uses the H.265/HEVC encoder for better compression.\n- -crf 28 sets the output quality; lower means better quality. For HEVC, values 24–28 are typical (28 is a good balance for web).\n- -preset medium balances encoding speed and efficiency (use slow or faster as needed).\n- -c:a aac -b:a 128k encodes audio in AAC, compatible with browsers.\n- -pix_fmt yuv420p ensures compatibility.\n\n```bash\nffmpeg -i example.mov -c:v libx265 -preset medium -crf 28 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart example_h265.mp4\n```\n\nAssumption: You are aware most browsers may not support playback of H.265 content, except Safari and certain platforms. H.264 is generally recommended for widest compatibility.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 296,
+    "total_tokens": 897,
+    "cost": 0.00357
+  },
+  "model_type": "task_run"
+}

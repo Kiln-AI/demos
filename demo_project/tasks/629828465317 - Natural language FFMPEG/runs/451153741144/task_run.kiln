@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "451153741144",
+  "created_at": "2025-07-24T20:36:25.095609",
+  "created_by": "scosman",
+  "input": "How do I resize a video and extract a 300x300 section from the top right corner?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "281795130869",
+    "path": null,
+    "created_at": "2025-07-24T20:36:25.095482",
+    "created_by": "scosman",
+    "output": "To resize a video and then extract a 300x300 pixel section from the top right corner, you can use two filters in sequence: `scale` to resize the entire video, and `crop` to extract the desired section.\n\nKey points:\n- `scale=w:h` resizes the video to width=w and height=h.\n- `crop=w:h:x:y` extracts a rectangle of width w and height h, starting at coordinates (x,y).\n- For the top right corner, x = (scaled_width - crop_width), y = 0.\n- Replace `scaled_width` with the width after scaling to correctly position the crop filter.\n\nAssuming you want to first resize the video to a known resolution (e.g., 1280x720) and then crop 300x300 pixels from the top right:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=1280:720,crop=300:300:980:0\" -c:a copy output.mp4\n```\n\nExplanation:\n- `scale=1280:720` resizes video to 1280x720.\n- `crop=300:300:980:0` crops a 300x300 box starting at x=1280-300=980, y=0 (top right corner).\n- `-c:a copy` copies audio stream directly.\n\nIf your input video has a different original resolution or you want to scale to a dynamic width preserving the aspect ratio, replace the scale with your desired resolution or use expressions.\n\nExample with dynamic scaling to height 720 keeping aspect ratio (width calculated automatically):\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=-1:720,crop=300:300:iw-300:0\" -c:a copy output.mp4\n```\n\nHere, `iw` refers to the input width after scaling. `iw-300` moves the crop box to the top right corner dynamically. This is more flexible for videos with varying sizes.\n\nChoose the approach that fits your use case.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 417,
+    "total_tokens": 1011,
+    "cost": 0.0009048
+  },
+  "model_type": "task_run"
+}

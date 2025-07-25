@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "890450855801",
+  "created_at": "2025-07-24T20:27:49.262626",
+  "created_by": "scosman",
+  "input": "How do I normalize the audio volume level in a video?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "340110697642",
+    "path": null,
+    "created_at": "2025-07-24T20:27:49.262600",
+    "created_by": "scosman",
+    "output": "To normalize audio volume in a video using ffmpeg, you can use the `loudnorm` filter, which implements EBU R128 loudness normalization. This is an industry-standard method to ensure consistent loudness across different audio tracks.\n\nKey points:\n- The `loudnorm` filter measures and adjusts audio according to loudness targets (integrated, loudness range, true peak).\n- You can run a 2-pass operation: first pass to analyze loudness, second pass to apply normalization with measured values for precise results.\n- For a quick single-pass normalization, ffmpeg uses default target values (−23 LUFS integrated loudness).\n\nHere is a basic 1-pass command that normalizes audio while copying the video stream:\n\n```bash\nffmpeg -i input.mp4 -af loudnorm -c:v copy output.mp4\n```\n\nFor more accurate normalization, use a two-pass approach:\n\n**First pass (analyze loudness):**\n\n```bash\nffmpeg -i input.mp4 -af loudnorm=print_format=json -f null -\n```\n\nNote the measured values `input_i`, `input_tp`, `input_lra`, `input_thresh`, and `offset` outputted.\n\n**Second pass (apply normalization with measured values):**\n\n```bash\nffmpeg -i input.mp4 -af loudnorm=linear=true:measured_i=INPUT_I:measured_tp=INPUT_TP:measured_lra=INPUT_LRA:measured_thresh=INPUT_THRESH:offset=OFFSET -c:v copy output_normalized.mp4\n```\n\nReplace `INPUT_I`, `INPUT_TP`, `INPUT_LRA`, `INPUT_THRESH`, and `OFFSET` with actual values from the first pass.\n\nThis method preserves video quality (`-c:v copy`), performs loudness normalization compliant with broadcast standards, and ensures audio consistency.\n\nIf you want to re-encode both audio and video (for instance, to change codecs), adjust the command accordingly, but the above is best to avoid unnecessary re-encoding of video.\n\n---\n\nAssumptions: The input file is named `input.mp4` and you want to keep original video quality intact. If you want another codec or container, specify accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 586,
+    "output_tokens": 452,
+    "total_tokens": 1038,
+    "cost": 0.0009576
+  },
+  "model_type": "task_run"
+}

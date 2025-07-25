@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "171005874292",
+  "created_at": "2025-07-23T12:01:17.380240",
+  "created_by": "scosman",
+  "dataset_id": "423614201433",
+  "task_run_config_id": "133430092079",
+  "eval_config_eval": false,
+  "input": "Can you double the speed of `fast_forward.mp4` but keep the original audio pitch?",
+  "output": "To double the playback speed of a video while maintaining the original audio pitch, you can use `setpts` to speed up the video and `atempo` for the audio. Since `atempo` supports a maximum speed of 2.0 per filter instance, for doubling speed, a single `atempo=2.0` suffices. \n\nAssuming the input filename is `fast_forward.mp4` and you want the output to be `fast_forward_2x.mp4`, here's how to do it:\n\n- `setpts=0.5*PTS` doubles the video speed by halving the presentation timestamps.\n- `atempo=2.0` doubles the audio speed while preserving pitch.\n- Make sure to copy codecs unless re-encoding is necessary for compatibility.\n\n```bash\nffmpeg -i fast_forward.mp4 -filter_complex \"[0:v]setpts=0.5*PTS[v];[0:a]atempo=2.0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -c:a aac fast_forward_2x.mp4\n```\n\nThis command re-encodes both video and audio to ensure proper synchronization and compatibility. If the codecs are compatible and you prefer copying streams, re-encoding can be skipped—but pitch preservation in that case is complex.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does not contain the issue described. The generated `ffmpeg` command correctly implements the user's request to double the playback speed of the video while maintaining the original audio pitch. It uses the appropriate filters (`setpts` for the video and `atempo` for the audio) as specified by `ffmpeg` documentation.\n\n2) The model's output is not similar to the failure example provided. The command correctly utilizes valid options and parameters. Unlike the failure example with the non-existent preset, this command assembles valid filters and codec mappings.\n\n3) The command presented does not break any requirements dictated in the `ffmpeg` man page. All the options used, such as `-filter_complex`, `setpts`, `atempo`, and codec mappings, adhere to the stipulated format and usage of `ffmpeg`.\n\n4) The output does not contain the issue described, as it generates a valid command that meets the user’s request accurately. Therefore, it should pass this evaluation."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 431,
+    "output_tokens": 274,
+    "total_tokens": 705,
+    "cost": 0.0001527
+  },
+  "model_type": "eval_run"
+}

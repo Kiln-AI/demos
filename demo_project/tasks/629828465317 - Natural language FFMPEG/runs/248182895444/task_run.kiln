@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "248182895444",
+  "created_at": "2025-07-24T20:26:54.919714",
+  "created_by": "scosman",
+  "input": "Is there an easy way to change the sample rate of all mp3 files in a folder to 48 kHz?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "259368548779",
+    "path": null,
+    "created_at": "2025-07-24T20:26:54.919689",
+    "created_by": "scosman",
+    "output": "To batch convert the sample rate of all mp3 files in a folder to 48 kHz, you can use a simple shell loop combined with ffmpeg. The key parameters are:\n\n- `-ar 48000`: sets the audio sample rate to 48 kHz.\n- You typically want to preserve other audio stream properties like codec (MP3) and bitrate or explicitly set them.\n- It's useful to append or overwrite files carefully to avoid data loss.\n\nHere's an example bash command that processes all MP3 files in the current directory, converting their sample rate to 48 kHz and saving them with a suffix \"_48k\":\n\n```bash\nfor f in *.mp3; do\n  ffmpeg -i \"$f\" -ar 48000 -codec:a libmp3lame -qscale:a 2 \"${f%.mp3}_48k.mp3\"\ndone\n```\n\nExplanation:\n\n- `for f in *.mp3; do ... done`: loops through all mp3 files.\n- `-i \"$f\"` input file.\n- `-ar 48000` changes sample rate.\n- `-codec:a libmp3lame` ensures output is MP3 encoded.\n- `-qscale:a 2` selects a good variable bitrate quality for MP3 (~190 kbps).\n- `\"${f%.mp3}_48k.mp3\"` outputs to a new file with suffix \"_48k\" to avoid overwriting originals.\n\nThis approach automates the batch processing safely and efficiently. If you prefer to overwrite originals, replace the output filename with the input filename, but be careful to backup your files first.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 333,
+    "total_tokens": 931,
+    "cost": 0.000772
+  },
+  "model_type": "task_run"
+}

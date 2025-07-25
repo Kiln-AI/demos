@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "225739019689",
+  "created_at": "2025-07-24T20:24:12.861684",
+  "created_by": "scosman",
+  "input": "My out.mov file is oddly sized (1013x773). Conform it to 1280x720 with cropping or padding as needed.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "256422526041",
+    "path": null,
+    "created_at": "2025-07-24T20:24:12.861598",
+    "created_by": "scosman",
+    "output": "To conform your 1013x773 video to the standard 1280x720 resolution, you can use a combination of cropping and padding within the `ffmpeg` filtergraph. The goal is to preserve the original aspect ratio and avoid distortion:\n\n- First, scale the video to fit within 1280x720 while maintaining aspect ratio (`scale=w:h:force_original_aspect_ratio=decrease`).\n- Then, pad the video to exactly 1280x720 if it doesn’t fill the frame (`pad=1280:720:(ow-iw)/2:(oh-ih)/2`).\n- Cropping is not always necessary if padding can fill the difference. But if you want to crop to fill the frame fully (cropping excess), use `force_original_aspect_ratio=increase` followed by cropping. Here, I’ll show the padding method since it preserves full content.\n\nThis method ensures the output is exactly 1280x720, content centered, without stretching.\n\n```bash\nffmpeg -i out.mov -vf \"scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2\" -c:a copy output_1280x720.mov\n```\n\nExplanation:\n- `scale=1280:720:force_original_aspect_ratio=decrease` scales the video to fit inside 1280x720 without distortion.\n- `pad=1280:720:(ow-iw)/2:(oh-ih)/2` adds black bars (if needed) centered horizontally and vertically.\n- `-c:a copy` copies the audio stream without re-encoding to save time.\n\nIf you prefer cropping to fill the frame (some content may be cut off), let me know, and I can provide that command as well.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 377,
+    "total_tokens": 980,
+    "cost": 0.0008444
+  },
+  "model_type": "task_run"
+}

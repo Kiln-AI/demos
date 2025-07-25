@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "685101600685",
+  "created_at": "2025-07-24T18:10:09.396691",
+  "created_by": "scosman",
+  "input": "I have a 1080i interlaced video that I want to deinterlace and convert to 1080p.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "302593319979",
+    "path": null,
+    "created_at": "2025-07-24T18:10:09.396640",
+    "created_by": "scosman",
+    "output": "To convert an interlaced 1080i video to progressive 1080p, you'll want to use a high-quality deinterlacing filter. FFmpeg's yadif (Yet Another DeInterlacing Filter) is suitable and commonly used. By default, yadif will process fields to reconstruct progressive frames. \n\nAssumptions:\n- Your input file is called input.ts (common for 1080i sources), but adjust as needed.\n- You want to keep the original frame rate (yadif=mode=1:parity=-1:deint=1 automatically doubles frame rate; if you want to keep original, use mode=0).\n- Output will be H.264 with AAC audio for broad compatibility.\n\nHere’s how you can do it:\n\n- The -vf yadif filter deinterlaces the video.\n- -c:v libx264 encodes video with H.264.\n- -crf 18 gives high-quality output (you can adjust for higher compression/lower quality).\n- -c:a aac encodes the audio as AAC.\n- -preset slow favors quality and compression efficiency.\n- -pix_fmt yuv420p for compatibility.\n- -movflags +faststart optimizes MP4 for streaming.\n\n```bash\nffmpeg -i input.ts -vf yadif=mode=0:parity=-1:deint=0 -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k -pix_fmt yuv420p -movflags +faststart output_1080p.mp4\n```\n\n- mode=0 deinterlaces at the original frame rate (outputs 25 or 29.97 fps for 50i/60i sources). If you want double frame rate (for smoother playback), set mode=1.\n- parity=-1 auto-detects field order.\n\nAdjust parameters as needed for your source and quality preferences.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 398,
+    "total_tokens": 1000,
+    "cost": 0.004388
+  },
+  "model_type": "task_run"
+}

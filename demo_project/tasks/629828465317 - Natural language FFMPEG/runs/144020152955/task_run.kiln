@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "144020152955",
+  "created_at": "2025-07-24T20:26:23.134889",
+  "created_by": "scosman",
+  "input": "Extract only SDH (Subtitles for the Deaf and Hard of Hearing) from video.mkv.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "410378139884",
+    "path": null,
+    "created_at": "2025-07-24T20:26:23.134864",
+    "created_by": "scosman",
+    "output": "To extract only the SDH subtitles from a Matroska video file (video.mkv), you first need to identify which subtitle stream corresponds to SDH. This is usually indicated by the stream's language metadata or its title containing \"SDH.\" You'll use `ffprobe` to find the stream index, then extract that particular subtitle stream using `ffmpeg`.\n\nAssuming the SDH subtitles are in the subtitles stream with the title or language tag indicating \"SDH,\" here's a two-step process:\n\n1. Use `ffprobe` to list streams and find the SDH subtitles stream index.\n2. Use `ffmpeg` to extract only that subtitle stream into a separate subtitle file (e.g., in `.srt` or `.ass` format).\n\nExample commands:\n\n```bash\nffprobe -v error -select_streams s -show_entries stream=index:stream_tags=title,language -of csv=p=0 video.mkv\n```\n\nLook for a subtitle stream with a \"title\" or \"language\" tag like \"SDH,\" then note its stream index (for example `2`).\n\nThen extract that SDH subtitle stream by specifying the stream index (`-map 0:s:<index>`) and copy it without re-encoding:\n\n```bash\nffmpeg -i video.mkv -map 0:s:2 -c:s copy SDH_subtitles.srt\n```\n\nIf the subtitles are in a format other than SRT (e.g., ASS), use the appropriate extension `.ass`. If subtitle streams are embedded in bitstream formats, use `-c:s copy` to avoid re-encoding and preserve quality.\n\nIf you are unsure of the exact stream index, use the first command to identify it precisely before extraction. This approach ensures you extract only the desired SDH subtitle stream. \n\n---\n\nIf you'd like a fully automated extraction (assuming only one SDH stream), you can parse and extract all subtitles with \"SDH\" in their title or language, but manual identification is more reliable for precise extraction.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 414,
+    "total_tokens": 1007,
+    "cost": 0.0008996
+  },
+  "model_type": "task_run"
+}

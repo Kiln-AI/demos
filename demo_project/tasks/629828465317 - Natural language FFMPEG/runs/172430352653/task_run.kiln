@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "172430352653",
+  "created_at": "2025-07-24T20:24:27.873610",
+  "created_by": "scosman",
+  "input": "Given a 2K video (2560x1440), scale it down to 720p and upload-ready mp4 format.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "741194793656",
+    "path": null,
+    "created_at": "2025-07-24T20:24:27.873586",
+    "created_by": "scosman",
+    "output": "To scale down a 2K (2560x1440) video to 720p and encode it into an upload-ready MP4 format, you want to maintain the aspect ratio while resizing the height to 720 pixels. Since the original resolution is 2560x1440 (16:9), resizing height to 720 will result in a width of 1280, which is the standard 720p resolution (1280x720).\n\nKey points in the command:\n- `-vf scale=-2:720` scales the height to 720, adjusting width to maintain aspect ratio and ensuring it’s divisible by 2 (libx264 requirement).\n- `-c:v libx264` uses the H.264 codec for wide compatibility.\n- `-preset slow` or `-preset medium` balances encoding speed and compression efficiency; here, choose `medium` for a good default.\n- `-crf 23` sets the quality level (lower means better quality).\n- `-c:a aac -b:a 128k` encodes audio with AAC at 128 kbps.\n- `-pix_fmt yuv420p` ensures broad compatibility.\n- `-movflags +faststart` enables streaming by moving metadata at file start.\n\nHere is the recommended ffmpeg command:\n\n```bash\nffmpeg -i input_2k.mp4 -vf scale=-2:720 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output_720p.mp4\n```\n\nThis will produce a high-quality 1280x720 MP4 suitable for uploading and streaming.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 352,
+    "total_tokens": 953,
+    "cost": 0.0008036
+  },
+  "model_type": "task_run"
+}

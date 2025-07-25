@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "228270248545",
+  "created_at": "2025-07-24T20:23:16.044881",
+  "created_by": "scosman",
+  "input": "Turn a PAL .avi (palvideo.avi) into NTSC .mpg for DVD authoring.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "335200741309",
+    "path": null,
+    "created_at": "2025-07-24T20:23:16.044856",
+    "created_by": "scosman",
+    "output": "To convert a PAL AVI video to NTSC MPG format suitable for DVD authoring, you need to perform these key steps:\n\n- Convert the frame rate from PAL's 25 fps to NTSC's 29.97 fps.\n- Change the video resolution from PAL's 720x576 to NTSC's 720x480.\n- Use MPEG-2 video codec (`mpeg2video`), which is standard for DVD video.\n- Use MPEG-1 Layer II audio codec (`mp2`), which is typical for DVDs.\n- Set the appropriate aspect ratio and pixel format for DVD (usually 720x480 with 4:3 or 16:9 display aspect ratio).\n- Use the proper DVD-compatible GOP size and bitrate (adjusted to your needs).\n\nHere’s a command example that assumes you want 29.97 fps (NTSC standard), 720x480 resolution, and maintains a good quality bitrate for DVD:\n\n```bash\nffmpeg -i palvideo.avi \\\n  -vf \"scale=720:480,format=yuv420p\" \\\n  -r 29.97 \\\n  -c:v mpeg2video -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 1835k \\\n  -muxrate 8000k \\\n  -c:a mp2 -b:a 192k \\\n  -aspect 4:3 \\\n  output_ntsc.mpg\n```\n\nExplanation:\n- `-vf \"scale=720:480,format=yuv420p\"` resizes video to NTSC DVD resolution and ensures pixel format is compatible.\n- `-r 29.97` changes the frame rate to NTSC standard.\n- `-c:v mpeg2video` uses MPEG-2 for DVD.\n- `-b:v 6000k` sets video bitrate suitable for DVD quality.\n- `-minrate`, `-maxrate`, and `-bufsize` control bitrate variability for consistent DVD playback.\n- `-muxrate` sets overall muxing bitrate.\n- `-c:a mp2 -b:a 192k` sets audio codec and bitrate suitable for DVD.\n- `-aspect 4:3` defines the display aspect ratio; if your source is widescreen, change to `16:9`.\n\nAdjust bitrates or aspect ratio depending on your exact source and DVD authoring requirements.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 495,
+    "total_tokens": 1090,
+    "cost": 0.00103
+  },
+  "model_type": "task_run"
+}

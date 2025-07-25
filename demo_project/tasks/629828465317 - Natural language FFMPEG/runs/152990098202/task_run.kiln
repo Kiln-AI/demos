@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "152990098202",
+  "created_at": "2025-07-24T20:27:28.794519",
+  "created_by": "scosman",
+  "input": "I have a video with subtitles burned in. Is there a way to remove them or blur them out?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "286460507726",
+    "path": null,
+    "created_at": "2025-07-24T20:27:28.794493",
+    "created_by": "scosman",
+    "output": "Burned-in subtitles are part of the video image itself, so they cannot be simply \"removed\" as if they were separate subtitle streams. However, you can try to obscure or blur the subtitle area by applying a filter over the region where the subtitles typically appear.\n\nThe most common technique is to detect the subtitle area (usually the bottom portion of the video) and blur that part with a boxblur or similar filter. This will make the subtitles less readable but won't restore the original image behind them.\n\nTo do this, you need to:\n\n- Identify the subtitle area coordinates (usually the region near the bottom of the video).\n- Apply a blur (boxblur or gblur) to just that region by using the `crop` and `overlay` filters or the `delogo` filter.\n  \nIf the subtitles are in a fixed position and size, you can use the `delogo` filter which is intended for logos but works well for blocking subtitles.\n\nHere is an example ffmpeg command that blurs a rectangular area at the bottom of the video (you may need to adjust the x,y,w,h parameters for your subtitle area):\n\n```bash\nffmpeg -i input.mp4 -vf \"delogo=x=0:y=ih-120:w=iw:h=120:show=0\" -c:a copy output.mp4\n```\n\nExplanation:\n\n- `delogo` is used here to blur the bottom 120 pixels across the entire width.\n- `x=0:y=ih-120:w=iw:h=120` defines the rectangle at the bottom.\n- `show=0` disables the red rectangle visualization.\n- `-c:a copy` copies the audio stream without re-encoding.\n\nIf you want a gentler blur instead of complete blocking, you can use a blend of the blurred region and the original using the `boxblur` filter in combination with cropping and overlay:\n\n```bash\nffmpeg -i input.mp4 -filter_complex \"\\\n[0:v]crop=iw:120:0:ih-120,boxblur=10:1[blurred]; \\\n[0:v][blurred]overlay=0:ih-120\" -c:a copy output.mp4\n```\n\nExplanation:\n\n- This crops the bottom 120 pixels and applies a strong blur.\n- Then overlays the blurred region back onto the original video at the same position.\n- This visually blurs only the subtitle area, leaving the rest untouched.\n\nNote: you will have to adjust the height (120 in examples) depending on your subtitle size and position.\n\nTrue removal of burned-in subtitles requires complex frame-by-frame inpainting or AI-based restoration, which is beyond basic ffmpeg capabilities.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 546,
+    "total_tokens": 1141,
+    "cost": 0.0011116
+  },
+  "model_type": "task_run"
+}

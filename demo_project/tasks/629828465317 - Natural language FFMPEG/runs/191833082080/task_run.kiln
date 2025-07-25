@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "191833082080",
+  "created_at": "2025-07-24T20:23:03.473991",
+  "created_by": "scosman",
+  "input": "Change video.mov into a MP4 HD video but keep the file size under 100MB.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "131574454328",
+    "path": null,
+    "created_at": "2025-07-24T20:23:03.473965",
+    "created_by": "scosman",
+    "output": "To convert video.mov into an HD MP4 while keeping the file size under 100MB, we can use two-pass encoding with libx264 to optimize video quality. HD usually refers to 1280x720 resolution. We'll scale the video accordingly and set a target bitrate calculated to meet the 100MB file size limit. Audio bitrate will be set reasonably to preserve quality but save space.\n\nCalculating target bitrate:\n- File size target: 100MB = 100 * 8 = 800 megabits total\n- Assume video length is unknown, so the command includes a placeholder {duration} you must replace with your clip length in seconds.\n- Target video bitrate (bps) = (Total bits - audio bits) / duration\n- Audio bitrate set at 128k (128,000 bps)\n- So to automate: bitrate = (800,000,000 - 128,000 * duration) / duration ≈ (800,000,000 / duration) - 128,000\n\nReplace {duration} with your video duration in seconds to get appropriate bitrate.\n\nWe do two-pass encoding for best video quality at the target bitrate (-b:v), scaling video to 720p height preserving aspect ratio, and use faststart for streaming optimization. Audio encoded with AAC at 128k.\n\n```bash\n# First pass\nffmpeg -y -i video.mov -vf scale=-2:720 -c:v libx264 -b:v {video_bitrate} -pass 1 -preset medium -an -f mp4 /dev/null\n\n# Second pass\nffmpeg -i video.mov -vf scale=-2:720 -c:v libx264 -b:v {video_bitrate} -pass 2 -preset medium -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nNote: \n- Replace {video_bitrate} with the calculated bitrate value in bps, e.g. 1500000 for 1.5 Mbps.\n- Replace {duration} with actual duration in seconds before calculating bitrate.\n- The `/dev/null` discard output line works on Unix-like systems; on Windows, use `NUL`.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 449,
+    "total_tokens": 1041,
+    "cost": 0.0009552
+  },
+  "model_type": "task_run"
+}

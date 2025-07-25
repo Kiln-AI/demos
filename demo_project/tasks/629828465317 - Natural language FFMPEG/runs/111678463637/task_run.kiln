@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "111678463637",
+  "created_at": "2025-07-24T20:26:23.701863",
+  "created_by": "scosman",
+  "input": "Embed multiple language subtitles in input.mov with default track set to Spanish.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "192837263271",
+    "path": null,
+    "created_at": "2025-07-24T20:26:23.701837",
+    "created_by": "scosman",
+    "output": "To embed multiple language subtitle tracks into a video file and set the default subtitle track to Spanish, you need to include the subtitle files as separate streams and adjust the metadata to indicate which subtitle stream is the default.\n\nAssumptions:\n- The subtitle files exist, e.g., `eng.srt` for English, `spa.srt` for Spanish, and possibly others.\n- The container format supports multiple subtitle tracks (MOV container can handle subtitle streams).\n- We want to map both subtitles into the output with Spanish as the default.\n\nTechnique:\n- Use `-i` multiple times to input subtitle files.\n- Use `-c copy` to avoid re-encoding the video and audio streams.\n- Use `-map` to include all necessary streams.\n- Use `-disposition:0` and `-disposition:1` (or appropriate stream specifiers) to set default and forced flags. The subtitle stream for Spanish will be set as default.\n- Set language metadata for subtitle streams for clarity.\n\nExample command with two subtitles (English and Spanish):\n\n```bash\nffmpeg -i input.mov -i eng.srt -i spa.srt \\\n  -map 0:v -map 0:a -map 1 -map 2 \\\n  -c copy \\\n  -metadata:s:s:0 language=eng \\\n  -metadata:s:s:1 language=spa \\\n  -disposition:s:0 0 \\\n  -disposition:s:1 default \\\n  output.mov\n```\n\nExplanation:\n- `-map 0:v -map 0:a` maps original video and audio streams.\n- `-map 1` maps the first subtitle input (English).\n- `-map 2` maps the second subtitle input (Spanish).\n- `-metadata:s:s:0 language=eng` and `-metadata:s:s:1 language=spa` set language codes for the subtitles.\n- `-disposition:s:1 default` marks the Spanish subtitles as the default subtitle track.\n- `-disposition:s:0 0` clears any disposition flags on the English subtitles.\n- `-c copy` avoids re-encoding video and audio.\n\nAdjust the subtitle filenames and count as needed for your case. If you have more subtitle files, just add them similarly with `-i` and `-map`.\n\nIf your subtitle files are not in SRT, specify codec for subtitles with `-c:s mov_text` (for MOV-compatible text subtitles) or convert accordingly. Assuming SRT is fine here. \n\n---\n\nIf you want to explicitly specify subtitle codec for MOV container (which often requires `mov_text`), you can do:\n\n```bash\nffmpeg -i input.mov -i eng.srt -i spa.srt \\\n  -map 0:v -map 0:a -map 1 -map 2 \\\n  -c:v copy -c:a copy -c:s mov_text \\\n  -metadata:s:s:0 language=eng \\\n  -metadata:s:s:1 language=spa \\\n  -disposition:s:0 0 \\\n  -disposition:s:1 default \\\n  output.mov\n```\n\nThis ensures subtitles are converted to MOV-compatible text subtitles.\n\n---\n\nSummary: This command embeds multiple subtitle tracks with Spanish set as default, keeping other streams untouched for a quick and codec-friendly workflow.\n\n```bash\nffmpeg -i input.mov -i eng.srt -i spa.srt \\\n  -map 0:v -map 0:a -map 1 -map 2 \\\n  -c:v copy -c:a copy -c:s mov_text \\\n  -metadata:s:s:0 language=eng \\\n  -metadata:s:s:1 language=spa \\\n  -disposition:s:0 0 \\\n  -disposition:s:1 default \\\n  output.mov\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 587,
+    "output_tokens": 783,
+    "total_tokens": 1370,
+    "cost": 0.0014876
+  },
+  "model_type": "task_run"
+}

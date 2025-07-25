@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "326773889799",
+  "created_at": "2025-07-24T18:08:51.812604",
+  "created_by": "scosman",
+  "input": "I need to cut the first 10 seconds from my video file.mp4 and save the resulting clip as output.mp4.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Commands for Video Editing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "201840474605",
+    "path": null,
+    "created_at": "2025-07-24T18:08:51.812578",
+    "created_by": "scosman",
+    "output": "To cut (remove) the first 10 seconds from file.mp4 and save the remainder as output.mp4, you should use the -ss option to specify the start time (10 seconds into the video). Use -c copy to avoid re-encoding, which is fast and preserves quality, but may not be frame-accurate unless placed before -i or used with re-encoding.\n\nAssumptions:\n\n- You want to simply discard the first 10 seconds and keep the rest unchanged.\n- This command will be most accurate if the cut aligns with a keyframe; otherwise, for exact cuts, omitting -c copy and letting ffmpeg re-encode is necessary.\n\nFast (not always frame-accurate, but high quality & quick):\n\n```bash\nffmpeg -ss 10 -i file.mp4 -c copy output.mp4\n```\n\nFor frame-accurate cutting (slower, re-encodes video):\n\n```bash\nffmpeg -ss 10 -i file.mp4 -c:v libx264 -c:a aac -movflags +faststart output.mp4\n```\n\nChoose the method based on your needs for accuracy and speed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 240,
+    "total_tokens": 840,
+    "cost": 0.00312
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "461576469665",
+  "created_at": "2025-07-24T18:10:43.807945",
+  "created_by": "scosman",
+  "input": "Could you help me normalize the audio levels of input.aac to peak at -1dB and save the result as normalized.aac?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Command Line Techniques for Audio Enhancement"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "208134170671",
+    "path": null,
+    "created_at": "2025-07-24T18:10:43.807905",
+    "created_by": "scosman",
+    "output": "To normalize the peak audio level of input.aac to -1dB and save the output as normalized.aac, you can use the ffmpeg volume normalization filters. Specifically, the `-filter:a \"volumedetect\"` pass will show the current peak, and then `-filter:a \"volume=\"` can be used to apply the needed gain. However, a best practice is to use the `loudnorm` filter, which implements EBU R128 normalization and can limit peaks. But since you specifically asked for peak normalization, the standard `-filter:a \"dynaudnorm\"` with a limiter or `-af \"volumedetect\"` and adjust accordingly.\n\nFor a single-step solution that ensures no sample exceeds -1dBTP, use the `loudnorm` filter's `true_peak` limit:\n\n```bash\nffmpeg -i input.aac -af \"loudnorm=I=-24:TP=-1:LRA=11\" -c:a aac normalized.aac\n```\n\nExplanation:\n- `-af \"loudnorm=I=-24:TP=-1:LRA=11\"`: The loudnorm filter sets the target integrated loudness (`I`) to -24 LUFS (standard for broadcast), true peak (`TP`) to -1 dBTP as you requested, and LRA (loudness range) to 11 LU (default). Adjust `I` if you wish. The key here is `TP=-1`.\n- `-c:a aac`: Encode output as AAC.\n- Output file is normalized.aac.\n\nIf you only care about peak normalization (not integrated loudness), you could first detect the peak manually (two-pass), or more simply use:\n\n```bash\nffmpeg -i input.aac -af \"volumedetect\" -f null /dev/null\n```\n\nReview output for \"max_volume.\" Suppose you see max_volume: -2.0 dB. To normalize to -1dB, add 1 dB (target) minus current peak (so gain = -1 - (-2) = +1 dB):\n\n```bash\nffmpeg -i input.aac -af \"volume=1dB\" -c:a aac normalized.aac\n```\n\nBut the `loudnorm` method above does automatic limiting to ensure peaks are at or below -1dB and is recommended for simplicity and accuracy. \n\n**Assumption:** You want the safest approach that avoids clipping and are fine using EBU R128 normalization which limits the true peak as part of its processing. The output will remain AAC.\n\nHere is the recommended command:\n\n```\nffmpeg -i input.aac -af \"loudnorm=I=-24:TP=-1:LRA=11\" -c:a aac normalized.aac\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 578,
+    "total_tokens": 1182,
+    "cost": 0.005832
+  },
+  "model_type": "task_run"
+}

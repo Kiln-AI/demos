@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "870567994169",
+  "created_at": "2025-07-24T20:39:02.221584",
+  "created_by": "scosman",
+  "input": "Is there a way to detect and remove black frames at the start and end of multiple videos in a batch ffmpeg job?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "169926541306",
+    "path": null,
+    "created_at": "2025-07-24T20:39:02.221558",
+    "created_by": "scosman",
+    "output": "Yes, you can automate the detection and removal of black frames at the start and end of multiple videos using ffmpeg's `blackdetect` filter combined with scripting. The approach involves two main steps per video:\n\n1. **Detect black frame intervals** using the `blackdetect` filter to find the durations of black frames at the start and end.\n2. **Trim the video** by using the detected timestamps to cut out the black frames.\n\n### Key details:\n- `blackdetect` logs black frame metadata (start time and duration) to stderr; you need to parse this output.\n- You typically want to trim from `black_start` to `black_end` at beginning and end.\n- The exact black frame intervals must be extracted programmatically (e.g., via a shell script or Python).\n- After getting timestamps, use `ffmpeg` with `-ss` (start) and `-to` (end) trim parameters.\n- For batch processing, iterate over each file in a directory.\n\n### Sample Bash script outline for batch processing:\n\n```bash\n#!/bin/bash\n\n# Directory with input videos\ninput_dir=\"videos\"\noutput_dir=\"trimmed_videos\"\nmkdir -p \"$output_dir\"\n\nfor file in \"$input_dir\"/*.{mp4,mkv,mov}; do\n    echo \"Processing $file...\"\n    \n    # Run blackdetect filter, capture output\n    black_info=$(ffmpeg -hide_banner -i \"$file\" -vf blackdetect=d=0.1:pix_th=0.10 -an -f null - 2>&1 | grep blackdetect)\n    \n    # Extract first black start and duration at the beginning\n    black_start=0\n    black_end=0\n    duration=0\n    \n    # Parse blackdetect log lines (e.g. blackdetect=black_start:0.000000 black_end:3.456000 black_duration:3.456000)\n    # Get first black sequence starting near 0 (start black frames)\n    start_black_line=$(echo \"$black_info\" | grep -m 1 'black_start:0')\n    if [ -n \"$start_black_line\" ]; then\n        start=$(echo \"$start_black_line\" | grep -oP 'black_start:\\K[0-9.]+' | head -1)\n        dur=$(echo \"$start_black_line\" | grep -oP 'black_duration:\\K[0-9.]+' | head -1)\n        black_start=\"$start\"\n        black_duration_start=\"$dur\"\n    else\n        black_duration_start=0\n    fi\n    \n    # For end black frames: find the last black frame interval near end\n    # Get video duration\n    duration=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"$file\")\n    \n    # Set threshold to consider black frame near the end (last few seconds)\n    threshold=5\n    \n    # Get last black_detect entry within last $threshold seconds of video\n    last_black_line=$(echo \"$black_info\" | awk -v dur=\"$duration\" -v thr=\"$threshold\" '\n    {\n      match($0, /black_start:([0-9.]+)/, a);\n      match($0, /black_end:([0-9.]+)/, b);\n      start_time=a[1];\n      end_time=b[1];\n      if (start_time >= dur - thr) last_line=$0;\n    }\n    END { print last_line }')\n    \n    if [ -n \"$last_black_line\" ]; then\n        black_start_end=$(echo \"$last_black_line\" | grep -oP 'black_start:\\K[0-9.]+' | head -1)\n        black_end_end=$(echo \"$last_black_line\" | grep -oP 'black_end:\\K[0-9.]+' | head -1)\n    else\n        black_start_end=0\n        black_end_end=0\n    fi\n    \n    # Calculate trimming start and end times\n    trim_start=$(echo \"$black_duration_start\" | awk '{print $0}')\n    trim_end=$(echo \"$duration - '\"$black_end_end\"'\" | bc)\n    if (( $(echo \"$trim_end < 0\" | bc -l) )); then\n        trim_end=0\n    fi\n    \n    # Define output file path\n    filename=$(basename \"$file\")\n    output=\"$output_dir/$filename\"\n    \n    # Compose trim parameters for ffmpeg (if trim_end=0 means till end)\n    if (( $(echo \"$trim_end > 0\" | bc -l) )); then\n        ffmpeg_trim_cmd=\"-ss $trim_start -to $trim_end -i \\\"$file\\\"\"\n    else\n        ffmpeg_trim_cmd=\"-ss $trim_start -i \\\"$file\\\"\"\n    fi\n\n    # Run ffmpeg trim command\n    # -c copy uses stream copy for speed; if you experience issues, remove -c copy for re-encoding\n    eval ffmpeg -hide_banner -loglevel info $ffmpeg_trim_cmd -c copy \"$output\"\n    \n    echo \"Finished processing $file, output saved to $output\"\ndone\n```\n\n### Explanation:\n\n- This script loops over all videos in a folder.\n- It extracts black frame intervals at start and near the end.\n- Uses `ffprobe` to get video duration.\n- Calculates trim times to cut black frames.\n- Runs `ffmpeg` to trim the video without re-encoding (`-c copy`), which is fast but depends on keyframe positioning and container compatibility.\n- You can adjust `d` (duration) and `pix_th` (pixel threshold) params for the blackdetect filter to suit your videos.\n\n---\n\nThis is a robust starting point for batch black frame removal with ffmpeg, combining filter detection and shell scripting automation. You can adapt it for Python or other scripting languages as needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 1219,
+    "total_tokens": 1818,
+    "cost": 0.00219
+  },
+  "model_type": "task_run"
+}

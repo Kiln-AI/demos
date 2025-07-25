@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "220644794101",
+  "created_at": "2025-07-24T20:24:46.457270",
+  "created_by": "scosman",
+  "input": "Take a 5-minute webcam recording in .webm and give me a .mp4 file for PowerPoint embedding.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "179688690446",
+    "path": null,
+    "created_at": "2025-07-24T20:24:46.457247",
+    "created_by": "scosman",
+    "output": "To convert a 5-minute .webm webcam recording into an .mp4 file suitable for embedding in PowerPoint, you want to use widely supported codecs like H.264 for video and AAC for audio. PowerPoint supports .mp4 files encoded with these codecs and expects progressive scan videos with standard pixel format.\n\nKey points for the command:\n\n- Use `-c:v libx264` for H.264 video codec.\n- Use `-c:a aac` for AAC audio codec.\n- Use `-preset slow` or `-preset medium` for good encoding efficiency.\n- Use `-pix_fmt yuv420p` as it is compatible with most players and PowerPoint.\n- Add `-movflags +faststart` to enable fast playback start by placing the moov atom at the beginning.\n- The 5-minute duration is assumed to come from the input file itself; no trimming is applied.\n- No resolution scaling is applied since PowerPoint can handle standard webcam resolutions; if needed, you can add scaling.\n\nHere is the command for a high-quality, compatible output:\n\n```bash\nffmpeg -i input.webm -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nThis produces an MP4 file optimized for PowerPoint embedding with good balance between quality and file size.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 295,
+    "total_tokens": 893,
+    "cost": 0.0007112
+  },
+  "model_type": "task_run"
+}

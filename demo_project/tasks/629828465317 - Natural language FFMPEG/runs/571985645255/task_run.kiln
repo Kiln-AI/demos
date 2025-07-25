@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "571985645255",
+  "created_at": "2025-07-24T20:36:37.946630",
+  "created_by": "scosman",
+  "input": "Convert a video encoded with MJPEG to x264 for the video and Opus for the audio, output as WebM.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "319236421510",
+    "path": null,
+    "created_at": "2025-07-24T20:36:37.946607",
+    "created_by": "scosman",
+    "output": "To convert a video from MJPEG to x264 video codec and Opus audio codec, outputting as a WebM file, you will:\n\n- Use `-c:v libx264` to encode video with x264 (H.264).\n- Use `-c:a libopus` to encode audio with Opus.\n- Since you're outputting to WebM, note that x264 (H.264) is not a native codec for WebM container, which typically supports VP8/VP9 video codecs with Opus or Vorbis audio. However, since the request specifically asks for x264 video inside WebM, note that this is unusual and may cause compatibility issues with players expecting VP8/VP9 video inside WebM, but ffmpeg will still mux it.\n- If strict WebM compliance is required, VP8 or VP9 video would be standard. Because of the request, this command encodes as requested.\n- Use `-movflags +faststart` is not applicable for WebM.\n- Example uses a reasonable CRF and preset for x264 encoding quality and speed.\n- Assumes the input file is named input.mjpeg or input.mov or input.avi, specify actual input filename.\n\n```bash\nffmpeg -i input.mjpeg -c:v libx264 -preset medium -crf 23 -c:a libopus -b:a 96k output.webm\n```\n\nThis produces an x264 video and Opus audio muxed into a WebM container. If playback issues occur, consider using VP8/VP9 for better compliance with the WebM standard.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 327,
+    "total_tokens": 926,
+    "cost": 0.0007628
+  },
+  "model_type": "task_run"
+}

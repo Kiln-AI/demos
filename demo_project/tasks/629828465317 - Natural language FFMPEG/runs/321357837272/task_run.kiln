@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "321357837272",
+  "created_at": "2025-07-24T20:25:01.799804",
+  "created_by": "scosman",
+  "input": "Take an FLAC album and re-encode to VBR MP3 using high-quality settings.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "164863772946",
+    "path": null,
+    "created_at": "2025-07-24T20:25:01.799771",
+    "created_by": "scosman",
+    "output": "To re-encode a FLAC album to variable bitrate (VBR) MP3 with high-quality settings, you should use the LAME MP3 encoder available in ffmpeg by specifying `libmp3lame` codec. VBR mode allows bitrate to vary depending on audio complexity to maintain quality while saving space.\n\n- `-qscale:a 2` selects the VBR quality level with LAME, where 0 is highest quality and 9 is lowest; 2 is a popular choice for high-quality audio.\n- `-id3v2_version 3` ensures compatibility with most players by writing ID3v2.3 tags.\n- `-write_id3v1 1` writes ID3v1 tags for compatibility with legacy software.\n- `-map_metadata 0` copies metadata (like artist, album, track info) from the FLAC file to the MP3 output.\n- Use a loop or batch script to process the entire album folder.\n\nExample command below assumes single file processing `album.flac`. For an entire album, the command can be incorporated into a shell loop.\n\n```bash\nffmpeg -i album.flac -c:a libmp3lame -qscale:a 2 -id3v2_version 3 -write_id3v1 1 -map_metadata 0 album.mp3\n```\n\nIf you want to process an entire folder of FLAC files in bash shell:\n\n```bash\nfor f in *.flac; do\n  ffmpeg -i \"$f\" -c:a libmp3lame -qscale:a 2 -id3v2_version 3 -write_id3v1 1 -map_metadata 0 \"${f%.flac}.mp3\"\ndone\n```\n\nThis approach preserves metadata and produces a high-quality VBR MP3 suitable for general listening.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 379,
+    "total_tokens": 972,
+    "cost": 0.0008436
+  },
+  "model_type": "task_run"
+}

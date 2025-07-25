@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "860499782975",
+  "created_at": "2025-07-24T18:11:21.956016",
+  "created_by": "scosman",
+  "input": "I need to crop a fixed 5-minute segment from 15:00 to 20:00 from longvideo.mp4. How is that done?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Advanced FFmpeg Video Filters"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "100458702999",
+    "path": null,
+    "created_at": "2025-07-24T18:11:21.955984",
+    "created_by": "scosman",
+    "output": "To extract a specific 5-minute segment from 15:00 to 20:00 in longvideo.mp4, use the -ss (start time) and -t (duration) options. -ss specifies where to begin, and -t specifies how long to keep. Placing -ss before -i will seek quickly, which is efficient for most use-cases, but may not be frame-accurate. If frame accuracy is vital, move -ss after -i, but it will be slower.\n\nHere, we assume quick extraction is acceptable. This keeps streams unchanged (stream copy) to avoid re-encoding, ensuring fast processing and no quality loss.\n\n```bash\nffmpeg -ss 00:15:00 -i longvideo.mp4 -t 00:05:00 -c copy output_segment.mp4\n```\n\n- -ss 00:15:00: Start at 15 minutes into the video.\n- -t 00:05:00: Keep 5 minutes duration (ends at 20:00).\n- -c copy: Copy video and audio streams without re-encoding (fast, lossless).\n\nIf you need frame-accurate cutting, use:\n\n```bash\nffmpeg -i longvideo.mp4 -ss 00:15:00 -t 00:05:00 -c:v libx264 -c:a aac output_segment.mp4\n```\n\nBut for most purposes, stream copy as shown above is ideal.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 606,
+    "output_tokens": 303,
+    "total_tokens": 909,
+    "cost": 0.003636
+  },
+  "model_type": "task_run"
+}

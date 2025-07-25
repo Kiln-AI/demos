@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "112425185765",
+  "created_at": "2025-07-24T18:13:08.226968",
+  "created_by": "scosman",
+  "input": "I have a 10-hour-long audio recording and need to adjust its pitch by a semitone higher. Could you provide a solution?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "125490075075",
+    "path": null,
+    "created_at": "2025-07-24T18:13:08.226942",
+    "created_by": "scosman",
+    "output": "To raise the pitch of a long audio recording by one semitone, use the asetrate and atempo audio filters. Increasing the asetrate by a factor of 2^(1/12) (approx. 1.0595) raises the pitch by a semitone, and then atempo is used to restore the original duration.\n\nKey points for long files:\n- Use -acodec pcm_s16le or -c:a aac for high-quality output.\n- The example assumes the input is input.wav and output desired as output.wav (change extensions/codecs if needed).\n\n```bash\nffmpeg -i input.wav -filter_complex \"asetrate=ceil(sample_rate*1.059463),atempo=0.943874\" -acodec pcm_s16le output.wav\n```\n\n- asetrate=ceil(sample_rate*1.059463) shifts pitch up by one semitone (1.059463 factor).\n- atempo compensates for speed/duration change (1/1.059463 ≈ 0.943874).\n- If you don’t know your sample rate in advance, ffmpeg’s sample_rate variable handles it.\n- For non-WAV output, change -acodec pcm_s16le and output extension accordingly (e.g., -c:a aac output.m4a for AAC).\n\nThis method works efficiently even for very long files.\n\n",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 287,
+    "total_tokens": 888,
+    "cost": 0.003498
+  },
+  "model_type": "task_run"
+}

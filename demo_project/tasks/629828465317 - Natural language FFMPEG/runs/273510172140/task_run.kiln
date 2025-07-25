@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "273510172140",
+  "created_at": "2025-07-24T20:37:19.168315",
+  "created_by": "scosman",
+  "input": "I want to split an MKV into two files at a timestamp, only copying streams, no encoding.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "490618506209",
+    "path": null,
+    "created_at": "2025-07-24T20:37:19.168251",
+    "created_by": "scosman",
+    "output": "To split an MKV file without re-encoding, you can use stream copying with the \"-c copy\" option and the \"-ss\" and \"-to\" or \"-t\" options to specify the segment timestamps. The key is to place \"-ss\" and \"-to\" before the input for accurate splitting or after the input for faster seeking but potentially less accuracy (the latter is better for stream copy).\n\nAssuming you want to split at a specific timestamp `HH:MM:SS` (for example, `00:10:00` for 10 minutes), here is how to do it:\n\n1. Extract the first segment from the start to the split point.\n2. Extract the second segment from the split point to the end.\n\nBoth commands use `-c copy` to avoid re-encoding, preserving all streams (video, audio, subtitles, etc.) exactly.\n\n```bash\n# Split point at 10 minutes (00:10:00)\nSPLIT_TIME=00:10:00\n\n# Extract first part from start to SPLIT_TIME\nffmpeg -i input.mkv -c copy -t $SPLIT_TIME output_part1.mkv\n\n# Extract second part from SPLIT_TIME to end\nffmpeg -ss $SPLIT_TIME -i input.mkv -c copy output_part2.mkv\n```\n\nExplanation:\n- `-c copy` copies streams without encoding.\n- `-t` specifies duration for the first segment.\n- `-ss` before input for the second segment to fast seek to the split point.\n  \nNote: Splitting without encoding can be less precise if keyframes are not exactly at the split point, as MKV requires splitting on keyframes for clean cuts. If you encounter issues with playback or seek-ability, consider using `-ss` as an input option or re-encoding or using tools specialized for MKV splitting like `mkvmerge`.\n\nThis method efficiently splits the MKV into two files without quality loss or re-encoding. Replace `$SPLIT_TIME` with your desired timestamp.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 422,
+    "total_tokens": 1020,
+    "cost": 0.0009144
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "134913739331",
+  "created_at": "2025-07-24T20:26:20.795063",
+  "created_by": "scosman",
+  "input": "Extract all subtitle streams and report their language codes.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "200183046979",
+    "path": null,
+    "created_at": "2025-07-24T20:26:20.794916",
+    "created_by": "scosman",
+    "output": "To extract all subtitle streams from a media file and report their language codes, you can use FFmpeg's `-map` option to select all subtitle streams and copy them without re-encoding. Additionally, extracting the language metadata from subtitle streams involves examining the stream info, which you can do with `ffprobe`. However, to do both in one FFmpeg command, you'd typically extract the subtitle streams into separate files, and use `ffprobe` to print language codes.\n\nHere’s a high-quality approach using two steps:\n\n1. Use `ffprobe` to list all subtitle streams with their index and language codes.\n2. Use `ffmpeg` to extract each subtitle stream into an external subtitle file (e.g., `.srt`, `.ass`, or `.vtt` based on codec).\n\nAssuming the input file is `input.mkv`:\n\n### Step 1: Report subtitle streams and their language codes\n\n```bash\nffprobe -v error -select_streams s -show_entries stream=index:stream_tags=language -of csv=p=0 input.mkv\n```\n\nThis command outputs lines with the subtitle stream index and language code, for example:\n\n```\n2,eng\n3,fre\n4,\n```\n\n### Step 2: Extract all subtitle streams in their native codec without re-encoding\n\nOne way is to automate extraction per stream index, but a basic example extracting all subtitles with `ffmpeg` is:\n\n```bash\nffmpeg -i input.mkv -map 0:s -c copy subtitles_%03d.@ext\n```\n\nHere, you need to set the extension based on codec. For example, if codec is `subrip` use `.srt`, if `ass` then `.ass`.\n\nTo determine subtitle codec per stream (with `ffprobe`):\n\n```bash\nffprobe -v error -select_streams s -show_entries stream=index,codec_name -of csv=p=0 input.mkv\n```\n\n---\n\n### Complete example of reporting then extracting subtitles:\n\n```bash\nffprobe -v error -select_streams s -show_entries stream=index:stream_tags=language -of csv=p=0 input.mkv\n```\n\nThen extract each subtitle stream one-by-one (assuming `.srt`, adjust as needed):\n\n```bash\nffmpeg -i input.mkv -map 0:s:0 -c copy subtitle_0.srt\nffmpeg -i input.mkv -map 0:s:1 -c copy subtitle_1.srt\n# Repeat for all subtitle streams\n```\n\n---\n\nThis two-step approach ensures you properly report language codes and extract subtitles without errors or re-encoding.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 583,
+    "output_tokens": 543,
+    "total_tokens": 1126,
+    "cost": 0.001102
+  },
+  "model_type": "task_run"
+}

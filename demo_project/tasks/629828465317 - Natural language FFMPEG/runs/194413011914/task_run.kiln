@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "194413011914",
+  "created_at": "2025-07-24T18:08:30.428008",
+  "created_by": "scosman",
+  "input": "Can you provide a command to convert an MKV file to a smaller-sized MP4 using the VP9 codec for efficient compression?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Common Video Codecs and Their Uses"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "123296417873",
+    "path": null,
+    "created_at": "2025-07-24T18:08:30.427983",
+    "created_by": "scosman",
+    "output": "To convert an MKV file to a smaller-sized MP4 using VP9 (an efficient, modern video codec often providing better compression than H.264), you will:\n\n- Use libvpx-vp9 as the video codec.\n- Set the output container to MP4.\n- Use a CRF (Constant Rate Factor) value for quality-based compression (lower CRF = higher quality/bigger file; higher CRF = lower quality/smaller file; 30 is a good starting point for VP9).\n- Re-encode audio to AAC for MP4 compatibility.\n- Include threads for faster encoding.\n\n**Assumptions:** Input file is called `input.mkv`, output will be `output.mp4`, and quality is more important than absolute smallest file size (for largest size reduction, increase CRF, e.g., 35).\n\n```bash\nffmpeg -i input.mkv -c:v libvpx-vp9 -b:v 0 -crf 30 -threads 4 -c:a aac -b:a 128k output.mp4\n```\n\n**Explanation of key parameters:**\n\n- `-c:v libvpx-vp9`: Use VP9 video codec (efficient compression).\n- `-b:v 0 -crf 30`: Quality-based variable bitrate encoding (adjust CRF for quality vs size trade-off).\n- `-threads 4`: Use 4 threads (adjust based on CPU).\n- `-c:a aac -b:a 128k`: Encode audio to AAC at 128 kbps (widely compatible with MP4).\n  \n**Note:**\n- VP9 in MP4 is less common than in WebM, but most modern players support it.\n- Change `crf` to a higher value (33–40) for a much smaller file at the cost of quality, or lower (25–29) for better quality.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 389,
+    "total_tokens": 992,
+    "cost": 0.004318
+  },
+  "model_type": "task_run"
+}

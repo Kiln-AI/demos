@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "372090663653",
+  "created_at": "2025-07-24T20:26:06.522156",
+  "created_by": "scosman",
+  "input": "Extract and OCR image-based (VobSub/PGS) subtitles from DVD remux.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "261627167606",
+    "path": null,
+    "created_at": "2025-07-24T20:26:06.522092",
+    "created_by": "scosman",
+    "output": "To extract image-based subtitles (like VobSub or PGS) from a DVD remux and perform OCR to convert them into text-based subtitles, you need two main steps:\n\n1. **Extract the subtitle track** (e.g., PGS or VobSub) using `ffmpeg`.\n2. **Perform OCR on the extracted subtitles** to convert graphical images to text (e.g., using `Subtitle Edit`, `OcrSub`, `BDSup2Sub++`, or `Tesseract` with specialized tools).\n\n`ffmpeg` itself does not perform OCR, but it can extract the subtitles in their original image-based format for further OCR processing.\n\n### Step 1: Extract the subtitle stream with ffmpeg\n\n- Use `-map` to select the subtitle stream (you have to check which stream index it is using `ffprobe`).\n- Copy the subtitle stream in its native format (`-c:s copy`).\n- For PGS subtitles, the container is typically `.sup` file; for VobSub it's `.sub` with a `.idx` file.\n\nExample to extract PGS subtitles:\n\n```bash\nffmpeg -i dvd_remux.mkv -map 0:s:0 -c:s copy subtitle.sup\n```\n\n(or for VobSub subtitles extraction)\n\n```bash\nffmpeg -i dvd_remux.mkv -map 0:s:0 -c:s copy subtitle.sub\n```\n\nYou need to identify the correct subtitle stream (`0:s:0` is an example; use `ffprobe` to find this).\n\n### Step 2: OCR the extracted image subtitles\n\n- Use a subtitle OCR tool such as [Subtitle Edit](https://www.nikse.dk/SubtitleEdit), which supports PGS, VobSub OCR.\n- Or convert `.sup` to bitmap images and run Tesseract OCR on those bitmaps, then convert back to text subtitles.\n- Tools like [BDSup2Sub++](https://github.com/amichaeltaylor/bdviewer) facilitate extracting images for OCR.\n\n### Summary\n\nSince your request is for the `ffmpeg` command, here is how to extract the image-based subtitles first. OCR is to be done with external tools.\n\n---\n\n```bash\n# First, inspect the streams to find subtitle stream index\nffprobe dvd_remux.mkv\n\n# Assuming first subtitle stream is 0:s:0, extract it:\nffmpeg -i dvd_remux.mkv -map 0:s:0 -c:s copy subtitle.sup\n```\n\n---\n\n**Note:** Replace `0:s:0` with the actual subtitle stream index found via `ffprobe`. You might need to extract multiple subtitle streams if present.\n\nAfter this, use specialized OCR tools to convert `subtitle.sup` or `.sub/.idx` into text-based subtitles formats like `.srt`.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 581,
+    "total_tokens": 1173,
+    "cost": 0.0011664
+  },
+  "model_type": "task_run"
+}

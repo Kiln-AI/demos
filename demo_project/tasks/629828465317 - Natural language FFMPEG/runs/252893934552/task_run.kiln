@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "252893934552",
+  "created_at": "2025-07-24T18:13:10.868046",
+  "created_by": "scosman",
+  "input": "I want to compress a video to a specific file size without losing the original aspect ratio or causing artifacts. What’s the best approach using ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "876140110052",
+    "path": null,
+    "created_at": "2025-07-24T18:13:10.868007",
+    "created_by": "scosman",
+    "output": "Achieving a specific file size with minimal artifacts and preserving aspect ratio involves 2-pass encoding, which lets ffmpeg precisely target your goal size. You should calculate the video bitrate required for your file size, keeping audio bitrate in mind, and use a high-quality codec such as libx264 (H.264). Two-pass encoding scans first for complexity, then encodes at the desired quality, minimizing artifacts.\n\n**Steps:**\n1. Calculate your desired video bitrate (in kbps):  \n   `video_bitrate = ((target_file_size_in_bytes * 8)/duration_in_seconds) - audio_bitrate`\n   For example: 50 MB file, 3-minute video (180s), 128 kbps audio:  \n   `video_bitrate = ((50*1024*1024*8)/180) - 128000 ≈ 2165 kbps`\n\n2. Use the -vf scale parameter only if you want to resize. Since you want to keep the original aspect ratio, don’t change dimensions.\n\n3. Use -pass 1 and -pass 2 for best quality at your target bitrate.\n\n**Command (replace values in ALL_CAPS):**\n```bash\n# First Pass\nffmpeg -i input.mp4 -c:v libx264 -b:v VIDEO_BITRATE -pass 1 -an -f mp4 -y /dev/null\n\n# Second Pass\nffmpeg -i input.mp4 -c:v libx264 -b:v VIDEO_BITRATE -pass 2 -c:a aac -b:a AUDIO_BITRATE -movflags +faststart -pix_fmt yuv420p output.mp4\n```\n**Parameters explained:**\n- `-b:v` sets video bitrate to your calculated value (e.g., 2165k).\n- `-c:a aac -b:a 128k` sets AAC audio at 128 kbps (adjust as needed).\n- `-pass 1 / -pass 2` activates two-pass encoding.\n- `-movflags +faststart` helps with web playback.\n- `-pix_fmt yuv420p` ensures compatibility.\n- The intermediate first-pass file is discarded (`/dev/null`).\n\n**Assumptions:**\n- You know your target file size and audio bitrate.\n- The video duration is known.\n- You are satisfied with H.264/AAC output.\n\nAdjust the video and audio bitrates as appropriate for your exact requirements. This method preserves aspect ratio and minimizes artifacts for the target file size.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 515,
+    "total_tokens": 1119,
+    "cost": 0.005328
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "113909562729",
+  "created_at": "2025-07-24T20:25:13.518232",
+  "created_by": "scosman",
+  "input": "I want to take a .mkv file and create a .ts file with the same video and audio quality using stream copy.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "298742530014",
+    "path": null,
+    "created_at": "2025-07-24T20:25:13.518209",
+    "created_by": "scosman",
+    "output": "To create a .ts file from a .mkv file without re-encoding (thus preserving the original video and audio quality), you can use FFmpeg's stream copy feature with the `-c copy` option. The `.ts` container works well with formats like MPEG-TS, so ensure your input codecs are compatible with the MPEG transport stream container (e.g., H.264 video, AAC or AC3 audio). If they are incompatible, the resulting file might not work properly.\n\nKey points:\n- `-c copy` tells FFmpeg to copy all streams (video, audio, subtitles) without re-encoding.\n- The output container is `.ts` which is designed for streaming and broadcasting.\n- Some codecs may not be compatible within the TS container; if that happens, re-encoding or remuxing with codec changes will be necessary, but this command assumes streams are compatible.\n\n```bash\nffmpeg -i input.mkv -c copy -bsf:v h264_mp4toannexb -f mpegts output.ts\n```\n\nExplanation:\n- `-bsf:v h264_mp4toannexb` is a bitstream filter that converts H.264 bitstreams from MP4 format to Annex B format, which is required for transport streams (.ts) to be compliant and play correctly.\n- `-f mpegts` explicitly sets the output format to MPEG transport stream.\n- This command keeps audio and video streams untouched and encapsulates them into a .ts container.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 307,
+    "total_tokens": 910,
+    "cost": 0.0007324
+  },
+  "model_type": "task_run"
+}

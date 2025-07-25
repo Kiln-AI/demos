@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "324375739825",
+  "created_at": "2025-07-24T18:12:06.443748",
+  "created_by": "scosman",
+  "input": "Convert a massive video file wedding.mp4 into multiple smaller segments of 10 minutes each, maintaining its quality.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Handling Large Media Files Efficiently"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "243768258945",
+    "path": null,
+    "created_at": "2025-07-24T18:12:06.443719",
+    "created_by": "scosman",
+    "output": "To split a large video file (wedding.mp4) into smaller 10-minute segments while preserving the original quality, use ffmpeg's stream copy mode (-c copy). This avoids re-encoding, making the operation fast and lossless.\n\n- -f segment uses the segment muxer to split the file.\n- -segment_time 600 splits every 600 seconds (10 minutes).\n- -c copy copies the original streams without re-encoding.\n- The output filename pattern wedding_part%03d.mp4 will number the segments sequentially.\n\n**Assumptions:**  \n- The input file’s format (mp4) and codecs are compatible with the chosen container and stream copy.  \n- Splitting at arbitrary points may result in a few second overlap or an incomplete last segment, but is fastest and avoids quality loss.  \n- For more precise splitting at keyframes, add -reset_timestamps 1 for each segment.\n\n```bash\nffmpeg -i wedding.mp4 -c copy -map 0 -f segment -segment_time 600 -reset_timestamps 1 wedding_part%03d.mp4\n```\n\nThis command will efficiently split your large wedding video into high-quality, lossless 10-minute parts named wedding_part000.mp4, wedding_part001.mp4, etc.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 262,
+    "total_tokens": 860,
+    "cost": 0.003292
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "203321045848",
+  "created_at": "2025-07-24T20:39:49.249560",
+  "created_by": "scosman",
+  "input": "My input is a raw video stream without headers (.yuv). How do I specify width, height, pixel format and frame rate for conversion?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "564946768197",
+    "path": null,
+    "created_at": "2025-07-24T20:39:49.249537",
+    "created_by": "scosman",
+    "output": "Raw video files like .yuv don't contain metadata such as width, height, pixel format, or frame rate, so you must specify these explicitly to ffmpeg when reading the input. Use the `-s` option for resolution, `-pix_fmt` for pixel format, and `-framerate` (or `-r`) for input frame rate prior to the `-i` input option. This tells ffmpeg how to interpret the raw data correctly.\n\n- `-s WIDTHxHEIGHT`: sets the input resolution.\n- `-pix_fmt FORMAT`: sets input pixel format (e.g., yuv420p, yuv422p).\n- `-framerate RATE`: sets the input frame rate before the input.\n- Output options (codecs, formats) should be specified after input.\n\nExample command assumes you want to convert a raw 640x480 yuv420p stream at 30fps to an H.264 encoded MP4:\n\n```bash\nffmpeg -f rawvideo -pix_fmt yuv420p -s 640x480 -framerate 30 -i input.yuv -c:v libx264 -preset medium -crf 23 output.mp4\n```\n\nExplanation:\n\n- `-f rawvideo` forces input format as raw video.\n- Pixel format, size, and framerate specify how to interpret the raw stream.\n- Output uses libx264 to encode.\n- Adjust `-preset` and `-crf` for encoding speed and quality.\n- You can add audio input or further filtering if needed.\n\nThis is a recommended approach to correctly handle raw video inputs.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 330,
+    "total_tokens": 933,
+    "cost": 0.0007692
+  },
+  "model_type": "task_run"
+}

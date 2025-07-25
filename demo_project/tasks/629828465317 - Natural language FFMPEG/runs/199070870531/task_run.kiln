@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "199070870531",
+  "created_at": "2025-07-24T20:26:30.461568",
+  "created_by": "scosman",
+  "input": "Help me rotate all videos in a folder 90 degrees clockwise and save them as new files with the \"_rotated\" suffix.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "233428797447",
+    "path": null,
+    "created_at": "2025-07-24T20:26:30.461543",
+    "created_by": "scosman",
+    "output": "To batch rotate all videos in a folder 90 degrees clockwise and save them with a \"_rotated\" suffix, you can use a shell loop (e.g., Bash) combined with ffmpeg.\n\nKey points:\n- The `transpose=1` filter rotates video 90 degrees clockwise.\n- For each video, output the rotated version with the same filename plus \"_rotated\" before the extension.\n- We assume common video file extensions like `.mp4`, `.avi`, `.mkv`. You can adjust extensions as needed.\n- Copy the audio stream as-is (`-c:a copy`) for efficiency unless you want to re-encode.\n- Use `-c:v libx264 -crf 23 -preset medium` for good quality and encoding efficiency.\n- `-movflags +faststart` for MP4 files to enable progressive streaming if applicable.\n\nHere is a Bash example for `.mp4` videos. You can extend it easily to other extensions:\n\n```bash\nfor input in *.mp4; do\n  # Extract base filename without extension\n  base=\"${input%.*}\"\n  # Set output filename with _rotated suffix\n  output=\"${base}_rotated.mp4\"\n\n  # Rotate 90 degrees clockwise using transpose filter\n  ffmpeg -i \"$input\" -vf \"transpose=1\" -c:v libx264 -preset medium -crf 23 -c:a copy -movflags +faststart \"$output\"\ndone\n```\n\nIf you want to process multiple extensions, you could loop over them or use a more complex find statement. This approach preserves the original files and creates new rotated versions with \"_rotated\" appended for clean batch processing.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 343,
+    "total_tokens": 943,
+    "cost": 0.0007888
+  },
+  "model_type": "task_run"
+}

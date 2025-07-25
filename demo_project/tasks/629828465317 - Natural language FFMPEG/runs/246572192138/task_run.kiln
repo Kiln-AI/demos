@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "246572192138",
+  "created_at": "2025-07-24T20:37:01.960963",
+  "created_by": "scosman",
+  "input": "I need the video 'song.mov' using Apple Animation codec exported as mp4 with x264 video (high profile) and AAC 192k.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "278064007430",
+    "path": null,
+    "created_at": "2025-07-24T20:37:01.960937",
+    "created_by": "scosman",
+    "output": "To convert 'song.mov' which uses the Apple Animation codec into an MP4 file with H.264 video encoded at High Profile and AAC audio at 192 kbps, you need to explicitly specify the H.264 codec options including the profile. The Apple Animation codec will be decoded automatically by ffmpeg when reading the input.\n\nKey points:\n- Use `-c:v libx264` for encoding video with x264.\n- Set the H.264 profile to high with `-profile:v high` for better compression and compatibility.\n- Use `-c:a aac` and `-b:a 192k` for AAC audio encoding at 192 kbps.\n- Adding `-pix_fmt yuv420p` ensures maximum compatibility with players.\n- Use `-movflags +faststart` to make the MP4 ready for progressive streaming.\n\nHere's the command:\n\n```bash\nffmpeg -i song.mov -c:v libx264 -profile:v high -preset slow -crf 23 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart output.mp4\n```\n\nAssumptions:\n- The source video is a standard frame size; no scaling by default.\n- `-preset slow` is used for good compression quality, you can change to `fast` if encoding speed is preferred.\n- `-crf 23` balances quality and file size; lower values yield higher quality.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 299,
+    "total_tokens": 903,
+    "cost": 0.00072
+  },
+  "model_type": "task_run"
+}

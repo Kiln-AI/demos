@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "186965238061",
+  "created_at": "2025-07-23T11:29:52.025994",
+  "created_by": "scosman",
+  "input": "I have a video file with multiple audio tracks and I want to map the third audio stream to the output, but keep the original video. The input file is movie.mkv",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "claude_sonnet_4",
+      "model_provider": "anthropic",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Mapping with Wrong Indices"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "221853935824",
+    "path": null,
+    "created_at": "2025-07-23T11:29:52.025969",
+    "created_by": "scosman",
+    "output": "To map the third audio stream while keeping the original video, you'll use ffmpeg's stream mapping feature with the -map parameter. The -map 0:v selects the video stream from input 0, and -map 0:a:2 selects the third audio stream (0-indexed, so index 2 is the third stream).\n\n```bash\nffmpeg -i movie.mkv -map 0:v -map 0:a:3 -c copy output.mkv\n```\n\nThis command:\n- `-map 0:v` maps the video stream from the input\n- `-map 0:a:3` maps the fourth audio stream (since audio streams are 0-indexed, index 3 refers to the fourth audio track)\n- `-c copy` copies streams without re-encoding for faster processing\n\nI assumed you want to keep the same container format (mkv) and that the input file has at least four audio tracks for the third audio stream mapping to work.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "claude_sonnet_4",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "function_calling",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_243159560313",
+    "eval_correctness"
+  ],
+  "usage": {
+    "input_tokens": 1005,
+    "output_tokens": 221,
+    "total_tokens": 1226,
+    "cost": 0.0063300000000000006
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "165362583800",
+  "created_at": "2025-07-24T18:09:37.288625",
+  "created_by": "scosman",
+  "input": "Transform documentary.mkv into a 360p format with minimal buffering for web streaming.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Streamlining Video Files for Web Streaming"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "380142546153",
+    "path": null,
+    "created_at": "2025-07-24T18:09:37.288599",
+    "created_by": "scosman",
+    "output": "To prepare documentary.mkv for optimal web streaming at 360p, transcode it to an MP4 file using H.264 video and AAC audio codecs (widely supported in browsers). Set the video resolution to 360 pixels in height, and use the -movflags +faststart option so metadata loads quickly for streaming. -crf 23 balances file size and quality for smooth streaming and reduced buffering.\n\n- -vf scale=-2:360: Resizes video to 360 pixels height, keeping the original aspect ratio (width is automatically calculated and divisible by 2).\n- -c:v libx264: Encodes video with H.264 for compatibility and efficiency.\n- -crf 23: Provides a good trade-off between quality and compression (use lower CRF for better quality, higher for smaller size).\n- -preset veryfast: Speeds up encoding for practical workflow, though \"fast\" or \"medium\" can be used for better compression.\n- -c:a aac -b:a 96k: Encodes audio in AAC at 96kbps, suitable for voice-heavy content.\n- -pix_fmt yuv420p: Ensures wide browser/device compatibility.\n- -movflags +faststart: Places metadata at the beginning for progressive download and minimal buffering.\n\n```bash\nffmpeg -i documentary.mkv -vf scale=-2:360 -c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 96k -pix_fmt yuv420p -movflags +faststart documentary_360p.mp4\n```\n\nAssumptions:\n- You're targeting web playback, so browser/device compatibility is prioritized.\n- The source has a higher resolution, and downscaling is desired.\n- Moderate audio quality (96k AAC) is sufficient for a documentary. Adjust as needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 378,
+    "total_tokens": 972,
+    "cost": 0.004212
+  },
+  "model_type": "task_run"
+}

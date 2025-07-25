@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "108922410613",
+  "created_at": "2025-07-24T22:27:56.616662",
+  "created_by": "scosman",
+  "dataset_id": "165128780702",
+  "task_run_config_id": "159052536756",
+  "eval_config_eval": false,
+  "input": "Can you create an ffmpeg command to select video stream 12 and audio stream 25 from my multi-stream file recording.mkv?",
+  "output": "To select video stream 12 and audio stream 25 from a multi-stream MKV file, you can use `-map` to specify exact stream indices. \n\nKey points:\n- `-map 0:v:12` selects the 12th video stream from the input (\"0:v:12\" means input 0 with stream type video and stream index 12).\n- `-map 0:a:25` selects the 25th audio stream from the same input.\n- You may also specify stream types (e.g., `-map 0:v:12:codestyle copy`) or use `-map 0:v:0` together with `-map 0:a:25` (to demux streams).\n- The command does not re-encode; any streams not selected remain unchanged (stream copy: `-c copy`).\n- Note that streams are 1-based, so stream 12 is index 12, not 11. If the streams are zero-based, use `0:v:11` for the first video stream.\n\nExample command:\n\n```bash\nffmpeg -i recording.mkv -map 0:v:12 -map 0:a:25 -c copy output select_streams.mkv\n```\n\nIf you want to output as another container without re-encoding, adjust the output filename and container accordingly.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) **Does the model's output contain the issue described?**  \nThe output appears correct. The command utilizes the `-map` option accurately to select specific video and audio streams from the input file, as requested by the user. The syntax used aligns with `ffmpeg` command requirements, meaning it should work as intended. \n\n2) **Is the model's output similar to the example of a failing output?**  \nNo, the output does not resemble the failing output in the example. The command generated does not include any invalid options or parameters. Instead, it correctly applies the required actions to meet the user’s needs.\n\n3) **Does the command break any requirements dictated in the man page?**  \nThe command adheres to the `ffmpeg` requirements presented in the man page. The use of `-map` is correct, and the overall command structure follows the accepted syntax for `ffmpeg`. There are no invalid arguments or misuse of command options.\n\n4) **Considering the above, does the model's output contain the issue described?**  \nThe output does not contain an issue and is appropriate for the task. The command generated should work correctly, adhering to the `ffmpeg` guidelines and effectively meeting the user's request. Overall, it passes the evaluation criteria."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 435,
+    "output_tokens": 269,
+    "total_tokens": 704,
+    "cost": 0.0
+  },
+  "model_type": "eval_run"
+}

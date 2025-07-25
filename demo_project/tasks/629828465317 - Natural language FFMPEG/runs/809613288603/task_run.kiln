@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "809613288603",
+  "created_at": "2025-07-24T20:26:21.756869",
+  "created_by": "scosman",
+  "input": "Burn only forced English subtitles from input.mkv into output.mp4.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "215029303344",
+    "path": null,
+    "created_at": "2025-07-24T20:26:21.756829",
+    "created_by": "scosman",
+    "output": "To burn only the forced English subtitles from an MKV into an MP4, you need to select the subtitle stream marked as forced and in English. First, identify the forced English subtitle stream from the input using `ffprobe`. Then, use `-filter_complex` with `subtitles` to burn those subtitles into the video (since forced subs are often softsubs, burning them in requires explicit subtitle filtering).\n\nAssumptions:\n- The MKV contains forced English subtitles correctly flagged as such.\n- The subtitles are in a supported subtitle format like SRT or PGS that `ffmpeg` can burn-in.\n- We pick the first forced English subtitle stream found.\n- We encode video with H.264 and audio with AAC for MP4 compatibility.\n  \nExample steps:\n\n1. Identify forced English subtitle stream index with:\n```bash\nffprobe -loglevel error -select_streams s -show_entries stream=index:stream_tags=language:disposition -of json input.mkv\n```\nLook for subtitle streams with `\"language\":\"eng\"` and `\"disposition\":{\"forced\":1}`.\n\n2. Use that subtitle stream index in the `-filter_complex` with `subtitles` (using the stream specifier \"[0:s:idx]\"). \n\n3. Encode video to H.264, audio AAC, and burn subtitles.\n\nExample command (if forced English subtitles are stream 0:s:2):\n\n```bash\nffmpeg -i input.mkv -filter_complex \"[0:v][0:s:2]overlay\" -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nHowever, since `overlay` is for subtitle overlays from images, a better approach is to use `subtitles` filter:\n\n```bash\nffmpeg -i input.mkv -filter_complex \"subtitles=input.mkv:si=2:force_style='FontName=Arial,FontSize=24'\" -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nHere `si=2` is subtitle stream index 2, the forced English subs stream index.\n\n---\n\nIf you want a fully automated way to do this without manually checking the stream index, you would need a script or manual step, since ffmpeg itself does not automatically filter forced subtitles. For demonstration, assuming forced English subtitles are at stream index 2, here is the full command:\n\n```bash\nffmpeg -i input.mkv -filter_complex \"subtitles=input.mkv:si=2:force_style='FontName=Arial,FontSize=24'\" -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nThis burns the forced English subtitles into the output MP4 video.\n\n---\n\nSummary:\n\n- Use `subtitles` filter to burn in subtitles from a specific stream.\n- Identify forced English subtitle stream index manually with ffprobe.\n- Use H.264 video encoder and AAC audio encoder for MP4 compatibility.\n- `-movflags +faststart` to optimize for streaming.\n- Add subtitle styling options with `force_style` if desired.\n\n---\n\n```bash\nffmpeg -i input.mkv -filter_complex \"subtitles=input.mkv:si=2:force_style='FontName=Arial,FontSize=24'\" -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -movflags +faststart output.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 587,
+    "output_tokens": 758,
+    "total_tokens": 1345,
+    "cost": 0.0014476
+  },
+  "model_type": "task_run"
+}

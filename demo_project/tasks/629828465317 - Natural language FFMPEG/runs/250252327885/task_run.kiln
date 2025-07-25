@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "250252327885",
+  "created_at": "2025-07-24T20:26:38.268890",
+  "created_by": "scosman",
+  "input": "What's the ffmpeg command to increase the volume by 3dB in all .wav files in a given folder?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "617429424085",
+    "path": null,
+    "created_at": "2025-07-24T20:26:38.268862",
+    "created_by": "scosman",
+    "output": "To increase the volume by 3dB for all .wav files in a folder, you can use ffmpeg's `-af \"volume=3dB\"` audio filter. For batch processing, a shell loop (e.g., bash) works well to process each input file, apply the volume increase, and save the result, typically with a modified filename to avoid overwriting the originals.\n\nKey points:\n- `-af \"volume=3dB\"` increases audio volume by 3 decibels.\n- Use a loop to process all `.wav` files.\n- Save output files with a suffix like `_boosted` to distinguish them.\n- Retain original sample rate and codec by using `-c:a pcm_s16le` (common for .wav) or let ffmpeg infer default codec for wav.\n- Use quotes around filenames to handle spaces.\n\nHere is a bash example processing all `.wav` files in the current directory:\n\n```bash\nfor f in *.wav; do\n  ffmpeg -i \"$f\" -af \"volume=3dB\" -c:a pcm_s16le \"${f%.wav}_boosted.wav\"\ndone\n```\n\nIf you want to overwrite the original files, you can add a temporary file and then move it back, but saving as new files is safer for batch automation to prevent data loss.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 276,
+    "total_tokens": 874,
+    "cost": 0.0006808
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "154446673072",
+  "created_at": "2025-07-24T20:26:56.709900",
+  "created_by": "scosman",
+  "input": "I want to make lower-resolution web versions from all videos in a directory, sizing them to 360p mp4s.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "250594907588",
+    "path": null,
+    "created_at": "2025-07-24T20:26:56.709808",
+    "created_by": "scosman",
+    "output": "To batch process all videos in a directory into 360p MP4 files suitable for web streaming, you can use a shell script (e.g. bash) with ffmpeg that:\n\n- Finds each video file.\n- Converts it to 360p resolution while maintaining aspect ratio (`-vf scale=-2:360`).\n- Encodes video with H.264 (`libx264`) and audio with AAC.\n- Uses `-movflags +faststart` to enable progressive streaming.\n- Saves output with a consistent naming pattern.\n\nAssumptions:\n- Your input videos are of common formats recognized by ffmpeg.\n- You want to preserve audio.\n- The output files will go into the same directory with suffix `_360p.mp4`.\n\nHere is an example bash script you can run in the directory containing your videos:\n\n```bash\nfor f in *.*; do\n  # Skip if not a video file by checking extension (adjust extensions as needed)\n  if [[ $f =~ \\.(mp4|mov|avi|mkv|flv|wmv|webm)$ ]]; then\n    outfile=\"${f%.*}_360p.mp4\"\n    ffmpeg -i \"$f\" -vf scale=-2:360 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart \"$outfile\"\n  fi\ndone\n```\n\nExplanation of key ffmpeg parameters:\n- `-vf scale=-2:360` resizes height to 360 pixels and width scaled to maintain aspect ratio; width is divisible by 2.\n- `-c:v libx264` selects H.264 codec.\n- `-preset medium` balances encoding speed and compression.\n- `-crf 23` controls quality (lower is better).\n- `-c:a aac -b:a 128k` encodes audio with AAC at 128 kbps.\n- `-pix_fmt yuv420p` ensures compatibility with broad devices.\n- `-movflags +faststart` allows video to start playing before fully downloaded.\n\nThis script should provide efficient encoding for web-friendly 360p versions of all your videos.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 456,
+    "total_tokens": 1055,
+    "cost": 0.0009692
+  },
+  "model_type": "task_run"
+}

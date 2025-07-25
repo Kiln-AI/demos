@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "295642997392",
+  "created_at": "2025-07-24T20:36:46.660786",
+  "created_by": "scosman",
+  "input": "Can you convert 'demo.mkv' to MP4 using AV1 for video, and AAC for audio?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "213533541196",
+    "path": null,
+    "created_at": "2025-07-24T20:36:46.660731",
+    "created_by": "scosman",
+    "output": "To convert 'demo.mkv' to an MP4 container using AV1 video codec and AAC audio codec, you'll need to use libaom-av1 (or another AV1 encoder) for video and libfdk_aac or the native aac encoder for audio. Since libfdk_aac is not always compiled in by default, I'll use the native AAC encoder here for portability.\n\nKey points:\n- AV1 encoding is slower but provides excellent compression. Use `-crf` to control quality (lower is better; range is roughly 0–63).\n- Use `-b:v 0` for constant quality mode with libaom-av1.\n- Use `-cpu-used` to balance speed vs. quality (0 is slowest/best quality, 4 is faster/lower quality).\n- MP4 container supports AV1 from modern players; ensure the playback environment supports this.\n- `-movflags +faststart` makes the MP4 file better for streaming.\n\nExample command with reasonable speed-quality tradeoff:\n\n```bash\nffmpeg -i demo.mkv -c:v libaom-av1 -crf 30 -b:v 0 -cpu-used 4 -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nExplanation:\n- `-c:v libaom-av1`: use AV1 encoder.\n- `-crf 30 -b:v 0`: quality-based variable bitrate.\n- `-cpu-used 4`: faster encoding preset.\n- `-c:a aac -b:a 128k`: AAC audio at 128 kbps.\n- `-movflags +faststart`: enable MP4 streaming support.\n\nThis will produce a high-quality AV1-encoded MP4 file suitable for modern playback.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 369,
+    "total_tokens": 965,
+    "cost": 0.0008288
+  },
+  "model_type": "task_run"
+}

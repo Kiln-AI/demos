@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "199058256108",
+  "created_at": "2025-07-24T20:27:09.988668",
+  "created_by": "scosman",
+  "input": "How can I use ffmpeg to convert all ogg audio files to mp3, but only if they are longer than 60 seconds?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "103662255789",
+    "path": null,
+    "created_at": "2025-07-24T20:27:09.988649",
+    "created_by": "scosman",
+    "output": "To batch convert all `.ogg` audio files longer than 60 seconds to `.mp3` using ffmpeg, you can use a shell script that first checks each file's duration and then processes only those exceeding 60 seconds. We can use ffprobe (part of the ffmpeg suite) to get the duration.\n\nHere's how this works:\n\n- Use `ffprobe` to read the duration of each `.ogg` file.\n- Compare the duration to 60 seconds.\n- If longer, run `ffmpeg` to convert that audio to MP3.\n- Preserve file names and place output `.mp3` files in the same directory or a different one as desired.\n\nThis method avoids unnecessary conversions and is efficient for batch automation.\n\nBelow is a sample bash script (for Linux/macOS) illustrating this approach:\n\n```bash\n#!/bin/bash\n\nfor f in *.ogg; do\n  # get duration in seconds (floating point)\n  duration=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"$f\")\n  \n  # integer part of duration\n  duration_int=${duration%.*}\n  \n  if [ \"$duration_int\" -gt 60 ]; then\n    echo \"Converting $f (duration ${duration_int}s) to mp3...\"\n    ffmpeg -i \"$f\" -codec:a libmp3lame -qscale:a 2 \"${f%.ogg}.mp3\"\n  else\n    echo \"Skipping $f (duration ${duration_int}s) - too short.\"\n  fi\ndone\n```\n\nExplanation of key options:\n\n- `ffprobe` is used with `-show_entries format=duration` to extract the duration.\n- `ffmpeg` uses `-codec:a libmp3lame` to encode with the popular MP3 codec.\n- `-qscale:a 2` provides high-quality VBR MP3 encoding (lower is better quality, 2 is a good tradeoff).\n- `\"${f%.ogg}.mp3\"` replaces the `.ogg` extension with `.mp3`.\n\nYou can customize the script by changing directories, output locations, or adjusting quality settings.\n\nIf you're on Windows, a PowerShell or batch script would be needed with similar logic. Let me know if you want that version.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 473,
+    "total_tokens": 1075,
+    "cost": 0.0009976
+  },
+  "model_type": "task_run"
+}

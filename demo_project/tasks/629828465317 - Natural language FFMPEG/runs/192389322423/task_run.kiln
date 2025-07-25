@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "192389322423",
+  "created_at": "2025-07-24T20:35:58.320354",
+  "created_by": "scosman",
+  "input": "Extract all audio tracks from input.mkv and output them with their stream IDs as filenames.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "277975531559",
+    "path": null,
+    "created_at": "2025-07-24T20:35:58.320328",
+    "created_by": "scosman",
+    "output": "To extract all audio tracks from input.mkv and save each audio stream as an individual file named by its stream ID, you can use ffmpeg’s stream mapping and audio codec copy to avoid re-encoding.\n\nHere's how the command works:\n- -map 0:a selects all audio streams from the input.\n- -c:a copy copies the audio streams without re-encoding, preserving quality.\n- -f segment and segment_services can be avoided since we want separate files by stream ID, so instead, we use the stream specifiers in the output filename.\n- To name files by their input stream IDs, use the output filename pattern with `%d` or more advanced stream specifiers like `%{stream_index}` or `%{stream_id}`. However, ffmpeg doesn’t directly support `%{stream_id}` in output filenames.\n- The closest is `%d` for segment number or `%03d` for padded numbering.\n- Alternatively, use `-map 0:a` plus `-c copy` but specify output files per stream by running a loop or multiple commands.\n\nBut since the user wants the files named by **stream IDs** (e.g., audio stream IDs), a robust method is to run ffmpeg multiple times or script it, but with just ffmpeg, you can do:\n\n```\nffmpeg -i input.mkv -map 0:a:0 -c copy audio_0.mka\nffmpeg -i input.mkv -map 0:a:1 -c copy audio_1.mka\n...\n```\n\nThis requires knowing how many audio streams are present. Since the user wants a single command, a more advanced approach relies on using the stream index `%d` in output filenames with the `-map` option.\n\nUnfortunately, ffmpeg does not provide a direct per-stream variable for output filenames.\n\nTherefore, this command extracts each audio stream into a file numbered by its audio stream index:\n\n```bash\nffmpeg -i input.mkv -map 0:a -c copy -f segment -segment_list /dev/null -segment_time 10 audio_%d.mka\n```\n\nBut this splits by time, not streams. So instead, the best practice is to run a simple command for each audio stream.\n\nAssuming you have 3 audio streams, example commands are:\n\n```bash\nffmpeg -i input.mkv -map 0:a:0 -c copy audio_0.mka\nffmpeg -i input.mkv -map 0:a:1 -c copy audio_1.mka\nffmpeg -i input.mkv -map 0:a:2 -c copy audio_2.mka\n```\n\nTo automate, use a shell script that calls ffprobe to find audio stream IDs.\n\nBecause of above constraints, here’s a recommended approach with an explanation and example commands.\n\n---\n\n**Summary:** ffmpeg does not support auto-extracting multiple audio streams to multiple output files with stream-based file names in a single command alone without scripting. The best practice is to use a script or run ffmpeg multiple times specifying each audio stream by its index or id.\n\n---\n\n**Example Bash Script (assuming bash shell):**\n\n```bash\n#!/bin/bash\n\ninput=\"input.mkv\"\n\n# Get audio stream indices\naudio_indices=$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 \"$input\")\n\nfor i in $audio_indices; do\n  ffmpeg -i \"$input\" -map 0:a:$i -c copy \"audio_${i}.mka\"\ndone\n```\n\n---\n\nIf you want just the ffmpeg commands assuming you want to extract streams 0 to N:\n\n```bash\nffmpeg -i input.mkv -map 0:a:0 -c copy audio_0.mka\nffmpeg -i input.mkv -map 0:a:1 -c copy audio_1.mka\n# add more lines if more audio streams exist\n```\n\nThis will extract each audio stream separately into its own file named after the stream ID.\n\n---\n\n### Explanation of parameters:\n- `-map 0:a:<stream_index>`: selects one specific audio stream from the input (0 is the first input file).\n- `-c copy`: copies the audio stream without re-encoding.\n- Output filename includes the stream index to distinguish streams.\n\n---\n\n```bash\n# Example for two audio streams (adjust indexes accordingly):\nffmpeg -i input.mkv -map 0:a:0 -c copy audio_0.mka\nffmpeg -i input.mkv -map 0:a:1 -c copy audio_1.mka\n```\n\n---\n\nIf the user prefers a single multi-stream output container (like MKV), you can just copy the entire audio streams to separate container, but to get separate files, the above approach is best.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 990,
+    "total_tokens": 1583,
+    "cost": 0.0018212
+  },
+  "model_type": "task_run"
+}

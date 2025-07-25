@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "871877753850",
+  "created_at": "2025-07-23T11:54:36.057530",
+  "created_by": "scosman",
+  "dataset_id": "311454288431",
+  "task_run_config_id": null,
+  "eval_config_eval": true,
+  "input": "Take the first video track (0:0) and the sixth audio stream (0:5) from my input file complex.mov and combine them into simple.mp4",
+  "output": "To extract a specific video track and audio stream from your input file, you'll use FFmpeg's stream mapping feature with the `-map` parameter to select exactly which streams you want in the output.\n\n- `-map 0:0` selects the first video stream from the input file\n- `-map 0:5` selects the sixth audio stream from the input file  \n- `-c:v copy` and `-c:a copy` copy the streams without re-encoding for faster processing\n\n```bash\nffmpeg -i complex.mov -map 0:0 -map 0:6 -c:v copy -c:a copy simple.mp4\n```\n\nThis assumes your input file has at least 6 audio streams (indexed 0-5) and uses stream copying to avoid quality loss and speed up the process.",
+  "intermediate_outputs": {
+    "reasoning": "**Assessing the FFmpeg Command**\n\nOkay, I'm examining this FFmpeg command, and here's my take: the user wants to take a video and audio track from the `complex.mov` file and combine them into a new `simple.mp4` file. Specifically, they need the first video track (`0:0`) and the sixth audio stream (`0:5`). \n\nThe provided command, `ffmpeg -i complex.mov -map 0:0 -map 0:6 -c:v copy -c:a copy simple.mp4`, looks almost correct. It correctly identifies the input and output files and utilizes `-map` to select specific streams. The use of `-c:v copy` and `-c:a copy` is perfectly reasonable, as we're copying the streams directly without re-encoding, which is efficient when we simply want to combine existing streams.\n\nHowever, here's where it falters. The user specified the *sixth* audio stream, which should be referenced as `0:5`. But the command is actually mapping the *seventh* audio stream with `-map 0:6`. It's a critical error because the stream index is off by one. The rest of the command is correct, but it is effectively useless, given the error in the selection of the audio track. The intended audio track will be left out.\n\nIn other words, the core function -- taking the sixth stream and putting it into the final output -- is broken. Therefore, the user won't get the desired result. The command will fail."
+  },
+  "scores": {
+    "correctness": 0.0
+  },
+  "task_run_usage": {
+    "input_tokens": 1004,
+    "output_tokens": 183,
+    "total_tokens": 1187,
+    "cost": 0.005757
+  },
+  "model_type": "eval_run"
+}

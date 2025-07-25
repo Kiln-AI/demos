@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "319376623219",
+  "created_at": "2025-07-24T20:25:50.441195",
+  "created_by": "scosman",
+  "input": "Extract all subtitle streams from input.mp4 to separate files.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "274486687059",
+    "path": null,
+    "created_at": "2025-07-24T20:25:50.441170",
+    "created_by": "scosman",
+    "output": "To extract all subtitle streams from `input.mp4` into separate files, you can use `ffmpeg` to map each subtitle stream individually and save them as separate subtitle files (such as `.srt`, `.ass`, `.vtt`, depending on the original format). The most common subtitle formats extracted can be in the original codec's format or converted to a universal format like `.srt`.\n\nFirst, identify all subtitle streams and their codecs with:\n```bash\nffprobe -loglevel error -select_streams s -show_entries stream=index,codec_name -of csv=p=0 input.mp4\n```\n\nAssuming the container has multiple subtitle streams, you can extract them individually as follows:\n\n- Use `-map 0:s:<stream_index>` to select a subtitle stream.\n- Use `-c:s copy` to copy the subtitle stream without re-encoding.\n- Name the output files distinctly, e.g., `input_sub0.srt`, `input_sub1.srt` etc.\n\nIf you want to guarantee output in `.srt` format regardless of original format, you'd need to re-encode using `-c:s srt` or convert via `ffmpeg`'s subtitle decoders, but copying preserves original quality and timing.\n\nExample commands for extracting two subtitle streams (indices 0 and 1):\n\n```bash\nffmpeg -i input.mp4 -map 0:s:0 -c:s copy input_sub0.srt\nffmpeg -i input.mp4 -map 0:s:1 -c:s copy input_sub1.srt\n```\n\nIf you want a single command to automatically extract all subtitle streams, you can use a bash loop (assuming Unix-like shell):\n\n```bash\nfor i in $(ffprobe -loglevel error -select_streams s -show_entries stream=index -of csv=p=0 input.mp4); do\n  ffmpeg -i input.mp4 -map 0:s:$i -c:s copy \"input_sub$i.srt\"\ndone\n```\n\nThis approach:\n\n- Uses `-map 0:s:<index>` to select each subtitle stream.\n- Uses `-c:s copy` to avoid re-encoding subtitles.\n- Outputs separate files for each subtitle stream.\n\n**Assumptions:**\n\n- The subtitle streams are in a format compatible with direct copying into `.srt` (or the file extension matches the original format).\n- You are running this in a Unix-like shell that supports loops.\n- If subtitles are in a format like `ass` or `mov_text`, adjust file extensions accordingly (`.ass`, `.txt`).\n\nIf exact subtitle format is unknown, use `.sup` or `.mkv` or the original container’s extension, or probe first to decide.\n\n---\n\n### Summary Command Example Extracting All Subtitle Streams Automatically in Linux/macOS Bash\n\n```bash\nfor i in $(ffprobe -loglevel error -select_streams s -show_entries stream=index -of csv=p=0 input.mp4); do\n  ffmpeg -i input.mp4 -map 0:s:$i -c:s copy \"input_sub$i.srt\"\ndone\n```\n\nIf you want a Windows `cmd` or PowerShell equivalent, let me know.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 585,
+    "output_tokens": 661,
+    "total_tokens": 1246,
+    "cost": 0.0012916
+  },
+  "model_type": "task_run"
+}

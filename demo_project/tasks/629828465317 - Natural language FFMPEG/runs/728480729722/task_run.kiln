@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "728480729722",
+  "created_at": "2025-07-24T20:25:07.836569",
+  "created_by": "scosman",
+  "input": "I want to change the audio stream in my .mp4 file from the first to the second one without changing the container. How?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "245007218429",
+    "path": null,
+    "created_at": "2025-07-24T20:25:07.836445",
+    "created_by": "scosman",
+    "output": "To switch the audio stream in an MP4 file from the first to the second without re-encoding or changing the container, you can use stream copy mode in FFmpeg. This mode copies the streams bit-for-bit, avoiding quality loss and saving processing time. You need to specify the video stream to copy as-is, select the second audio stream as the audio input, and copy it into the output file.\n\nAssuming your input.mp4 contains multiple audio streams, you can remux the video stream (stream 0:v:0) from the input and the second audio stream (usually stream 0:a:1) while ignoring the first audio stream (0:a:0).\n\n- `-map 0:v:0` selects the first video stream from input.\n- `-map 0:a:1` selects the second audio stream from input.\n- `-c copy` copies all selected streams without re-encoding.\n- This command does not alter the container, only remuxes streams.\n\n```bash\nffmpeg -i input.mp4 -map 0:v:0 -map 0:a:1 -c copy output.mp4\n```\n\nThis approach assumes that your desired audio stream is indeed the second audio stream (`0:a:1`). You can verify stream indexes with `ffmpeg -i input.mp4`.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 271,
+    "total_tokens": 875,
+    "cost": 0.0006752
+  },
+  "model_type": "task_run"
+}

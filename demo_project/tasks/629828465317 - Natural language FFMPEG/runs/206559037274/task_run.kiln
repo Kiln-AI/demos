@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "206559037274",
+  "created_at": "2025-07-24T18:09:58.623500",
+  "created_by": "scosman",
+  "input": "How can I take 'event.avi' and output a 1440p video at 60fps while keeping file size in check?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "214752743073",
+    "path": null,
+    "created_at": "2025-07-24T18:09:58.623471",
+    "created_by": "scosman",
+    "output": "To convert event.avi to 1440p (2560x1440 pixels) at 60 frames per second while keeping file size reasonable, use H.264 encoding with a constant rate factor (CRF) for balanced quality and size. The scale filter ensures 1440p, fps filter ensures 60fps. Adjust CRF (lower values = higher quality/larger files, 18–23 is reasonable for general use).\n\nExplanation:\n- -vf \"scale=2560:1440,fps=60\" resizes video to 1440p and changes frame rate to 60fps.\n- -c:v libx264 encodes using H.264.\n- -preset slower gives better compression (smaller size, but slower encode).\n- -crf 22 targets a balance between quality and file size.\n- -pix_fmt yuv420p ensures compatibility.\n- -c:a aac -b:a 128k provides efficient audio encoding.\n\n```bash\nffmpeg -i event.avi -vf \"scale=2560:1440,fps=60\" -c:v libx264 -preset slower -crf 22 -pix_fmt yuv420p -c:a aac -b:a 128k event_1440p60.mp4\n```\n\nAssumptions:\n- Input event.avi is lower than or equal to 1440p/60fps (if not, frames are interpolated).\n- Output format is MP4 for good compatibility and streaming.\n- Adjust CRF/preset for your own size/quality needs.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 322,
+    "total_tokens": 926,
+    "cost": 0.003784
+  },
+  "model_type": "task_run"
+}

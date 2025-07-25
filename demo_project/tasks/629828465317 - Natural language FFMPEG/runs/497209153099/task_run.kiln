@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "497209153099",
+  "created_at": "2025-07-24T20:35:56.225561",
+  "created_by": "scosman",
+  "input": "I need to shrink a 3840x2160 file to 1920x1080 with maximum sharpness. Which ffmpeg options should I use?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "239538018124",
+    "path": null,
+    "created_at": "2025-07-24T20:35:56.225537",
+    "created_by": "scosman",
+    "output": "To downscale a 3840x2160 (4K) video to 1920x1080 (Full HD) with maximum sharpness, you should use a high-quality scaling algorithm such as 'lanczos', which excels in preserving detail and sharpness during resizing.\n\nKey points:\n- Use the `-vf scale=1920:1080:flags=lanczos` video filter to resize the video with the lanczos rescaling algorithm.\n- Preserve the aspect ratio by specifying exact dimensions assuming the input is exactly 3840x2160.\n- Use a high-quality encoder preset to maintain quality.\n- For video codec, libx264 with a reasonable CRF value balances quality and file size.\n- Keep the pixel format as yuv420p for broad compatibility.\n- For audio stream, copy it as-is to avoid quality loss and speeding up processing (optional).\n\n```bash\nffmpeg -i input.mp4 -vf scale=1920:1080:flags=lanczos -c:v libx264 -preset slow -crf 18 -c:a copy -pix_fmt yuv420p output_1080p.mp4\n```\n\nExplanation:\n- `scale=1920:1080:flags=lanczos`: scales the video to 1080p using the sharp lanczos rescaling filter.\n- `-c:v libx264`: encodes the video with the widely supported H.264 codec.\n- `-preset slow`: favors compression efficiency and quality over speed.\n- `-crf 18`: high-quality constant rate factor (lower means better quality; 18 is visually lossless or near).\n- `-c:a copy`: copies the audio stream without re-encoding to preserve original quality and save time.\n- `-pix_fmt yuv420p`: ensures compatibility across devices and players.\n\nThis command assumes your source is in MP4 format, and you want to maintain original audio quality and codec compatibility. Adjust input/output filenames and audio options depending on your requirements.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 606,
+    "output_tokens": 411,
+    "total_tokens": 1017,
+    "cost": 0.0009
+  },
+  "model_type": "task_run"
+}

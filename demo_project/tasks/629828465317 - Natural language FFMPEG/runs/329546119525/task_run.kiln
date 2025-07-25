@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "329546119525",
+  "created_at": "2025-07-24T20:27:50.326814",
+  "created_by": "scosman",
+  "input": "Is it possible to extract just a 10-second clip from the midpoint of a video?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "794987748246",
+    "path": null,
+    "created_at": "2025-07-24T20:27:50.326787",
+    "created_by": "scosman",
+    "output": "Yes, you can extract a 10-second clip from the midpoint of a video by first determining the video's total duration, then calculating the midpoint timestamp, and finally using ffmpeg's `-ss` (start time) and `-t` (duration) options to extract the clip.\n\nHere's the typical approach:\n1. Use `ffprobe` to get the duration of the video.\n2. Calculate midpoint = duration / 2.\n3. Extract 10 seconds starting at midpoint minus 5 seconds (so the 10-second clip is centered around the midpoint).\n\nAssuming you have the midpoint timestamp calculated as a variable (e.g., `midpoint`), the ffmpeg command would be:\n\n- `-ss` seeks to the specified start time.\n- `-t 10` extracts 10 seconds duration.\n- Using input seeking (`-ss` before `-i`) is faster, but less accurate. For frame-accurate extraction, place `-ss` after `-i` but it will be slower.\n- `-c copy` if you want to extract without re-encoding (only works if the start time is a keyframe; otherwise, you may get inaccurate or no output). For accuracy, re-encoding is safer.\n\nExample for accurate extraction with re-encoding (assuming midpoint is known, and it's, say, 1 minute 30 seconds for a 3-minute video):\n\n```bash\nffmpeg -ss 00:01:25 -i input.mp4 -t 10 -c:v libx264 -c:a aac -preset fast -crf 23 output_clip.mp4\n```\n\nIf you want to automate duration measurement and midpoint extraction in a script, that can be done using shell scripting with `ffprobe`.\n\nHere's a more generic example (assuming bash shell):\n\n```bash\nduration=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 input.mp4)\nmidpoint=$(echo \"$duration / 2 - 5\" | bc)\nffmpeg -ss $midpoint -i input.mp4 -t 10 -c:v libx264 -c:a aac -preset fast -crf 23 output_clip.mp4\n```\n\nThis extracts 10 seconds starting 5 seconds before the midpoint, so your clip is centered on the midpoint.\n\nFinal succinct example command (replace with actual midpoint timecode):\n\n```bash\nffmpeg -ss 00:01:25 -i input.mp4 -t 10 -c:v libx264 -c:a aac -preset fast -crf 23 output_clip.mp4\n```\n\nThis extracts a 10-second clip starting at 1 minute, 25 seconds.\n\n---\n\nSummary: Yes, extracting a 10-second clip from the midpoint is straightforward using `-ss` and `-t`. For best accuracy, re-encode. For speed, try stream copy (`-c copy`), but it may be less accurate.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 616,
+    "total_tokens": 1208,
+    "cost": 0.0012224
+  },
+  "model_type": "task_run"
+}

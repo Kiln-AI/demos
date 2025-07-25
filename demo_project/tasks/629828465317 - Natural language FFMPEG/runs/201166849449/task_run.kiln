@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "201166849449",
+  "created_at": "2025-07-24T20:24:52.716098",
+  "created_by": "scosman",
+  "input": "Transcode webcam MJPEG .avi to H.264, keeping audio as uncompressed PCM.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "220579122755",
+    "path": null,
+    "created_at": "2025-07-24T20:24:52.716073",
+    "created_by": "scosman",
+    "output": "To transcode a webcam MJPEG AVI file to H.264 video while keeping the audio as uncompressed PCM, you need to:\n\n- Decode the input video stream encoded with MJPEG and re-encode it to H.264 using libx264 codec.\n- Keep the audio stream in uncompressed PCM format by copying or explicitly encoding it as PCM (e.g., pcm_s16le).\n- Use the AVI container or another container that supports uncompressed PCM and H.264 (e.g., MKV or MP4).\n- For maximum compatibility, output pixel format yuv420p is recommended for H.264.\n\nAssuming the input file is named input.avi and output is output.avi, here is the ffmpeg command:\n\n```bash\nffmpeg -i input.avi -c:v libx264 -pix_fmt yuv420p -crf 23 -preset medium -c:a pcm_s16le output.avi\n```\n\nExplanation:\n- `-c:v libx264`: encode video in H.264.\n- `-pix_fmt yuv420p`: set pixel format to a widely compatible format for H.264.\n- `-crf 23`: quality setting for H.264; 23 is a good balance.\n- `-preset medium`: an encoding speed/quality tradeoff preset.\n- `-c:a pcm_s16le`: encode audio as uncompressed signed 16-bit little endian PCM.\n- Using .avi container preserves uncompressed audio compatibility, although MKV or MOV are also options if preferred.\n\nIf you want a more modern container like MKV to better support H.264 and uncompressed audio, just change output filename extension accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 344,
+    "total_tokens": 937,
+    "cost": 0.0007876
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "168953729670",
+  "created_at": "2025-07-24T20:38:15.417306",
+  "created_by": "scosman",
+  "input": "Burn only forced subtitle lines (forced.srt, flag = forced) onto history.mp4, ignoring full subtitles.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "293510353096",
+    "path": null,
+    "created_at": "2025-07-24T20:38:15.417271",
+    "created_by": "scosman",
+    "output": "To burn only the forced subtitles from a subtitle file into the video, you can use the `subtitles` filter with the `forced_style` option. This option allows you to display only subtitle lines marked as forced, ignoring all others. The `forced.srt` subtitle file should contain the subtitle entries with the \"forced\" flag properly set.\n\nKey points:\n- `subtitles=forced.srt:force_style='Fontname=Arial'` loads the subtitles, and the filter automatically shows only forced subtitles.\n- The `force_style` parameter customizes appearance but is optional.\n- We use `-c:a copy` to keep the original audio intact.\n- The output video codec is the same as input re-encoded by default, but you may explicitly specify codecs if needed.\n\nHere is a command assuming you want to burn forced subtitles only (the `forced` flag in the subtitle file is required):\n\n```bash\nffmpeg -i history.mp4 -vf \"subtitles=forced.srt:force_style='Fontname=Arial'\" -c:a copy output_forced_subs.mp4\n```\n\nIf you want to specify video codec and preserve quality with H.264:\n\n```bash\nffmpeg -i history.mp4 -vf \"subtitles=forced.srt:force_style='Fontname=Arial'\" -c:v libx264 -preset medium -crf 18 -c:a copy output_forced_subs.mp4\n```\n\n**Note:** The subtitles file must have lines marked as forced to correctly filter only those lines. This works with subtitle formats like SubStation Alpha (.ass) or some advanced .srt files with forced flags. If your `.srt` doesn't support forced flags, consider converting or editing to `.ass` and marking forced subtitles explicitly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 364,
+    "total_tokens": 960,
+    "cost": 0.0008208
+  },
+  "model_type": "task_run"
+}

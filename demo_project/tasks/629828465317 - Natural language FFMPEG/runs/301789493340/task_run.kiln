@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "301789493340",
+  "created_at": "2025-07-24T20:39:37.410929",
+  "created_by": "scosman",
+  "input": "I have a HEVC video file that doesn't play properly on my TV. How do I convert it to a Blu-Ray-compatible MPEG-2 file?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "214151568470",
+    "path": null,
+    "created_at": "2025-07-24T20:39:37.410903",
+    "created_by": "scosman",
+    "output": "To convert an HEVC video to a Blu-Ray-compatible MPEG-2 file, you should encode the video using MPEG-2 video codec at Blu-Ray specification resolutions and bitrates, and use AC3 audio as commonly required for Blu-Ray. Blu-Ray supports specific resolutions like 1920x1080 or 1280x720, and the video bitrate typically ranges up to 40 Mbps for 1080p MPEG-2. AC3 audio should be set to 192 kbps or higher.\n\nKey points:\n- Use `-c:v mpeg2video` to encode video in MPEG-2 format.\n- Target resolution 1920x1080 or 1280x720 (here, assuming 1080p; adjust if source is lower).\n- Set video bitrate (`-b:v`) to about 25-40 Mbps depending on your quality needs (30M here is a balance).\n- Use `-c:a ac3` for AC3 audio codec with bitrate set to 192k.\n- Set frame rate same as input (`-r`) for compatibility.\n- Use `-mpegtsflags +resend_headers` can improve compatibility with some players.\n- Output to an MPEG-TS container (`.ts` file) as typically used in Blu-Ray streams.\n- Ensure pixel format is `yuv420p`, the standard for Blu-Ray MPEG-2 video.\n\nIf your input resolution doesn't match Blu-Ray spec, the command includes scaling to 1920x1080 while preserving aspect ratio and padding if needed.\n\n```bash\nffmpeg -i input_hevc.mkv -vf \"scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2\" \\\n-c:v mpeg2video -b:v 30000k -minrate 30000k -maxrate 30000k -bufsize 1835k -r:v 30000/1001 \\\n-pix_fmt yuv420p -c:a ac3 -b:a 192k -ar 48000 -ac 6 \\\n-mpegtsflags +resend_headers output_bd_compatible.ts\n```\n\nExplanation:\n- The scaling filter resizes input to fit within 1920x1080 while keeping aspect ratio.\n- Padding centers the video if aspect ratio != 16:9.\n- `-b:v`, `-minrate` and `-maxrate` fix the video bitrate to 30 Mbps for constant bitrate (CBR), common in Blu-Ray.\n- `-r:v 30000/1001` sets frame rate to 29.97 fps (NTSC standard), adjust to your source frame rate if different.\n- Audio is set to AC3 5.1 channels (6 channels) 48kHz.\n- Use MPEG-TS container `.ts` which Blu-Ray can handle.\n\nThis setup maximizes compatibility with traditional Blu-Ray players that cannot handle HEVC files.\n\nIf you want to create a full Blu-Ray folder structure or ISO, additional authoring tools are needed beyond ffmpeg. This command produces a single video stream suitable for testing or further authoring.\n\nNote: Replace `input_hevc.mkv` and `output_bd_compatible.ts` with your actual filenames.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 676,
+    "total_tokens": 1280,
+    "cost": 0.0013232
+  },
+  "model_type": "task_run"
+}

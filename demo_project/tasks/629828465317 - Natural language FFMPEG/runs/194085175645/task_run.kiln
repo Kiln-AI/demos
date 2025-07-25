@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "194085175645",
+  "created_at": "2025-07-24T20:34:56.224717",
+  "created_by": "scosman",
+  "input": "Convert video.mov to a GIF with a width of 400 pixels.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "159918436045",
+    "path": null,
+    "created_at": "2025-07-24T20:34:56.224642",
+    "created_by": "scosman",
+    "output": "To convert video.mov to a GIF with a width of 400 pixels while maintaining the aspect ratio, you can use the `-vf scale=400:-1` filter, where `-1` automatically calculates the height preserving the aspect ratio. Additionally, generating high-quality GIFs usually benefits from using a palette for optimized colors, so we'll create a palette first, then use it to convert the video to GIF with good quality.\n\nThis two-step approach avoids color banding and improves the final GIF quality:\n\n1. Generate a palette from the source video.\n2. Use the palette to convert the video to GIF with scaling.\n\n```bash\n# Step 1: Generate palette\nffmpeg -i video.mov -vf \"fps=15,scale=400:-1:flags=lanczos,palettegen\" -y palette.png\n\n# Step 2: Create GIF using the palette\nffmpeg -i video.mov -i palette.png -filter_complex \"fps=15,scale=400:-1:flags=lanczos[x];[x][1:v]paletteuse\" -y output.gif\n```\n\nExplanation:\n- `fps=15` limits the frame rate to 15 fps for a reasonable GIF size and smoothness.\n- `scale=400:-1` resizes width to 400 pixels and keeps aspect ratio.\n- `flags=lanczos` applies high-quality scaling.\n- `palettegen` creates an optimized color palette.\n- `paletteuse` uses that palette for the GIF conversion.\n- `-y` overwrites output files without prompting.\n  \nThis method produces higher quality GIFs with better colors and smoother scaling than a direct one-step conversion.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 587,
+    "output_tokens": 339,
+    "total_tokens": 926,
+    "cost": 0.0007772
+  },
+  "model_type": "task_run"
+}

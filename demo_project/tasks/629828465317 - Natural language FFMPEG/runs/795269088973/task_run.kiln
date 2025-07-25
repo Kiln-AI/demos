@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "795269088973",
+  "created_at": "2025-07-24T20:37:23.706100",
+  "created_by": "scosman",
+  "input": "If I have audio and video in separate files, how do I mux them together without encoding?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "590950541017",
+    "path": null,
+    "created_at": "2025-07-24T20:37:23.706075",
+    "created_by": "scosman",
+    "output": "To mux (multiplex) separate audio and video files without re-encoding, you perform stream copying. This means the audio and video streams are simply combined into a single container without any modification, which is very fast and preserves the original quality.\n\nKey points:\n- Use `-c:v copy` and `-c:a copy` to avoid encoding.\n- The output container format should support both the codecs in your input files (e.g., MP4, MKV).\n- Make sure the input files are properly synchronized and compatible in terms of codecs and formats.\n- The order of inputs matters: specify the video input first, then the audio input.\n- If the audio or video streams’ codecs are not supported by the chosen container, muxing might fail or produce an unusable file.\n\nExample: merging video.mp4 (video only) and audio.aac (audio only) into output.mp4 without encoding.\n\n```bash\nffmpeg -i video.mp4 -i audio.aac -c:v copy -c:a copy -map 0:v:0 -map 1:a:0 output.mp4\n```\n\nExplanation:\n- `-map 0:v:0` selects the first video stream from the first input.\n- `-map 1:a:0` selects the first audio stream from the second input.\n- `-c:v copy -c:a copy` copy streams without re-encoding.\n- Output container is mp4 for compatibility.\n\nAdjust inputs and output filename according to your files and preferred container format.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 310,
+    "total_tokens": 906,
+    "cost": 0.0007344
+  },
+  "model_type": "task_run"
+}

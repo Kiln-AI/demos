@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "170821408201",
+  "created_at": "2025-07-24T20:39:59.575346",
+  "created_by": "scosman",
+  "input": "I need to redact a region (pixelate censor bar) on multiple places in each frame, using ffmpeg alone.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "180004573152",
+    "path": null,
+    "created_at": "2025-07-24T20:39:59.575148",
+    "created_by": "scosman",
+    "output": "To redact multiple regions in each frame with pixelation (a censor effect) using ffmpeg alone, you can use the `boxblur` filter combined with the `crop` and `overlay` filters. The basic idea is:\n\n- For each region to censor, `crop` out that area.\n- Apply a strong blur (pixelation) effect to the cropped patch.\n- Overlay the blurred patch back on top of the original video at the same position.\n\nYou will chain these operations for each region you want to pixelate. This method keeps the rest of the video untouched and only pixelates specified rectangles.\n\nHere is a generalized example with two regions to pixelate. You will need to know the (x,y) coordinates and width and height of each rectangle:\n\n- Region 1: position (x1, y1), size (w1, h1)\n- Region 2: position (x2, y2), size (w2, h2)\n\nWe use a strong blur `boxblur=10:enable` to simulate pixelation. You can increase the blur values for stronger censoring.\n\n```bash\nffmpeg -i input.mp4 -filter_complex \"\n[0:v]split=3[main][crop1][crop2];\n\n[crop1]crop=w=w1:h=h1:x=x1:y=y1,boxblur=10[blur1];\n[crop2]crop=w=w2:h=h2:x=x2:y=y2,boxblur=10[blur2];\n\n[main][blur1]overlay=x1:y1[tmp1];\n[tmp1][blur2]overlay=x2:y2\n\" -c:a copy -c:v libx264 -preset fast -crf 23 output.mp4\n```\n\nReplace `x1,y1,w1,h1` and `x2,y2,w2,h2` with numeric values for your specific redaction areas.\n\n- `split=3` prepares 3 streams: main untouched, and two crops to blur.\n- The cropped blurry patches overlay back on the main video.\n- This approach can be extended to more regions by increasing the number of splits and overlay steps.\n\nAssumptions:\n- Input video is `input.mp4`.\n- You want to encode with H.264 and keep the audio unchanged.\n- Pixelation is done via strong box blur.\n- You know the pixel coordinates for the censor bars.\n\nIf you have many regions, scripts or tools generating the filter_complex part might be easier.\n\nThis approach maintains high-quality processing and uses only ffmpeg filters.  \n\nExample for two specific regions at (100,100,200x50) and (300,300,150x75):\n\n```bash\nffmpeg -i input.mp4 -filter_complex \"\n[0:v]split=3[main][crop1][crop2];\n[crop1]crop=200:50:100:100,boxblur=10[blur1];\n[crop2]crop=150:75:300:300,boxblur=10[blur2];\n[main][blur1]overlay=100:100[tmp1];\n[tmp1][blur2]overlay=300:300\n\" -c:a copy -c:v libx264 -preset fast -crf 23 output.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 670,
+    "total_tokens": 1268,
+    "cost": 0.0013112
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "105061677809",
+  "created_at": "2025-07-24T18:11:01.635334",
+  "created_by": "scosman",
+  "input": "Could you convert a 4K video to 1080p while compressing it to a small file size without losing quality?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Advanced FFmpeg Video Filters"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "232673632086",
+    "path": null,
+    "created_at": "2025-07-24T18:11:01.635306",
+    "created_by": "scosman",
+    "output": "To convert a 4K video to 1080p and compress for a small file size while preserving as much quality as possible, use H.264 (libx264) with constant rate factor (CRF) for balanced quality, resize to 1080p, and tune encoding settings for quality retention.\n\nKey points:\n- -vf scale=-2:1080 rescales the video to 1080p while maintaining aspect ratio. -2 ensures width is divisible by 2, required by libx264.\n- -c:v libx264 -preset slow achieves better compression and quality (can use slower presets for even better compression if encoding time is less important).\n- -crf 22 offers a good tradeoff between quality and file size. Lower CRF (~18) means better quality/larger file; higher (24+) means less quality/smaller file.\n- -pix_fmt yuv420p ensures broad compatibility.\n- -c:a aac -b:a 128k encodes audio efficiently.\n- -movflags +faststart enables streaming.\n\nAssuming your input video is input4k.mp4:\n\n```bash\nffmpeg -i input4k.mp4 -vf scale=-2:1080 -c:v libx264 -preset slow -crf 22 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output1080p.mp4\n```\n\nIf you need even smaller sizes, increase the CRF value (e.g., 24), but this may begin to show visual difference. Adjust -preset for encoding time versus size/quality as needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 337,
+    "total_tokens": 938,
+    "cost": 0.003898
+  },
+  "model_type": "task_run"
+}

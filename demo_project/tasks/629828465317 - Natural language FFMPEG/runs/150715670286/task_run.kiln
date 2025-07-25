@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "150715670286",
+  "created_at": "2025-07-24T20:35:46.721299",
+  "created_by": "scosman",
+  "input": "Extract the audio, apply a band-stop filter (remove 2kHz – 4kHz), and save as filtered.wav.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "929918881100",
+    "path": null,
+    "created_at": "2025-07-24T20:35:46.721269",
+    "created_by": "scosman",
+    "output": "To extract audio from a video or audio source and apply a band-stop filter that attenuates frequencies between 2kHz and 4kHz, you can use the `afftdn` or `bandreject` filter; here, `bandreject` is more suitable for band-stop filtering.\n\nIn this command:\n- `-vn` disables video processing (extract audio only).\n- The `bandreject=f=3000:t=q:w=2000` filter applies a band-stop filter centered at 3000 Hz (midpoint of 2k-4k Hz), with a width of 2000 Hz to cover the 2kHz to 4kHz range.\n- Output is saved as a WAV file (`filtered.wav`), preserving original sample rate and channels.\n\nNote: This assumes the input file is named `input.ext`. Replace with your actual input filename.\n\n```bash\nffmpeg -i input.ext -vn -af \"bandreject=f=3000:t=q:w=2000\" -c:a pcm_s16le filtered.wav\n```\n\nIf you want higher audio fidelity, you could specify `-ar` (sample rate) or `-ac` (channels) explicitly, but by default it copies from input.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 255,
+    "total_tokens": 857,
+    "cost": 0.0006488
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "589786456903",
+  "created_at": "2025-07-24T20:27:09.973200",
+  "created_by": "scosman",
+  "input": "What's the fastest way to split each video in a folder into 10-second segments?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "205339477769",
+    "path": null,
+    "created_at": "2025-07-24T20:27:09.973176",
+    "created_by": "scosman",
+    "output": "To quickly split each video in a folder into 10-second segments while maintaining the original quality and avoiding re-encoding (which can be time-consuming), you can use ffmpeg's segment muxer with stream copy mode (`-c copy`). This will cut the video into chunks by keyframes, which is very fast but might have segments slightly longer/shorter if keyframes don't align exactly at 10s intervals.\n\n**Key points:**\n- `-c copy` copies streams without re-encoding (fastest).\n- `-f segment` uses segment muxer to split the video.\n- `-segment_time 10` sets segment length to 10 seconds.\n- Output filenames include `%03d` to number segments sequentially.\n- Make sure your files have keyframes placed frequently (e.g., GOP size ~10s) for precise splitting; otherwise, splits occur at nearest previous keyframe.\n\nFor batch processing, a shell script (bash) loops over all video files in a directory and runs this command per file.\n\n---\n\nExample bash script snippet for `.mp4` videos:\n\n```bash\n#!/bin/bash\nmkdir -p output_segments\nfor input in *.mp4; do\n  filename=\"${input%.*}\"\n  ffmpeg -i \"$input\" -c copy -map 0 -f segment -segment_time 10 -reset_timestamps 1 \"output_segments/${filename}_part_%03d.mp4\"\ndone\n```\n\n**Explanation:**\n\n- `mkdir -p output_segments` creates an output subfolder to keep outputs organized.\n- `${input%.*}` extracts the base filename without extension.\n- `-map 0` ensures all streams (audio, video, subtitles) are copied.\n- `-reset_timestamps 1` resets timestamps on each segment to start at 0, improving compatibility.\n- Output files named like `filename_part_000.mp4`, etc.\n\n**Assumptions:**\n\n- Your videos are `.mp4` format; modify `*.mp4` accordingly if you have other extensions.\n- You want lossless speed-focused splitting, not frame-accurate re-encoded segments.\n- Running on a Unix-like shell (Linux, macOS); adjust for Windows PowerShell or batch if needed.\n\nThis is the fastest and efficient way to split many videos into 10-second chunks.\n\n---\n\nIf you want me to generate commands for other systems or with re-encoding, just ask!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 497,
+    "total_tokens": 1088,
+    "cost": 0.0010316
+  },
+  "model_type": "task_run"
+}

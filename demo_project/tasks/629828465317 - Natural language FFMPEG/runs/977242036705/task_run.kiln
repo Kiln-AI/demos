@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "977242036705",
+  "created_at": "2025-07-24T18:13:03.385274",
+  "created_by": "scosman",
+  "input": "How would I combine two video files side by side with one of them being an alpha-transparent overlay over the other?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "986529818738",
+    "path": null,
+    "created_at": "2025-07-24T18:13:03.385249",
+    "created_by": "scosman",
+    "output": "To combine two videos side by side, with one acting as an alpha-transparent overlay, you should:\n\n1. Place the base video on the left using the `hstack` filter.\n2. Overlay the alpha-transparent video (which must have an alpha channel, e.g., `mov`, `webm` with VP8/VP9, `png`-sequence, or similar) using the `overlay` filter, ensuring it’s composited with transparency.\n3. Use `-filter_complex` for advanced filter chains.\n\nBelow is an example assuming `background.mp4` (no alpha, base layer) and `overlay.webm` (with alpha channel):\n\n- [0][1]hstack=inputs=2 merges videos side by side.\n- [stacked][1]overlay=shortest=1 merges the alpha-video over the stacked result. If overlay's alpha is not respected, ensure your format supports alpha and input is decoded appropriately.\n- -c:v supports `-c:v libvpx-vp9` for outputs with alpha, or `-c:v qtrle` for QuickTime (MOV), or use `-pix_fmt yuv420p` if you want to drop alpha for web playback.\n\n**Assumption:** Both videos are the same height. If not, scale them first. `overlay.webm` has alpha. Adjust filenames as needed.\n\n```bash\nffmpeg -i background.mp4 -i overlay.webm -filter_complex \"[0][1]hstack=inputs=2[stacked];[stacked][1]overlay=shortest=1\" -c:v libvpx-vp9 -auto-alt-ref 0 -pix_fmt yuva420p output.webm\n```\n\n**Explanation:**\n- This stacks the two videos side by side and overlays the alpha-transparent video as needed.\n- For outputting with alpha, VP9 in WebM (`libvpx-vp9` with `yuva420p`) is a practical choice.\n- The filter chain ensures correct compositing and respects alpha if your source supports it.\n\n**Tips:**\n- Alpha in MP4 is not broadly supported; WebM or MOV is preferred.\n- If the overlay should go only on one side, crop it first or adjust the overlay position.\n- Both videos should have the same resolution/height for a clean hstack; use `scale` as needed.\n\nLet me know if you need scaling or special alignment!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 501,
+    "total_tokens": 1098,
+    "cost": 0.005202
+  },
+  "model_type": "task_run"
+}

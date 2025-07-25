@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "311461022889",
+  "created_at": "2025-07-24T20:26:01.149586",
+  "created_by": "scosman",
+  "input": "Crop the video but keep subtitles centered after burning them in.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "333877697868",
+    "path": null,
+    "created_at": "2025-07-24T20:26:01.149550",
+    "created_by": "scosman",
+    "output": "To crop a video while burning subtitles and keep the subtitles centered on the cropped frame, you need to:\n\n1. Use the `crop` filter to crop the video to your desired dimensions.\n2. Burn subtitles using the `subtitles` filter.\n3. Adjust the subtitle positioning by overriding the subtitle alignment and position via the `force_style` parameter inside the subtitles filter. Centering subtitles is generally by setting alignment to bottom center (alignment=2).\n4. Ensure the subtitles appear centered relative to the cropped video frame.\n\nAssumptions:\n- You want a specific crop size; I will assume cropping to width=iw/2 and height=ih/2 centered.\n- Subtitles are in an external subtitle file `subs.srt`.\n- The video input is `input.mp4` and output is `output.mp4`.\n\nExample:\n\n```bash\nffmpeg -i input.mp4 -vf \"crop=iw/2:ih/2:(iw-out_w)/2:(ih-out_h)/2,subtitles=subs.srt:force_style='Alignment=2'\" -c:a copy output.mp4\n```\n\nExplanation:\n- `crop=iw/2:ih/2:(iw-out_w)/2:(ih-out_h)/2` crops to half width and half height, centered.\n- `subtitles=subs.srt:force_style='Alignment=2'` burns subtitles with style forcing bottom-center alignment.\n- `-c:a copy` copies audio without re-encoding.\n- The order places the crop first so the subtitles are over the cropped video.\n  \nIf your crop size differs or the subtitles are internal (embedded), let me know so I can adjust the example accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 585,
+    "output_tokens": 345,
+    "total_tokens": 930,
+    "cost": 0.000786
+  },
+  "model_type": "task_run"
+}

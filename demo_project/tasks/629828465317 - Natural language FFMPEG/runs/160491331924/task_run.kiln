@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "160491331924",
+  "created_at": "2025-07-24T18:08:28.255852",
+  "created_by": "scosman",
+  "input": "I'm looking to convert a VOB file from a DVD into a digital file with the highest possible quality using H.264. How can I achieve this?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Common Video Codecs and Their Uses"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "104557681723",
+    "path": null,
+    "created_at": "2025-07-24T18:08:28.255807",
+    "created_by": "scosman",
+    "output": "To convert a VOB file (commonly found on DVDs) to a high-quality digital file using the H.264 codec, you should use the libx264 encoder with settings favoring quality:\n\n- Use the `-preset slower` for better compression efficiency (higher quality at a given file size).\n- `-crf 18` for near visually lossless quality (lower values mean higher quality; 18 is a commonly recommended value for archiving).\n- `-c:a copy` to preserve the original audio stream without re-encoding (assuming you wish to keep the DVD audio as-is; use AAC encoding if you need universal compatibility).\n- `-pix_fmt yuv420p` for compatibility.\n- `-movflags +faststart` for optimized playback if you’re targeting MP4 output.\n\n**Assumptions:**  \n- The input file is named `input.vob`.\n- You want an MP4 output (`output.mp4`), which is broadly compatible.\n- DVD interlacing is not treated here; for best results, add deinterlacing (`-vf yadif`) if the source is interlaced.\n\n```bash\nffmpeg -i input.vob -c:v libx264 -preset slower -crf 18 -pix_fmt yuv420p -c:a copy -movflags +faststart output.mp4\n```\n\n**If your DVD video is interlaced, add deinterlacing:**\n\n```bash\nffmpeg -i input.vob -vf yadif -c:v libx264 -preset slower -crf 18 -pix_fmt yuv420p -c:a copy -movflags +faststart output.mp4\n```\n\nThis command preserves the highest practical quality while converting your VOB file to H.264 in an MP4 container.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 608,
+    "output_tokens": 370,
+    "total_tokens": 978,
+    "cost": 0.004176
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "282429491453",
+  "created_at": "2025-07-23T13:29:05.948656",
+  "created_by": "scosman",
+  "dataset_id": "687706851240",
+  "task_run_config_id": null,
+  "eval_config_eval": true,
+  "input": "I have a file with 4 video streams and 8 audio streams. I want to use video stream 0:2 and audio stream 0:7 to create output.mp4 from input.mkv",
+  "output": "To map specific streams from a multi-stream file, you'll use the `-map` parameter to select exactly which video and audio streams you want in the output. This allows you to choose specific streams by their indices.\n\nThe `-map` parameter uses the format `-map input_file_index:stream_index` where the input file index is typically 0 for the first (and often only) input file, followed by the stream index within that file.\n\n```bash\nffmpeg -i input.mkv -map 0:3 -map 0:8 -c copy output.mp4\n```\n\nI'm using `-c copy` to avoid re-encoding the streams, which will be faster and maintain original quality. The command maps video stream index 3 (the third video stream) and audio stream index 8 (the eighth audio stream) from the input file to create the output MP4.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) Let's evaluate based on the criteria provided:\n\n- **Produces a valid and runnable ffmpeg command**: \n  - The command provided by the model is:\n    ```bash\n    ffmpeg -i input.mkv -map 0:3 -map 0:8 -c copy output.mp4\n    ```\n  - In this context, `-i input.mkv` specifies the input file. The `-map` option is used to select specific streams. However, the stream indices are incorrect as per the user request. The user asked for video stream `0:2` and audio stream `0:7`, but the model specified `0:3` and `0:8`. With valid stream indices replacing the incorrect ones, the command should work if replaced with:\n    ```bash\n    ffmpeg -i input.mkv -map 0:2 -map 0:7 -c copy output.mp4\n    ```\n\n- **The produced ffmpeg command follows user request**:\n  - The user specifically requested mapping video stream `0:2` and audio stream `0:7`. The model incorrectly mapped `0:3` and `0:8`. Thus, the produced command does not follow the user's request correctly.\n\n- **Other considerations**: \n  - The command explanation is correct and succinct. It explains the use of `-map` and `-c copy` well. The necessity for corrections lies only in adhering to the correct stream index per the user’s instructions.\n\nGiven these criteria, the model's output fails because the stream indices do not match the user's request, despite being runnable with correct indices. The incorrect handling of user instructions largely affects the usability and adherence of the output to the user request."
+  },
+  "scores": {
+    "correctness": 4.599055376134504e-10
+  },
+  "task_run_usage": {
+    "input_tokens": 1017,
+    "output_tokens": 197,
+    "total_tokens": 1214,
+    "cost": 0.006006
+  },
+  "model_type": "eval_run"
+}

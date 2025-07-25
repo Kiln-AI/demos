@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "242577387577",
+  "created_at": "2025-07-24T20:37:55.187057",
+  "created_by": "scosman",
+  "input": "Merge external subs (closed_captions.srt) and video (ballet.avi) into MP4, making sure it’s compatible with iOS devices.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "805783605783",
+    "path": null,
+    "created_at": "2025-07-24T20:37:55.187009",
+    "created_by": "scosman",
+    "output": "To merge external subtitles (SRT) into an MP4 and ensure iOS compatibility, you should burn the subtitles into the video (also called \"hardcoding\") because iOS devices have limited support for external or soft subtitles in MP4 containers. \n\nKey points:\n- Use ffmpeg's `subtitles` filter to burn the subtitles directly onto the video frames.\n- Use H.264 video codec and AAC audio codec for compatibility.\n- Set pixel format to yuv420p for broad device support.\n- Use `-movflags +faststart` to optimize MP4 for streaming.\n- Assume default audio is compatible; re-encode if needed with AAC.\n\nThis approach ensures subtitles are visible on iOS because they become part of the video image rather than relying on device subtitle support.\n\n```bash\nffmpeg -i ballet.avi -vf \"subtitles=closed_captions.srt\" -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nThis command takes `ballet.avi` as input, burns the subtitles from `closed_captions.srt` onto the video frames, and outputs an iOS-compatible MP4 with soft-subtitle limitations bypassed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 606,
+    "output_tokens": 271,
+    "total_tokens": 877,
+    "cost": 0.000676
+  },
+  "model_type": "task_run"
+}

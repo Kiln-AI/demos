@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "105930630201",
+  "created_at": "2025-07-24T20:36:08.023980",
+  "created_by": "scosman",
+  "input": "Is there a way to convert a 320x240 video to 720x480 NTSC DVD standard?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "321962414851",
+    "path": null,
+    "created_at": "2025-07-24T20:36:08.023956",
+    "created_by": "scosman",
+    "output": "To convert a 320x240 video to the 720x480 resolution required for NTSC DVD standard, you need to scale the video to 720x480 pixels and encode it in a DVD-compatible format. NTSC DVD video uses a resolution of 720x480 pixels, usually with a fixed aspect ratio flag to indicate either 4:3 or 16:9 display aspect ratio. \n\nKey points:\n- Use `-vf scale=720:480` to scale the video.\n- Specify DVD-compatible video codec settings: MPEG-2 video codec (`mpeg2video`) with a bitrate typical for DVDs (e.g., 6000 kbps).\n- Set frame rate to 29.97 (`30000/1001`) which is NTSC standard.\n- Use MPEG-2 audio codec (`mp2`) or AC3 for DVD, with appropriate audio bitrate.\n- Set pixel format to `yuv420p` (required for DVDs).\n- Set aspect ratio to 4:3 or 16:9 using `-aspect 4:3` or `-aspect 16:9`.\n- Output container should be MPEG Transport Stream (`.vob`) or MPEG Program Stream (`.mpg`), but `.mpg` is fine for compatibility.\n\nHere, assuming the source has a 4:3 aspect ratio and you want standard NTSC frame rate and DVD encoding.\n\n```bash\nffmpeg -i input.mp4 -vf scale=720:480 -r 30000/1001 -aspect 4:3 -c:v mpeg2video -b:v 6000k -minrate 6000k -maxrate 6000k -bufsize 1835k -c:a mp2 -b:a 192k -pix_fmt yuv420p output.mpg\n```\n\nExplanation:\n\n- `-r 30000/1001` sets frame rate to NTSC standard 29.97fps.\n- `-c:v mpeg2video` encodes video in the DVD MPEG-2 codec.\n- `-b:v 6000k ...` fixes the bitrate to a DVD-compatible level.\n- `-c:a mp2 -b:a 192k` uses MPEG audio layer II at 192 kbps (DVD standard).\n- `-pix_fmt yuv420p` required pixel format for DVD video.\n- `-aspect 4:3` sets the display aspect ratio; change to `16:9` if needed.\n- Output file is `.mpg`, suitable for DVD authoring.\n\nIf you prefer to output a VOB file structure for direct DVD authoring, you may need additional multiplexing steps or a dedicated DVD authoring tool, but this command produces DVD-compliant MPEG video.\n\nMake sure your source video has a NTSC-compatible frame rate or consider frame rate conversion carefully to avoid judder.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 589,
+    "total_tokens": 1185,
+    "cost": 0.0011808
+  },
+  "model_type": "task_run"
+}

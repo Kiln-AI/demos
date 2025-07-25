@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "191256080950",
+  "created_at": "2025-07-24T18:12:48.145367",
+  "created_by": "scosman",
+  "input": "Every time I try to crop a video to a specific aspect ratio, the output ends up with black bars. Is there a specific ffmpeg command that avoids this issue?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "112856130519",
+    "path": null,
+    "created_at": "2025-07-24T18:12:48.145334",
+    "created_by": "scosman",
+    "output": "Black bars in your cropped video usually occur when the output resolution doesn’t exactly match the crop area or when the aspect ratio set for output doesn't match the actual cropped content. To avoid black bars, ensure that:\n\n- You use the crop filter to extract the region you want to keep, specifying the output width and height that matches your target aspect ratio.\n- You do NOT use -aspect or force an output resolution that doesn’t match your crop dimensions.\n- Don't use the pad filter or output resolutions that “add” pixels outside your main content.\n\nHere’s how you can crop a video to a 16:9 aspect ratio (e.g., 1280x720) without black bars:\n\n- The crop filter: crop=out_w:out_h:x:y crops a region of out_w width and out_h height from position (x, y).\n- Replace x and y with desired starting positions, or use expressions like to center the crop.\n\nFor example, to crop the center 1280x720 region from any video:\n\n```bash\nffmpeg -i input.mp4 -vf \"crop=1280:720\" -c:a copy output.mp4\n```\n\nThis command will only keep the center 1280x720 region, discarding the rest. No scaling or aspect forcing is done, so there are no black bars.\n\nIf you want to crop to just a given aspect ratio (not a fixed size), you can use expressions. For any video, cropping to the largest possible center 16:9 area:\n\n```bash\nffmpeg -i input.mp4 -vf \"crop='min(iw,ih*16/9)':'min(ih,iw*9/16)'\" -c:a copy output.mp4\n```\n\nExplanation:\n- iw and ih are FFmpeg variables for input width and height.\n- min(iw,ih*16/9) chooses the maximum width or height that fits a 16:9 area inside the source.\n\nThis ensures you get a 16:9 video, cropped to the center, without ever introducing black bars.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 608,
+    "output_tokens": 423,
+    "total_tokens": 1031,
+    "cost": 0.0046
+  },
+  "model_type": "task_run"
+}

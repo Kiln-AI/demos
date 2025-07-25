@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "200933583535",
+  "created_at": "2025-07-24T20:23:24.935131",
+  "created_by": "scosman",
+  "input": "Mix background.mp3 at -20dB under primary.wav, result saved as mix.wav.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "981051986745",
+    "path": null,
+    "created_at": "2025-07-24T20:23:24.935103",
+    "created_by": "scosman",
+    "output": "To mix background.mp3 at -20dB below the level of primary.wav, you need to first reduce the volume of background.mp3 by 20dB, then mix it with primary.wav. Using `ffmpeg`:\n\n- Use `-filter_complex` to control the volumes and perform the audio mixing.\n- The `volume` filter adjusts background.mp3 by \"-20dB\".\n- The `amerge` or `amix` filter can mix audio streams. `amix` is better for mixing multiple inputs while retaining duration.\n- Set `duration=longest` in `amix` to ensure the output length matches the longest input.\n- Output as WAV with `-c:a pcm_s16le` for high quality uncompressed audio.\n\nHere's the command:\n\n```bash\nffmpeg -i primary.wav -i background.mp3 -filter_complex \"[1:a]volume=-20dB[bg];[0:a][bg]amix=inputs=2:duration=longest:dropout_transition=2[aout]\" -map \"[aout]\" -c:a pcm_s16le mix.wav\n```\n\nExplanation:\n- `[1:a]volume=-20dB[bg]` lowers the background audio by 20dB.\n- `[0:a][bg]amix=inputs=2:duration=longest:dropout_transition=2[aout]` mixes primary and background audio.\n- `-c:a pcm_s16le` ensures WAV format with 16-bit PCM audio.\n- `dropout_transition=2` smooths the transition if one input ends earlier.\n\nThis assumes both files have compatible sample rates and channel layouts. ffmpeg can resample or convert if needed automatically.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 353,
+    "total_tokens": 947,
+    "cost": 0.0008024
+  },
+  "model_type": "task_run"
+}

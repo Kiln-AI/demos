@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "204303143988",
+  "created_at": "2025-07-24T20:37:50.442820",
+  "created_by": "scosman",
+  "input": "Strip only one specific subtitle track (e.g. French) from international.mkv and output the rest unchanged.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "297876686235",
+    "path": null,
+    "created_at": "2025-07-24T20:37:50.442790",
+    "created_by": "scosman",
+    "output": "To strip only one specific subtitle track (e.g., French) from an MKV file while keeping all other streams intact, you first need to identify the stream index of the French subtitle track. You then exclude that stream using `-map` options.\n\n- Use `ffprobe` or `ffmpeg -i` to find the subtitle stream index of the French subtitles.\n- Use `-map` to selectively include all streams except the French subtitle.\n- Use `-c copy` to avoid re-encoding and preserve quality.\n\nAssuming French subtitles are stream 0:s:2 (a common subtitle stream notation), the command would map all streams, then exclude the French subtitle stream explicitly.\n\nHere's a two-step approach:\n\n1. Identify subtitle streams:\n```bash\nffprobe -i international.mkv -show_streams -select_streams s -loglevel error\n```\nLook for the stream with `TAG:language=fra` or \"French\".\n\n2. Use `-map` to include all streams except the French subtitle:\n\nIf the French subtitle is stream index 2 (zero-based), you can do:\n\n```bash\nffmpeg -i international.mkv -map 0 -map -0:s:2 -c copy output.mkv\n```\n\nExplanation:\n- `-map 0` selects all streams from the input.\n- `-map -0:s:2` excludes subtitle stream 2.\n- `-c copy` copies all streams without re-encoding to keep quality.\n  \nAdjust subtitle stream index accordingly based on your probe result.\n\n```bash\nffmpeg -i international.mkv -map 0 -map -0:s:2 -c copy output.mkv\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 347,
+    "total_tokens": 942,
+    "cost": 0.0007932
+  },
+  "model_type": "task_run"
+}

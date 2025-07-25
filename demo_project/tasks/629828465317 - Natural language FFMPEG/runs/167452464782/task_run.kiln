@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "167452464782",
+  "created_at": "2025-07-24T20:26:53.941059",
+  "created_by": "scosman",
+  "input": "How do I batch convert all mp4 files to ProRes .mov format for editing?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "212645095626",
+    "path": null,
+    "created_at": "2025-07-24T20:26:53.941034",
+    "created_by": "scosman",
+    "output": "To batch convert all MP4 files in a directory to ProRes MOV files, you can use a shell loop combined with ffmpeg. ProRes is a high-quality intermediate codec ideal for editing, and the `-c:v prores_ks` codec with an appropriate profile (like 3 for standard HQ) is recommended for ProRes encoding.\n\nKey points:\n- Loop over all `.mp4` files.\n- Output filename changes extension to `.mov`.\n- Use `-c:v prores_ks -profile:v 3` for ProRes 422 HQ quality.\n- Copy audio with `-c:a copy` to avoid re-encoding.\n- Adjust output filenames to avoid overwriting.\n- This example assumes a Unix-like shell (bash).\n\nExample command to run in your terminal within the folder containing the `.mp4` files:\n\n```bash\nfor f in *.mp4; do\n  ffmpeg -i \"$f\" -c:v prores_ks -profile:v 3 -c:a copy \"${f%.*}.mov\"\ndone\n```\n\nExplanation:\n- `${f%.*}` strips the extension from the filename.\n- ProRes encoding ensures compatibility for editing workflows in most NLEs.\n- Audio is copied as-is for speed (if compatible with the container).\n- You can modify the `-profile:v` (0,1,2,3) for different ProRes flavors if needed.\n\nIf you want to process files recursively in subfolders or on other OSes, the loop syntax will vary accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 312,
+    "total_tokens": 904,
+    "cost": 0.000736
+  },
+  "model_type": "task_run"
+}

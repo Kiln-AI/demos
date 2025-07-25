@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "317190495271",
+  "created_at": "2025-07-24T20:36:30.918245",
+  "created_by": "scosman",
+  "input": "Can you show a command that scales to 1080 width, and crops centered if the height is over 1350?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "929038715239",
+    "path": null,
+    "created_at": "2025-07-24T20:36:30.918163",
+    "created_by": "scosman",
+    "output": "To scale the video to a width of 1080 while keeping the aspect ratio, and then crop the height to 1350 pixels centered only if the scaled height exceeds 1350, you can use FFmpeg's filter_complex with conditional cropping logic.\n\nHere’s what’s done:\n\n- `scale=1080:-2`: Scale width to 1080, height is automatically calculated to maintain aspect ratio, and `-2` ensures the height is divisible by 2 (required by many codecs).\n- `crop` filter with expressions:\n  - `iw` (input width) and `ih` (input height) refer to the video after scaling.\n  - Crop height is set to 1350.\n  - The `if` condition checks `ih > 1350`: if true, crops height to 1350 centered; otherwise, uses original height (no cropping).\n- `x=(iw - iw)/2` centers crop horizontally — since width remains 1080, no horizontal cropping, so x=0.\n- `y=(ih - 1350)/2` centers crop vertically when cropping occurs.\n\nHere is the FFmpeg command applying these principles:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=1080:-2,crop=1080:if(gt(in_h\\,1350)\\,1350\\,in_h):(1080-1080)/2:if(gt(in_h\\,1350)\\,(in_h-1350)/2\\,0)\" -c:a copy output.mp4\n```\n\nExplanation:\n- `scale=1080:-2` scales width to 1080, height auto with aspect ratio.\n- `crop=1080:if(gt(in_h\\,1350)\\,1350\\,in_h)` crops height to 1350 if `in_h` (input height after scaling) is greater, else no cropping.\n- `x=(1080-1080)/2=0` means no horizontal cropping offset.\n- `y=if(gt(in_h,1350),(in_h-1350)/2,0)` centers crop vertically if applied.\n- `-c:a copy` copies audio stream without re-encoding.\n\nThis ensures the output video is always 1080 pixels wide, and only cropped vertically centered if taller than 1350 pixels after scaling.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 476,
+    "total_tokens": 1075,
+    "cost": 0.0010012
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "942820353155",
+  "created_at": "2025-07-24T20:36:06.018387",
+  "created_by": "scosman",
+  "input": "How do I use ffmpeg to resize a video and limit output file size to 10MB?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "487557723316",
+    "path": null,
+    "created_at": "2025-07-24T20:36:06.018362",
+    "created_by": "scosman",
+    "output": "To resize a video and limit the output file size to about 10MB, you need to control both the resolution and the bitrate of the output. Here's a recommended approach:\n\n1. Resize the video using the `-vf scale` filter by specifying the width or height. You can set either width or height to -1 to maintain the aspect ratio automatically.\n2. Calculate the target bitrate based on the file size goal and video duration.\n3. Use two-pass encoding with libx264 for better bitrate control and quality.\n4. Set audio bitrate as well.\n5. Use `-movflags +faststart` to optimize for streaming if needed.\n\nAssuming you want to scale to 720p height (or change as needed) and set output size to 10MB:\n\n### Steps:\n\n- First, get the input duration (in seconds) with ffprobe (example):\n```bash\nffprobe -v error -show_entries format=duration -of csv=p=0 input.mp4\n```\n\n- Calculate total bitrate (video + audio) in kbps for 10MB file size:\n\n```\nTotal bitrate (kbps) = (File size in bits) / duration (seconds) / 1000\nFile size in bits = 10MB * 8,388,608 bits/MB = 83,886,080 bits\n```\n\nFor example, for a 120 seconds video:\n```\nBitrate = 83,886,080 / 120 / 1000 ≈ 699 kbps total\n```\n\n- Allocate about 128 kbps for audio, leaving ~571 kbps for video.\n\n### Example ffmpeg two-pass command:\n\n```bash\nffmpeg -y -i input.mp4 -vf scale=-2:720 -c:v libx264 -b:v 571k -pass 1 -an -f null /dev/null && \\\nffmpeg -i input.mp4 -vf scale=-2:720 -c:v libx264 -b:v 571k -pass 2 -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nExplanation:\n- `-vf scale=-2:720`: resize video to height 720 while maintaining aspect ratio.\n- `-b:v 571k`: sets video bitrate.\n- `-b:a 128k`: audio bitrate.\n- Two-pass encoding (`-pass 1` and `-pass 2`) for optimal quality and bitrate control.\n- `-movflags +faststart` enables progressive streaming.\n- `-an` on first pass disables audio processing.\n\nMake sure to replace `input.mp4` and `output.mp4` with your actual filenames.\n\nIf your video duration is unknown, you can use ffprobe or write a script to automate bitrate calculation before invoking ffmpeg for best results.\n\n```bash\n# Example to get duration and calculate bitrate (bash)\nDURATION=$(ffprobe -v error -show_entries format=duration -of csv=p=0 input.mp4)\nFILESIZE_MB=10\nFILESIZE_BITS=$(echo \"$FILESIZE_MB * 8 * 1024 * 1024\" | bc)\nTOTAL_BITRATE=$(echo \"$FILESIZE_BITS / $DURATION / 1000\" | bc)\nAUDIO_BITRATE=128\nVIDEO_BITRATE=$(echo \"$TOTAL_BITRATE - $AUDIO_BITRATE\" | bc)\necho \"Video bitrate: ${VIDEO_BITRATE}k\"\n```\n\nThen plug the bitrate into the ffmpeg command above.\n\nThis combination ensures your resized video roughly fits into the 10MB target with controlled quality and resolution.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 743,
+    "total_tokens": 1337,
+    "cost": 0.0014264
+  },
+  "model_type": "task_run"
+}

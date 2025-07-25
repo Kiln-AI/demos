@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "166983177176",
+  "created_at": "2025-07-24T20:27:55.143666",
+  "created_by": "scosman",
+  "input": "My source is a live stream. How do I save it to disk, but also segment it into 10-minute files?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "324327219586",
+    "path": null,
+    "created_at": "2025-07-24T20:27:55.143643",
+    "created_by": "scosman",
+    "output": "To save a live stream to disk while segmenting it into 10-minute chunks, you can use ffmpeg's segment muxer. This muxer splits the output into multiple files based on duration. The key options are:\n\n- `-i <input>`: specifies your live stream input URL or device.\n- `-c copy`: copies the audio and video streams without re-encoding for efficiency and no quality loss (assuming the input is compatible with container format).\n- `-f segment`: enables segment muxer.\n- `-segment_time 600`: sets segment duration to 600 seconds (10 minutes).\n- `-reset_timestamps 1`: resets timestamps at the start of each segment for better playback compatibility.\n- Output filename pattern like `output_%03d.ts` to generate sequential numbered segment files.\n\nAssumptions:\n- Your live stream input is compatible with MPEG-TS container format for segmenting (.ts files).\n- You want lossless capture (no re-encoding) to minimize CPU and maintain original quality.\n- You want to store segments as .ts files; if you want other containers or streaming formats let me know.\n\nExample command to record live stream and split into 10-minute `.ts` files:\n\n```bash\nffmpeg -i <live_stream_url> -c copy -f segment -segment_time 600 -reset_timestamps 1 output_%03d.ts\n```\n\nReplace `<live_stream_url>` with your actual live stream source URL or input device.\n\nIf you want to segment with other formats like MP4, the process is more complex (due to mp4 internal indexing), but streaming TS segments is the most straightforward for live segmentation.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 340,
+    "total_tokens": 939,
+    "cost": 0.0007836
+  },
+  "model_type": "task_run"
+}

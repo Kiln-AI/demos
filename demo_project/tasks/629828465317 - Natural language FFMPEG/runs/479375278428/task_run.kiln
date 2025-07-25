@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "479375278428",
+  "created_at": "2025-07-24T20:24:44.828847",
+  "created_by": "scosman",
+  "input": "My phone records in H.265, but I need H.264 for Adobe Premiere compatibility. How to do this?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "106797576696",
+    "path": null,
+    "created_at": "2025-07-24T20:24:44.828820",
+    "created_by": "scosman",
+    "output": "To convert your phone recordings from H.265 (HEVC) to H.264, you should re-encode the video stream using the libx264 codec, which is widely supported including by Adobe Premiere. Copy the audio stream directly if it's compatible to save processing time, or re-encode if necessary.\n\nKey points:\n- Use `-c:v libx264` to encode video in H.264.\n- Choosing an appropriate preset (e.g., `medium` or `slow`) balances quality and encoding speed.\n- Use CRF (Constant Rate Factor) to control quality; 18-23 is a typical range (lower is better quality).\n- Copy audio with `-c:a copy` if it’s already compatible (e.g., AAC); otherwise, re-encode with `-c:a aac`.\n- Set pixel format to `yuv420p` for broad compatibility.\n- Use `-movflags +faststart` for better playback/startup behavior if output is MP4.\n\nAssuming your input file is `input.hevc` (adjust extension as needed) and output is `output.mp4`, here’s a recommended command:\n\n```bash\nffmpeg -i input.hevc -c:v libx264 -preset medium -crf 20 -c:a copy -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nIf your audio is incompatible, re-encode audio like this:\n\n```bash\nffmpeg -i input.hevc -c:v libx264 -preset medium -crf 20 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nThis ensures maximum compatibility with Adobe Premiere while maintaining good video quality.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 361,
+    "total_tokens": 959,
+    "cost": 0.0008168
+  },
+  "model_type": "task_run"
+}

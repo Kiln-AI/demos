@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "202253067556",
+  "created_at": "2025-07-24T20:25:57.806606",
+  "created_by": "scosman",
+  "input": "Boost subtitle opacity when burning subs.ass into a transparent video.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "724390600470",
+    "path": null,
+    "created_at": "2025-07-24T20:25:57.806580",
+    "created_by": "scosman",
+    "output": "When burning ASS subtitles into a transparent video, the subtitle opacity is controlled within the ASS subtitle file by the alpha value in the style definitions. ffmpeg itself doesn't provide a direct option to increase subtitle opacity at the burn-in stage; instead, you need to modify the ASS subtitle file's style override so that the alpha channel (opacity) of the subtitles is reduced (meaning more opaque).\n\nIn the ASS subtitle format, the alpha component ranges from 00 (fully opaque) to FF (fully transparent). To boost (increase) subtitle opacity, you need to make sure the alpha in the style's color fields is closer to 00.\n\nIf you want to do this in ffmpeg without manually editing the .ass file, you can use the `ass` filter with a `:alpha` option or manipulate styles before burning. Unfortunately, `libass` (used by ffmpeg to render ASS) does not provide direct opacity adjustment.\n\nA practical approach inside ffmpeg is:\n\n1. Modify the ASS file to decrease the alpha values in the Style entries so they become more opaque (e.g., from &HA0 to &H00).\n2. Then burn the subtitles using the `ass` filter.\n\nIf you want to increase subtitle opacity programmatically at runtime without editing the file, it's necessary to preprocess the subtitle file or use a workaround filter chain.\n\n---\n\nAssuming your video has an alpha channel (e.g., a .mov with RGBA or .webm with VP8/VP9 with alpha), and you want to overlay the subtitles with maximum opacity, you can first preprocess the subtitle file by removing alpha transparency or you can convert the ASS file styles to full opacity.\n\nHere is an example ffmpeg command to burn subtitles with maximum opacity assuming the ASS file is prepared accordingly:\n\n```bash\nffmpeg -i input_with_alpha.mov -vf \"ass=subtitles.ass\" -c:v qtrle -pix_fmt yuva444p output_with_subs.mov\n```\n\nExplanation:\n- `ass=subtitles.ass` burns subtitles from the ASS file.\n- The output codec `qtrle` with pixel format `yuva444p` preserves transparency.\n- You must ensure your ASS subtitle file uses styles with full opacity.\n\n---\n\nIf you cannot or do not want to manually edit the ASS file, here is an example workflow to adjust opacity via a script or manually:\n\n1. Open `subtitles.ass` in a text editor.\n2. Find the `[V4+ Styles]` section.\n3. Locate the `PrimaryColour` line (format is `&HAABBGGRR` in hex, A = alpha).\n4. Change alpha part (AA) from a higher number (more transparent) to `00` for fully opaque, e.g., `&H0000FFFF` = opaque blue.\n5. Save the ASS, then burn with ffmpeg.\n\n---\n\nIf your video does not have an alpha channel and you want to simulate the appearance of higher opacity (instead of semi-transparent subs), the above method works for that too.\n\n---\n\nIn summary, ffmpeg doesn't provide a direct \"opacity boost\" for burned-in ASS subtitles; you have to control the subtitle style in the ASS file.\n\n---\n\nHere is a more complete example assuming your input video supports alpha and the ASS file is premodified:\n\n```bash\nffmpeg -i input_with_alpha.mov -vf \"ass=subtitles.ass\" -c:v qtrle -pix_fmt yuva444p -c:a copy output_with_subs.mov\n```\n\nIf you want to convert an input video without alpha to one with subtitles burnt in opaque but transparent background, this approach works only if the subtitles themselves contain transparency info you control via the ASS file style.\n\n---\n\nIf you want me to help you script a modification of the ASS file alpha from ffmpeg filters or other means, please specify.\n\n---\n\nSummary:\n\n- Subtitle opacity is controlled by the alpha channel in ASS styles.\n- Lower alpha hex values = more opaque.\n- Modify ASS file styles' alpha values to 00 to maximize opacity.\n- Then burn using ffmpeg ass filter.\n- Use a codec/pix_fmt supporting alpha (like qtrle and yuva444p) to preserve transparency in the video.\n\n# Example command:\n\n```bash\nffmpeg -i input_with_alpha.mov -vf \"ass=subtitles_ass_opaque.ass\" -c:v qtrle -pix_fmt yuva444p -c:a copy output_with_subs.mov\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 585,
+    "output_tokens": 906,
+    "total_tokens": 1491,
+    "cost": 0.0016836
+  },
+  "model_type": "task_run"
+}

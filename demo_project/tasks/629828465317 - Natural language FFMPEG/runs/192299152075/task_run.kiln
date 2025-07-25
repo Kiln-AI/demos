@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "192299152075",
+  "created_at": "2025-07-24T20:23:53.440674",
+  "created_by": "scosman",
+  "input": "Blend two files (guitar.wav, vocals.wav) with a 20% overlap at the start of vocals.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "236016639219",
+    "path": null,
+    "created_at": "2025-07-24T20:23:53.440651",
+    "created_by": "scosman",
+    "output": "To blend two audio files with a 20% overlap of the second file (vocals.wav) at the start, you can use the `ffmpeg` `afade` and `amix` filters along with `adelay` to delay the vocals so that they start overlapping by 20% of their duration.\n\nSteps:\n1. Calculate the 20% overlap duration of vocals.wav.\n2. Delay the vocals so they start 80% into their duration (i.e., shifted left by 20% overlap).\n3. Mix the two audio streams with proper volume balancing to avoid clipping.\n\nSince we're scripting, we'll estimate the delay dynamically by probing the duration of vocals.wav, then calculating the delay in milliseconds.\n\nHowever, ffmpeg doesn’t support dynamic variables easily on the command line, so for best quality and accuracy, this is done in two steps:\n\n**Step 1: Get vocals.wav duration in seconds**\n\n```bash\nduration=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 vocals.wav)\n```\n\n**Step 2: Compute delay (in ms) = 80% of duration**\n\n```bash\ndelay=$(echo \"$duration * 0.8 * 1000\" | bc | cut -d'.' -f1)\n```\n\n**Step 3: Apply delay to the vocals (adelay), then mix with guitar.wav**\n\nThe delayed vocals will start at 80% of vocals.wav duration, effectively overlapping the last 20% of guitar.wav with the first 20% of vocals.\n\nAssuming the guitar.wav and vocals.wav have the same sample rate and channel layout. If not, `aresample` and `channelsplit` might be needed.\n\nFinal command:\n\n```bash\nffmpeg -i guitar.wav -i vocals.wav -filter_complex \\\n\"[1]adelay=${delay}|${delay}[vocdelayed]; \\\n [0][vocdelayed]amix=inputs=2:duration=longest:dropout_transition=0\" \\\n -c:a pcm_s16le output_blended.wav\n```\n\n**Explanation:**\n- `adelay`: delays the vocals by the computed duration (in ms).\n- `amix`: mixes the delayed vocals and guitar.\n- `duration=longest`: output length covers the longest input.\n- `dropout_transition=0`: disables fade out on dropout.\n- `-c:a pcm_s16le`: outputs uncompressed WAV for highest quality.\n\n**If you want a one-liner with substituted delay, for example if vocals.wav duration is 10 sec, then delay is 8000 ms:**\n\n```bash\nffmpeg -i guitar.wav -i vocals.wav -filter_complex \"[1]adelay=8000|8000[vocdelayed];[0][vocdelayed]amix=inputs=2:duration=longest:dropout_transition=0\" -c:a pcm_s16le output_blended.wav\n```\n\nThis will mix the last 2 seconds (20% of 10s) of guitar with the first 2 seconds of vocals.\n\n**Note:** The delay value should be the delay per channel; for stereo use `delay|delay`, for mono a single delay value suffices.\n\n---\n\nIf you want to fade-in the vocals during the overlap or fade-out the guitar smoothly for a better blend, you can add `afade` filters accordingly. Let me know if you want an example with fades.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 716,
+    "total_tokens": 1314,
+    "cost": 0.0013848
+  },
+  "model_type": "task_run"
+}

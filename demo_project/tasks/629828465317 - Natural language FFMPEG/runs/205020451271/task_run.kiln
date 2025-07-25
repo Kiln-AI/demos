@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "205020451271",
+  "created_at": "2025-07-24T20:24:39.250693",
+  "created_by": "scosman",
+  "input": "I have a .mkv file with multiple audio tracks; convert only the main audio track to AC3, keep the rest unchanged.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "316133092709",
+    "path": null,
+    "created_at": "2025-07-24T20:24:39.250661",
+    "created_by": "scosman",
+    "output": "To convert only the main audio track to AC3 while keeping the other audio tracks unchanged, you need to:\n\n- Map all streams explicitly to keep video and subtitle streams unchanged.\n- Re-encode only the first audio track to AC3.\n- Copy all other audio and subtitle streams as is.\n\nAssuming the \"main\" audio track is the first audio stream (audio stream 0:1), the command uses:\n\n- `-map 0` to include all streams.\n- `-c:v copy` to keep video streams untouched.\n- `-c:a:0 ac3 -b:a:0 640k` to re-encode only the first audio stream to AC3 at 640 kbps bitrate.\n- `-c:a:1 copy` (and so on) to copy remaining audio streams without re-encoding.\n- `-c:s copy` to copy subtitles if present.\n\nIf there are more than two audio streams, you should repeat `-c:a:N copy` for each additional audio track after `-c:a:0 ac3`.\n\nHere's an example command assuming 3 audio tracks (adjust accordingly if you have a different number):\n\n```bash\nffmpeg -i input.mkv -map 0 -c:v copy -c:a:0 ac3 -b:a:0 640k -c:a:1 copy -c:a:2 copy -c:s copy output.mkv\n```\n\nIf you do not know the exact number of audio streams, you can first run `ffmpeg -i input.mkv` to check the stream counts.\n\nThis approach ensures only the main audio track is transformed to AC3, while all other streams remain untouched.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 343,
+    "total_tokens": 944,
+    "cost": 0.0007892
+  },
+  "model_type": "task_run"
+}

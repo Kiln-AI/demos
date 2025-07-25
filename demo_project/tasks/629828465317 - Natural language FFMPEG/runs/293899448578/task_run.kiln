@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "293899448578",
+  "created_at": "2025-07-24T20:25:32.011271",
+  "created_by": "scosman",
+  "input": "How can I re-wrap fragmented .mp4 files into a single .mp4 with stream copy?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "265193971577",
+    "path": null,
+    "created_at": "2025-07-24T20:25:32.011245",
+    "created_by": "scosman",
+    "output": "To re-wrap fragmented MP4 files (which may be split into multiple segments or have fragmented moov atoms) into a single continuous MP4 without re-encoding, you can use ffmpeg with stream copy (`-c copy`) to perform a fast remuxing. This avoids quality loss and speeds up the process.\n\nKey points:\n- `-c copy` copies the streams without re-encoding.\n- `-movflags +faststart` moves the metadata (moov atom) to the beginning, which is typical for non-fragmented, progressive MP4 files.\n- Input fragmented MP4 files can be concatenated if multiple fragments, or just a single file can be remuxed.\n\nAssuming you have a single fragmented MP4 file named `fragmented.mp4` and want to create a smooth non-fragmented output `output.mp4`, the command is:\n\n```bash\nffmpeg -i fragmented.mp4 -c copy -movflags +faststart output.mp4\n```\n\nIf your fragmented MP4 consists of multiple files that need concatenation, you should first create a text file listing them (e.g., `inputs.txt`):\n\n```\nfile 'segment1.mp4'\nfile 'segment2.mp4'\nfile 'segment3.mp4'\n```\n\nThen run:\n\n```bash\nffmpeg -f concat -safe 0 -i inputs.txt -c copy -movflags +faststart output.mp4\n```\n\nThis method merges and rewraps multiple fragmented MP4 segments into one seamless MP4 without re-encoding.\n\n---\n\n**Summary:**\n- Use `-c copy` to avoid re-encoding.\n- Use `-movflags +faststart` to place metadata upfront for compatibility.\n- Use `-f concat` input if multiple fragmented files to merge.\n- This process re-wraps fragmented MP4 files into a standard MP4 container.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 383,
+    "total_tokens": 980,
+    "cost": 0.0008516
+  },
+  "model_type": "task_run"
+}

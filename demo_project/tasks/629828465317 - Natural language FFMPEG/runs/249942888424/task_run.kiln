@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "249942888424",
+  "created_at": "2025-07-24T20:38:58.870665",
+  "created_by": "scosman",
+  "input": "How do I add 2 seconds of silence to the start of every audio file in a folder using ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "405940681629",
+    "path": null,
+    "created_at": "2025-07-24T20:38:58.870639",
+    "created_by": "scosman",
+    "output": "To add 2 seconds of silence at the start of every audio file in a folder, you can use a batch processing approach with a shell loop combined with ffmpeg audio filters. The technique involves generating 2 seconds of silent audio and then concatenating it with the original audio.\n\nKey points:\n- `anullsrc=r=sample_rate:channel_layout` generates silent audio with the specified sample rate and channel layout, matching the source audio.\n- Using the `concat` filter to join the silence and original audio seamlessly.\n- This command assumes the input audio files are of common formats (e.g., mp3, wav) and you want output files appended with `_silenced` in the same format.\n- This example uses bash shell scripting for batch processing on Linux/macOS. For Windows batch, the approach is similar but syntax differs.\n\nHere is an example script for bash:\n\n```bash\nfor f in *.mp3; do\n  # Extract sample rate and channel layout from input\n  sample_rate=$(ffprobe -v error -select_streams a:0 -show_entries stream=sample_rate -of csv=p=0 \"$f\")\n  channel_layout=$(ffprobe -v error -select_streams a:0 -show_entries stream=channel_layout -of csv=p=0 \"$f\")\n  \n  # If channel layout is empty, default to stereo\n  if [ -z \"$channel_layout\" ]; then\n    channel_layout=stereo\n  fi\n  \n  ffmpeg -i \"$f\" -f lavfi -t 2 -i \"anullsrc=r=${sample_rate}:cl=${channel_layout}\" \\\n  -filter_complex \"[1:a][0:a]concat=n=2:v=0:a=1[out]\" -map \"[out]\" -c:a aac -b:a 192k \"${f%.*}_silenced.${f##*.}\"\ndone\n```\n\nExplanation:\n- `ffprobe` extracts sampling info from each file to create matching silent audio.\n- `lavfi` input creates 2 seconds of silence.\n- `concat` filter merges silence + original audio.\n- Output audio encoded to AAC at 192 kbps; adjust codec/quality as needed.\n- Output filename adds `_silenced` suffix before extension to keep originals safe.\n\nThis script can be customized for other audio formats or different silence duration by editing parameters.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 482,
+    "total_tokens": 1079,
+    "cost": 0.00101
+  },
+  "model_type": "task_run"
+}

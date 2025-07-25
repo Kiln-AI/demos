@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "195753699524",
+  "created_at": "2025-07-24T20:35:29.721378",
+  "created_by": "scosman",
+  "input": "Extract all audio streams from input.mkv and save each as a separate file.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "164804835920",
+    "path": null,
+    "created_at": "2025-07-24T20:35:29.721353",
+    "created_by": "scosman",
+    "output": "To extract all audio streams from `input.mkv` and save each as a separate file, you can use `ffmpeg` with stream selection and mapping. The `-map` option selects each audio stream by index, and using a loop or multiple commands allows extraction of all streams. Since `ffmpeg` does not have a built-in single command to extract each audio stream to separate files automatically, the common practice is to first identify the number of audio streams, then extract them one by one.\n\nHere's how you can proceed:\n\n1. Use `ffprobe` or `ffmpeg` to count audio streams.\n2. For each audio stream, run:\n   - `-map 0:a:<stream_index>` to select the audio stream.\n   - Use `-c:a copy` to copy audio as is without re-encoding.\n   \nAssuming you have three audio streams, here is an example of commands extracting them as separate files, naming based on stream index:\n\n```bash\nffmpeg -i input.mkv -map 0:a:0 -c:a copy audio_stream_0.aac\nffmpeg -i input.mkv -map 0:a:1 -c:a copy audio_stream_1.ac3\nffmpeg -i input.mkv -map 0:a:2 -c:a copy audio_stream_2.opus\n```\n\nNote: The output container/file extension should match the codec format of the respective audio stream. Since codecs vary, you might want to check the codec for each stream first.\n\nAlternatively, if you want to automate this with a bash script:\n\n```bash\n#!/bin/bash\ninput=\"input.mkv\"\n# Get number of audio streams\nnum_audio_streams=$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 \"$input\" | wc -l)\n\nfor ((i=0; i<num_audio_streams; i++)); do\n    # Get codec name for stream i\n    codec=$(ffprobe -v error -select_streams a:$i -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 \"$input\")\n    # Map codec to container extension\n    case \"$codec\" in\n        aac) ext=\"aac\" ;;\n        ac3) ext=\"ac3\" ;;\n        opus) ext=\"opus\" ;;\n        mp3) ext=\"mp3\" ;;\n        flac) ext=\"flac\" ;;\n        wav) ext=\"wav\" ;;\n        *) ext=\"$codec\" ;;\n    esac\n    ffmpeg -i \"$input\" -map 0:a:$i -c:a copy \"audio_stream_${i}.${ext}\"\ndone\n```\n\nThis script automatically extracts all audio streams using their native codec and saves the audio streams with matching extensions for best compatibility.\n\nIf you want a one-liner command for a known number of audio streams (e.g., 2):\n\n```bash\nffmpeg -i input.mkv -map 0:a:0 -c:a copy audio_0.aac -map 0:a:1 -c:a copy audio_1.ac3\n```\n\nBut this merges the output into one file, so the safer choice is extracting separately as above.\n\n---\n\n**Summary of key options:**\n\n- `-map 0:a:<n>` selects the nth audio stream.\n- `-c:a copy` copies the audio data without re-encoding.\n- Proper file extension matches the codec for the audio stream.\n\nThis approach maintains audio quality by avoiding re-encoding and preserves each audio stream individually.\n\n```bash\n# Example for extracting the first audio stream as a copy (without codec change)\nffmpeg -i input.mkv -map 0:a:0 -c:a copy audio_stream_0.aac\n```\n\n(Repeat similarly for other streams, changing `0:a:0` to the desired stream index and adjusting extension accordingly.)",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 804,
+    "total_tokens": 1395,
+    "cost": 0.0015228
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "278154446085",
+  "created_at": "2025-07-24T20:37:55.870228",
+  "created_by": "scosman",
+  "input": "Make an mp4 where the only audio is descriptive audio and the only subtitles are English SDH.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "711085448366",
+    "path": null,
+    "created_at": "2025-07-24T20:37:55.870206",
+    "created_by": "scosman",
+    "output": "To create an MP4 file containing only the descriptive audio track and the English SDH subtitles, you need to:\n\n- Identify the stream indexes (audio and subtitle) corresponding to descriptive audio and English SDH.\n- Map only those streams into the output.\n- Copy the streams without re-encoding if compatible, or encode as needed.\n- For subtitles, convert to a format compatible with MP4 container (like mov_text) because MP4 doesn't support all subtitle formats; text-based subtitles like mov_text are best for compatibility.\n- Remove other audio and subtitle tracks by not mapping them.\n\nAssuming:\n- Input file is input.mkv (you can replace it with your actual file).\n- The descriptive audio is labeled or track metadata includes \"descriptive\" or \"commentary\" (you need to check stream info).\n- The English SDH subtitle track can be identified by the language \"eng\" and \"SDH\" in the title or disposition.\n\nThe general process is:\n\n1. Use `ffprobe` to find streams matching descriptive audio and English SDH subtitles.\n2. Use `-map` options to include those streams only.\n3. For audio, if the format is acceptable (e.g., AAC), use `-c:a copy`, otherwise re-encode to AAC.\n4. For subtitles, re-encode subtitles into mov_text for MP4 compatibility.\n\nHere is an example command assuming:\n- Descriptive audio is stream 0:a:1\n- English SDH subtitles is stream 0:s:2\n\nReplace the stream indexes with the actual ones from your input media.\n\n```bash\nffmpeg -i input.mkv -map 0:v:0 -map 0:a:1 -map 0:s:2 -c:v copy -c:a aac -b:a 128k -c:s mov_text -metadata:s:s:0 language=eng -disposition:s:0 default output.mp4\n```\n\nExplanation:\n- `-map 0:v:0` copies the primary video stream.\n- `-map 0:a:1` maps only the descriptive audio stream (check the right index).\n- `-map 0:s:2` maps only the English SDH subtitle stream.\n- `-c:v copy` copies the video stream without re-encoding.\n- `-c:a aac -b:a 128k` encodes the descriptive audio to AAC at 128 kbps (commonly supported).\n- `-c:s mov_text` converts subtitles to MP4 compatible subtitles.\n- `-metadata:s:s:0 language=eng` sets the subtitle stream language to English.\n- `-disposition:s:0 default` sets the subtitle stream as default.\n\nMake sure to run `ffprobe -i input.mkv -show_streams` to identify the correct indexes for the descriptive audio and English SDH subtitle streams. Adjust the command accordingly.\n\nIf you want to exclude the main audio and only keep the descriptive audio and English SDH subtitles, do not map other audio or subtitle streams. This keeps the output clean with only desired audio and subtitles.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 632,
+    "total_tokens": 1225,
+    "cost": 0.0012484
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "235384460376",
+  "created_at": "2025-07-24T20:24:22.945974",
+  "created_by": "scosman",
+  "input": "Scale video input.mkv to 640 pixels width, keeping maximum sharpness.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "310565806513",
+    "path": null,
+    "created_at": "2025-07-24T20:24:22.945949",
+    "created_by": "scosman",
+    "output": "To scale the video to exactly 640 pixels in width while preserving the aspect ratio, and keeping maximum sharpness, we will use the `scale` video filter with the width set to 640 and height automatically calculated to maintain the aspect ratio (`-2` ensures height is divisible by 2, which is required by many codecs). For maximum sharpness, we can use the `lanczos` rescaling algorithm, which is one of the sharpest scaling methods provided by ffmpeg.\n\nKey points:\n- `-vf \"scale=640:-2:flags=lanczos\"` scales width to 640 and height to maintain aspect ratio, using sharp lanczos filter.\n- We copy the audio stream (`-c:a copy`) to avoid unnecessary re-encoding and preserve original quality.\n- Assuming output format is MKV as input or adjust extension if needed.\n\nHere's the command:\n\n```bash\nffmpeg -i input.mkv -vf \"scale=640:-2:flags=lanczos\" -c:v libx264 -preset slow -crf 18 -c:a copy output_scaled.mkv\n```\n\nExplanation:\n- `-c:v libx264` encodes video in H.264 for good compatibility and quality.\n- `-preset slow` balances encoding speed and compression efficiency.\n- `-crf 18` is a visually lossless quality setting aiming to preserve sharpness.\n- `-c:a copy` copies audio stream without re-encoding.\n\nThis approach preserves sharpness via lanczos scaling and high-quality encoding settings.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 315,
+    "total_tokens": 905,
+    "cost": 0.00074
+  },
+  "model_type": "task_run"
+}

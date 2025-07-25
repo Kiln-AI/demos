@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "487151157094",
+  "created_at": "2025-07-24T20:26:33.628854",
+  "created_by": "scosman",
+  "input": "I need a command to remove metadata from all mkv files in a directory.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "449355726911",
+    "path": null,
+    "created_at": "2025-07-24T20:26:33.628798",
+    "created_by": "scosman",
+    "output": "To remove metadata from all MKV files in a directory while keeping the video and audio streams intact, you can use a batch loop that processes each file individually. The `-map_metadata -1` option tells ffmpeg to ignore all metadata during output. Using `-c copy` copies the streams without re-encoding, preserving quality and speed.\n\nHere is an example for a bash shell on Linux or macOS:\n\n```bash\nfor f in *.mkv; do\n  ffmpeg -i \"$f\" -map_metadata -1 -c copy \"cleaned_$f\"\ndone\n```\n\nExplanation:\n- `for f in *.mkv; do ... done` loops over all MKV files in the current folder.\n- `-map_metadata -1` removes all metadata.\n- `-c copy` copies audio and video streams without re-encoding for fast processing.\n- Output files are named with a \"cleaned_\" prefix to avoid overwriting originals.\n\nAssumptions:\n- You want to keep the original files untouched.\n- You are running this in a bash-compatible shell.\n- File names do not contain tricky characters requiring extra escaping.\n\nIf you want to overwrite files in place, you can add a temporary filename and move it back after processing, but this is safer for batch automation to avoid data loss.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 268,
+    "total_tokens": 858,
+    "cost": 0.0006648
+  },
+  "model_type": "task_run"
+}

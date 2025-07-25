@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "256849036781",
+  "created_at": "2025-07-24T20:35:39.809282",
+  "created_by": "scosman",
+  "input": "Extract vocals from a stereo music track input.mp3 and output as vocals_only.wav.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "206177807168",
+    "path": null,
+    "created_at": "2025-07-24T20:35:39.809257",
+    "created_by": "scosman",
+    "output": "Extracting vocals from a mixed stereo track is a complex audio processing task that typically requires advanced source separation techniques, often involving machine learning models. However, ffmpeg offers a basic method called \"center channel extraction\" that can sometimes isolate vocals if they are mixed equally in both stereo channels (center-panned).\n\nThis method uses the \"pan\" audio filter to extract the center channel by subtracting the left and right channels and amplifying the difference, which can emphasize vocals if they are mixed in the center. This is not perfect and often results in incomplete or artifacted vocals, but it is a straightforward approach using only ffmpeg.\n\nExplanation of key parameters/components:\n- `-i input.mp3`: input stereo music file.\n- `-af \"pan=mono|c0=0.5*FL+0.5*FR\"`: combines left and right channels equally to mono. (This is usually for vocal remixing.)\n- For center channel extraction, we use `-af \"pan=stereo|c0=0.5*FL-0.5*FR|c1=0.5*FR-0.5*FL\"` or better, just `-af \"channelsplit\"` with further filtering.\n- A common vocal isolation approach is to subtract the sides from center (using `sidechain` or `astats` with the `afir` filter), but ffmpeg alone has limited capabilities.\n\nA practical minimal attempt to isolate vocals using center channel extraction is:\n\n```bash\nffmpeg -i input.mp3 -af \"pan=mono|c0=0.5*FL+0.5*FR\" vocals_only.wav\n```\n\nBut this outputs a summed mono track, not vocals only.\n\nTo try to suppress instrumental stereo sides and keep center vocals, one can do:\n\n```bash\nffmpeg -i input.mp3 -af \"pan=mono|c0=1*FL-1*FR\" vocals_only.wav\n```\n\nThis effectively subtracts the right channel from the left, which inverses instrumental stereo parts, sometimes isolating vocals if they are center-panned.\n\n**Recommended best practice for vocal isolation using ffmpeg alone:**\n\n```bash\nffmpeg -i input.mp3 -af \"pan=mono|c0=0.5*FL-0.5*FR\" vocals_only.wav\n```\n\nThis extracts the difference between left and right channels (often instrumental), so to get vocals mostly center-panned, you invert it as:\n\n```bash\nffmpeg -i input.mp3 -af \"pan=mono|c0=0.5*FL+0.5*FR\" vocals_only.wav\n```\n\nHowever, since vocals are usually center-panned, summing left and right yields vocals plus everything else; subtracting side components (left-right) reduces instrumental but also removes centered vocals.\n\nFor better vocal isolation, specialized tools like Spleeter or Demucs are recommended.\n\n---\n\n### Final ffmpeg command (best effort vocal isolation by removing stereo sides):\n\n```bash\nffmpeg -i input.mp3 -af \"pan=mono|c0=0.5*FL+0.5*FR\" vocals_only.wav\n```\n\n**OR to remove instrumental sides (harder to interpret):**\n\n```bash\nffmpeg -i input.mp3 -af \"pan=mono|c0=1*FL-1*FR\" vocals_only.wav\n```\n\n**Assumptions:** The input is stereo with vocals center-panned; you want a WAV output with extracted vocals only using ffmpeg's basic filtering capabilities. Advanced separation is not possible within ffmpeg alone.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 744,
+    "total_tokens": 1336,
+    "cost": 0.0014272
+  },
+  "model_type": "task_run"
+}

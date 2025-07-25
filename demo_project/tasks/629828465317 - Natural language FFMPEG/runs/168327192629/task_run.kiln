@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "168327192629",
+  "created_at": "2025-07-24T18:11:56.901868",
+  "created_by": "scosman",
+  "input": "Convert a huge MKV file movie.mkv into an MP4 format but keep the quality as close as possible to the original.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Handling Large Media Files Efficiently"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "169367223256",
+    "path": null,
+    "created_at": "2025-07-24T18:11:56.901843",
+    "created_by": "scosman",
+    "output": "To convert a large MKV file (movie.mkv) to MP4 while preserving the original quality, you should avoid re-encoding the streams if possible. Instead, remux the video and audio streams directly (i.e., copy them without re-encoding) using the -c copy option. This process is very fast and does not degrade quality.\n\nHowever, not all codecs found in MKV files are compatible with the MP4 container (e.g., if the MKV contains subtitles or video in certain formats). This command assumes your MKV uses codecs supported by MP4 (e.g., H.264 video, AAC or AC3 audio). If you encounter compatibility errors, you may need to re-encode the incompatible streams.\n\n```bash\nffmpeg -i movie.mkv -c copy -map 0 output.mp4\n```\n\n- -c copy copies all streams without re-encoding, ensuring no quality loss or long processing times.\n- -map 0 ensures all streams (video, audio, subtitles, chapters) are included. Remove this if you do not want to bring everything over.\n- This method is the most efficient for very large files, as it minimizes CPU usage and process time.\n\nIf you get warnings/errors regarding unsupported streams (common with certain subtitles or audio types in MP4), you can selectively copy only video and audio, or re-encode problematic streams, but the command above is the best starting point for lossless, efficient conversion with large files.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 300,
+    "total_tokens": 902,
+    "cost": 0.003604
+  },
+  "model_type": "task_run"
+}

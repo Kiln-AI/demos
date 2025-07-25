@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "278058157598",
+  "created_at": "2025-07-24T18:13:02.399459",
+  "created_by": "scosman",
+  "input": "I have a set of images that I need to convert to a video with audio from a separate file; however, the images vary in resolution and aspect ratio.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "147454422382",
+    "path": null,
+    "created_at": "2025-07-24T18:13:02.399412",
+    "created_by": "scosman",
+    "output": "To create a smooth, professional-looking video from a set of images with varying resolutions and aspect ratios, it's best to standardize the output resolution and handle aspect ratios with padding (to avoid stretching/distortion). For example, to generate a 1920x1080 (Full HD) video, you can use the `scale` filter along with `pad` to fit each image inside the frame, and then combine this with a separately supplied audio track.\n\nAssumptions:\n- Images are named in alphanumeric order (e.g., img001.jpg, img002.jpg) or your pattern matches.\n- Audio file is audio.mp3.\n- Desired output is output.mp4 (H.264 video, AAC audio).\n- 30 fps for smooth video; you can adjust -framerate or -r as needed.\n\nExplanation:\n- -framerate 30 sets input sequence to 30 fps.\n- -i \"img%03d.jpg\" uses a sequential pattern for image files. Adjust as needed.\n- The filter `scale=iw*min(1920/iw\\,1080/ih):ih*min(1920/iw\\,1080/ih)` ensures the image is as large as possible within 1920x1080 without cropping or stretching.\n- The filter `pad=1920:1080:(1920-iw*min(1920/iw\\,1080/ih))/2:(1080-ih*min(1920/iw\\,1080/ih))/2` centers the scaled image and fills the rest with black padding.\n- -c:v libx264 -preset slow -crf 18 for high-quality encoding, adjust as needed.\n- -c:a aac -b:a 192k encodes audio at good quality.\n- -shortest matches video length to audio or image sequence (whichever is shorter).\n- -pix_fmt yuv420p for compatibility.\n\n```bash\nffmpeg -framerate 30 -i \"img%03d.jpg\" -i audio.mp3 \\\n-vf \"scale=iw*min(1920/iw\\,1080/ih):ih*min(1920/iw\\,1080/ih),pad=1920:1080:(1920-iw*min(1920/iw\\,1080/ih))/2:(1080-ih*min(1920/iw\\,1080/ih))/2\" \\\n-c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k -pix_fmt yuv420p -shortest output.mp4\n```\n\nThis command guarantees all images are displayed in a uniform resolution and aspect ratio, avoiding cropping or distortion, and synchronizes with the provided audio. Adjust image pattern, output resolution, framerate, or encoding settings as needed for your scenario.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 606,
+    "output_tokens": 582,
+    "total_tokens": 1188,
+    "cost": 0.005868
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "900085587672",
+  "created_at": "2025-07-24T19:14:49.742282",
+  "created_by": "scosman",
+  "dataset_id": "271319913924",
+  "task_run_config_id": "166999835520",
+  "eval_config_eval": false,
+  "input": "Convert my video to both H.264 and H.265 codecs simultaneously in the same output file",
+  "output": "It's not possible to store video streams encoded with two different codecs (H.264 and H.265) simultaneously in a single standard video file container (like MP4 or MKV) in a way that most players can use seamlessly. While some container formats (e.g., MKV) can physically hold multiple video streams, typical playback is limited to one video stream at a time, and most use cases and players expect just one active video codec per file.\n\nHowever, you *can* create a single MKV file with two separate video streams: one H.264 and one H.265. This is mainly useful for advanced workflows or situations where you want to distribute both versions in one file and choose which to play later.\n\nHere's how you can do it with FFmpeg:\n\n- The first -map encodes H.264 for the first video stream.\n- The second -map encodes H.265 for the second video stream.\n- -c:v:0 libx264 encodes the first video stream as H.264.\n- -c:v:1 libx265 encodes the second video stream as H.265.\n- Only one audio stream is included and copied for simplicity.\n\nAssumption: You want both streams in one file for distribution or testing, not for normal playback.\n\n```bash\nffmpeg -i input.mp4 \\\n  -map 0:v -c:v:0 libx264 -crf 23 -preset fast \\\n  -map 0:v -c:v:1 libx265 -crf 28 -preset fast \\\n  -map 0:a? -c:a copy \\\n  -f matroska output_with_both.mkv\n```\n\nExplanation:\n- -map 0:v selects all video streams (here only one in input), used twice for two outputs.\n- -c:v:0 and -c:v:1 specify different codecs for each output video stream.\n- -crf sets quality (H.265 typically needs a higher CRF for similar perceived quality).\n- -c:a copy includes the original audio, if present.\n- The output file is MKV, which supports multiple video streams.\n\nFor everyday use, it’s best to create separate files for each codec. But for advanced purposes, this command creates a single MKV with both H.264 and H.265 streams.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does not contain the specific issue described in the issue description. The command it produced is coherent, logically structured to achieve the user’s request (to encode in H.264 and H.265 within the same MKV file), and follows the general syntax rules of `ffmpeg`. Therefore, it successfully addresses the requirement to generate valid `ffmpeg` commands.\n\n2) The model's output does not resemble the failure example provided. The command includes valid options and codecs recognized by ffmpeg, and there are no incorrect parameters like the nonexistent `extra_fast` preset. It properly describes the mapping of streams and selects the appropriate codecs.\n\n3) According to the ffmpeg man page, the command produced by the model adheres to the requirements dictated there. The options provided (-map, -c:v, -crf, etc.) are valid, and the syntax is correct, indicating that the command wouldn’t break any guidelines set forth in the man page.\n\n4) Overall, the model's output passes the evaluation, as it correctly interprets the user input and generates an acceptable and effective command without any mistakes that violate the `ffmpeg` command structure or functionality. The use of -map to handle multiple video streams and including separate codec specifications for each stream aligns well with expected behavior in `ffmpeg`."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 431,
+    "output_tokens": 476,
+    "total_tokens": 907,
+    "cost": null
+  },
+  "model_type": "eval_run"
+}

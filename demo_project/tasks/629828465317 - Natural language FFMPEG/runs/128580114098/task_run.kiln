@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "128580114098",
+  "created_at": "2025-07-24T20:40:01.095632",
+  "created_by": "scosman",
+  "input": "I need to crop a video to a region that sometimes goes outside the frame (bad source data). How do I safely handle out-of-bounds values?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "103436284668",
+    "path": null,
+    "created_at": "2025-07-24T20:40:01.095607",
+    "created_by": "scosman",
+    "output": "When cropping a video where the specified crop region might go out of the frame boundaries, a robust approach is to use the `crop` filter in `ffmpeg` combined with expressions that clamp the cropping rectangle coordinates and dimensions to valid values within the input video frame size. This prevents errors or unexpected results from invalid crop values.\n\nKey points and techniques:\n\n- Use `iw` and `ih` in expressions, which represent the input width and height, to dynamically constrain crop dimensions.\n- Use the `min()` and `max()` functions within the filter expressions to clamp crop position (x,y) and width/height, ensuring they don’t go beyond the frame.\n- Example: If your desired crop rectangle is (X,Y) with width W and height H, replace them with clamped values:\n  - `x = max(0, min(iw-1, X))`\n  - `y = max(0, min(ih-1, Y))`\n  - `w = min(W, iw - x)` to ensure width fits inside frame after cropping start x\n  - `h = min(H, ih - y)` similarly for height\n- This method adapts at runtime based on the input video size, preventing cropping outside valid regions.\n\nAssuming you want to crop around a problematic rectangle with nominal values (X=100, Y=50, W=400, H=300), here is how to use a safe crop filter:\n\n```bash\nffmpeg -i input.mp4 -vf \"crop=w=min(400\\,iw - max(0\\,min(iw-1\\,100))) : h=min(300\\,ih - max(0\\,min(ih-1\\,50))) : x=max(0\\,min(iw-1\\,100)) : y=max(0\\,min(ih-1\\,50))\" -c:a copy output.mp4\n```\n\nExplanation:\n\n- `max(0, min(iw-1, 100))` clamps `x` between 0 and the width-1 of the input.\n- `iw - x` ensures the crop width fits inside the frame starting from `x`.\n- Similar logic applies for `y` and height.\n- Audio is copied directly without re-encoding (`-c:a copy`) for efficiency.\n\nThis technique ensures that even if your source coordinates are bad or partially outside the frame, the crop filter will adjust them to valid values safely and your encoding won't fail or produce invalid results.\n\nIf you have exact coordinates you want to use or a dynamic method to determine them, those expressions can be adjusted accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 605,
+    "output_tokens": 530,
+    "total_tokens": 1135,
+    "cost": 0.00109
+  },
+  "model_type": "task_run"
+}

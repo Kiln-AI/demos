@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "192412759866",
+  "created_at": "2025-07-24T20:28:05.141785",
+  "created_by": "scosman",
+  "input": "How do I change the sample rate of audio from 44.1kHz to 48kHz?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "174724713442",
+    "path": null,
+    "created_at": "2025-07-24T20:28:05.141679",
+    "created_by": "scosman",
+    "output": "To change the audio sample rate from 44.1kHz to 48kHz using ffmpeg, you can use the `-ar` option, which sets the audio sample rate. This will resample the audio stream to the specified sample rate. This is a common operation when preparing audio for video projects, broadcast, or specific playback systems that require 48kHz.\n\nHere’s a command that takes an input file and outputs it with the audio resampled to 48kHz, while copying the video stream unchanged:\n\n```bash\nffmpeg -i input.ext -c:v copy -ar 48000 -c:a aac -b:a 192k output.ext\n```\n\nExplanation:\n- `-c:v copy` copies the video stream without re-encoding (assuming the input has video and you want to keep it as is).\n- `-ar 48000` sets the audio sample rate to 48kHz.\n- `-c:a aac` re-encodes the audio to AAC codec for wide compatibility (you can adjust codec as needed).\n- `-b:a 192k` sets the audio bitrate to 192 kbps, a good quality default for AAC.\n- Replace `input.ext` and `output.ext` with actual filenames and extensions (e.g., .mp4, .mkv, .wav).\n\nIf your input is audio-only, you can drop the `-c:v copy` option. If you want to preserve the original audio codec, you can replace `-c:a aac` with `-c:a pcm_s16le` or another appropriate codec, but re-encoding is generally necessary when changing sample rate.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 343,
+    "total_tokens": 939,
+    "cost": 0.0007872
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "127991941084",
+  "created_at": "2025-07-24T20:39:37.425240",
+  "created_by": "scosman",
+  "input": "I have a .mov with ProRes4444 and alpha channel. How do I convert to WebM VP9 preserving transparency?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "371753648304",
+    "path": null,
+    "created_at": "2025-07-24T20:39:37.425224",
+    "created_by": "scosman",
+    "output": "To convert a ProRes 4444 MOV file with an alpha channel to WebM VP9 while preserving transparency, you need to ensure the alpha channel is retained during the conversion. WebM VP9 supports transparency via the alpha channel in the VP9 codec's 10-bit or 12-bit profiles. \n\nKey points for this process:\n- Use `-c:v libvpx-vp9` to encode video in VP9.\n- Use `-pix_fmt yuva420p` to preserve the alpha channel. The `yuva420p` pixel format includes an alpha plane.\n- Use `-auto-alt-ref 0` to disable temporal filtering that can mess up alpha transparency in VP9.\n- Use `-b:v` to specify a decent bitrate or use `-crf` and `-b:v` combined for quality-based encoding.\n- Use `-c:a libopus` or `-an` if you want to drop audio (VP9 WebM often uses Opus audio).\n- Output container is `.webm`.\n\nHere is a recommended command that retains alpha channel with good quality:\n\n```bash\nffmpeg -i input.mov -c:v libvpx-vp9 -pix_fmt yuva420p -auto-alt-ref 0 -crf 30 -b:v 0 -c:a libopus output.webm\n```\n\nExplanation:\n- `-pix_fmt yuva420p`: ensures alpha is preserved.\n- `-auto-alt-ref 0`: disables alt-ref frames which break alpha channel.\n- `-crf 30 -b:v 0`: uses constant quality mode with a relatively good balance of quality and compression. Adjust CRF lower (e.g., 20) for higher quality or higher for more compression.\n- Audio codec libopus is used for WebM compatibility; remove or change if your source has no audio or you want differently.\n- `output.webm` is the resulting VP9 WebM file with transparency.\n\nMake sure your ffmpeg build supports `libvpx-vp9` and alpha channel encoding. This command assumes your source has alpha in ProRes 4444 as described.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 439,
+    "total_tokens": 1039,
+    "cost": 0.0009424
+  },
+  "model_type": "task_run"
+}

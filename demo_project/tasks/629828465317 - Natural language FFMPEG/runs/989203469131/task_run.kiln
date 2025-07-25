@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "989203469131",
+  "created_at": "2025-07-24T18:10:26.162960",
+  "created_by": "scosman",
+  "input": "I want to increase the volume of my podcast episode.mp3 by 3 dB without clipping. How would I do that?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Command Line Techniques for Audio Enhancement"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "298151331444",
+    "path": null,
+    "created_at": "2025-07-24T18:10:26.162914",
+    "created_by": "scosman",
+    "output": "To increase the volume of your podcast by 3 dB in ffmpeg while avoiding clipping, use the `volume` audio filter. The `volume` filter lets you specify an increase in decibels (dB). Boosting by 3 dB multiplies the amplitude by about 1.414. It’s also good practice to use the `-af \"volume=3dB\"` form for clarity.\n\nTo prevent clipping (distortion caused by exceeding the maximum allowable amplitude), ffmpeg’s `volume` filter alone does not apply limiting or normalization. If your file is already peaking near 0 dBFS, boosting volume can cause clipping. For safety, consider using a limiter filter after the volume boost; the `alimiter` filter will ensure no samples exceed 0 dBFS.\n\nExample command with both volume increase and a limiter for safety:\n\n```bash\nffmpeg -i episode.mp3 -af \"volume=3dB,alimiter=limit=0dB\" -c:a libmp3lame -b:a 192k episode_louder.mp3\n```\n\n- `volume=3dB` increases volume by 3 decibels.\n- `alimiter=limit=0dB` ensures the signal does not exceed digital full scale (prevents clipping).\n- `-c:a libmp3lame -b:a 192k` re-encodes to MP3 at 192 kbps, a common high-quality bitrate.\n\nAssumption: Your MP3 can be re-encoded (as lossless adjustment is not supported for MP3), and you want to stay in the MP3 format. Adjust `-b:a` as needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 347,
+    "total_tokens": 949,
+    "cost": 0.00398
+  },
+  "model_type": "task_run"
+}

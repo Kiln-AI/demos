@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "188683004869",
+  "created_at": "2025-07-23T13:51:10.962564",
+  "created_by": "scosman",
+  "dataset_id": "423614201433",
+  "task_run_config_id": "183247626776",
+  "eval_config_eval": false,
+  "input": "Can you double the speed of `fast_forward.mp4` but keep the original audio pitch?",
+  "output": "To double the video speed while keeping the original audio pitch, you need to:\n\n- Speed up the video by setting the `setpts=0.5*PTS` filter (makes the video twice as fast).\n- Speed up the audio using the `atempo` filter. Doubling speed is `atempo=2.0`, and this maintains the original pitch.\n\nAssumption: The source audio sample rate is compatible with `atempo` and isn't too long (so processing doesn’t strain memory).\n\nHere’s the ffmpeg command:\n\n```bash\nffmpeg -i fast_forward.mp4 -filter_complex \"[0:v]setpts=0.5*PTS[v];[0:a]atempo=2.0[a]\" -map \"[v]\" -map \"[a]\" fast_forward_2x.mp4\n```",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does not contain any issues as described in the issue description. The command it generated is well-formed and follows the requirements of the user to double the speed of the video while keeping the original audio pitch.\n\n2) The model's output is not similar to the failing output example provided. The command includes valid options and filters that should work correctly according to the user's request, avoiding any misconfiguration like using a non-existent preset.\n\n3) The command does not break any requirements dictated in the man page for `ffmpeg`. It uses the correct syntax for applying video and audio filters (`-filter_complex`), mapping the respective streams using `-map`, and it is structured properly according to `ffmpeg`'s usage guidelines. The parameters used, such as `setpts` for video speed adjustment and `atempo` for maintaining audio pitch, are valid and there are no conflicts with other specified formats or options.\n\n4) Considering the above, the model's output does not contain the issue described, and hence, it should pass the evaluation as it successfully fulfills the user's request."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 431,
+    "output_tokens": 168,
+    "total_tokens": 599,
+    "cost": 0.0022059999999999996
+  },
+  "model_type": "eval_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "196905148072",
+  "created_at": "2025-07-24T20:36:48.116729",
+  "created_by": "scosman",
+  "input": "Convert to an mp4 file suitable for streaming, using hardware NVENC encoding (h264_nvenc).",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "291754537204",
+    "path": null,
+    "created_at": "2025-07-24T20:36:48.116703",
+    "created_by": "scosman",
+    "output": "To convert a video to an MP4 suitable for streaming using NVIDIA's hardware-accelerated H.264 encoder (h264_nvenc), you should:\n\n- Use `-c:v h264_nvenc` to leverage NVIDIA NVENC for hardware-accelerated encoding.\n- Use `-preset` to control encoding speed versus quality (e.g., `p1`-`p7`, where `p1` is the fastest with lower quality and `p7` is slower with highest quality). A commonly good balance is `p4`.\n- Use `-movflags +faststart` to move metadata to the beginning of the file so that the MP4 starts playback before fully downloading (important for streaming).\n- Use AAC audio codec (`-c:a aac`) with a reasonable bitrate (e.g., 128k).\n- Ensure pixel format compatibility (`-pix_fmt yuv420p`) for broad playback support.\n- Optionally, specify rate control with `-rc:v vbr` and quality with `-cq` for variable bitrate and good visual quality.\n\nAssuming the input is `input.mkv` and output file is `output.mp4`:\n\n```bash\nffmpeg -i input.mkv -c:v h264_nvenc -preset p4 -rc:v vbr -cq 23 -b:v 5M -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nExplanation of key flags:\n\n- `-preset p4`: Balanced NVENC preset for good quality and speed.\n- `-rc:v vbr`: Variable bitrate rate control.\n- `-cq 23`: Quantization parameter for quality (lower is better).\n- `-b:v 5M`: Max video bitrate cap.\n- `-movflags +faststart`: Enables progressive streaming by relocating metadata.\n\nAdjust bitrate and `cq` as needed based on your quality and file size objectives.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 402,
+    "total_tokens": 997,
+    "cost": 0.0008812
+  },
+  "model_type": "task_run"
+}

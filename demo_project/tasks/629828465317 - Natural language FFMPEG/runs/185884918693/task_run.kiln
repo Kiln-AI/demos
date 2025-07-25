@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "185884918693",
+  "created_at": "2025-07-24T20:25:48.078149",
+  "created_by": "scosman",
+  "input": "Convert an ASS subtitle to SRT before embedding into MP4.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "163072664523",
+    "path": null,
+    "created_at": "2025-07-24T20:25:48.078119",
+    "created_by": "scosman",
+    "output": "To convert an ASS subtitle file to SRT format and then embed it into an MP4 container, ffmpeg alone does not perform subtitle format conversion on the fly. You should first convert the ASS subtitle to SRT using a dedicated tool (like `ffmpeg` with the subtitle codec copy won't work for ASS -> SRT conversion), or `ffmpeg` can re-encode by decoding and encoding subtitles, but ASS to SRT conversion is best done explicitly with subtitle processing tools like `ffmpeg` with `-c:s srt` when input is ASS. Then you embed the resulting SRT into the MP4 file as a text subtitle stream.\n\nHowever, recent ffmpeg versions support transcoding subtitles from ASS to SRT directly during remux. So let's use that:\n\n- `-i input.mp4` inputs the video file.\n- `-i input.ass` inputs the ASS subtitles.\n- `-c:v copy -c:a copy` copies video and audio streams without re-encoding for speed and quality retention.\n- `-c:s srt` sets the subtitle codec to SRT format for the output stream, converting ASS to SRT.\n- `-metadata:s:s:0 language=eng` assigns the English language to the first subtitle stream.\n- `-map` controls stream selection: video, audio, and subtitle streams mapped explicitly.\n\nThis command converts ASS subtitles to SRT format, embeds them as soft subtitles in the MP4 container, and does not re-encode video or audio.\n\n```bash\nffmpeg -i input.mp4 -i input.ass -map 0:v -map 0:a -map 1 -c:v copy -c:a copy -c:s srt -metadata:s:s:0 language=eng output.mp4\n```\n\nAssumptions:\n- You have a video file `input.mp4` and an ASS subtitle file `input.ass`.\n- You want to keep video and audio as-is without re-encoding (for speed and quality).\n- The output MP4 container supports subtitle track in SRT codec (modern MP4 containers support text subtitles). If your player doesn't support SRT subtitles in MP4, consider MKV container instead.\n- Language tag is set to English (`eng`). Adjust as needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 586,
+    "output_tokens": 461,
+    "total_tokens": 1047,
+    "cost": 0.000972
+  },
+  "model_type": "task_run"
+}

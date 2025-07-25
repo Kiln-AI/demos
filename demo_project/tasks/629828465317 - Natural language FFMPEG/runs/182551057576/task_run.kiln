@@ -1,0 +1,52 @@
+{
+  "v": 1,
+  "id": "182551057576",
+  "created_at": "2025-07-23T11:41:10.258677",
+  "created_by": "scosman",
+  "input": "My video `concert.mp4` has 5.1 surround sound. Can you convert it to stereo audio, but mix the rear channels at 50% volume?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gemini_2_5_pro",
+      "model_provider": "gemini_api",
+      "adapter_name": "kiln_data_gen"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "210379218074",
+    "path": null,
+    "created_at": "2025-07-23T11:41:10.258648",
+    "created_by": "scosman",
+    "output": "To convert 5.1 surround sound to stereo while mixing the rear channels at 50% volume, you'll need to use the `pan` filter to create a custom channel mapping. This will downmix the 5.1 channels (FL, FR, FC, LFE, BL, BR) into stereo (L, R) with the rear channels attenuated.\n\nThe pan filter allows you to specify how each input channel contributes to each output channel:\n- FL (front left) and BL (back left) go to left output\n- FR (front right) and BR (back right) go to right output  \n- FC (front center) is mixed equally into both channels\n- LFE (low frequency) is mixed into both channels\n- Rear channels (BL, BR) are mixed at 50% volume (0.5)\n\n```bash\nffmpeg -i concert.mp4 -af \"pan=stereo|FL=FL+0.5*FC+0.5*LFE+0.5*BL|FR=FR+0.5*FC+0.5*LFE+0.5*BR\" -c:v copy output.mp4\n```\n\nThis command copies the video stream unchanged while downmixing the 5.1 audio to stereo with the specified rear channel attenuation.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "claude_sonnet_4",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "function_calling",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_616379110733",
+    "eval_correctness"
+  ],
+  "usage": {
+    "input_tokens": 1041,
+    "output_tokens": 306,
+    "total_tokens": 1347,
+    "cost": 0.007713
+  },
+  "model_type": "task_run"
+}

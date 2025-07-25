@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "116882654257",
+  "created_at": "2025-07-24T18:07:44.489427",
+  "created_by": "scosman",
+  "input": "I have a video in MOV format, and I need to convert it to AVI format while keeping the original video quality.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Video Conversion Techniques"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "138230019759",
+    "path": null,
+    "created_at": "2025-07-24T18:07:44.489399",
+    "created_by": "scosman",
+    "output": "To convert a MOV video to AVI format while preserving original quality, you should use lossless or near-lossless codecs. However, AVI is just a container, so the choice of codecs inside matters. For maximum compatibility, you can use the FFV1 codec (lossless), or for wide compatibility with good quality and manageable file size, use MPEG-4 Part 2 codec (`-c:v mpeg4`) with minimal compression (set high bitrate or low quantizer).\n\nAssuming you want to preserve as much quality as possible and keep full compatibility, I'll use the FFV1 lossless codec. If you have storage restrictions or want a more compressed result, replace `-c:v ffv1` with `-c:v mpeg4 -q:v 1` for high quality.\n\nHere's the lossless approach:\n\n- `-c:v ffv1` uses FFV1, a lossless intra-frame video codec supported in AVI.\n- `-c:a pcm_s16le` keeps audio uncompressed in PCM format (very high quality).\n- This keeps the quality highest at the cost of larger files.\n\n```bash\nffmpeg -i input.mov -c:v ffv1 -c:a pcm_s16le output.avi\n```\n\nIf you need a smaller output with very high quality using the MPEG-4 codec:\n\n- `-c:v mpeg4 -q:v 1` uses the MPEG-4 Part 2 codec at near-lossless quality (the lower the `q:v`, the better; `1` is the best).\n- `-c:a mp3 -q:a 0` encodes audio as high-quality MP3.\n\n```bash\nffmpeg -i input.mov -c:v mpeg4 -q:v 1 -c:a mp3 -q:a 0 output.avi\n```\n\n**Summary:**  \n- Use the FFV1 version for true lossless quality.\n- Use the MPEG-4 with `q:v 1` for very high quality and better playback compatibility.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 415,
+    "total_tokens": 1013,
+    "cost": 0.004516
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "178010260650",
+  "created_at": "2025-07-24T20:36:45.090125",
+  "created_by": "scosman",
+  "input": "Transcode .mov to mp4 and force the use of the main 10 profile for HEVC.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "182573451341",
+    "path": null,
+    "created_at": "2025-07-24T20:36:45.090097",
+    "created_by": "scosman",
+    "output": "To transcode a .mov file to an MP4 container using the HEVC codec with the main 10 profile, you should use the x265 encoder, which supports HEVC Main 10 profile for 10-bit video. This means you are encoding in 10-bit color depth, providing better color precision.\n\nKey points:\n- Use `-c:v libx265` to select the x265 encoder.\n- Pass `-x265-params profile=main10` to specify the main 10 profile explicitly.\n- The MP4 container (`.mp4`) supports HEVC streams properly.\n- You may want to set pixel format to `yuv420p10le` to handle 10-bit video.\n- For audio, just copy the stream or encode as needed (I'll assume copying audio in this example).\n\nExample command:\n\n```bash\nffmpeg -i input.mov -c:v libx265 -pix_fmt yuv420p10le -x265-params profile=main10 -c:a copy output.mp4\n```\n\nExplanation:\n- `-c:v libx265`: selects x265 encoder for HEVC video.\n- `-pix_fmt yuv420p10le`: sets pixel format to 10-bit (little endian), required for main 10 profile.\n- `-x265-params profile=main10`: enforces main 10 profile.\n- `-c:a copy`: copies the audio stream without re-encoding for faster processing and lossless audio preservation.\n\nThis command assumes your input file is compatible with 10-bit encoding and that you want to keep the audio unchanged. If you want to re-encode audio or set other options, adjust accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 344,
+    "total_tokens": 939,
+    "cost": 0.0007884
+  },
+  "model_type": "task_run"
+}

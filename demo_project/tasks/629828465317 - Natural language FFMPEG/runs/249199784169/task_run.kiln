@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "249199784169",
+  "created_at": "2025-07-24T18:08:18.133675",
+  "created_by": "scosman",
+  "input": "How can I add a cover image to an MP3 file using a JPEG image I have?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Encoding Basics"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "187846412083",
+    "path": null,
+    "created_at": "2025-07-24T18:08:18.133620",
+    "created_by": "scosman",
+    "output": "To add a cover image (album art) to an MP3 file, you can use ffmpeg's `-map` option to specify the audio and image streams, along with `-id3v2_version 3` to maximize compatibility with most players. The image should be JPEG (as you specified), and you should set the cover as \"attached picture\" using `-disposition:v:0 attached_pic`.\n\nAssuming your MP3 is input.mp3 and your cover image is cover.jpg, here’s how you can do it:\n\n```bash\nffmpeg -i input.mp3 -i cover.jpg -map 0:a -map 1:v -c copy -id3v2_version 3 -metadata:s:v title=\"Album cover\" -metadata:s:v comment=\"Cover (Front)\" -disposition:v:0 attached_pic output_with_cover.mp3\n```\n\n- `-map 0:a -map 1:v` maps the audio from the first input and the image from the second.\n- `-c copy` copies audio & image without re-encoding.\n- `-id3v2_version 3` writes ID3v2.3 metadata for better player support.\n- `-disposition:v:0 attached_pic` signals the image as cover art.\n- The `-metadata` options add helpful tags.\n\nAssumption: The MP3 and the JPEG image exist as separate files. Replace filenames as needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 295,
+    "total_tokens": 887,
+    "cost": 0.003544
+  },
+  "model_type": "task_run"
+}

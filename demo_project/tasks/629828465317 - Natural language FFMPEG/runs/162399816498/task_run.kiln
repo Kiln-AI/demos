@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "162399816498",
+  "created_at": "2025-07-24T20:37:41.857234",
+  "created_by": "scosman",
+  "input": "Add multiple subtitle tracks (English and Spanish) from srt files into output.mkv for movie.mp4.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "278364531442",
+    "path": null,
+    "created_at": "2025-07-24T20:37:41.857209",
+    "created_by": "scosman",
+    "output": "To add multiple subtitle tracks (English and Spanish) from SRT files into an MKV container, you can map the video and audio streams from the input video and then add the subtitles as separate subtitle streams. MKV supports multiple subtitle tracks well.\n\nKey points:\n- Use `-i` multiple times to input the video and each subtitle file.\n- Use `-map` to specify which streams to include: video, audio, and each subtitle.\n- Use `-c:v copy` and `-c:a copy` to avoid re-encoding the video and audio, assuming they're already in suitable formats.\n- Use `-c:s srt` to correctly mux the subtitle streams as SRT.\n- Add metadata (like language) to each subtitle track for proper identification in players.\n- Use MKV format output to support multiple subtitle tracks robustly.\n\nAssuming:\n- `movie.mp4` is your main input file.\n- `english.srt` and `spanish.srt` are the subtitle files in the current directory.\n- You want to keep the original video and audio codecs.\n\n```bash\nffmpeg -i movie.mp4 -i english.srt -i spanish.srt \\\n-map 0:v -map 0:a -map 1 -map 2 \\\n-c:v copy -c:a copy -c:s srt \\\n-metadata:s:s:0 language=eng -metadata:s:s:1 language=spa \\\noutput.mkv\n```\n\nThis command does the following:\n- Inputs `movie.mp4` (index 0), `english.srt` (index 1), and `spanish.srt` (index 2).\n- Maps video and audio from `movie.mp4` and both subtitle streams.\n- Copies video and audio without re-encoding.\n- Includes subtitle streams as SRT with proper language metadata.\n- Outputs into `output.mkv` with multiple selectable subtitle tracks.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 391,
+    "total_tokens": 986,
+    "cost": 0.0008636
+  },
+  "model_type": "task_run"
+}

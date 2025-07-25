@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "195519314726",
+  "created_at": "2025-07-24T20:34:45.575421",
+  "created_by": "scosman",
+  "input": "I have a video file in .mov format, and I want it as an .mp4 file.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "315331568207",
+    "path": null,
+    "created_at": "2025-07-24T20:34:45.575393",
+    "created_by": "scosman",
+    "output": "To convert a .mov file to an .mp4 file with high compatibility, the common approach is to copy the streams if they are already in compatible formats, or re-encode them to widely supported codecs like H.264 for video and AAC for audio. If the original codecs are compatible with MP4 (e.g., H.264 video and AAC audio), stream copy will be fast and lossless. Otherwise, re-encoding ensures compatibility.\n\nThe command below assumes you want good compatibility with most players and web platforms, so it uses H.264 video encoding and AAC audio encoding. The `-movflags +faststart` option places the MP4 header at the beginning to enable progressive streaming.\n\n```bash\nffmpeg -i input.mov -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\nExplanation:\n\n- `-c:v libx264` encodes video using H.264 codec.\n- `-preset medium` balances encoding speed and compression quality.\n- `-crf 23` uses a reasonable quality level (lower = better quality).\n- `-c:a aac` encodes audio in AAC codec.\n- `-b:a 128k` sets audio bitrate to 128 kbps.\n- `-movflags +faststart` enables fast streaming for the MP4 file.\n\nIf you want to try to avoid re-encoding and just remux (if codecs are compatible), you could test with:\n\n```bash\nffmpeg -i input.mov -c copy -movflags +faststart output.mp4\n```\n\nBut this only works if the video and audio codecs inside the .mov file are supported natively in MP4 containers.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 363,
+    "total_tokens": 957,
+    "cost": 0.0008184
+  },
+  "model_type": "task_run"
+}

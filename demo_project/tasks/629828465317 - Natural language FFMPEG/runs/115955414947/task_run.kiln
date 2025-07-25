@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "115955414947",
+  "created_at": "2025-07-24T20:35:02.131695",
+  "created_by": "scosman",
+  "input": "Give me a command to turn camera.mov into a .webm for embedding on a website.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "333559691325",
+    "path": null,
+    "created_at": "2025-07-24T20:35:02.131668",
+    "created_by": "scosman",
+    "output": "To convert `camera.mov` into a `.webm` suitable for embedding on a website, you can use the VP9 video codec and Opus audio codec, which offer good quality and broad browser support for WebM files.\n\n- `-c:v libvpx-vp9` selects VP9 video codec, providing efficient compression and high quality.\n- `-b:v 2M` sets target video bitrate to 2 Mbps for good quality; you can adjust based on your quality/size tradeoff.\n- `-c:a libopus` uses Opus codec for audio, which is well supported in WebM.\n- `-b:a 128k` sets audio bitrate to 128 kbps.\n- `-pix_fmt yuva420p` ensures compatibility with alpha transparency if needed; typically use `yuv420p` if no alpha is required.\n- `-auto-alt-ref 4 -arnr-maxframes 7 -arnr-strength 4` enhances VP9 compression efficiency.\n- `-movflags +faststart` is not applicable for WebM and thus omitted.\n- `-deadline good -cpu-used 1` balance of encoding speed and quality.\n\nAssumption: The original video may have any resolution; if you need resizing, add a `-vf scale=w:h` filter. Also, WebM supports alpha channel, but if your video does not have transparency, use `-pix_fmt yuv420p` instead.\n\n```bash\nffmpeg -i camera.mov -c:v libvpx-vp9 -b:v 2M -auto-alt-ref 4 -arnr-maxframes 7 -arnr-strength 4 -deadline good -cpu-used 1 -c:a libopus -b:a 128k -pix_fmt yuv420p output.webm\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 372,
+    "total_tokens": 964,
+    "cost": 0.000832
+  },
+  "model_type": "task_run"
+}

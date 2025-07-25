@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "208784614068",
+  "created_at": "2025-07-24T20:37:11.511435",
+  "created_by": "scosman",
+  "input": "I want to take the video from input.mp4 and remux it into a .ts file for streaming. No re-encoding needed.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "110162980704",
+    "path": null,
+    "created_at": "2025-07-24T20:37:11.511406",
+    "created_by": "scosman",
+    "output": "To remux the video from input.mp4 into a .ts file without re-encoding, use stream copy mode. This copies the streams as-is, avoiding quality loss and saving time.\n\n- `-c copy` tells ffmpeg to copy all streams (video, audio, etc.) without re-encoding.\n- The `.ts` container is MPEG Transport Stream, commonly used for streaming.\n- No filters or scaling applied since you want a direct remux.\n- This command assumes input.mp4 codecs are compatible with the MPEG-TS container (generally H.264/AAC or similar); if not, remuxing may fail.\n\n```bash\nffmpeg -i input.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts output.ts\n```\n\nExplanation of special parameters:\n- `-bsf:v h264_mp4toannexb` is a bitstream filter to convert H.264 format from MP4 style (AVCC) to Annex B format, required for .ts files to ensure compatibility. This is necessary when the video codec is H.264. If your codec differs, this may not be needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 605,
+    "output_tokens": 240,
+    "total_tokens": 845,
+    "cost": 0.000626
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "330057504561",
+  "created_at": "2025-07-24T20:39:48.901389",
+  "created_by": "scosman",
+  "input": "I'm trying to convert an extremely large ProRes 4444 4K to H.264 but my system keeps running out of memory. How to process in chunks?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "172414402891",
+    "path": null,
+    "created_at": "2025-07-24T20:39:48.901358",
+    "created_by": "scosman",
+    "output": "When dealing with extremely large ProRes 4444 4K files, memory exhaustion often comes from decoding or encoding huge frames at once. To handle this, you can process the video in chunks (segments) by splitting the input into smaller time intervals, encoding each segment individually, then concatenating them back together. This approach reduces memory load at any moment.\n\nHere’s a best-practice technique using ffmpeg:\n\n1. **Split Input into Segments**: Use `-ss` (start time) and `-t` (duration) to process smaller chunks in a loop/script.\n2. **Encode each chunk individually**: Encode each segment into H.264 with your desired parameters. Memory use is limited to that chunk.\n3. **Concatenate segments losslessly**: Once all chunks are processed, concatenate the encoded chunks using the ffmpeg concat demuxer for seamless playback.\n\n*Assumptions*: You know approximate segment duration and have enough disk space. Chunks will be encoded independently which might slightly vary on GOP boundaries if not controlled, but generally seamless if you use segment boundaries on keyframes or re-encode fully.\n\n### Example commands for one chunk\n\nConvert a chunk starting at 0 seconds, duration 60 seconds (adjust as needed):\n\n```bash\nffmpeg -ss 0 -i input.mov -t 60 -c:v libx264 -preset slow -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart chunk_00.mp4\n```\n\nConvert the next chunk starting at 60 seconds:\n\n```bash\nffmpeg -ss 60 -i input.mov -t 60 -c:v libx264 -preset slow -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart chunk_01.mp4\n```\n\n... and so on, until the full duration is covered.\n\n### Concatenate all chunks\n\nCreate a text file `concat_list.txt`:\n\n```\nfile 'chunk_00.mp4'\nfile 'chunk_01.mp4'\nfile 'chunk_02.mp4'\n```\n\nThen run:\n\n```bash\nffmpeg -f concat -safe 0 -i concat_list.txt -c copy output.mp4\n```\n\nThis merges the chunks without re-encoding.\n\n---\n\n### Additional notes:\n- Use precise `-ss` placement before `-i` for faster seeking.\n- Choose a segment duration that balances memory use vs number of files.\n- To ensure keyframe alignment, you can force keyframes at specific intervals (e.g., `-g` and `-force_key_frames` options), which helps with cleaner concatenation.\n- If you want to automate this, write a script to loop over the duration.\n\nThis chunked encoding approach prevents memory overload while preserving final video quality in H.264.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 608,
+    "output_tokens": 595,
+    "total_tokens": 1203,
+    "cost": 0.0011952
+  },
+  "model_type": "task_run"
+}

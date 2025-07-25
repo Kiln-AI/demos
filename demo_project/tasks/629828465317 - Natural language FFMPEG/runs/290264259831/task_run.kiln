@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "290264259831",
+  "created_at": "2025-07-24T20:40:05.671872",
+  "created_by": "scosman",
+  "input": "I want to set a variable bitrate for audio in output, but the encoder gives errors with my container. How do I set compatible options?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "287953456870",
+    "path": null,
+    "created_at": "2025-07-24T20:40:05.671848",
+    "created_by": "scosman",
+    "output": "When using variable bitrate (VBR) audio encoding, compatibility between the audio codec, container format, and bitrate control options is crucial to avoid errors. Some containers or codecs do not support certain VBR modes or parameters. To achieve VBR audio while maintaining compatibility:\n\n1. **Choose a codec that supports VBR well**, such as `libfdk_aac` or `libmp3lame`, instead of the native AAC encoder in ffmpeg (`aac`), which is limited in VBR support.\n\n2. **Use a container format that supports the codec and its methods well**, e.g., `.m4a` or `.mp4` for AAC.\n\n3. **Set bitrate control parameters properly, respecting codec/container limitations.**\n\nFor example, with AAC codec in MP4 container:\n\n- The native `aac` encoder supports bitrate modes `-b:a` (CBR) and limited VBR modes with `-vbr` flag (values 1-5). However, some container muxers may fail with unsupported options.\n- The `libfdk_aac` codec supports high-quality VBR well.\n- If `libfdk_aac` is unavailable, use the native `aac` encoder VBR mode carefully and test compatibility.\n\nHere is an example ffmpeg command with native `aac` encoder's VBR and compatible MP4 container:\n\n```bash\nffmpeg -i input.wav -c:a aac -vbr 3 -movflags +faststart output.mp4\n```\n\nExplanation:\n\n- `-vbr 3` enables an intermediate VBR quality setting.\n- `-movflags +faststart` helps streaming compatibility.\n- Avoid explicitly setting `-b:a` when using VBR with native `aac`, as it conflicts.\n  \nIf errors persist, consider switching to CBR bitrate with `-b:a` or using a different codec/container combo.\n\nIn summary, ensure audio codec, container, and bitrate mode options align, and avoid conflicting parameters when enabling VBR audio encoding with ffmpeg.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 415,
+    "total_tokens": 1017,
+    "cost": 0.0009048
+  },
+  "model_type": "task_run"
+}

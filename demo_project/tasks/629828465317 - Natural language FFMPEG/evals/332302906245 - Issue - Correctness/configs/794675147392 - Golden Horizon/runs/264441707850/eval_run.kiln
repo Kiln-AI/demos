@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "264441707850",
+  "created_at": "2025-07-23T11:35:26.605147",
+  "created_by": "scosman",
+  "dataset_id": "975726493071",
+  "task_run_config_id": null,
+  "eval_config_eval": true,
+  "input": "I want to merge video from stream 2 and audio from stream 7 of my input file multi_track.mp4 into a single output file",
+  "output": "To merge specific streams from a multi-track file, you'll use the `-map` parameter to select which streams to include in the output. This allows you to pick specific video and audio tracks from files with multiple streams.\n\nThe `-map` parameter uses zero-based indexing, so stream 2 is the third stream and stream 7 is the eighth stream in the file. The format is `-map input_file_index:stream_index`.\n\n```bash\nffmpeg -i multi_track.mp4 -map 0:2 -map 0:7 -c copy output.mp4\n```\n\nThis command maps stream 2 (video) and stream 7 (audio) from the input file, using `-c copy` to avoid re-encoding for faster processing while maintaining quality.",
+  "intermediate_outputs": {
+    "reasoning": "**Review of the `ffmpeg` Command Generation**\n\nOkay, I've got a user who wants to merge specific streams from `multi_track.mp4` into `output.mp4`.  They're looking for stream 2 (video) and stream 7 (audio).  I need to generate an `ffmpeg` command to do this.\n\nFirst, I've identified that the crucial parameter is `-map`. Its syntax is straightforward: `-map <input_file_index>:<stream_specifier>`. Since we have a single input file, the `input_file_index` will always be `0`. The `stream_specifier` will be the stream's index.\n\nThe key here is that `ffmpeg` uses zero-based indexing for streams, but users often think in terms of 1-based indices, or the numbering they see in tools like `ffprobe`. In this case, \"stream 2\" and \"stream 7\" likely correspond to the streams with indices 2 and 7 respectively, which I'll interpret as `0:2` and `0:7`.\n\nNow, let's analyze the proposed command: `ffmpeg -i multi_track.mp4 -map 0:2 -map 0:7 -c copy output.mp4`.\n\n*   `-i multi_track.mp4`:  Good, that's the correct input.\n*   `-map 0:2`:  This maps stream index 2 from the input file.  Assuming the user's intent, this is likely their video stream.\n*   `-map 0:7`:  This maps stream index 7 from the input file. This must be the requested audio stream.\n*   `-c copy`:  This tells `ffmpeg` to stream copy, which is the most efficient method and preserves the original quality. A good default, unless the user explicitly requested transcoding.\n*   `output.mp4`:  Correctly defines the output.\n\nThe explanation the model provides hits all the key points: the use of `-map`, zero-based indexing, and the meaning of `-c copy`.\n\nBased on the prompt's ambiguity, this approach is the most logical interpretation. This command should work as intended. **Pass!**"
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 1002,
+    "output_tokens": 177,
+    "total_tokens": 1179,
+    "cost": 0.005661
+  },
+  "model_type": "eval_run"
+}

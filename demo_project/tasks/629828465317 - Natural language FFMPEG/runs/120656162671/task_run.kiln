@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "120656162671",
+  "created_at": "2025-07-24T20:26:03.286015",
+  "created_by": "scosman",
+  "input": "Change subtitle encoding from Windows-1252 to UTF-8 before embedding.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "205429077344",
+    "path": null,
+    "created_at": "2025-07-24T20:26:03.285988",
+    "created_by": "scosman",
+    "output": "To change subtitle encoding from Windows-1252 to UTF-8 before embedding, you need to first convert the subtitle file's character encoding (if it’s an external subtitle file like .srt), then embed it into the video using ffmpeg.\n\n- ffmpeg cannot directly convert text encoding of subtitle streams inside a video container, so you should convert the subtitle file outside ffmpeg (using tools like `iconv`), or specify the input subtitle codec options if supported.\n- If you have an external subtitle file, use `iconv` to convert encoding from Windows-1252 to UTF-8.\n- Then embed the UTF-8 encoded subtitle into the video with ffmpeg using `-c:s mov_text` for MP4 or `-c:s srt` for MKV.\n\nExample workflow:\n\n1. Convert subtitle encoding using iconv (Linux/macOS):\n```bash\niconv -f WINDOWS-1252 -t UTF-8 input_windows1252.srt -o input_utf8.srt\n```\n\n2. Embed the UTF-8 subtitle into the video (assuming MP4 container):\n```bash\nffmpeg -i input.mp4 -i input_utf8.srt -c:v copy -c:a copy -c:s mov_text output.mp4\n```\n\nExplanation:\n\n- `-c:v copy -c:a copy` copies the original video and audio without re-encoding.\n- `-c:s mov_text` encodes subtitles as mov_text, which is the subtitle codec supported in MP4 containers.\n- The subtitle file needs to be UTF-8 encoded before embedding to avoid garbled characters.\n\nIf the subtitle is already inside the video file but with Windows-1252 encoding, you would typically need to extract it, convert externally, then re-mux it back to the video.\n\nIf you want an ffmpeg-only approach and your ffmpeg build supports `-sub_charenc` to specify input subtitle encoding (mostly for text subtitles), you can try:\n\n```bash\nffmpeg -sub_charenc WINDOWS-1252 -i input.srt -i input.mp4 -c:v copy -c:a copy -c:s mov_text output.mp4\n```\n\nThis tells ffmpeg that the input subtitle file is Windows-1252 encoded and converts it to UTF-8 when embedding.\n\n---\n\nSummary command assuming you have an external .srt file and want to embed it into an MP4 video with UTF-8 subtitles:\n\n```bash\n# Step 1: Convert subtitle encoding\niconv -f WINDOWS-1252 -t UTF-8 input_windows1252.srt -o input_utf8.srt\n\n# Step 2: Embed subtitle in MP4 container\nffmpeg -i input.mp4 -i input_utf8.srt -c:v copy -c:a copy -c:s mov_text output.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 588,
+    "output_tokens": 581,
+    "total_tokens": 1169,
+    "cost": 0.0011648
+  },
+  "model_type": "task_run"
+}

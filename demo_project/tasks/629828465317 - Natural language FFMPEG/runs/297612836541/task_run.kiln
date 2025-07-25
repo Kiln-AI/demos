@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "297612836541",
+  "created_at": "2025-07-24T20:35:03.700531",
+  "created_by": "scosman",
+  "input": "Can you convert multiple .avi files to .mp4 and preserve their aspect ratios?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "935870484878",
+    "path": null,
+    "created_at": "2025-07-24T20:35:03.700506",
+    "created_by": "scosman",
+    "output": "To convert multiple .avi files to .mp4 while preserving their aspect ratios, you can use a loop in your shell environment (e.g., bash). The key points are:\n\n- Use `-vf scale=-2:720` or adjust the scale filter to maintain the aspect ratio by only specifying one dimension (width or height), letting ffmpeg calculate the other. Here, for example, setting width to -2 allows height to be auto-calculated based on the original aspect ratio and ensures the width is divisible by 2 (a requirement for many encoders). Adjust if you want to fix height or width.\n- Use H.264 video codec (`libx264`) and AAC audio codec (`aac`) for wide compatibility.\n- Use `-movflags +faststart` to enable MP4 files to start playback before the entire file is downloaded.\n- Use a suitable quality setting (`-crf` for quality; lower means better).\n- The loop processes each `.avi` file found and writes an `.mp4` with the same basename.\n\nHere’s an example bash loop to convert all `.avi` files in the current directory to `.mp4`:\n\n```bash\nfor f in *.avi; do\n  ffmpeg -i \"$f\" -vf \"scale=trunc(oh*a/2)*2:trunc(oh/2)*2\" -c:v libx264 -preset slow -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart \"${f%.avi}.mp4\"\ndone\n```\n\nExplanation of scale filter used here:  \n`scale=trunc(oh*a/2)*2:trunc(oh/2)*2` dynamically calculates width and height based on original height (`oh`) and aspect ratio (`a` = input width/input height), ensuring both dimensions are divisible by 2, which complies with encoder requirements and preserves aspect ratio.\n\nAssumptions:  \n- You want to keep roughly the original resolution; the example scales width and height dynamically.  \n- You have bash shell or similar environment.  \n- Audio quality at 128 kbps and video quality at CRF 23 is acceptable.\n\nYou can adjust the scale filter to fix either width or height if desired, e.g., `scale=-2:720` for fixed height of 720 pixels and proportional width.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 490,
+    "total_tokens": 1080,
+    "cost": 0.00102
+  },
+  "model_type": "task_run"
+}

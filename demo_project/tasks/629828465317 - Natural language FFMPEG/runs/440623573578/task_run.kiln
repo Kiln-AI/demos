@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "440623573578",
+  "created_at": "2025-07-24T20:27:38.501852",
+  "created_by": "scosman",
+  "input": "Is it possible to replace the audio track in a video with a new wav file?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "171564968142",
+    "path": null,
+    "created_at": "2025-07-24T20:27:38.501759",
+    "created_by": "scosman",
+    "output": "Yes, it is definitely possible to replace the audio track of a video with a new WAV file using ffmpeg. The process involves telling ffmpeg to take the video stream from the original file, but use the new audio stream from your WAV file instead.\n\nKey points and best practices:\n- Use the `-i` option twice to specify input video and input audio.\n- Use `-map` options to select the video stream from the original video and the audio stream from the new audio file explicitly, avoiding including unwanted streams.\n- Use `-c:v copy` to copy the video stream without re-encoding (lossless and fast).\n- Use `-c:a` with an appropriate codec for the output container; for example, if the output container is MP4, you can't simply put WAV audio inside it without re-encoding because WAV is uncompressed PCM audio not supported directly in MP4. You need to encode the audio to AAC or similar.\n- If the new audio is exactly the length you want, you might want to add `-shortest` to stop encoding when the shortest stream ends, or handle audio/video length mismatch accordingly.\n\nAssuming you want to output an MP4 file with replaced audio (encoded to AAC), here is a command example:\n\n```bash\nffmpeg -i input_video.mp4 -i new_audio.wav -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 192k -shortest output_with_new_audio.mp4\n```\n\nExplanation of parameters:\n- `-i input_video.mp4` loads the original video file.\n- `-i new_audio.wav` loads the new audio WAV file.\n- `-map 0:v:0` selects the first video stream from the first input (the input video).\n- `-map 1:a:0` selects the first audio stream from the second input (the new WAV audio).\n- `-c:v copy` copies the video as-is without re-encoding, faster and preserves quality.\n- `-c:a aac -b:a 192k` encodes the new audio to AAC at 192 kbps, compatible with MP4.\n- `-shortest` stops encoding at the shortest input length to avoid extra silence or video frames if streams are different lengths.\n\nIf your output container supports WAV (like MKV or MOV), you can just copy the audio codec directly with `-c:a copy` without re-encoding.\n\nFor replacing audio without re-encoding in MKV:\n\n```bash\nffmpeg -i input_video.mkv -i new_audio.wav -map 0:v:0 -map 1:a:0 -c:v copy -c:a copy -shortest output_with_new_audio.mkv\n```\n\nThis approach preserves the original video quality and replaces audio cleanly.\n\nMake sure your new audio file is appropriately synced and has a compatible sample format for the chosen container and codec.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 605,
+    "total_tokens": 1196,
+    "cost": 0.0012044
+  },
+  "model_type": "task_run"
+}

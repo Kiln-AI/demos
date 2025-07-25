@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "295894348996",
+  "created_at": "2025-07-23T11:28:25.999457",
+  "created_by": "scosman",
+  "input": "Can you help me create a complex filter that combines two video inputs, applies different effects to each, and then blends them together?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "claude_sonnet_4",
+      "model_provider": "anthropic",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Filter Chains with Syntax Errors"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "679830036585",
+    "path": null,
+    "created_at": "2025-07-23T11:28:25.999434",
+    "created_by": "scosman",
+    "output": "To create a complex filter that combines two video inputs with different effects and blends them, I'll use ffmpeg's filter graph syntax with multiple filter chains. This example applies a blur effect to the first input, a color adjustment to the second input, and then blends them using the overlay filter.\n\nThe filter graph uses semicolons to separate filter chains and square brackets for intermediate labels. Each input gets processed through different effects before being combined:\n\n- `[0:v]boxblur=5:1[blurred]` applies a box blur to the first input\n- `[1:v]hue=s=1.5,brightness=0.1[colored]` increases saturation and brightness on the second input  \n- `[blurred][colored]overlay=0:0:format=auto,blend=all_mode=overlay[final]` overlays and blends the processed inputs\n\n```bash\nffmpeg -i input1.mp4 -i input2.mp4 -filter_complex \"[0:v]boxblur=5:1[blurred];[1:v]hue=s=1.5,brightness=0.1[colored];[blurred][colored]overlay=0:0:format=auto,blend=all_mode=overlay[final]\" -map \"[final]\" -c:v libx264 -preset fast output.mp4\n```\n\nThis command processes both inputs through their respective effect chains, then combines them with an overlay blend mode to create the final output.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "claude_sonnet_4",
+        "model_provider": "anthropic",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "function_calling",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_243159560313",
+    "eval_correctness"
+  ],
+  "usage": {
+    "input_tokens": 997,
+    "output_tokens": 336,
+    "total_tokens": 1333,
+    "cost": 0.008031
+  },
+  "model_type": "task_run"
+}

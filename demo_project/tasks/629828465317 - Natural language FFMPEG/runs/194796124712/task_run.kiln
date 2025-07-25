@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "194796124712",
+  "created_at": "2025-07-24T20:37:50.872083",
+  "created_by": "scosman",
+  "input": "Change the subtitle character encoding from UTF-16 to UTF-8 during extraction from encoded_track.mkv.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "322941252494",
+    "path": null,
+    "created_at": "2025-07-24T20:37:50.872058",
+    "created_by": "scosman",
+    "output": "When extracting subtitles from a Matroska file (.mkv) that are encoded in UTF-16 and converting them to UTF-8, you can use `ffmpeg`'s subtitle codec with a specific encoding option. The trick is to extract the subtitle stream and specify the output subtitle character encoding as UTF-8.\n\nAssumptions:\n- The subtitle is in a format compatible with extraction as text (e.g., SRT, ASS).\n- The subtitles are embedded in the MKV as a separate stream.\n- You want to convert and save the subtitles as a plain text subtitle file (e.g., `.srt`).\n- The first subtitle stream is the targeted one; if not, modify the `-map` accordingly.\n\nHere is a command that extracts the first subtitle stream, converting the charset from UTF-16 to UTF-8:\n\n```bash\nffmpeg -i encoded_track.mkv -map 0:s:0 -c:s srt -sub_charenc UTF-16 -f srt output_subs.srt\n```\n\nExplanation:\n- `-map 0:s:0` selects the first subtitle stream from the input.\n- `-c:s srt` sets the subtitle codec to SRT for extraction.\n- `-sub_charenc UTF-16` tells ffmpeg that the input subtitle charset is UTF-16 (important for decoding).\n- `-f srt` forces output format as SubRip subtitle file.\n- The output file `output_subs.srt` will contain subtitles in UTF-8 encoding by default (the standard encoding for SRT files).\n\nIf the subtitles are in a format other than SRT, replace `-c:s srt -f srt` with the appropriate format, or convert as necessary. This approach ensures proper conversion from UTF-16 to UTF-8 during the extraction process.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 594,
+    "output_tokens": 378,
+    "total_tokens": 972,
+    "cost": 0.0008424
+  },
+  "model_type": "task_run"
+}

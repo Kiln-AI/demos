@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "171661061574",
+  "created_at": "2025-07-24T20:23:36.167617",
+  "created_by": "scosman",
+  "input": "Extract simultaneous audio channels from movie.mkv (e.g., English and Spanish).",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "242926483574",
+    "path": null,
+    "created_at": "2025-07-24T20:23:36.167593",
+    "created_by": "scosman",
+    "output": "To extract simultaneous audio channels (such as English and Spanish) from a video file like movie.mkv, you first need to identify which audio streams correspond to each language. This is commonly done by inspecting the input file's streams and their metadata (like language tags). Once identified, you can extract those audio streams separately without re-encoding by using the `-map` option.\n\nAssuming that the English and Spanish audio tracks are labeled with language codes \"eng\" and \"spa\" respectively in the container metadata, you can use `ffmpeg`'s `-map` to extract those streams. The extraction will be done as is (codec copy), preserving the original audio quality.\n\nHere are the steps:\n\n1. Check the streams and language tags:\n\n```bash\nffmpeg -i movie.mkv\n```\n\nLook for lines similar to:\n\n```\nStream #0:1(eng): Audio: ...\nStream #0:2(spa): Audio: ...\n```\n\n2. Extract the English and Spanish audio tracks into separate files (e.g., `english_audio.ac3`, `spanish_audio.ac3`). The container format for the audio files can be chosen according to the codec found (e.g., if the audio codec is AC3, use `.ac3`).\n\nHere is the command assuming English is stream 0:1 and Spanish is stream 0:2 (adjust stream indices according to your inspection):\n\n```bash\nffmpeg -i movie.mkv -map 0:1 -c copy english_audio.ac3 -map 0:2 -c copy spanish_audio.ac3\n```\n\nExplanation:\n\n- `-map 0:1` selects the first audio stream (English).\n- `-map 0:2` selects the second audio stream (Spanish).\n- `-c copy` copies the audio codec without re-encoding.\n- Separate output files are specified for each language stream.\n\nIf you want to extract both channels into a single file containing two audio streams (e.g., a multi-audio MKV or MP4), you can do:\n\n```bash\nffmpeg -i movie.mkv -map 0:a:0 -map 0:a:1 -c copy output_with_two_audios.mkv\n```\n\nHere `0:a:0` and `0:a:1` selects the first and second audio streams regardless of their stream index.\n\nIf you want to extract the audio streams into separate files in a format other than their original codec (e.g., convert to WAV or MP3), you can remove `-c copy` and specify an audio codec (like `-c:a mp3` or `-c:a pcm_s16le`), but this will result in re-encoding and larger file size.\n\n---\n\nExample final extraction commands:\n\n```bash\nffmpeg -i movie.mkv -map 0:m:language:eng -c copy english_audio.ac3 -map 0:m:language:spa -c copy spanish_audio.ac3\n```\n\nThis uses `-map 0:m:language:eng` which automatically maps streams tagged with the English language.\n\n---\n\n**Summary:** Use `-map` to select specific language streams by their language tags or stream index and copy them directly without re-encoding.\n\n```bash\nffmpeg -i movie.mkv -map 0:m:language:eng -c copy english_audio.ac3 -map 0:m:language:spa -c copy spanish_audio.ac3\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 710,
+    "total_tokens": 1301,
+    "cost": 0.0013724
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "464077054714",
+  "created_at": "2025-07-24T20:24:23.972147",
+  "created_by": "scosman",
+  "input": "Take a video (ocean.mp4) with odd resolution and conform it to the nearest multiple-of-16 for both width and height.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "294718564079",
+    "path": null,
+    "created_at": "2025-07-24T20:24:23.972122",
+    "created_by": "scosman",
+    "output": "When conforming a video with an odd resolution to the nearest multiple of 16, you typically want to round both width and height to the closest multiple of 16 to ensure hardware decoder compatibility and better compression efficiency. Since the resolution must be divisible by 16, ffmpeg’s `scale` filter can be used with expressions that round the dimensions to multiples of 16.\n\nThe approach here uses `ceil(iw/16)*16` and `ceil(ih/16)*16` to round up the input width and height to the nearest multiple of 16. This may increase the resolution slightly so the video fits standard block sizes for codecs like H.264.\n\nHere's the command:\n\n```bash\nffmpeg -i ocean.mp4 -vf \"scale=ceil(iw/16)*16:ceil(ih/16)*16\" -c:a copy output.mp4\n```\n\nExplanation:\n- `-vf \"scale=ceil(iw/16)*16:ceil(ih/16)*16\"` scales width (iw) and height (ih) up to nearest multiple of 16 by applying `ceil`.\n- Audio codec `-c:a copy` copies audio as is without re-encoding.\n- Video codec is not explicitly specified, so ffmpeg will select the default codec for MP4 (usually `h264`) but you can specify `-c:v libx264` if you want to ensure H.264 output.\n\nIf you want to avoid quality loss or re-encode only when necessary, specifying the video codec explicitly is recommended. Also, consider using a pixel format like `yuv420p` if compatibility is required.\n\nExample with explicit video codec and pixel format:\n\n```bash\nffmpeg -i ocean.mp4 -vf \"scale=ceil(iw/16)*16:ceil(ih/16)*16\" -c:v libx264 -preset slow -crf 23 -c:a copy -pix_fmt yuv420p output.mp4\n```\n\nThis ensures quality encoding with compatibility for most players.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 414,
+    "total_tokens": 1016,
+    "cost": 0.0009032
+  },
+  "model_type": "task_run"
+}

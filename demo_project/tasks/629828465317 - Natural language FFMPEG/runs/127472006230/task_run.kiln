@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "127472006230",
+  "created_at": "2025-07-24T20:36:16.314398",
+  "created_by": "scosman",
+  "input": "Is it possible to resize an input video proportionally to a maximum width of 854 pixels?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "489350859750",
+    "path": null,
+    "created_at": "2025-07-24T20:36:16.314347",
+    "created_by": "scosman",
+    "output": "Yes, it is certainly possible to resize a video to a maximum width of 854 pixels while maintaining its aspect ratio proportionally with ffmpeg. You can achieve this by using the `scale` video filter with a calculated height that automatically respects the aspect ratio.\n\n- The scale filter uses `width:height` format.\n- Set width to 854 (maximum desired width).\n- Set height to `-1` which tells ffmpeg to automatically calculate height based on the input aspect ratio so that the output video remains proportional.\n- This means if the input width is already less than or equal to 854, the video will be scaled up to width 854; if smaller scaling or no scaling is preferred only when width exceeds 854, you can add an `if` expression.\n- To ensure the height is divisible by 2 (a common requirement for many codecs like H.264), it’s best to force the height to be `-2` instead of `-1`. This maintains the aspect ratio and makes height divisible by 2.\n\nHere is a basic command assuming you want to scale width to 854, maintain aspect ratio, and ensure height is divisible by 2:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=if(gt(iw\\,854)\\,854\\,iw):-2\" -c:a copy output.mp4\n```\n\nExplanation:\n- `if(gt(iw\\,854),854,iw)` means: if input width (`iw`) is greater than 854, scale width to 854; otherwise keep original width.\n- `-2` makes height proportional and divisible by 2.\n- `-c:a copy` copies audio stream without re-encoding.\n  \nThis approach avoids unnecessary upscaling of videos that are already smaller than 854 pixels wide and always keeps the output video dimensions valid for most codecs.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 378,
+    "total_tokens": 971,
+    "cost": 0.000842
+  },
+  "model_type": "task_run"
+}

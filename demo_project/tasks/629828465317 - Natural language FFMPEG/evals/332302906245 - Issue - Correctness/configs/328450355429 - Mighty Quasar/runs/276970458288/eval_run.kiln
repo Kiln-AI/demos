@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "276970458288",
+  "created_at": "2025-07-23T16:55:16.762604",
+  "created_by": "scosman",
+  "dataset_id": "219122294515",
+  "task_run_config_id": "262229054254",
+  "eval_config_eval": false,
+  "input": "I need to select stream 15 for video and stream 22 for audio from my input file with many tracks called source.mkv",
+  "output": "To extract and combine specific streams when the input has multiple tracks, use the `-map` option. Stream 0 refers to the first input file (`source.mkv`); within that file, streams are numbered from 0 upwards.  \n\n- `-map 0:v:14` selects the **15th** video stream (indexing starts at 0, so 14 = 15th).  \n- `-map 0:a:21` selects the **22nd** audio stream.  \n- `-c copy` copies both streams losslessly to the output (fastest, no re-encode).  \n\nI assume you want an `.mkv` output container because it preserves any codec in the source and supports all track types. If re-encoding were needed, switch `-c copy` to `-c:v libx264 -c:a aac` (or similar).\n\n```bash\nffmpeg -i source.mkv -map 0:v:14 -map 0:a:21 -c copy out.mkv\n```",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does **not** contain the issue described in the issue description. The generated ffmpeg command is appropriate for the user's request to select specific video and audio streams from a multi-track MKV file. The use of the `-map` option to specify the desired streams is correct, and `-c copy` indicates a lossless copy, which aligns with common practice when no re-encoding is required.\n\n2) The model's output is **not** similar to the example of a failing output; the command appears valid according to the documentation. In contrast to the failure example where an invalid preset was used, this command does not contain any errors or invalid options.\n\n3) Upon reviewing the man page for ffmpeg, the command does not break any requirements dictated in the man page. The command correctly uses `-map` to select the appropriate streams from the input file and correctly applies `-c copy` to copy those streams without re-encoding, adhering to the expected usage denoted in the documentation.\n\n4) Based on the evaluations of points 1 through 3, the model's output does **not** contain the issue described. Therefore, it should pass the evaluation."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 432,
+    "output_tokens": 209,
+    "total_tokens": 641,
+    "cost": 0.00072694
+  },
+  "model_type": "eval_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "190962858085",
+  "created_at": "2025-07-24T20:25:07.179858",
+  "created_by": "scosman",
+  "input": "I have a .mkv with chapters. Can you copy it to .mp4 and preserve chapters if possible?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "158431668002",
+    "path": null,
+    "created_at": "2025-07-24T20:25:07.179832",
+    "created_by": "scosman",
+    "output": "To copy a .mkv file to .mp4 while preserving chapters, you can use stream copying with `-c copy` to avoid re-encoding. However, note that MP4 container support for chapters is limited: only timed ID3 metadata or text-based chapter formats are supported, and some players might not recognize them as well as Matroska chapters.\n\n`ffmpeg` can copy chapters from MKV to MP4 using the `-map_chapters 0` option, which copies chapters from the first input. The `-c copy` flag copies all streams without transcoding, preserving quality and metadata where possible.\n\nHere is the command:\n\n```bash\nffmpeg -i input.mkv -map 0 -c copy -map_chapters 0 output.mp4\n```\n\nExplanation:\n- `-map 0`: includes all streams (video, audio, subtitles, etc.).\n- `-c copy`: copies all streams without re-encoding.\n- `-map_chapters 0`: copies chapter metadata from the first input.\n  \nAssumption: Your `.mkv` file's streams (video, audio) are compatible with the MP4 container format. If some streams, like certain subtitle types, are not supported in MP4, they may be dropped silently or cause errors. If necessary, you could specifically exclude or convert incompatible streams.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 600,
+    "output_tokens": 276,
+    "total_tokens": 876,
+    "cost": 0.0006816
+  },
+  "model_type": "task_run"
+}

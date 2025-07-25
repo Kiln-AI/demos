@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "399164100711",
+  "created_at": "2025-07-24T20:26:44.256780",
+  "created_by": "scosman",
+  "input": "How can I batch extract 30-second previews (from 00:10 to 00:40) from each audio file in a folder?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "880217185823",
+    "path": null,
+    "created_at": "2025-07-24T20:26:44.256755",
+    "created_by": "scosman",
+    "output": "To batch extract 30-second previews starting at 00:10 from every audio file in a folder, you can use a simple shell loop combined with `ffmpeg`. This approach automates the process across all files matching a pattern (e.g., `*.mp3` or `*.wav`) in a directory.\n\nKey points for the `ffmpeg` options:\n- `-ss 00:00:10` seeks to 10 seconds into the input quickly.\n- `-t 30` extracts a 30-second duration segment.\n- `-c copy` copies the audio stream without re-encoding (if supported by the format, speeding up the process and avoiding quality loss). If the format or codec does not support stream copy for this operation, you can omit `-c copy` to force re-encoding.\n- Output files are named systematically to avoid conflicts, e.g., appending `_preview` to the original basename.\n  \nExample assumes `.mp3` audio files. Adjust the pattern or codec options as needed for other formats.\n\nHere’s the batch command for a Unix shell (bash):\n\n```bash\nfor f in *.mp3; do\n  ffmpeg -ss 00:00:10 -i \"$f\" -t 30 -c copy \"${f%.mp3}_preview.mp3\"\ndone\n```\n\nIf format copy doesn't work (e.g., for some codecs), use this version that re-encodes audio with a common format like AAC:\n\n```bash\nfor f in *.mp3; do\n  ffmpeg -ss 00:00:10 -i \"$f\" -t 30 -c:a aac -b:a 192k \"${f%.mp3}_preview.m4a\"\ndone\n```\n\nThis approach is easily adaptable to Windows PowerShell or batch scripts by adjusting syntax accordingly.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 378,
+    "total_tokens": 981,
+    "cost": 0.000846
+  },
+  "model_type": "task_run"
+}

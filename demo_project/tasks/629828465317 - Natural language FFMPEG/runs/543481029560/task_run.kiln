@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "543481029560",
+  "created_at": "2025-07-24T20:26:12.440932",
+  "created_by": "scosman",
+  "input": "Remove forced flag from all subtitles in an MKV file.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "256987181266",
+    "path": null,
+    "created_at": "2025-07-24T20:26:12.440895",
+    "created_by": "scosman",
+    "output": "To remove the forced flag from all subtitle streams in an MKV file, you can use `ffmpeg`'s `-disposition` option. The forced flag is a disposition flag in subtitles. By setting `-disposition:s:<index> none` for each subtitle stream, you remove the forced flag. Since the number of subtitle streams may vary, you first need to identify subtitle stream indexes and then apply the disposition reset to all subtitle streams.\n\nA best practice approach is:\n\n1. Detect subtitle streams with `ffprobe`.\n2. Build an `ffmpeg` command with `-disposition:s:<index> none` for each subtitle subtitle stream index.\n3. Copy the video, audio, and subtitle streams without re-encoding (`-c copy`) to preserve quality and speed up processing.\n4. The output is an MKV file with all forced flags removed from subtitles.\n\nHere is a general command if you know the subtitle indexes (e.g., 0,1 for subtitles), or preferably use it dynamically in scripting.\n\nExample command to remove forced flag from all subtitles in an MKV file assuming subtitle streams are 2 and 3:\n\n```bash\nffmpeg -i input.mkv -map 0 -c copy -disposition:s:2 none -disposition:s:3 none output.mkv\n```\n\nIf you want a shell one-liner to automatically detect subtitle streams and remove forced flags:\n\n```bash\nffmpeg -i input.mkv $(ffprobe -v error -select_streams s -show_entries stream=index -of csv=p=0 input.mkv | xargs -I{} echo -disposition:s:{} none) -c copy output.mkv\n```\n\nExplanation of parameters:\n\n- `-map 0` ensures all streams (video, audio, subtitles, chapters, attachments) are copied.\n- `-c copy` avoids re-encoding.\n- `-disposition:s:<index> none` removes forced flag from that subtitle stream.\n- `ffprobe...` gets all subtitle indexes dynamically.\n\nAssumption: All subtitle streams should have the forced flag removed, regardless of language or other criteria.\n\n---\n\n**Final note:** The command must be run in a POSIX shell (Linux/macOS) to use the `$(...)` shell substitution and `xargs`.\n\n```bash\nffmpeg -i input.mkv $(ffprobe -v error -select_streams s -show_entries stream=index -of csv=p=0 input.mkv | xargs -I{} echo -disposition:s:{} none) -map 0 -c copy output.mkv\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 585,
+    "output_tokens": 532,
+    "total_tokens": 1117,
+    "cost": 0.0010852
+  },
+  "model_type": "task_run"
+}

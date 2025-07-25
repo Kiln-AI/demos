@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "294961417447",
+  "created_at": "2025-07-24T20:27:28.057077",
+  "created_by": "scosman",
+  "input": "I have a video with a variable frame rate. How can I convert it to a constant frame rate of 30fps?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "132784829088",
+    "path": null,
+    "created_at": "2025-07-24T20:27:28.057051",
+    "created_by": "scosman",
+    "output": "To convert a variable frame rate (VFR) video to a constant frame rate (CFR) of 30fps using ffmpeg, you need to explicitly specify the output frame rate with `-r 30` after the input. This forces ffmpeg to duplicate or drop frames as needed to achieve a consistent 30 frames per second output.\n\nKey points:\n- Place `-r 30` after `-i input` to set the output frame rate.\n- Use a suitable video codec like libx264.\n- Optionally, copy the audio as is (`-c:a copy`) to avoid re-encoding audio unless you want to.\n- Ensure pixel format compatibility (often yuv420p).\n- Use `-preset` and `-crf` for quality control.\n\nHere's a command assuming you want an mp4 output with H.264 video:\n\n```bash\nffmpeg -i input.mp4 -r 30 -c:v libx264 -preset medium -crf 23 -c:a copy -pix_fmt yuv420p output_cfr30.mp4\n```\n\nExplanation:\n- `-r 30` sets constant output frame rate.\n- `-c:v libx264` encodes video with H.264.\n- `-preset medium` balances encoding speed and compression.\n- `-crf 23` sets quality, with lower values improving quality.\n- `-c:a copy` copies audio without re-encoding.\n- `-pix_fmt yuv420p` ensures wide compatibility.\n\nThis approach guarantees a stable 30fps video from your original VFR input.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 328,
+    "total_tokens": 927,
+    "cost": 0.0007644
+  },
+  "model_type": "task_run"
+}

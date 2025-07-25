@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "168329802347",
+  "created_at": "2025-07-24T20:39:53.689013",
+  "created_by": "scosman",
+  "input": "A batch conversion failed because one file had a mismatched color profile/bad metadata. How to force standard sRGB color space on output?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "128407945267",
+    "path": null,
+    "created_at": "2025-07-24T20:39:53.688894",
+    "created_by": "scosman",
+    "output": "When dealing with corrupted or mismatched color profiles in input files, the best practice is to explicitly convert the video to a standard color space and pixel format known for compatibility and predictability. For forcing standard sRGB-like output, you can convert the video to the standard BT.709 color space (commonly used for HD video) and ensure the pixel format is yuv420p, which is widely compatible.\n\nKey points:\n- Use `-color_primaries bt709` to set the color primaries to BT.709.\n- Use `-color_trc bt709` to set the transfer characteristics to BT.709.\n- Use `-colorspace bt709` to set the colorspace to BT.709.\n- Set pixel format to `yuv420p` to ensure compatibility.\n- If you want to be extra thorough, you can use a colorspace filter (`colorspace`) for color conversion, but the parameters above are usually sufficient.\n- This approach avoids copying any embedded (possibly corrupted) color metadata from the input.\n\nAssuming your input is `input.mp4` and you want to create a clean output `output.mp4`, here is a typical command:\n\n```bash\nffmpeg -i input.mp4 -vf format=yuv420p -color_primaries bt709 -color_trc bt709 -colorspace bt709 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k output.mp4\n```\n\nExplanation:\n- `-vf format=yuv420p` forces pixel format.\n- `-color_primaries`, `-color_trc`, and `-colorspace` explicitly specify the standard color parameters, effectively overriding any input profile.\n- Video encoded with `libx264` H.264 codec for wide compatibility.\n- Audio encoded with AAC.\n- Adjust `-preset` and `-crf` for your desired encoding speed vs quality tradeoff.\n\nIf you prefer to use the colorspace filter to explicitly convert colorspace, you could do:\n\n```bash\nffmpeg -i input.mp4 -vf \"colorspace=all=bt709:iall=bt601:fast=1,format=yuv420p\" -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k output.mp4\n```\n\nThis assumes your input color space is BT.601 (standard for SD video), converting it to BT.709. Adjust accordingly based on your inputs.\n\nBy forcing these parameters, you remove uncertainties related to bad or missing metadata, ensuring consistent sRGB-like output for your batch.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 540,
+    "total_tokens": 1142,
+    "cost": 0.0011048
+  },
+  "model_type": "task_run"
+}

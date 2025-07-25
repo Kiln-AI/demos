@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "188526914651",
+  "created_at": "2025-07-24T18:12:00.709115",
+  "created_by": "scosman",
+  "input": "Please convert a large batch of images (photos/*.png) into a single PDF file with each image on a separate page.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Handling Large Media Files Efficiently"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "182292513609",
+    "path": null,
+    "created_at": "2025-07-24T18:12:00.709090",
+    "created_by": "scosman",
+    "output": "To efficiently convert a large batch of PNG images into a single PDF with each image on its own page using ffmpeg, use an image file pattern for input, ensure images are sorted in the correct order (if needed, rename as img001.png, img002.png, etc.), and select a lossless output format.\n\nAssumptions:\n- All images are in the photos/ directory and named with a sortable sequence (like img001.png, img002.png, ...).\n- You want lossless quality in the PDF.\n- ffmpeg’s output PDF acts as an image collection with each “frame” as a page.\n\nTechnique:\n- Use the image sequence pattern in the input (e.g., photos/img%03d.png for img001.png…img999.png).\n- PDF output natively supports multiple image pages via ffmpeg.\n\nCommand:\n\n```bash\nffmpeg -framerate 1 -pattern_type glob -i 'photos/*.png' -c:v png output.pdf\n```\n\n- -framerate 1 processes images at 1 per “second” (irrelevant for PDF, but required by ffmpeg).\n- -pattern_type glob enables glob (wildcard) pattern for input images.\n- -c:v png encodes PDF pages losslessly.\n\nIf you need precise order, rename images to be numerically sequential and use:\n\n```bash\nffmpeg -framerate 1 -i photos/img%03d.png -c:v png output.pdf\n```\n\nThis ensures all images are combined, one per PDF page, handling large image batches efficiently.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 601,
+    "output_tokens": 316,
+    "total_tokens": 917,
+    "cost": 0.00373
+  },
+  "model_type": "task_run"
+}

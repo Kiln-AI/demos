@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "136894804456",
+  "created_at": "2025-07-24T20:23:57.372295",
+  "created_by": "scosman",
+  "input": "There's a social.mp4 post that's square (1080x1080). Turn it into a landscape 1280x720 video for YouTube.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "487189239030",
+    "path": null,
+    "created_at": "2025-07-24T20:23:57.372271",
+    "created_by": "scosman",
+    "output": "To convert a square 1080x1080 video into a 1280x720 landscape video for YouTube, it's important to scale and pad/crop the video correctly to avoid distortion and maintain the subject centered, or fill the frame properly. Since the source is square and the target is 16:9 landscape, we can either:\n\n1. Scale the 1080x1080 video down slightly and pad the sides to fit 1280x720 without stretching, adding black bars on the sides (pillarboxing).\n2. Or, scale and crop to fill 1280x720 entirely, which might crop some top and bottom regions.\n\nFor YouTube, full HD (1920x1080) or 720p (1280x720) are standard resolutions. Here, we target 1280x720.\n\nAssuming you want to fill the entire 1280x720 frame without any black bars, the best approach is to:\n\n- Scale the video to fill height 720px, so width becomes 720px (because of original 1:1 aspect).\n- Then crop or pad horizontally to 1280px width.\n\nSince 720 < 1280, we need to pad horizontally. Padding with black bars (\"pillarboxing\") is common to preserve the entire image without cropping.\n\nHere's how that can be done:\n\n- Scale the input to 720 height, width becomes 720 to maintain aspect ratio.\n- Use pad filter to add width up to 1280, centering the video.\n\nWe'll use the following filter chain:\n\n`scale=720:720,pad=1280:720:(1280-720)/2:0`\n\nThis preserves the entire video without distortion or cropping, centered in a 1280x720 frame.\n\nAlso, we encode using libx264 at a good quality for YouTube, with AAC audio. For compatibility, we'll use yuv420p pixel format and faststart for streaming.\n\n```bash\nffmpeg -i social.mp4 -vf \"scale=720:720,pad=1280:720:280:0\" -c:v libx264 -preset slow -crf 20 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart social_1280x720.mp4\n```\n\nExplanation:\n\n- `scale=720:720` scales the video to 720x720.\n- `pad=1280:720:280:0` adds 280 pixels of black padding on left and right ((1280-720)/2 = 280) to center the video horizontally.\n- `-preset slow` for better compression efficiency.\n- `-crf 20` good visual quality for YouTube uploads.\n- Audio encoded to AAC 128k.\n- `-movflags +faststart` allows progressive streaming on YouTube.\n- Output filename reflects resolution.\n\nIf you prefer cropping to fill 1280x720 without padding, let me know!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 610,
+    "total_tokens": 1214,
+    "cost": 0.0012176
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "680032030637",
+  "created_at": "2025-07-24T20:25:19.576078",
+  "created_by": "scosman",
+  "input": "How to remux multiple .mp4 files into a single .mkv, copying all streams?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "223898062046",
+    "path": null,
+    "created_at": "2025-07-24T20:25:19.576053",
+    "created_by": "scosman",
+    "output": "To remux multiple MP4 files into a single MKV container while copying all streams without re-encoding, we need to concatenate the input files first and then output to MKV. Since these are MP4 files, we must ensure they have compatible codecs and parameters for seamless concatenation.\n\nSteps:\n1. Create a text file listing all input MP4s in the correct order.\n2. Use `ffmpeg` concat demuxer to concatenate inputs.\n3. Use `-c copy` to stream copy all streams without re-encoding.\n4. Output to MKV container for best compatibility and flexibility.\n\nAssumptions:\n- All MP4 files have the same codec parameters (codecs, resolution, framerate, etc.) — required for concat demuxer.\n- The user has a list of files named e.g., input1.mp4, input2.mp4, input3.mp4.\n\nExample:\n\nCreate `inputs.txt` (each line with `file 'filename.mp4'`):\n```\nfile 'input1.mp4'\nfile 'input2.mp4'\nfile 'input3.mp4'\n```\n\nThen run:\n\n```bash\nffmpeg -f concat -safe 0 -i inputs.txt -c copy output.mkv\n```\n\nExplanation:\n- `-f concat` uses concat demuxer to read file list.\n- `-safe 0` allows unsafe file paths.\n- `-i inputs.txt` inputs the concat list.\n- `-c copy` stream copies all audio, video, subtitles without re-encoding.\n- `.mkv` container output supports multiple streams and flexible codecs.\n\nThis approach efficiently remuxes multiple MP4 inputs into a single MKV file without quality loss or encoding time.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 354,
+    "total_tokens": 951,
+    "cost": 0.0008052
+  },
+  "model_type": "task_run"
+}

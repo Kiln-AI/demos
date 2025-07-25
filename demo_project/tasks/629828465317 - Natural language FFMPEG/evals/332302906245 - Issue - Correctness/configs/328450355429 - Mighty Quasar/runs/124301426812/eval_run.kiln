@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "124301426812",
+  "created_at": "2025-07-24T21:40:33.552135",
+  "created_by": "scosman",
+  "dataset_id": "186965238061",
+  "task_run_config_id": "218344223527",
+  "eval_config_eval": false,
+  "input": "I have a video file with multiple audio tracks and I want to map the third audio stream to the output, but keep the original video. The input file is movie.mkv",
+  "output": "To achieve this, you'll use the `-map` option to specify which audio stream to include in the output. When dealing with multiple audio tracks, specifying the video stream implicitly (`-c:v copy`) is a good practice to ensure no unintended transcoding or loss of quality occurs.\n\nAssuming the video doesn't need any modifications (it will be copied as is), and you want to include only the third audio stream (note that stream indexing starts at 0), you can use the following command.\n\n```bash\nffmpeg -i movie.mkv -c:v copy -map 0:v:0 -map 0:a:2 -c:a aac output.mkv\n```\n\nExplanation:\n\n- `-c:v copy` specifies that the video from the input file should be copied without any changes.\n- `-map 0:v:0` maps the first video stream (index 0) from the input file to the output. The `0:v:0` part means: `input file index : stream type : stream index`.\n- `-map 0:a:2` maps the third audio stream (index 2) from the input file to the output.\n- `-c:a aac` specifies that the included audio stream should be transcoded into AAC format. If you want to keep the original audio codec but only select a different stream, you can replace `-c:a aac` with `-c:a copy`.\n\nNote: This command assumes that there are at least three audio streams in the input file (`movie.mkv`). Also, the output format (`mkv` in this case) is chosen for its ability to handle multiple streams and different codecs, but you can change it to other formats like `mp4` or `avi` based on your needs, keeping in mind compatibility and container format limitations.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does not contain the issue described. The generated command correctly uses the `-map` option to select the specified audio stream and keeps the video copy intact. The command should work correctly based on the user’s requirements and the assumptions made.\n\n2) The model's output is not similar to the failing output example. The command produced is syntactically correct and should function as intended, unlike the provided failure example which contained an invalid preset.\n\n3) The command does not break any requirements dictated in the man page for ffmpeg. It correctly uses options, respects the order of parameters, and adheres to the conventions for specifying input and output streams.\n\n4) Since the model's output contains a valid and correctly structured ffmpeg command that matches the user's requirements, it should pass based on the evaluation criteria given. The output is a successful response to the user's request."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 444,
+    "output_tokens": 369,
+    "total_tokens": 813,
+    "cost": 0.00020532
+  },
+  "model_type": "eval_run"
+}

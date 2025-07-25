@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "186445410658",
+  "created_at": "2025-07-24T18:10:14.969974",
+  "created_by": "scosman",
+  "input": "I need to change the resolution of a short clip from HD 720p to SD 480i while making sure it remains compatible with older TVs.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Resolution and Frame Rate Considerations"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "891803635506",
+    "path": null,
+    "created_at": "2025-07-24T18:10:14.969947",
+    "created_by": "scosman",
+    "output": "To convert a 720p HD video to standard definition 480i (interlaced), use the NTSC resolution (720x480), ensure interlacing with tinterlace, and select a widely compatible pixel format and codec (e.g., MPEG-2 video in an MPEG-TS or DVD-compliant .mpg file). This setup maximizes compatibility with older TVs and DVD players.\n\nKey options:\n- `-vf \"scale=720:480,format=yuv420p,tinterlace=interleave_top\"`: Scales to SD NTSC resolution, converts to 4:2:0 for legacy support, and applies interlacing (top field first, typical for NTSC).\n- `-c:v mpeg2video -q:v 2`: MPEG-2 codec with quality setting suitable for SD/DVD.\n- `-c:a mp2 -b:a 192k`: MPEG-1 Layer II audio at common bitrate.\n- Output as `.mpg` (MPEG-2 Program Stream), standard for SD video.\n\nAssumption: Source is 16:9; output remains 16:9 (may add pillarboxes for 4:3 TVs if needed).\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=720:480,format=yuv420p,tinterlace=interleave_top\" -c:v mpeg2video -q:v 2 -r 29.97 -c:a mp2 -b:a 192k output.mpg\n```\n\nThis will produce an interlaced SD file suitable for playback on older TVs and DVD players. If you need 4:3 aspect ratio, add `,setsar=8/9` (for NTSC). Adjust the input file name and desired output as necessary.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 606,
+    "output_tokens": 367,
+    "total_tokens": 973,
+    "cost": 0.004148
+  },
+  "model_type": "task_run"
+}

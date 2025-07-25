@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "192378816454",
+  "created_at": "2025-07-24T20:26:17.894877",
+  "created_by": "scosman",
+  "input": "Downscale vertical subtitles (East Asian languages) to fit on screen.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "124165463486",
+    "path": null,
+    "created_at": "2025-07-24T20:26:17.894852",
+    "created_by": "scosman",
+    "output": "For downscaling vertical East Asian subtitles so that they fit properly on screen, you typically need to use ffmpeg’s subtitle filter with appropriate scaling or forced style modifications, as vertical subtitles can otherwise overflow or be too large.\n\nIf you have an external subtitle file (like ASS with vertical subtitles), you can use the `ass` filter with modifications to the style to reduce font size or scale the subtitles. Unfortunately, the `ass` filter itself doesn't directly allow dynamic scaling inside ffmpeg, but you can modify the subtitle file before or use the `subtitles` filter combined with `scale` or adjust the ASS styling parameters on the fly.\n\nHere's the recommended approach: \n\n1. Use `subtitles` filter with forced style override to scale down the font size of vertical subtitles.\n\n2. If the subtitles are in ASS format, enable `force_style` to reduce font size or line spacing, which will downscale vertical subtitles.\n\nExample command explanation:\n\n- `-vf \"subtitles=input.ass:force_style='Fontsize=18'\"` will force the font size of subtitles to 18 (adjust smaller as needed). This affects vertical subtitles as well.\n\n- This will scale down the vertical subtitles to fit better within the screen.\n\n- You can use `force_style` to also adjust `Spacing`, `MarginV`, `ScaleX`, `ScaleY` if needed for better fitting.\n\nAssumptions:\n\n- The subtitles are in an external ASS subtitle file named `input.ass`.\n\n- The video file is `input.mp4`.\n\n- You want the output video in `output.mp4` with burned-in downscaled vertical subtitles.\n\n```bash\nffmpeg -i input.mp4 -vf \"subtitles=input.ass:force_style='Fontsize=18'\" -c:a copy output.mp4\n```\n\nIf you want to further adjust vertical scaling, you can modify `ScaleY` in the `force_style`:\n\n```bash\nffmpeg -i input.mp4 -vf \"subtitles=input.ass:force_style='Fontsize=18,ScaleY=80'\" -c:a copy output.mp4\n```\n\nHere, `ScaleY=80` scales the vertical size to 80% (adjust as needed).\n\nIf your subtitles are embedded or you want to handle SRT or other formats, you may need to convert them to ASS first or extract and convert them to enable advanced styling.\n\nThis approach ensures the vertical East Asian subtitles are made smaller to fit the screen using proper subtitle rendering and styling in ffmpeg.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 587,
+    "output_tokens": 510,
+    "total_tokens": 1097,
+    "cost": 0.0010508
+  },
+  "model_type": "task_run"
+}

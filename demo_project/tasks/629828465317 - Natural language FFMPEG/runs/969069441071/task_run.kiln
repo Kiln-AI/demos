@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "969069441071",
+  "created_at": "2025-07-24T20:37:36.393144",
+  "created_by": "scosman",
+  "input": "How do I add a cover art (image) into an mp4 or mkv during a remux, just copying existing streams?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "295299835522",
+    "path": null,
+    "created_at": "2025-07-24T20:37:36.393120",
+    "created_by": "scosman",
+    "output": "To add a cover art image into an MP4 or MKV file while remuxing (copying all existing streams without re-encoding), you can use stream copying with the `-c copy` option and specify the cover image as an additional input. Then, the image is attached as a cover or metadata stream depending on the container.\n\n**Key details:**\n\n- Use `-map` to include all input streams from the original media as well as the cover image.\n- For MKV, you can attach the image as a **video** stream with a `-disposition:v` flag or as an **attached picture** (`-disposition:v:1 attached_pic`).\n- For MP4, the cover art is typically added as an **attached picture** stream.\n- Use `-c copy` so that all streams, including audio/video, are copied without re-encoding.\n- For MP4, the cover image should generally be a JPEG or PNG.\n\n**Example for MKV:**\n\n```bash\nffmpeg -i input.mkv -i cover.jpg -map 0 -map 1 -c copy -disposition:v:1 attached_pic output.mkv\n```\n\n- `-map 0` includes all streams of the original input.\n- `-map 1` adds the cover image as an extra stream.\n- `-disposition:v:1 attached_pic` marks the second video stream (the cover image) as an attached picture.\n- `-c copy` copies all streams.\n\n**Example for MP4:**\n\n```bash\nffmpeg -i input.mp4 -i cover.jpg -map 0 -map 1 -c copy -disposition:v:1 attached_pic output.mp4\n```\n\nSame explanation applies here: attach the cover image as an attached picture stream.\n\n---\n\n**Assumptions**:\n\n- Input cover image is `cover.jpg`.\n- Input is already an MP4 or MKV file with streams you want to copy as-is.\n- You want to remux (no transcoding).\n- You want the cover art properly flagged for players to recognize it.\n\nThese commands will produce a remuxed file with embedded cover art without re-encoding the main streams.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 453,
+    "total_tokens": 1057,
+    "cost": 0.0009664
+  },
+  "model_type": "task_run"
+}

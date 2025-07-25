@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "981427320010",
+  "created_at": "2025-07-24T20:38:37.550709",
+  "created_by": "scosman",
+  "input": "How do I batch change the frame rate of multiple videos from 60fps to 30fps with ffmpeg?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "303987686820",
+    "path": null,
+    "created_at": "2025-07-24T20:38:37.550683",
+    "created_by": "scosman",
+    "output": "To batch change the frame rate of multiple videos from 60fps to 30fps using ffmpeg, you can use a simple shell loop (bash for Linux/macOS or PowerShell for Windows) to process all relevant video files in a directory.\n\nKey points:\n- Use `-r 30` to set the output frame rate to 30fps.\n- Copy audio codec to avoid re-encoding audio (`-c:a copy`), saving time and preserving quality.\n- Use a standardized naming pattern for output files to avoid overwriting (e.g., adding `_30fps` suffix).\n- The command assumes input videos have 60fps originally, but ffmpeg will handle frame rate conversion as needed.\n- Use `-vf fps=30` filter alternatively for more precise frame rate conversion.\n\nHere is an example bash script to run in a terminal on Linux/macOS:\n\n```bash\nfor file in *.mp4; do\n  ffmpeg -i \"$file\" -vf fps=30 -c:a copy \"${file%.mp4}_30fps.mp4\"\ndone\n```\n\nExplanation:\n- `for file in *.mp4` iterates over all mp4 files in the current directory.\n- `-vf fps=30` re-samples video frames to 30fps consistently.\n- `-c:a copy` copies audio stream without re-encoding.\n- `${file%.mp4}_30fps.mp4` creates a new file name by removing `.mp4` suffix and adding `_30fps.mp4`.\n\nIf you want to process different video formats (e.g., .avi, .mov), adjust the file globbing pattern accordingly or loop over multiple patterns.\n\nOn Windows PowerShell, a similar batch command is:\n\n```powershell\nGet-ChildItem -Filter *.mp4 | ForEach-Object {\n  $output = $_.BaseName + \"_30fps\" + $_.Extension\n  ffmpeg -i $_.FullName -vf fps=30 -c:a copy $output\n}\n```\n\nThis batch approach automates frame rate conversion of multiple files efficiently.\n\n---\n\nIf you want a robust cross-platform solution with logging, error checking, or multi-threading, consider writing a small script in Python, but for most cases, the shell loop above is sufficient.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 465,
+    "total_tokens": 1062,
+    "cost": 0.0009828
+  },
+  "model_type": "task_run"
+}

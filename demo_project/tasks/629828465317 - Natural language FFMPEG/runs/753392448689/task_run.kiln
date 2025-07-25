@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "753392448689",
+  "created_at": "2025-07-24T20:40:22.034350",
+  "created_by": "scosman",
+  "input": "Input file has variable rotation metadata (scene shot landscape, then handheld in portrait). How to output with uniform orientation?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "285331872244",
+    "path": null,
+    "created_at": "2025-07-24T20:40:22.034326",
+    "created_by": "scosman",
+    "output": "When your input video has variable rotation metadata (some scenes shot in landscape, others handheld in portrait), simply copying the rotation tag won't result in uniform orientation throughout the output file. Instead, you need to physically rotate and/or flip the frames as needed to normalize their orientation during re-encoding.\n\nFFmpeg's `transpose` filter can rotate video frames, and the `rotate` filter for arbitrary angles, but to fix variable rotation throughout the video, you must apply the `-noautorotate` flag to ignore input metadata rotation and then manually apply the correct transform to each frame, or use the `-vf \"transpose=...\"` to normalize orientation uniformly.\n\nHowever, since rotation can vary scene to scene, a practical approach is to disable automatic rotation handling (`-noautorotate`), then pre-roll the video so all frames are raw (as shot without rotation metadata), and then apply a filter to rotate everything to the same orientation.\n\nIf you do not want to manually specify rotations for each scene, you can force all frames to be upright by removing rotation metadata and re-encoding with a set filter. For example, assuming your desired final orientation is standard landscape with no rotation, you can do:\n\n- Use `-noautorotate` to ignore rotation metadata.\n- Apply `-vf \"transpose=...\"` if needed to rotate frames to your desired orientation.\n- Remove rotation metadata by setting it to 0 or dropping it.\n\nIf you just want to reset all rotation metadata to zero and ensure the frames are not rotated by the player, setting `-metadata:s:v:0 rotate=0` at output will remove embedded rotation metadata, but you must ensure frames themselves are actually in the correct visual orientation (not relying on metadata).\n\nExample command that disables autorotate, removes rotation metadata, and outputs MP4 with H.264 video re-encoded:\n\n```bash\nffmpeg -noautorotate -i input.mp4 -vf \"transpose=0\" -c:v libx264 -preset slow -crf 18 -c:a copy -metadata:s:v:0 rotate=0 -movflags +faststart output.mp4\n```\n\n**Explanation:**\n\n- `-noautorotate` disables automatic rotation handling by ffmpeg input demuxer, so you work with raw pixel data as shot.\n- `-vf \"transpose=0\"` applies no rotation; change number (0-3) to rotate frames 90° steps if needed.\n- `-c:v libx264 -preset slow -crf 18` re-encodes video at high quality.\n- `-c:a copy` copies audio without re-encoding.\n- `-metadata:s:v:0 rotate=0` resets rotation metadata to zero, ensuring players won't rotate the output.\n- `-movflags +faststart` enables fast start for streaming.\n\n**Important:** You might need to adjust or chain `transpose` or `rotate` filters to fix specific scene orientations as you identify them, since ffmpeg doesn't dynamically rotate frames based on per-frame metadata automatically.\n\n---\n\nIf the input has multiple rotation changes across scenes and you want to fully normalize, you generally need to:\n\n1. Disable autorotate.\n2. Use filters or scripting to detect and correct orientation per scene manually.\n3. Re-encode with rotation metadata zeroed.\n\nThis process requires manual intervention or advanced scripting beyond simple ffmpeg CLI commands.\n\n---\n\n**Summary:** To produce a uniform orientation in output from variable rotation input, disable autorotate, optionally apply a uniform rotation filter, remove rotation metadata, and re-encode.\n\n```bash\nffmpeg -noautorotate -i input.mp4 -vf \"transpose=0\" -c:v libx264 -preset slow -crf 18 -c:a copy -metadata:s:v:0 rotate=0 -movflags +faststart output.mp4\n```\nReplace `transpose=0` with `transpose=1` / `2` / `3` or combine `transpose` and `vflip` / `hflip` filters if the output orientation is still incorrect.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 827,
+    "total_tokens": 1424,
+    "cost": 0.001562
+  },
+  "model_type": "task_run"
+}

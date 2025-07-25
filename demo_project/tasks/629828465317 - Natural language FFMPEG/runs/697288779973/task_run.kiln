@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "697288779973",
+  "created_at": "2025-07-24T18:11:36.786678",
+  "created_by": "scosman",
+  "input": "I have an `mp4` file, and I need it to be web-streamable with optimizations for faster loading times on browsers. What options should I use?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Optimizing Encoding for Browser Compatibility"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "229586341105",
+    "path": null,
+    "created_at": "2025-07-24T18:11:36.786652",
+    "created_by": "scosman",
+    "output": "To optimize your MP4 file for browser compatibility and fast streaming, you should ensure:\n\n- The metadata is moved to the start of the file for immediate playback (`-movflags +faststart`).\n- Video uses the H.264 codec (`-c:v libx264`) and audio uses AAC (`-c:a aac`), both widely supported in all browsers.\n- The pixel format is set to `yuv420p` for broadest device compatibility.\n- The output is not unnecessarily re-encoded if your input is already in the right codecs (use `-c:v copy -c:a copy` for a fast pass-through), but for best compatibility and consistent streaming, re-encoding is advisable.\n- Set a sane bitrate/quality with `-crf` (e.g., 23).\n\nAssuming full compatibility and streaming are needed, here’s the recommended command:\n\n```bash\nffmpeg -i input.mp4 -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -movflags +faststart -pix_fmt yuv420p output_streamable.mp4\n```\n\n**Explanation of key options:**\n\n- `-c:v libx264` encodes video in H.264.\n- `-preset fast` speeds up encoding (can use `medium` or `slow` for smaller files).\n- `-crf 23` adjusts the quality (lower = better).\n- `-c:a aac -b:a 128k` encodes audio in AAC at 128kbps.\n- `-movflags +faststart` enables immediate playback while downloading.\n- `-pix_fmt yuv420p` ensures broad compatibility.\n\nThis will produce an MP4 optimized for fast loading and playback in all major browsers.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 610,
+    "output_tokens": 369,
+    "total_tokens": 979,
+    "cost": 0.004172
+  },
+  "model_type": "task_run"
+}

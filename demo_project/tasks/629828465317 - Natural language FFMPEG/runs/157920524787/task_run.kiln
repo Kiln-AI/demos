@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "157920524787",
+  "created_at": "2025-07-24T20:23:14.960778",
+  "created_by": "scosman",
+  "input": "I need to export a video (concert.avi) as .webm at 720p.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "491402127664",
+    "path": null,
+    "created_at": "2025-07-24T20:23:14.960753",
+    "created_by": "scosman",
+    "output": "To convert concert.avi to a 720p WebM video, we use the VP9 video codec (libvpx-vp9) and Opus audio codec (libopus), both offering good quality and broad browser compatibility for WebM. The video will be scaled to 720 pixels height while keeping the aspect ratio. The -crf and -b:v control quality and bitrate, respectively, with CRF 30 and a reasonable bitrate balancing quality and file size. The -movflags +faststart flag is not applicable for WebM, so it's omitted.\n\n- vf scale=-2:720 maintains aspect ratio by automatically calculating width to be divisible by 2.\n- c:v libvpx-vp9 sets video encoder to VP9.\n- crf 30 sets quality (lower values produce better quality, 15-35 scale in VP9).\n- b:v 0 enables constant quality mode.\n- c:a libopus uses Opus audio codec.\n- b:a 128k sets audio bitrate.\n\n```bash\nffmpeg -i concert.avi -vf scale=-2:720 -c:v libvpx-vp9 -crf 30 -b:v 0 -c:a libopus -b:a 128k output.webm\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 258,
+    "total_tokens": 851,
+    "cost": 0.00065
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "165160744015",
+  "created_at": "2025-07-24T20:24:46.287136",
+  "created_by": "scosman",
+  "input": "I want to export an .mp4 for Instagram: which codecs/settings should I use for video and audio?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "206905247602",
+    "path": null,
+    "created_at": "2025-07-24T20:24:46.287081",
+    "created_by": "scosman",
+    "output": "For exporting an MP4 tailored for Instagram, you should use H.264 (libx264) for video and AAC for audio, both widely supported by Instagram and optimized for mobile playback. Instagram prefers square (1:1), vertical (4:5), or full vertical (9:16) aspect ratios, so you may want to crop or scale accordingly. Instagram's max video bitrate is typically around 3500 kbps for feed videos and up to 5 Mbps for stories or reels.\n\nKey recommendations:\n- Video codec: libx264 with `-preset slow` or `-preset medium` for a balance of quality and encoding speed.\n- Use `-crf 23` for a good quality-to-size ratio (lower value = higher quality).\n- Resolution: Limit width to 1080 px (Instagram max width), adjust height accordingly based on aspect ratio.\n- Pixel format: `yuv420p` for compatibility.\n- Audio codec: AAC at 128 kbps.\n- Set the output container to MP4 with `-movflags +faststart` for progressive playback.\n\nHere is an example command assuming you want to resize to 1080x1350 (4:5 aspect ratio, common Instagram portrait post):\n\n```bash\nffmpeg -i input.mp4 -vf \"scale=1080:-2,crop=1080:1350\" -c:v libx264 -preset slow -crf 23 -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart output_instagram.mp4\n```\n\nExplanation:\n- `scale=1080:-2`: Resizes the width to 1080 and adjusts height to maintain aspect ratio (rounded to an even number).\n- `crop=1080:1350`: Crops the video to 1080 width and 1350 height (4:5 ratio).\n- `-preset slow`: Efficient compression.\n- `-crf 23`: Good quality.\n- `-pix_fmt yuv420p`: Ensures wide compatibility.\n- `-c:a aac -b:a 128k`: Standard audio.\n- `-movflags +faststart`: Allows the video to start playing before fully downloaded.\n\nIf your input doesn't match the desired aspect ratio exactly, you can adjust the scaling and cropping parameters accordingly based on your source.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 484,
+    "total_tokens": 1080,
+    "cost": 0.0010128
+  },
+  "model_type": "task_run"
+}

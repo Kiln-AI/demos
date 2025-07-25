@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "714690304038",
+  "created_at": "2025-07-24T18:09:37.317186",
+  "created_by": "scosman",
+  "input": "What command ensures that an uploaded AVI file will be appropriately scaled and ready for streaming across all major browsers?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Streamlining Video Files for Web Streaming"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "134103809868",
+    "path": null,
+    "created_at": "2025-07-24T18:09:37.317154",
+    "created_by": "scosman",
+    "output": "To ensure an uploaded AVI file is \"web ready\" for streaming across all major browsers, you should:\n\n- Convert to MP4 container with H.264 video and AAC audio (widely supported by browsers).\n- Set -vf scale=-2:720 (or similar scaling filter) to resize appropriately while maintaining aspect ratio; you can adjust 720 to your preferred height.\n- Use -pix_fmt yuv420p for maximum compatibility.\n- Add -movflags +faststart to optimize the MP4 file for progressive download and streaming.\n\nHere’s an example command covering these best practices:\n\n```bash\nffmpeg -i input.avi -vf scale=-2:720 -c:v libx264 -profile:v high -crf 23 -preset fast -c:a aac -b:a 128k -movflags +faststart -pix_fmt yuv420p output.mp4\n```\n\n**Explanation of key parameters:**\n\n- `-vf scale=-2:720`: Scales height to 720 pixels, automatically adjusting width to maintain aspect and divisible by 2 (libx264 requirement).\n- `-c:v libx264 -profile:v high -crf 23 -preset fast`: Uses H.264, high profile for compatibility, good quality/size tradeoff.\n- `-c:a aac -b:a 128k`: Encodes audio in AAC at reasonable quality.\n- `-movflags +faststart`: Moves MP4 metadata to the file start for faster playback over the web.\n- `-pix_fmt yuv420p`: Ensures widest compatibility with browsers and devices.\n\nAssumption: Output should be 720p, but you can change `720` in the command as needed. This makes the video ready for streaming across all major browsers.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 364,
+    "total_tokens": 962,
+    "cost": 0.004108
+  },
+  "model_type": "task_run"
+}

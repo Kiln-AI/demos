@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "235979083680",
+  "created_at": "2025-07-24T20:36:25.578664",
+  "created_by": "scosman",
+  "input": "Can you explain how to use the scale filter with expressions for dynamic video resizing?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "289932981629",
+    "path": null,
+    "created_at": "2025-07-24T20:36:25.578639",
+    "created_by": "scosman",
+    "output": "Certainly! The `scale` filter in ffmpeg allows you to resize videos, and it supports expressions so you can perform dynamic calculations based on the input video's dimensions, aspect ratio, or other parameters. This is useful when you want to resize a video while preserving its aspect ratio or according to some conditional logic.\n\nKey features of using expressions with `scale`:\n\n- Use `iw` and `ih` to refer to the input width and height, respectively.\n- You can use arithmetic operations to calculate output width (`w`) and height (`h`).\n- Use `-1` for width or height to maintain aspect ratio automatically.\n- You can use functions like `min()`, `max()`, `if()`, and others to create conditional logic.\n- Expressions can be combined with mathematical operators (+, -, *, /).\n- It's important that width and height are divisible by 2 for many codecs.\n\nExample scenarios:\n\n1. **Resize to fixed width, maintain aspect ratio:**\n\n   ```bash\n   ffmpeg -i input.mp4 -vf \"scale=640:-1\" output.mp4\n   ```\n   Here, width is fixed to 640 pixels and height is automatically computed to preserve aspect ratio.\n\n2. **Scale video to maximum dimension of 720p, preserving aspect ratio:**\n\n   To ensure the output video fits within 1280x720 but maintains aspect ratio, use:\n\n   ```bash\n   ffmpeg -i input.mp4 -vf \"scale='min(1280,iw*min(720/ih\\,1280/iw))':'min(720,ih*min(720/ih\\,1280/iw))'\" output.mp4\n   ```\n\n3. **Dynamic scaling with conditional logic:**\n\n   Suppose you want to scale the video down only if it's wider than 1280, otherwise use original size:\n\n   ```bash\n   ffmpeg -i input.mp4 -vf \"scale='if(gt(iw,1280),1280,iw)':'-2'\" output.mp4\n   ```\n   This scales width to 1280 if input width is greater than 1280, otherwise keeps original width, and height is adjusted to maintain aspect ratio.\n\n---\n\n### Example command demonstrating expression usage with scale\n\nThis example scales a video so the width is 1280 if it's larger, otherwise keeps the original width; height is scaled accordingly to maintain aspect ratio, and both are rounded to a multiple of 2 for codec compatibility by using `floor()` and arithmetic expressions:\n\n```bash\nffmpeg -i input.mp4 -vf \"scale='if(gt(iw,1280),1280,iw)':floor(ow*ih/iw/2)*2\" output.mp4\n```\n\n- `ow` is the output width computed by the first expression.\n- The height expression computes proportional height and rounds it down to nearest even number (`floor(.../2)*2`).\n\n---\n\n### Summary\n\nUsing expressions with `scale` makes your resizing logic dynamic and aspect-ratio-aware. Remember to ensure the output dimensions are multiples of 2 (or as required by your codec) to prevent encoding issues.\n\nIf you have a specific resizing goal, I can help craft the precise scale expression for that!",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 660,
+    "total_tokens": 1250,
+    "cost": 0.001292
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "401705627591",
+  "created_at": "2025-07-24T20:34:48.102846",
+  "created_by": "scosman",
+  "input": "How can I turn my old video.mpg into an .avi file?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "104624996336",
+    "path": null,
+    "created_at": "2025-07-24T20:34:48.102821",
+    "created_by": "scosman",
+    "output": "To convert your old video.mpg file into an AVI container format, you can use ffmpeg to copy the streams if the codecs are compatible or re-encode them if not. Since MPG may contain MPEG-2 video and MP2 audio which are supported inside AVI as well, copying streams is possible. However, if compatibility is an issue, re-encoding to more widely supported codecs like MPEG-4 part 2 (via `mpeg4` encoder) and MP3 or AAC audio in AVI would be more reliable.\n\nHere’s a basic command that re-encodes the video to MPEG-4 video and MP3 audio inside AVI:\n\n- `-c:v mpeg4` specifies MPEG-4 video codec.\n- `-q:v 5` sets video quality; lower values give better quality (1-31).\n- `-c:a libmp3lame` encodes audio as MP3.\n- `-q:a 5` sets audio quality for MP3 (variable bitrate).\n- AVI container is set by the `.avi` extension.\n\n```bash\nffmpeg -i video.mpg -c:v mpeg4 -q:v 5 -c:a libmp3lame -q:a 5 output.avi\n```\n\nIf your original streams are already compatible and you want to avoid re-encoding (faster and lossless), try stream copy:\n\n```bash\nffmpeg -i video.mpg -c copy output.avi\n```\n\nNote that stream copy may fail or the output AVI might not play correctly if codecs are not supported inside AVI container. In those cases, re-encoding as above is recommended.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 588,
+    "output_tokens": 335,
+    "total_tokens": 923,
+    "cost": 0.0007712
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "171716299855",
+  "created_at": "2025-07-24T20:35:45.456724",
+  "created_by": "scosman",
+  "input": "Extract all audio tracks from input.mkv, merge them into one track, save as merged.mp3.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "638078040959",
+    "path": null,
+    "created_at": "2025-07-24T20:35:45.456698",
+    "created_by": "scosman",
+    "output": "To extract all audio tracks from input.mkv, merge them into a single audio stream, and save as an MP3 file, you can use ffmpeg's `amerge` filter. This filter combines multiple audio inputs into one multi-channel stream, then you can downmix to stereo if needed.\n\nImportant points:\n- We first map all audio streams as inputs.\n- Use `-filter_complex` with `amerge=inputs=N` where N is the number of audio streams.\n- Use `pan` filter to downmix to stereo if you want a stereo MP3, because MP3 commonly supports up to 2 channels.\n- Use `-ac 2` to set output channels to stereo.\n- Encode with libmp3lame codec for wide MP3 compatibility.\n- Assumption: input has more than one audio stream and you want all audio merged into one stereo track.\n\nExample command (assuming input has 2 audio streams, adjust for more by adding -map and changing N):\n\n```bash\nffmpeg -i input.mkv -filter_complex \"[0:a:0][0:a:1]amerge=inputs=2,pan=stereo|c0<c0+c2|c1<c1+c3[aout]\" -map \"[aout]\" -ac 2 -c:a libmp3lame -q:a 4 merged.mp3\n```\n\nIf the number of audio streams is variable or more than 2, you'd need to adjust inputs and pan accordingly.\n\nFor a generic solution that merges all audio streams without explicitly specifying streams, you can do:\n\n```bash\nffmpeg -i input.mkv -filter_complex \"amerge=inputs=$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 input.mkv | wc -l),pan=stereo|c0<c0+c2+c4+c6|c1<c1+c3+c5+c7[aout]\" -map \"[aout]\" -ac 2 -c:a libmp3lame -q:a 4 merged.mp3\n```\n\nBut since shell variable expansion inside ffmpeg command is complex, it's better to manually specify.\n\nIf you want a simpler approach that concatenates audio tracks sequentially rather than mixing them, that would require a different approach such as using concat filter, but the request is to merge streams.\n\n# Final recommended command for 2 audio tracks merging into stereo MP3:\n\n```bash\nffmpeg -i input.mkv -filter_complex \"[0:a:0][0:a:1]amerge=inputs=2,pan=stereo|c0<c0+c2|c1<c1+c3[aout]\" -map \"[aout]\" -ac 2 -c:a libmp3lame -q:a 4 merged.mp3\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 580,
+    "total_tokens": 1176,
+    "cost": 0.0011664
+  },
+  "model_type": "task_run"
+}

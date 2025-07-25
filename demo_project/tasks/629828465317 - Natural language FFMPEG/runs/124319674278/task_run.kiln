@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "124319674278",
+  "created_at": "2025-07-24T20:38:17.313577",
+  "created_by": "scosman",
+  "input": "Sync out-of-sync subtitles (subs_shifted.srt), offsetting by -00:00:02.5 and re-mux with voiceover.mp4.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "121827761210",
+    "path": null,
+    "created_at": "2025-07-24T20:38:17.313538",
+    "created_by": "scosman",
+    "output": "To sync out-of-sync subtitles by offsetting them by -2.5 seconds and then mux them back into the video file, you can use `ffmpeg` with the subtitles filter `subtitles` combined with the `itsoffset` option for the subtitle input. \n\n- `-itsoffset -2.5` shifts the subtitles input timing by -2.5 seconds (subtitles appear earlier).\n- `-i voiceover.mp4` is the video input.\n- `-i subs_shifted.srt` is the subtitle file input.\n- `-c:v copy -c:a copy` copies video and audio without re-encoding.\n- `-c:s mov_text` converts subtitles to the MP4 compatible format (for example, mov_text is widely supported in MP4 containers and many players).\n- Synchronizes the subtitle track with the corrected timing during muxing.\n\nThis method assumes you want to keep original video/audio unchanged and just remux corrected subtitles.\n\n```bash\nffmpeg -i voiceover.mp4 -itsoffset -2.5 -i subs_shifted.srt -c:v copy -c:a copy -c:s mov_text -map 0:v -map 0:a -map 1:s output_with_synced_subs.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 606,
+    "output_tokens": 260,
+    "total_tokens": 866,
+    "cost": 0.0006584
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "418973765665",
+  "created_at": "2025-07-24T20:26:26.740494",
+  "created_by": "scosman",
+  "input": "I need to resize all .mp4 files in a folder to have a width of 480 pixels, keeping the aspect ratio, and save them in a new folder.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "298403785197",
+    "path": null,
+    "created_at": "2025-07-24T20:26:26.740411",
+    "created_by": "scosman",
+    "output": "To batch resize all `.mp4` files in a folder to a width of 480 pixels while maintaining aspect ratio, you can use a shell loop combined with `ffmpeg`. The filter `scale=480:-2` sets the width to 480 and automatically calculates the height to keep the aspect ratio. `-2` ensures the height is divisible by 2, which is required for many video codecs including H.264.\n\nAssuming:\n- Your input files are in the current directory.\n- You want to store resized output files in a subfolder called `resized`.\n- The `resized` folder exists or will be created.\n\nHere is a robust bash script snippet that will do this batch processing:\n\n```bash\nmkdir -p resized\nfor f in *.mp4; do\n  ffmpeg -i \"$f\" -vf scale=480:-2 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -movflags +faststart \"resized/$f\"\ndone\n```\n\nExplanation:\n- `mkdir -p resized` ensures the output folder exists.\n- `for f in *.mp4; do ... done` loops over all mp4 files.\n- `-vf scale=480:-2` resizes video width to 480, scaling height proportionally.\n- `-c:v libx264 -preset medium -crf 23` re-encodes video using H.264 with balanced speed/quality.\n- `-c:a aac -b:a 128k` encodes audio in AAC at 128 kbps.\n- `-movflags +faststart` optimizes the MP4 file for web playback by moving metadata to the start.\n\nThis approach provides good quality output, browser compatibility, and efficient batch processing.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 608,
+    "output_tokens": 372,
+    "total_tokens": 980,
+    "cost": 0.0008384
+  },
+  "model_type": "task_run"
+}

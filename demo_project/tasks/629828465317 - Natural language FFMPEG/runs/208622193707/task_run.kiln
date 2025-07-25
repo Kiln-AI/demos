@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "208622193707",
+  "created_at": "2025-07-24T18:08:48.574114",
+  "created_by": "scosman",
+  "input": "How to convert a 1080p video to 720p using the VP9 codec while ensuring it has a constant frame rate of 24fps?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Common Video Codecs and Their Uses"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "285337332859",
+    "path": null,
+    "created_at": "2025-07-24T18:08:48.574050",
+    "created_by": "scosman",
+    "output": "To convert a 1080p video to 720p with the VP9 codec and enforce a constant frame rate of 24fps:\n\n- -c:v libvpx-vp9 specifies the VP9 codec.\n- -vf scale=-2:720 downsizes video to 720 pixels high, keeping aspect ratio.\n- -r 24 enforces a constant 24fps output.\n- -b:v 2M sets the video bitrate to 2Mbps, which is a reasonable starting point for 720p VP9.\n- -row-mt 1 enables row-based multi-threading for better encoding speed (with libvpx-vp9 ≥ 1.6).\n- -c:a libopus uses the Opus audio codec, which is well-supported in WebM containers and with VP9 video.\n\nAssuming your source video is input.mp4 and you want a WebM file as the output:\n\n```bash\nffmpeg -i input.mp4 -vf scale=-2:720 -r 24 -c:v libvpx-vp9 -b:v 2M -row-mt 1 -c:a libopus output.webm\n```\n\nThis command resizes the video, enforces a constant 24fps, and uses standard codecs for VP9 workflows. The `-r 24` ensures every output frame is aligned to exactly 24fps. Adjust -b:v for higher or lower final quality/file size as needed.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 608,
+    "output_tokens": 297,
+    "total_tokens": 905,
+    "cost": 0.003592
+  },
+  "model_type": "task_run"
+}

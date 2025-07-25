@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "332232414781",
+  "created_at": "2025-07-24T20:26:33.736639",
+  "created_by": "scosman",
+  "input": "I have a folder full of .webm videos. How do I convert them all to .mp4 using the H.265 codec?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "583261741164",
+    "path": null,
+    "created_at": "2025-07-24T20:26:33.736601",
+    "created_by": "scosman",
+    "output": "To batch convert all .webm videos in a folder to H.265-encoded MP4 files, you can use a simple shell loop with `ffmpeg`. This will process each file individually, applying the H.265 codec (libx265) while copying audio streams if possible (or re-encoding if needed).\n\nKey points:\n- `-c:v libx265` specifies H.265 video encoding.\n- `-c:a aac` ensures the audio is encoded to AAC, widely compatible with MP4 containers. This assumes audio isn't already in an MP4-compatible format.\n- Using `-preset medium` balances encoding speed and compression; you can choose faster or slower presets as needed.\n- `-crf 28` sets the quality for H.265 (lower is better; 28 is a decent default for good quality and smaller size).\n- The output filename is the input filename with the extension changed to `.mp4`.\n\nHere’s an example Bash script/loop for Linux/macOS or Windows with a Bash environment (like Git Bash):\n\n```bash\nfor f in *.webm; do\n  # Extract the base filename without extension\n  filename=\"${f%.*}\"\n  # Convert to mp4 using H.265 codec for video and AAC for audio\n  ffmpeg -i \"$f\" -c:v libx265 -preset medium -crf 28 -c:a aac -b:a 128k \"${filename}.mp4\"\ndone\n```\n\n**Notes:**\n- Make sure you run this command inside the folder containing the `.webm` files.\n- Adjust `-crf` and `-preset` for your preferred balance between quality, size, and encoding speed.\n- If your audio codec is already AAC and compatible, you could try `-c:a copy` to save time and avoid re-encoding.\n- For Windows CMD, you'd need a different looping syntax or run this inside a Bash shell.\n\nThis approach efficiently automates converting all `.webm` videos in the folder to MP4 using H.265.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 422,
+    "total_tokens": 1024,
+    "cost": 0.000916
+  },
+  "model_type": "task_run"
+}

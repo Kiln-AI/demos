@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "777507124984",
+  "created_at": "2025-07-24T20:37:14.134270",
+  "created_by": "scosman",
+  "input": "My video file has multiple audio tracks; how do I remux only the first audio track and the video into a new mkv?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "112272720314",
+    "path": null,
+    "created_at": "2025-07-24T20:37:14.134247",
+    "created_by": "scosman",
+    "output": "To remux a video file while keeping only the first audio track and the video stream into a new MKV container, you can use stream selection and stream copying. The key is to copy the streams without re-encoding (`-c copy`) for a fast, lossless operation.\n\n- `-map 0:v:0` selects the first video stream from the first input.\n- `-map 0:a:0` selects the first audio stream from the first input (the first audio track).\n- `-c copy` copies the streams without re-encoding.\n- Output container is MKV, which supports multiple streams but here we only keep one audio track.\n\nThis technique ensures you only include the first audio track along with the video and remux them with no quality loss or additional encoding time.\n\n```bash\nffmpeg -i input.mkv -map 0:v:0 -map 0:a:0 -c copy output.mkv\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 195,
+    "total_tokens": 799,
+    "cost": 0.0005536
+  },
+  "model_type": "task_run"
+}

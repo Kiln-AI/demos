@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "446306989013",
+  "created_at": "2025-07-24T20:25:29.843763",
+  "created_by": "scosman",
+  "input": "How to extract a specific subtitle track from .mkv when there are multiple?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "663071359065",
+    "path": null,
+    "created_at": "2025-07-24T20:25:29.843738",
+    "created_by": "scosman",
+    "output": "To extract a specific subtitle track from an MKV file when multiple subtitle streams are present, you first need to identify the stream index of the subtitle you want. Use ffprobe or ffmpeg to list the streams. Then, use the `-map` option in ffmpeg to select the desired subtitle stream and copy it without re-encoding (`-c:s copy`).\n\nHere's the step-by-step:\n\n1. Identify all streams and their indices:\n```bash\nffmpeg -i input.mkv\n```\nLook for subtitle streams, e.g., \"Stream #0:2(eng): Subtitle: subrip (default)\"\n\n2. Use the stream index (for example, 0:2) in the `-map` option to extract that subtitle. Use `-c:s copy` to copy the subtitle codec stream as is, preserving the original format.\n\nExample command to extract the subtitle track 0:2 into a separate `.srt` file:\n\n```bash\nffmpeg -i input.mkv -map 0:2 -c:s copy output.srt\n```\n\nIf you want to extract a different subtitle type like ASS or PGS, just ensure the output filename extension matches the codec type, e.g., `.ass`, `.sup`.\n\nThis method efficiently extracts a single subtitle track without re-encoding or affecting other streams.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 273,
+    "total_tokens": 866,
+    "cost": 0.000674
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "196104337782",
+  "created_at": "2025-07-24T18:09:21.144731",
+  "created_by": "scosman",
+  "input": "My site requires videos in 720p resolution for uniform playback. What ffmpeg command would ensure that for any input video?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Streamlining Video Files for Web Streaming"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "109154631735",
+    "path": null,
+    "created_at": "2025-07-24T18:09:21.144698",
+    "created_by": "scosman",
+    "output": "To ensure all input videos are encoded at 720p (height of 720 pixels), you can use ffmpeg's scaling filter to automatically resize while maintaining aspect ratio. For maximum compatibility, it's recommended to use H.264 video encoding, AAC audio, and move MP4 metadata to the start of the file for fast loading in browsers.\n\nKey points:\n- -vf scale=-2:720: Resizes the video to 720 pixels in height while keeping the width proportional (using -2 ensures width is divisible by 2, a requirement for H.264).\n- -c:v libx264 -crf 23: Uses H.264 encoding with a good quality/size balance.\n- -c:a aac -b:a 128k: Converts audio to widely-compatible AAC at 128 kbps.\n- -pix_fmt yuv420p: Maximum compatibility with browsers and devices.\n- -movflags +faststart: Enables instant playback before file is fully downloaded (important for web streaming).\n\nAssuming input is any video and output should be \"output_720p.mp4\":\n\n```bash\nffmpeg -i input.ext -vf scale=-2:720 -c:v libx264 -crf 23 -preset fast -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output_720p.mp4\n```\n\nReplace input.ext with your file’s extension. This will conform any video to 720p resolution, ready for uniform playback on your site.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 312,
+    "total_tokens": 914,
+    "cost": 0.0037
+  },
+  "model_type": "task_run"
+}

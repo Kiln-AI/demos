@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "279011447428",
+  "created_at": "2025-07-24T18:10:34.013053",
+  "created_by": "scosman",
+  "input": "I recorded a voiceover using my phone and the audio quality is poor. How can I boost the vocal clarity in recording.m4a?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Command Line Techniques for Audio Enhancement"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "460305393197",
+    "path": null,
+    "created_at": "2025-07-24T18:10:34.013026",
+    "created_by": "scosman",
+    "output": "To enhance vocal clarity in your recording, you can use several ffmpeg audio filters:\n\n- Use the highpass and lowpass filters to focus on the typical frequency range of the human voice (about 80 Hz to 12 kHz).\n- Apply the compand (compressor/expander) filter to even out levels and reduce noise.\n- Optionally, use dynaudnorm (dynamic audio normalization) to further even out loudness.\n- Use the volume filter to slightly increase overall loudness if needed.\n\nHere’s a command which applies these steps; it assumes your input is a mono or stereo recording with the voice as the main content.\n\n```bash\nffmpeg -i recording.m4a -af \"highpass=f=80, lowpass=f=12000, compand=attacks=0:decays=0:points=-80/-900|-40/-40|-20/-10|0/0, dynaudnorm, volume=2.0\" output_enhanced.m4a\n```\n\n**Explanation of filters used:**\n- `highpass=f=80`: Cuts low frequencies below 80 Hz (removes rumble).\n- `lowpass=f=12000`: Cuts high frequencies above 12 kHz (removes hiss).\n- `compand`: Compresses dynamic range, making quiet parts louder and loud parts softer for clarity.\n- `dynaudnorm`: Normalizes loudness dynamically, evening out volume.\n- `volume=2.0`: Boosts output volume by 2x (adjust as needed).\n\nYou can tweak the parameters for your specific voice and recording for best results.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 334,
+    "total_tokens": 938,
+    "cost": 0.00388
+  },
+  "model_type": "task_run"
+}

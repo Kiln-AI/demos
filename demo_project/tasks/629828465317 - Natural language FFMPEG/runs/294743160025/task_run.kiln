@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "294743160025",
+  "created_at": "2025-07-24T18:08:36.823475",
+  "created_by": "scosman",
+  "input": "How can I encode a video file to AV1 while ensuring it's playable in modern browsers and devices?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Common Video Codecs and Their Uses"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "344019915474",
+    "path": null,
+    "created_at": "2025-07-24T18:08:36.823451",
+    "created_by": "scosman",
+    "output": "To encode a video to AV1 (AOMedia Video 1, `libaom-av1`), you'll want to ensure:\n\n- The container is MP4 or WebM (WebM has broader AV1 support, but MP4 works in many modern browsers).\n- Audio is usually Opus (for WebM) or AAC (for MP4).\n- Use `pix_fmt yuv420p` for compatibility.\n- Use reasonable bitrate/CRF for a balance of quality and file size (AV1 is slower to encode, so default to slightly faster settings for practicality).\n- Add `-movflags +faststart` for MP4 or `-movflags dash+frag_keyframe+empty_moov` for fMP4 streaming.\n\nHere's the best-practice command for AV1 in a WebM container (widely supported in Chrome, Firefox, Edge, etc.):\n\n```bash\nffmpeg -i input.mp4 -c:v libaom-av1 -crf 30 -b:v 0 -cpu-used 4 -pix_fmt yuv420p -c:a libopus -b:a 128k output.webm\n```\n\n### Explanation:\n- `-c:v libaom-av1` encodes video with AV1.\n- `-crf 30` sets the quality (lower means better, ~28-32 typical for AV1; adjust as needed).\n- `-b:v 0` enables constant quality mode (required by AV1 in CRF mode).\n- `-cpu-used 4` increases encoding speed (0=best quality, 8=fastest; higher = faster, less compression).\n- `-pix_fmt yuv420p` ensures compatibility with browsers/devices.\n- `-c:a libopus -b:a 128k` uses Opus audio at 128k (for WebM).\n\n#### For MP4 container (supported in newer Safari, Edge, and Chrome, but not as widely as WebM):\n\n```bash\nffmpeg -i input.mp4 -c:v libaom-av1 -crf 30 -b:v 0 -cpu-used 4 -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart output.mp4\n```\n\n**Assumptions**:\n- The source file is input.mp4. Change as needed.\n- Output quality/size can be adjusted via `-crf` or `-cpu-used`.\n- Output file format chosen for browser compatibility (WebM is best for widest AV1 playback currently).\n\nTest your output in target browsers/devices to confirm playback.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 542,
+    "total_tokens": 1139,
+    "cost": 0.00553
+  },
+  "model_type": "task_run"
+}

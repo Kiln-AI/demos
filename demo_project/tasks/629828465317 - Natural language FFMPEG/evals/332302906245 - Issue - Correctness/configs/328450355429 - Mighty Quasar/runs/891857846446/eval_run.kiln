@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "891857846446",
+  "created_at": "2025-07-23T13:51:53.821110",
+  "created_by": "scosman",
+  "dataset_id": "423614201433",
+  "task_run_config_id": "104202333365",
+  "eval_config_eval": false,
+  "input": "Can you double the speed of `fast_forward.mp4` but keep the original audio pitch?",
+  "output": "To maintain the original pitch while doubling the video speed, we need to use the **`setpts`** filter for the video stream and **`atmover`** (Smalltown Audio Time Stretch) for the audio. \n\n- `[0:v]setpts=PTS/2` speeds up the video by 2x by halving its presentation timestamp.\n- `[0:a]atmover=t=2` applies time-stretching to the audio using phase vocoder (pitch-preserving) for a 2x speed increase. This requires the **Smalltown audio filters**, which are non-default and must be compiled into `ffmpeg`.\n- `-map \"[v]\" -map \"[a]\"` ensures both modified streams are used in the output.\n\nAssumptions:\n1. The user has `ffmpeg` built with Smalltown filters (`atmover`) enabled.\n2. The video and audio durations are identical, so stretching audio by the same factor keeps synchronization.\n\n```bash\nffmpeg -i fast_forward.mp4 -filter_complex \"[0:v]setpts=PTS/2 [v]; [0:a]atmover=t=2 [a]\" -map \"[v]\" -map \"[a]\" -c:v copy output.mp4\n```\n\nIf Smalltown is unavailable, **double audio speed and pitch** inevitably using `atempo`. For pitch preservation, ensure `atmover` is compiled or use external tools (e.g., `sox`, `rubberband`).",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does contain the issue described. The command it generated utilizes the `atmover` filter, which is not a standard filter included in default `ffmpeg` builds. The explanation indicates that Smalltown filters must be enabled, which is a situational and potentially limiting requirement. This means that the command could fail on default installations where the Smalltown filters are not available.\n\n2) The model's output is not similar to the failure example given, as the command does not invoke an invalid or non-existent option. However, it does rely on a custom filter that may not be universally available, indicating a potential failure in practice even if the syntax is correct.\n\n3) The command does not break any general requirements indicated in the `ffmpeg` man page, as it utilizes valid syntax and options. However, since `atmover` is not part of standard `ffmpeg` builds, this could lead to failure if the user does not have the custom filter compiled into their `ffmpeg` installation, but this does not technically break any man page requirements.\n\n4) Based on the aforementioned evaluation, the model's output contains the issue described, as it generates a command that may not work universally. Thus, the evaluation should fail."
+  },
+  "scores": {
+    "correctness": 0.0
+  },
+  "task_run_usage": {
+    "input_tokens": 464,
+    "output_tokens": 2794,
+    "total_tokens": 3258,
+    "cost": 0.000087966
+  },
+  "model_type": "eval_run"
+}

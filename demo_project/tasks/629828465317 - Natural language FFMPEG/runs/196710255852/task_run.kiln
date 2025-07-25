@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "196710255852",
+  "created_at": "2025-07-24T20:40:23.246044",
+  "created_by": "scosman",
+  "input": "Input video contains closed captions in a weird format (CEA-708). How to extract just the English CCs to a separate SRT file?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "591255583756",
+    "path": null,
+    "created_at": "2025-07-24T20:40:23.246018",
+    "created_by": "scosman",
+    "output": "CEA-708 closed captions are often embedded as digital data in video streams, typically within the MPEG transport stream or MPEG PS container. Extracting just the English captions to an SRT file involves:\n\n- Identifying and extracting the CEA-708 captions from the input stream.\n- Selecting the English captions if multiple languages are present.\n- Converting those captions into the SRT subtitle format.\n\n`ffmpeg` can extract CEA-708 captions as subtitles with the `-codec:s:0` set to `mov_text` or `srt` if supported, but support and language filtering might be limited. Therefore, we often use the `-scodec` option with `copy` and `-map` to extract the subtitle stream. To filter only English captions, the language metadata is needed. If the file has proper language tags, you can select the English subtitle stream by `-map`.\n\nA recommended approach:\n\n1. Probe the file to identify subtitle streams and languages:\n```bash\nffmpeg -i input.mp4\n```\n\nLook for subtitle stream entries containing `Stream #0:s:0(eng): Subtitle: eia_608/cea_708` or similar.\n\n2. Extract the English CEA-708 subtitle stream (assuming stream 0:s:0 is English):\n\nBecause the captions are CEA-708 (embedded), you first have to extract them into a subtitle file. `ffmpeg` can do this by using `-c:s srt` to convert captions to SRT format.\n\nExample command:\n\n```bash\nffmpeg -i input.mp4 -map 0:s:m:language:eng -c:s srt output_eng.srt\n```\n\nExplanation:\n\n- `-map 0:s:m:language:eng` selects the subtitle stream with the language tag \"eng\".\n- `-c:s srt` converts the subtitle codec to SRT format.\n- This extracts only the English subtitles.\n\nAssumptions:\n\n- Input contains language metadata tagging English captions as `eng`.\n- Subtitles are in a recognized subtitle stream, not just embedded in video.\n- FFmpeg version supports `-map` with language selector and decoding CEA-708.\n\nIf language tags are missing, you may need to identify the English stream by index manually or use tools specialized in closed caption extraction (e.g., ccextractor).\n\nHere is the full command:\n\n```bash\nffmpeg -i input.mp4 -map 0:s:m:language:eng -c:s srt output_eng.srt\n```\n\nIf the input format does not support `-map` by language, and you only have one subtitle stream, you can try:\n\n```bash\nffmpeg -i input.mp4 -map 0:s:0 -c:s srt output_eng.srt\n```\n\nThis will extract the first subtitle stream.\n\nIf captions are embedded as EIA-608/CEA-708 in video and no subtitle streams exist, you can extract by enabling the `copy` of subtitle bitstream if present, or re-encode with `-scodec srt`. For example:\n\n```bash\nffmpeg -f lavfi -i \"movie=input.mp4[out+subcc]\" -map 0:s:0 -c:s srt output_eng.srt\n```\n\nBut this is more complex and depends on the input file.\n\nSummary: Use `-map` with language code and `-c:s srt` to extract English CEA-708 captions into an SRT file.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 717,
+    "total_tokens": 1320,
+    "cost": 0.0013884
+  },
+  "model_type": "task_run"
+}

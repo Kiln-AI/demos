@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "264611684916",
+  "created_at": "2025-07-23T11:28:29.837835",
+  "created_by": "scosman",
+  "input": "I want to create a picture-in-picture effect with multiple resize operations, positioning filters, and opacity adjustments. Can you show me the proper filter graph syntax?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "claude_sonnet_4",
+      "model_provider": "anthropic",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Filter Chains with Syntax Errors"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "286706845539",
+    "path": null,
+    "created_at": "2025-07-23T11:28:29.837777",
+    "created_by": "scosman",
+    "output": "To create a picture-in-picture effect with multiple operations, you'll need to use ffmpeg's complex filter graph syntax. This involves using multiple video streams, scaling operations, overlay positioning, and opacity adjustments with proper stream labeling.\n\nThe filter graph uses semicolons to separate filter chains, square brackets to label intermediate streams, and commas to chain filters within the same stream. For picture-in-picture, you typically scale the overlay video, adjust its opacity, then overlay it onto the main video at a specific position.\n\n```bash\nffmpeg -i main_video.mp4 -i overlay_video.mp4 -filter_complex \"[1:v]scale=320:240,format=rgba,colorchannelmixer=aa=0.7[pip]; [0:v][pip]overlay=x=main_w-overlay_w-10:y=10\" -c:v libx264 -preset fast output.mp4\n```\n\nThis command takes two input videos, scales the second one to 320x240 for the picture-in-picture, reduces its opacity to 70% using colorchannelmixer (aa=0.7 sets alpha transparency), and overlays it in the top-right corner with a 10-pixel margin from the edges.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "claude_sonnet_4",
+        "model_provider": "anthropic",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "function_calling",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_243159560313",
+    "eval_correctness"
+  ],
+  "usage": {
+    "input_tokens": 1004,
+    "output_tokens": 283,
+    "total_tokens": 1287,
+    "cost": 0.007257
+  },
+  "model_type": "task_run"
+}

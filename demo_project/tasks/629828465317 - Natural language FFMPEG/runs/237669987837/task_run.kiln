@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "237669987837",
+  "created_at": "2025-07-24T20:38:40.889233",
+  "created_by": "scosman",
+  "input": "What is the ffmpeg command to batch normalize the audio levels on multiple video files?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "138348315552",
+    "path": null,
+    "created_at": "2025-07-24T20:38:40.889207",
+    "created_by": "scosman",
+    "output": "To batch normalize audio levels on multiple video files using ffmpeg, you typically perform two passes:\n\n1. **Analyze audio loudness** for each file to get normalization parameters.\n2. **Apply normalization** using those parameters or directly use a filter like `loudnorm` in one pass for approximate normalization.\n\nFor batch processing, you often use a shell script or command loop to process multiple files consistently.\n\n### Technique/Parameters:\n- The `loudnorm` filter is the recommended approach to normalize audio to ITU-R BS.1770 loudness standards.\n- `loudnorm` can be used in one-pass mode for simple normalization, or two-pass for precise levels.\n- Batch operation requires scripting; here is an example using a bash loop for multiple files in a folder.\n- We will assume input videos have different formats and output will keep original video codecs and container formats but with normalized audio.\n- To avoid re-encoding video (if quality or speed is priority), use `-c:v copy` to copy video stream without re-encoding.\n- To encode audio with normalization, we re-encode audio (`-c:a aac`) after loudnorm filter.\n\n### Example one-pass batch command snippet in Bash:\n\n```bash\nfor f in *.mp4; do\n  ffmpeg -i \"$f\" -af loudnorm=I=-23:LRA=7:TP=-2 -c:v copy -c:a aac -b:a 192k \"normalized_$f\"\ndone\n```\n\n### Explanation:\n- `for f in *.mp4; do ... done` loops through each MP4 file in the directory.\n- `-af loudnorm=I=-23:LRA=7:TP=-2` normalizes audio with target Integrated loudness of -23 LUFS, Loudness Range 7 LU, and True Peak -2 dBTP (broadcast safe levels).\n- `-c:v copy` copies video stream, no re-encoding, fast and lossless for video.\n- `-c:a aac -b:a 192k` re-encodes audio to AAC at 192 kbps, necessary because we apply filter on audio.\n- Outputs file prefixed with `normalized_` to avoid overwriting originals.\n\n---\n\nIf you want to do precise two-pass normalization, it involves parsing the output of the first pass and feeding measured values into the second pass, which is script-intensive. Using the one-pass `loudnorm` configuration as above is often sufficient for batch automated normalization.\n\n```bash\nfor f in *.mp4; do\n  ffmpeg -i \"$f\" -af loudnorm=I=-23:LRA=7:TP=-2 -c:v copy -c:a aac -b:a 192k \"normalized_$f\"\ndone\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 591,
+    "output_tokens": 573,
+    "total_tokens": 1164,
+    "cost": 0.0011532
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "193883177235",
+  "created_at": "2025-07-24T18:11:14.216276",
+  "created_by": "scosman",
+  "input": "I want to speed up a section of my video, scene.avi, from 10 seconds to 20 seconds by 1.5x while the rest remains same.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Advanced FFmpeg Video Filters"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "302083935902",
+    "path": null,
+    "created_at": "2025-07-24T18:11:14.216243",
+    "created_by": "scosman",
+    "output": "To speed up a specific portion of your video—namely, from 10s to 20s—by 1.5x while leaving the rest unchanged, you need to split your video into three segments: before, during, and after the speed-up. Then, apply the speed adjustment only to the middle section and concatenate all parts.\n\nHere's how to do it using FFmpeg's trim, setpts, and concat filters:\n\n**Technique Explanation:**\n- Use the trim and setpts filters to isolate [0s-10s], [10s-20s], and [20s-end].\n- Speed up the [10s-20s] section using setpts=PTS/1.5 (for video) and atempo=1.5 (for audio).\n- Concatenate the three segments back together.\n\n**Assumption:** scene.avi contains both video and audio.\n\n```bash\nffmpeg -i scene.avi -filter_complex \\\n\"[0:v]trim=0:10,setpts=PTS-STARTPTS[v1]; \\\n [0:a]atrim=0:10,asetpts=PTS-STARTPTS[a1]; \\\n [0:v]trim=10:20,setpts=(PTS-STARTPTS)/1.5[v2]; \\\n [0:a]atrim=10:20,asetpts=PTS-STARTPTS,atempo=1.5[a2]; \\\n [0:v]trim=20,setpts=PTS-STARTPTS[v3]; \\\n [0:a]atrim=20,asetpts=PTS-STARTPTS[a3]; \\\n [v1][a1][v2][a2][v3][a3]concat=n=3:v=1:a=1[outv][outa]\" \\\n-map \"[outv]\" -map \"[outa]\" -c:v libx264 -c:a aac -movflags +faststart output.mp4\n```\n\n**Key points:**\n- All trim and setpts/atempo ensure the sections are cut and handled with correct timing.\n- The concat filter joins the pieces seamlessly.\n- Adjust -c:v and -c:a as needed for different codecs.\n- `-movflags +faststart` improves MP4 playback.\n\nThis is best practice for handling selective speed changes with FFmpeg.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 610,
+    "output_tokens": 474,
+    "total_tokens": 1084,
+    "cost": 0.005012
+  },
+  "model_type": "task_run"
+}

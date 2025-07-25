@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "442061307817",
+  "created_at": "2025-07-24T20:38:56.243945",
+  "created_by": "scosman",
+  "input": "How do I batch change the audio codec in every video from AC3 to AAC, preserving everything else?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "121274874776",
+    "path": null,
+    "created_at": "2025-07-24T20:38:56.243919",
+    "created_by": "scosman",
+    "output": "To batch convert the audio codec from AC3 to AAC in multiple videos while preserving all other streams and metadata, you can use a shell loop to process each file. The key points are:\n\n- Use `-c:v copy` to copy the video stream without re-encoding.\n- Use `-c:a aac` to re-encode the audio to AAC.\n- Use `-b:a 192k` or another bitrate to control audio quality.\n- Use `-map 0` to include all streams (video, audio, subtitles, metadata).\n- Preserve existing subtitles and other streams.\n- Use `-movflags +faststart` if output is MP4 and you want browser streaming (optional).\n- Be careful not to overwrite originals before verifying output.\n\nAssuming your input videos are in a directory and have extensions like `.mkv` or `.mp4`, and you want outputs to a separate folder, here’s a generic bash example. Adjust the file pattern and output folder as needed.\n\n```bash\nmkdir -p output_folder\nfor f in *.mkv; do\n  ffmpeg -i \"$f\" -c:v copy -c:a aac -b:a 192k -map 0 -metadata:s:a:0 language=eng \"output_folder/$f\"\ndone\n```\n\nExplanation:\n- `for f in *.mkv; do ... done` loops all mkv files in current directory.\n- `-c:v copy` preserves video without re-encoding.\n- `-c:a aac -b:a 192k` converts audio from AC3 (or any format) to AAC at 192 kbps.\n- `-map 0` ensures all streams get copied to output.\n- `-metadata:s:a:0 language=eng` is an example of preserving or setting metadata (optional).\n- Output files are saved inplace in `output_folder`.\n\nIf your inputs vary or you want to recursively find files, you may use `find` or other scripting tools.\n\nThis approach efficiently batch re-encodes audio without losing video quality or other streams, ideal for automation or batch processing tasks.\n\n```bash\nmkdir -p output_folder\nfor f in *.mkv; do\n  ffmpeg -i \"$f\" -c:v copy -c:a aac -b:a 192k -map 0 \"output_folder/$f\"\ndone\n```\n",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 489,
+    "total_tokens": 1084,
+    "cost": 0.0010204
+  },
+  "model_type": "task_run"
+}

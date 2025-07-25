@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "257081538893",
+  "created_at": "2025-07-24T20:39:27.167068",
+  "created_by": "scosman",
+  "input": "I need to extract audio from a video file input.mp4 but the file is corrupted and has some missing frames.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "791632215044",
+    "path": null,
+    "created_at": "2025-07-24T20:39:27.167042",
+    "created_by": "scosman",
+    "output": "When extracting audio from a possibly corrupted video with missing frames, it's important to instruct ffmpeg to be more tolerant of errors and to focus on the audio stream extraction only. The flags `-err_detect ignore_err` and `-fflags +genpts` help to handle corrupted frames gracefully. Additionally, specifying `-vn` disables video processing to speed up extraction. Using `-acodec copy` extracts the original audio stream without re-encoding, preserving quality and avoiding further errors.\n\n```bash\nffmpeg -err_detect ignore_err -fflags +genpts -i input.mp4 -vn -acodec copy output_audio.aac\n```\n\nAssumptions:  \n- The audio codec in `input.mp4` is compatible with `.aac` container extension; if it's different (e.g., mp3), adjust the output file extension accordingly, e.g., `.mp3`.  \n- We want lossless audio extraction without transcoding. If transcoding is required for compatibility, replace `-acodec copy` with an appropriate encoder like `-c:a aac`.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 222,
+    "total_tokens": 819,
+    "cost": 0.000594
+  },
+  "model_type": "task_run"
+}

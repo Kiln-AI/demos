@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "211733527920",
+  "created_at": "2025-07-24T20:36:01.312954",
+  "created_by": "scosman",
+  "input": "I have a 4:3 video but need it at 1920x1080. Can you show both stretch and pad options?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "249670208911",
+    "path": null,
+    "created_at": "2025-07-24T20:36:01.312928",
+    "created_by": "scosman",
+    "output": "To convert a 4:3 video to 1920x1080 while preserving or altering aspect ratio, you can either stretch it (which distorts the image) or pad it (which preserves aspect ratio and fills empty areas with color).\n\n1. **Stretch option:**  \nThis forcibly scales the 4:3 video to full 1920x1080, which will distort the original image because the aspect ratio changes from 4:3 (~1.33) to 16:9 (1.78). Use `-vf scale=1920:1080` for this.\n\n2. **Pad option:**  \nThis scales the video to fit inside 1920x1080 while maintaining aspect ratio, then fills the remaining space with black bars (letterboxing or pillarboxing). For 4:3 video, the scaled width will be 1440 and height 1080, padded with black bars on left/right. This uses `scale` with `force_original_aspect_ratio=decrease` and `pad` filters.\n\nBoth commands assume the input video is arbitrary 4:3 and output is MP4 with H.264 video codec.\n\n```bash\n# Stretch (distorts aspect ratio)\nffmpeg -i input.mp4 -vf scale=1920:1080 -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 128k -movflags +faststart output_stretch.mp4\n\n# Pad (preserves aspect ratio, letterboxed to 1920x1080)\nffmpeg -i input.mp4 -vf \"scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2\" -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 128k -movflags +faststart output_pad.mp4\n```\n\n### Explanation:\n- `scale=1920:1080` resizes directly.\n- `force_original_aspect_ratio=decrease` ensures scaling down but keeps aspect ratio.\n- `pad=1920:1080:(ow-iw)/2:(oh-ih)/2` centers the scaled video into 1920x1080 frame.\n- `preset slow` and `crf 18` for good quality H.264 compression.\n- `-movflags +faststart` enables progressive streaming.\n- Audio encoded as AAC 128k for compatibility.\n\nThis approach demonstrates best practices for scaling and aspect ratio handling in ffmpeg.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 602,
+    "output_tokens": 532,
+    "total_tokens": 1134,
+    "cost": 0.001092
+  },
+  "model_type": "task_run"
+}

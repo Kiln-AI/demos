@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "109967707918",
+  "created_at": "2025-07-24T18:11:55.790881",
+  "created_by": "scosman",
+  "input": "I need to extract a 30-second clip starting at 1-minute mark from a large video file marathon.mkv in mp4 format.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Handling Large Media Files Efficiently"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "283464350112",
+    "path": null,
+    "created_at": "2025-07-24T18:11:55.790856",
+    "created_by": "scosman",
+    "output": "To efficiently extract a 30-second clip from a large video file, you should use stream copy mode (-c copy) whenever possible to avoid re-encoding (which is fast and avoids quality loss). However, with certain formats (like MKV to MP4), this only works if the codecs are compatible. If your input video/audio codecs are compatible with MP4 (e.g., H.264/AAC), use -c copy; otherwise, re-encode as needed.\n\nFor best compatibility, I’ll show both methods.\n\n### 1. Fast, No Re-encoding (if codecs are compatible)\nUse -ss (seek to 1 minute), -t (duration 30 seconds), and -c copy to copy the streams directly.\n\n```bash\nffmpeg -ss 00:01:00 -i marathon.mkv -t 30 -c copy -avoid_negative_ts make_zero output_clip.mp4\n```\n\n- -ss 00:01:00 seeks to the 1-minute mark.\n- -i marathon.mkv specifies the input file.\n- -t 30 extracts 30 seconds.\n- -c copy avoids re-encoding.\n- -avoid_negative_ts make_zero ensures proper timestamp alignment in output.\n\n### 2. Guaranteed Compatibility (re-encode if needed)\nIf the input’s codecs aren’t compatible with MP4, re-encode to H.264/AAC:\n\n```bash\nffmpeg -ss 00:01:00 -i marathon.mkv -t 30 -c:v libx264 -c:a aac -strict experimental -movflags +faststart -preset fast output_clip.mp4\n```\n\n- -c:v libx264 and -c:a aac re-encode as compatible MP4 codecs.\n- -movflags +faststart is recommended for streaming/fast playback for large files.\n- -preset fast balances encoding speed and compression.\n\n**Assumption:** Input video and audio codecs are compatible for stream copy; otherwise, use the re-encode method.\n\nFor handling large files, seeking with `-ss` before `-i` makes ffmpeg jump directly to the timestamp, greatly increasing extraction speed.\n\nUse the first command if possible for best efficiency with large files.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 453,
+    "total_tokens": 1057,
+    "cost": 0.004832
+  },
+  "model_type": "task_run"
+}

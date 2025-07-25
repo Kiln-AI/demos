@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "145611750376",
+  "created_at": "2025-07-24T20:25:47.942626",
+  "created_by": "scosman",
+  "input": "Sync subtitles by shifting all start times by 2 seconds earlier in subs.srt.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "103575824238",
+    "path": null,
+    "created_at": "2025-07-24T20:25:47.942600",
+    "created_by": "scosman",
+    "output": "To shift all subtitle start times 2 seconds earlier in an SRT file, you can use ffmpeg’s subtitle filter `subtitles` with the `-itsoffset` option or by re-encoding with the `-ss` option affecting subtitle timestamps. However, the cleanest approach to shift subtitles directly without affecting the video is to use `ffmpeg` with the `-sub_charenc` and `-itsoffset` options or use subtitle filters with `subtitles` and the `force_style` parameter.\n\nBut ffmpeg does not directly support shifting subtitle timestamps in SRT files without re-muxing or re-encoding the subtitles. A better way is to use the `subtitle` filter with the `:si` step or external tool, but since the user wants ffmpeg command, we can use the `-ss` option to shift subtitle timestamps when remuxing.\n\nAnother approach is to use `ffsubsync` or external tools, but sticking with ffmpeg, we can re-encode the subtitle stream after shifting.\n\nFor SRT, the method is to use this filter chain:\n\n- Extract the subtitles as raw subtitles\n- Then shift timestamps and output again as SRT\n\nUnfortunately, ffmpeg provides `-fix_sub_duration` for subtitle timing fix but not direct timestamp shifting.\n\nThe best pure-ffmpeg method involves re-encoding subtitles with time offset, by specifying `-ss` with negative offset or by `-itsoffset`. But `-itsoffset` shifts the entire stream timing, so for subtitles only, use it on the subtitle stream when remuxing.\n\nAssuming you have a video file with the subtitles or want to convert subs.srt alone, you can do:\n\n```bash\nffmpeg -itsoffset -2 -i subs.srt -c:s srt subs_shifted.srt\n```\n\nBut ffmpeg alone cannot process subtitle files without a video or audio input. So here’s a robust workaround:\n\nCreate a dummy video, mux the subtitles shifted by -2 seconds, then extract subtitles again.\n\nAlternatively, use ffmpeg’s `subtitles` filter and `ass` subtitles for more flexibility.\n\nGiven these constraints, here’s a high quality two-step approach using ffmpeg:\n\n1. Use ffmpeg to create an ASS subtitle file with shifted times.\n2. Convert it back to SRT if needed.\n\nExample:\n\n```bash\nffmpeg -i subs.srt -vf \"subtitles=subs.srt:force_style='Alignment=2',setpts=PTS-2/TB\" subs_ass.ass\n```\n\nNot perfect for SRT timestamps though.\n\n**Conclusion:** The best documented method to shift subtitles in ffmpeg when you only have an SRT file is to use `-itsoffset` when remuxing with another media or a dummy silent audio.\n\n**Assumption:** You want to shift timestamps on the subtitle file alone. I will demonstrate the minimal approach of re-muxing with a silent audio.\n\nExample:\n\n```bash\nffmpeg -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 -itsoffset 2 -i subs.srt -map 0 -map 1 -c:a copy -c:s srt subs_shifted.srt\n```\n\nThis shifts the subtitles forward by 2 seconds; since you want 2 seconds earlier, use `-itsoffset -2`.\n\n**Final high-quality command:**\n\n```bash\nffmpeg -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 -itsoffset -2 -i subs.srt -map 0 -map 1 -c:a copy -c:s srt subs_shifted.srt\n```\n\nExplanation:\n\n- `-f lavfi -i anullsrc=...` generates silent audio as placeholder input needed by ffmpeg.\n- `-itsoffset -2` shifts subtitle timestamps backward by 2 seconds (earlier).\n- `-map 0` maps the silent audio.\n- `-map 1` maps subtitles input.\n- `-c:a copy` copies audio stream (silent).\n- `-c:s srt` encodes subtitles back to SRT.\n- Output is a shifted subtitles file with silent audio and subtitles.\n\nIf you want only the subs without audio, you can try extracting subtitles afterward from this file using ffmpeg, or use external tools but ffmpeg requires an audio/video input.\n\n---\n\nIf the user just needs a direct subtitle shift without audio, they may need external tools like `subtitleeditor` or `pysrt`. But this ffmpeg command is a robust best practice to shift subtitles using ffmpeg only. \n\n```bash\nffmpeg -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 -itsoffset -2 -i subs.srt -map 1 -c:s srt subs_shifted.srt\n```\n\nThis command takes silent audio as dummy input, shifts the subtitle timestamps 2 seconds earlier, maps only subtitle stream for output, and writes it back to SRT.\n\n---\n\n# Summary:\n\n- Subtitles cannot be edited standalone easily with ffmpeg.\n- Using a dummy audio input and `-itsoffset` on subtitle input lets you shift timestamps.\n- Mapping only subtitle stream allows output only of the shifted subtitles.\n\n```bash\nffmpeg -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 -itsoffset -2 -i subs.srt -map 1 -c:s srt subs_shifted.srt\n```\n\nThis shifts all subtitle timestamps 2 seconds earlier in subs.srt and saves as subs_shifted.srt.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 590,
+    "output_tokens": 1165,
+    "total_tokens": 1755,
+    "cost": 0.0021
+  },
+  "model_type": "task_run"
+}

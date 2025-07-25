@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "313966838429",
+  "created_at": "2025-07-24T20:27:23.452213",
+  "created_by": "scosman",
+  "input": "How do I trim the first 5 seconds off a video and keep the rest as an exact copy?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "259234680623",
+    "path": null,
+    "created_at": "2025-07-24T20:27:23.452168",
+    "created_by": "scosman",
+    "output": "To trim off the first 5 seconds of a video while keeping the rest as an exact copy without re-encoding (for lossless and fast processing), you can use the `-ss` option as an input seeking parameter combined with `-c copy` to copy streams directly.\n\n- Using `-ss 5` before `-i` can be less accurate but faster; however, since you want an exact copy starting at 5 seconds, place `-ss 5` after `-i` for accurate seeking.\n- `-c copy` copies the audio and video without re-encoding.\n- Note: For some formats, cutting without re-encoding might result in slightly imprecise cuts unless keyframes align with the trim point. If precise frame-accurate trimming is necessary, re-encoding may be required.\n\nHere's the command assuming a file called `input.mp4` and trimming the first 5 seconds off:\n\n```bash\nffmpeg -i input.mp4 -ss 5 -c copy output_trimmed.mp4\n```\n\nIf you find the cut is not frame-accurate and want exact trimming with re-encoding, you can re-encode as follows (this is slower but precise):\n\n```bash\nffmpeg -ss 5 -i input.mp4 -c:v libx264 -c:a aac -preset fast -crf 23 output_trimmed.mp4\n```\n\nThis re-encodes the video and audio starting precisely at 5 seconds.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 306,
+    "total_tokens": 901,
+    "cost": 0.0007276
+  },
+  "model_type": "task_run"
+}

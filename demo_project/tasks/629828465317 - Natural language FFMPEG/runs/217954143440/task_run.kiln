@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "217954143440",
+  "created_at": "2025-07-24T20:35:06.666216",
+  "created_by": "scosman",
+  "input": "Please transcode input.rawvideo to a playable h264 mp4 while deinterlacing.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Basic Format Conversion"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "336139613108",
+    "path": null,
+    "created_at": "2025-07-24T20:35:06.666192",
+    "created_by": "scosman",
+    "output": "To transcode a raw video file to a playable H.264 MP4 with deinterlacing, you'll want to:\n\n- Use the `yadif` filter for high-quality deinterlacing.\n- Encode video with `libx264` codec for compatibility and efficiency.\n- Choose a CRF value (e.g., 23) for balanced quality and file size.\n- Encode audio if available or use a silent audio stream if none is present (assuming input.rawvideo might lack audio).\n- Set pixel format to yuv420p for broad device compatibility.\n- Use `-movflags +faststart` to optimize MP4 for progressive streaming.\n\nAssuming the rawvideo input needs explicit format and frame rate specification. If you know the exact pixel format, resolution, and frame rate, replace the placeholders accordingly.\n\nHere's a general command:\n\n```bash\nffmpeg -f rawvideo -pixel_format yuv420p -video_size 1920x1080 -framerate 30 -i input.rawvideo -vf yadif -c:v libx264 -preset medium -crf 23 -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nExplanation of placeholders you should adjust:\n\n- `-pixel_format yuv420p`: Change if input uses a different pixel format.\n- `-video_size 1920x1080`: Set based on your raw video resolution.\n- `-framerate 30`: Set input frame rate accordingly.\n\nIf your rawvideo also carries audio, you can add `-c:a aac -b:a 128k` to encode audio. If no audio, consider adding a silent audio track for compatibility:\n\n```bash\n- f lavfi -i aevalsrc=0 -shortest\n```\n\nFull example with silent audio track:\n\n```bash\nffmpeg -f rawvideo -pixel_format yuv420p -video_size 1920x1080 -framerate 30 -i input.rawvideo -f lavfi -i aevalsrc=0 -vf yadif -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -shortest -movflags +faststart output.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 467,
+    "total_tokens": 1059,
+    "cost": 0.000984
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "191910179710",
+  "created_at": "2025-07-24T20:37:31.400939",
+  "created_by": "scosman",
+  "input": "How do I select all but one audio stream to copy into a new container?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "144648245751",
+    "path": null,
+    "created_at": "2025-07-24T20:37:31.400915",
+    "created_by": "scosman",
+    "output": "To select all but one audio stream and copy them into a new container, you first need to identify the index of the audio stream you want to exclude. Then use `-map` to include all streams except that specific one.\n\nFFmpeg doesn’t support directly excluding streams with a single command, so you can do this by explicitly mapping the streams you want to keep. Here's a recommended approach:\n\n1. List all streams and their indexes using:\n   ```bash\n   ffprobe -v error -show_entries stream=index,codec_type -of csv=p=0 input.mkv\n   ```\n2. Identify the audio stream index you want to exclude (for example, audio stream 1).\n\n3. Use `-map` to select all streams except that audio stream. You can map video and other streams with `-map 0` and then remove the undesired stream with `-map -0:a:<index>` or specify manually.\n\n**However, since `-map -0:a:<index>` to exclude streams is not supported, you should list the desired streams explicitly**, for example:\n\n```bash\nffmpeg -i input.mkv -map 0:v -map 0:a:0 -map 0:a:2 -c copy output.mkv\n```\nThis command copies all video streams and audio streams except audio stream index 1.\n\nIf you want to automate this for an unknown number of audio streams, a small script is needed to generate the map parameters dynamically.\n\n---\n\n**Example command assuming:**\n\n- Video stream(s) retained,\n- All audio streams except audio stream 1 copied,\n- Stream copying (`-c copy`) used for fast remuxing without re-encoding.\n\n```bash\nffmpeg -i input.mkv -map 0:v -map 0:a:0 -map 0:a:2 -c copy output.mkv\n```\n\n---\n\n**Summary:**\n\n- Use `-map` to select all streams you want explicitly.\n- FFmpeg does not provide direct \"exclude\" map syntax.\n- Use `-c copy` for stream copying/remuxing without re-encoding.\n\nIf you provide your input file's stream layout, I can help craft the exact command.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 593,
+    "output_tokens": 451,
+    "total_tokens": 1044,
+    "cost": 0.0009588
+  },
+  "model_type": "task_run"
+}

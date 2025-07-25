@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "175304415317",
+  "created_at": "2025-07-24T18:08:33.634665",
+  "created_by": "scosman",
+  "input": "I want to normalize the audio of an MP4 video file for consistent sound levels across different playback devices.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Common Video Codecs and Their Uses"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "231513311762",
+    "path": null,
+    "created_at": "2025-07-24T18:08:33.634639",
+    "created_by": "scosman",
+    "output": "To normalize the audio in an MP4 file for consistent playback levels, you can use FFmpeg's `loudnorm` audio filter, which conforms to EBU R128 loudness standards. This ensures perceptually consistent loudness across different devices.\n\nHere's how this works:\n- The filter analyzes the audio to determine appropriate normalization values (two-pass is most accurate, but one-pass offers simplicity).\n- Uses `-c:v copy` to avoid re-encoding the video stream.\n- Audio is re-encoded (e.g., with AAC) to maintain MP4 compatibility.\n\nAssumptions:\n- You want a single-pass normalization for convenience and speed.\n- The output audio codec remains AAC for MP4 compatibility.\n\n```bash\nffmpeg -i input.mp4 -af \"loudnorm=I=-16:TP=-1.5:LRA=11\" -c:v copy -c:a aac -b:a 192k output_normalized.mp4\n```\n\n- `loudnorm=I=-16:TP=-1.5:LRA=11` specifies target integrated loudness, true peak, and loudness range.\n- `-c:v copy` preserves original video without re-encoding.\n- `-c:a aac -b:a 192k` re-encodes audio at 192 kbps AAC.\n\nFor best results on diverse devices, the EBU R128 settings (`I=-16`, `TP=-1.5`) are commonly used industry standards. If you want the most accurate normalization, consider running a two-pass process; let me know if you’d like that command.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 598,
+    "output_tokens": 328,
+    "total_tokens": 926,
+    "cost": 0.00382
+  },
+  "model_type": "task_run"
+}

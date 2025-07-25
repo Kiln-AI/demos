@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "315336559623",
+  "created_at": "2025-07-24T20:38:49.758627",
+  "created_by": "scosman",
+  "input": "How do I batch strip subtitles from a directory full of .mkv files while leaving everything else unchanged?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "121170106422",
+    "path": null,
+    "created_at": "2025-07-24T20:38:49.758605",
+    "created_by": "scosman",
+    "output": "To batch strip subtitles from all .mkv files in a directory while keeping all other streams (video, audio, attachments) unchanged, you can use ffmpeg's stream selection and copy codec features.\n\nKey points:\n- Use `-map 0` to include all streams.\n- Use `-map -0:s` to exclude all subtitle streams.\n- Use `-c copy` to avoid re-encoding and keep the original quality and all non-subtitle streams intact.\n- Process files in a loop in a shell (bash) for batch operation.\n\nHere is a well-structured bash script command that does the job:\n\n```bash\nfor f in *.mkv; do\n  ffmpeg -i \"$f\" -map 0 -map -0:s -c copy \"nosubs_${f}\"\ndone\n```\n\nExplanation:\n- `for f in *.mkv; do ... done` loops over all `.mkv` files in the current directory.\n- `-map 0` maps all input streams.\n- `-map -0:s` removes subtitle streams.\n- `-c copy` copies all streams without re-encoding.\n- Output files are prefixed with `nosubs_` to avoid overwriting originals.\n\nIf you want to overwrite in-place safely, consider moving the original elsewhere or using temporary files and renaming carefully.\n\nThis approach ensures no quality loss and preserves all original audio, video, and attachments.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 595,
+    "output_tokens": 292,
+    "total_tokens": 887,
+    "cost": 0.0007052
+  },
+  "model_type": "task_run"
+}

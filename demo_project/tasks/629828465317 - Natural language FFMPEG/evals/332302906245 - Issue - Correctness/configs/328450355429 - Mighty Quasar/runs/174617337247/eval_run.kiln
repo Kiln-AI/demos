@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "174617337247",
+  "created_at": "2025-07-25T10:38:07.315032",
+  "created_by": "scosman",
+  "dataset_id": "423614201433",
+  "task_run_config_id": "941499435597",
+  "eval_config_eval": false,
+  "input": "Can you double the speed of `fast_forward.mp4` but keep the original audio pitch?",
+  "output": "To double the playback speed of the video `fast_forward.mp4` while keeping the original audio pitch intact, we use `setpts=PTS/2` (which sets video presentation timestamps to one-half their original value, effectively doubling the speed) and `atempo=2.0` (which speeds up the audio playback by a factor of 2 without changing the pitch). \n\nWe assume:\n- The original video (`fast_forward.mp4`) is encoded in a lossy format like H.264.\n- The audio should be kept in-sync with the sped-up video.\n- If the original file uses a different audio codec, we will re-encode the audio to AAC as part of the command unless otherwise specified.\n\n```bash\nffmpeg -i fast_forward.mp4 -filter_complex \"[0:v]setpts=PTS/2[v];[0:a]atempo=2.0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -crf 23 -preset fast -c:a aac output.mp4\n```",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) **Does the model's output contain the issue described here?**\n   - The model's output does not contain the issue. The FFmpeg command it generated is correctly structured to double the speed of the video and keep the original audio pitch intact. The parameters used (setpts=PTS/2 for video and atempo=2.0 for audio) are appropriate and valid commands for the task at hand.\n\n2) **Is the model's output similar to this example of a failing output?**\n   - No, the model's output is not similar to the failing output example. The provided command is valid and does not include any non-existent options or syntax errors that would prevent it from executing properly.\n\n3) **Does the command break any requirements dictated in the man page?**\n   - The command follows the requirements dictated in the FFmpeg man page. The use of the `-filter_complex` option to apply multiple filters is valid, and the mapping of video and audio streams with `-map` is appropriately used. There are no conflicts or rules violations present in the command.\n\n4) **Does the model's output contain the issue described?**\n   - The model's output does not contain the issue described. It correctly fulfills the user's request and produces a valid FFmpeg command for the specified task. Thus, it should pass the evaluation."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 470,
+    "output_tokens": 226,
+    "total_tokens": 696,
+    "cost": 0.000018792
+  },
+  "model_type": "eval_run"
+}

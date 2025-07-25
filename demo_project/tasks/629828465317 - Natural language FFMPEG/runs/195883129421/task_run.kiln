@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "195883129421",
+  "created_at": "2025-07-24T20:38:53.372196",
+  "created_by": "scosman",
+  "input": "I want to batch crop the top 100 pixels from a bunch of videos. What would the ffmpeg command look like?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Batch Processing and Automation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "260069173166",
+    "path": null,
+    "created_at": "2025-07-24T20:38:53.372164",
+    "created_by": "scosman",
+    "output": "To batch crop the top 100 pixels from a bunch of videos using ffmpeg, you want to automate the crop filter across multiple input files.\n\nKey points:\n- The crop filter syntax is `crop=width:height:x:y`.\n- To remove the top 100 pixels, you keep the full width, reduce the height by 100 pixels, and start cropping from y=100 pixels down.\n- We can use shell scripting to process multiple files in a folder.\n- Assuming videos are all the same format, e.g., `.mp4`.\n- Output files can be named with a suffix to avoid overwriting originals.\n\nHere is an example bash script snippet to do this batch processing:\n\n```bash\nfor input in *.mp4; do\n  # Get the video width and height via ffprobe\n  width=$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 \"$input\")\n  height=$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 \"$input\")\n  # Calculate new height after cropping top 100 pixels\n  new_height=$((height - 100))\n  # Output filename\n  output=\"${input%.mp4}_cropped.mp4\"\n\n  # Run ffmpeg crop filter: width x new_height starting from x=0, y=100 (crop top 100 pixels)\n  ffmpeg -i \"$input\" -vf \"crop=${width}:${new_height}:0:100\" -c:a copy -c:v libx264 -preset fast -crf 23 -movflags +faststart \"$output\"\ndone\n```\n\nExplanation:\n- For each `.mp4` file, we extract its original dimensions via `ffprobe`.\n- We calculate the new height by subtracting 100 pixels from the original height.\n- The crop filter removes top 100 pixels by cropping starting from y=100.\n- `-c:a copy` copies audio without re-encoding.\n- `-c:v libx264 -preset fast -crf 23` re-encodes video with reasonable quality and speed settings.\n- `-movflags +faststart` allows better streaming for MP4 output.\n- Output files are named with a `_cropped` suffix to keep original files.\n\nAdjust file extension or directory as needed. This technique ensures cropping is accurate per video dimension, suitable for batch automation. \n\nIf you know all videos share the same dimension, you can hardcode width and new_height to simplify.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 520,
+    "total_tokens": 1119,
+    "cost": 0.0010716
+  },
+  "model_type": "task_run"
+}

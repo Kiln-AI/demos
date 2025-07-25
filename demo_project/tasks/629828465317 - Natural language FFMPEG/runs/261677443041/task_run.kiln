@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "261677443041",
+  "created_at": "2025-07-24T18:12:02.276107",
+  "created_by": "scosman",
+  "input": "Compress a large video presentation.mp4 for faster upload while retaining decent video quality.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Handling Large Media Files Efficiently"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "308731020766",
+    "path": null,
+    "created_at": "2025-07-24T18:12:02.276081",
+    "created_by": "scosman",
+    "output": "To efficiently compress a large video file like presentation.mp4 while maintaining decent quality, use the H.264 codec with CRF (Constant Rate Factor) mode, which balances quality and filesize. CRF 23 is a good starting point for acceptable quality and good compression; you can lower to 20 for better quality or increase for smaller size. I’ll also use the AAC audio codec at 96k bitrate for good compression, and place MP4 metadata at the start for faster playback on upload.\n\nBest practices:\n- Use -preset veryfast or fast for quicker encoding; use slower presets (like medium) for better compression if you don’t mind longer processing time.\n- -movflags +faststart is essential for web playback and uploads.\n- Specifying -pix_fmt yuv420p maximizes compatibility.\n\n```bash\nffmpeg -i presentation.mp4 -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 96k -movflags +faststart -pix_fmt yuv420p presentation_compressed.mp4\n```\n\nAssumption: No significant resolution change required; you’re balancing upload speed and decent presentation quality for streaming or sharing. If lower resolution is acceptable (e.g., 720p), you can add `-vf scale=-2:720` for further size reduction.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 272,
+    "total_tokens": 864,
+    "cost": 0.00336
+  },
+  "model_type": "task_run"
+}

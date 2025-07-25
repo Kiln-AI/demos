@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "333447012231",
+  "created_at": "2025-07-24T20:35:50.460026",
+  "created_by": "scosman",
+  "input": "How can I batch resize all MOV files in a folder to 720 pixels wide, but keep their aspect ratios?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "288594172336",
+    "path": null,
+    "created_at": "2025-07-24T20:35:50.460000",
+    "created_by": "scosman",
+    "output": "To batch resize all MOV files in a folder to have a width of 720 pixels while keeping their aspect ratio, you can use a shell loop combined with `ffmpeg`. The key is to set the width to 720 and the height to -2 with the `-vf scale` filter, which tells FFmpeg to automatically calculate the height to maintain the aspect ratio and ensures the height is divisible by 2 (a common codec requirement).\n\nHere’s what this does:\n- `-vf scale=720:-2` sets width to 720 pixels and calculates the height automatically, rounded to be divisible by 2.\n- The script processes all `.mov` files in the folder.\n- Outputs resized files with a modified filename like `filename_720.mov` to avoid overwriting.\n- Uses libx264 codec and AAC for compatible, good-quality encoding.\n\nExample bash script:\n\n```bash\nfor f in *.mov; do\n  ffmpeg -i \"$f\" -vf scale=720:-2 -c:v libx264 -preset slow -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p \"${f%.mov}_720.mov\"\ndone\n```\n\nExplanation of parameters:\n- `-c:v libx264`: Encode video with H.264 codec for good compression and compatibility.\n- `-preset slow`: Higher compression efficiency (use `fast` or `medium` for faster encoding).\n- `-crf 23`: Quality setting; lower means better quality (default sane tradeoff).\n- `-c:a aac -b:a 128k`: Encode audio in AAC with 128 kbps bitrate.\n- `-pix_fmt yuv420p`: Ensures compatibility with most players and devices.\n\nMake sure you run this command in the folder where your MOV files reside, or adjust the path accordingly. This solution assumes you have a bash-like shell environment (Linux, macOS, or Windows with WSL or Git Bash).",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 406,
+    "total_tokens": 1003,
+    "cost": 0.0008884
+  },
+  "model_type": "task_run"
+}

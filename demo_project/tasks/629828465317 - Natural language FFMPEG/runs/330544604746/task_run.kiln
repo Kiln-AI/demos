@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "330544604746",
+  "created_at": "2025-07-24T20:39:51.018613",
+  "created_by": "scosman",
+  "input": "I need to burn in non-UTF-8 SRT subtitles (with accent marks/foreign characters), but the output displays garbled text.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "324941395446",
+    "path": null,
+    "created_at": "2025-07-24T20:39:51.018589",
+    "created_by": "scosman",
+    "output": "When burning in subtitles from a non-UTF-8 encoded SRT file, you need to explicitly specify the correct subtitle character encoding to ffmpeg so it can properly interpret the accent marks and foreign characters. By default, ffmpeg assumes UTF-8. Use the `-sub_charenc` option to tell ffmpeg the charset of the subtitles (e.g., `cp1252`, `iso-8859-1`, `windows-1250`, etc.).\n\nHere’s how to do this:\n\n- `-sub_charenc` specifies the character encoding of the input subtitles.\n- Make sure to use `-vf subtitles=filename.srt` filter to burn in the subtitles.\n- If unsure about the encoding, you can check the SRT file with a text editor or use tools like `file` or `enca` on Linux.\n\nExample assumes the subtitles are encoded in `cp1252` (Western European, common for many Windows subtitles). Replace with the correct encoding for your file.\n\n```bash\nffmpeg -i input.mp4 -vf \"subtitles=subtitle.srt:charenc=cp1252\" -c:v libx264 -crf 23 -preset medium -c:a copy output.mp4\n```\n\nExplanation:\n- `-vf subtitles=subtitle.srt:charenc=cp1252`: burns subtitles while interpreting them with CP1252 encoding.\n- `-c:v libx264 -crf 23 -preset medium`: good quality re-encoding.\n- `-c:a copy`: copies audio stream without re-encoding.\n\nIf you don’t know the encoding, try common ones such as `iso-8859-1`, `cp1250`, `utf-16`, etc. If the SRT is UTF-16 (BOM encoded), you can also try `charenc=utf-16`.\n\nThis approach avoids garbled characters by correctly interpreting the subtitle text encoding.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 391,
+    "total_tokens": 994,
+    "cost": 0.0008668
+  },
+  "model_type": "task_run"
+}

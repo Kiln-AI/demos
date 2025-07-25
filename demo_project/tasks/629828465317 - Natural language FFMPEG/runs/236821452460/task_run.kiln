@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "236821452460",
+  "created_at": "2025-07-24T18:12:42.664474",
+  "created_by": "scosman",
+  "input": "While re-encoding a video for smoother playback on mobile devices, I notice a loss of detail. What ffmpeg options might help maintain detail while ensuring device compatibility?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "247950054746",
+    "path": null,
+    "created_at": "2025-07-24T18:12:42.664446",
+    "created_by": "scosman",
+    "output": "To preserve as much detail as possible during re-encoding for mobile devices, while maintaining compatibility, you can:\n\n- Lower the CRF value (raises quality, reduces loss of detail).\n- Avoid unnecessary scaling (unless required for device compatibility).\n- Use a slower x264 preset (better compression/quality at the same bitrate).\n- Ensure pixel format yuv420p for compatibility.\n- Use AAC audio and baseline or main video profile (for compatibility).\n- Add movflags +faststart for instant streaming/playback on mobile.\n\nHere’s a balanced command focusing on high quality and wide device support. Adjust the CRF value (e.g., 18~20 is visually lossless to high quality):\n\n```bash\nffmpeg -i input.mp4 -c:v libx264 -preset slow -crf 18 -profile:v main -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart output_mobile.mp4\n```\n\n**Explanation of choices:**\n- `-crf 18`: Near visually lossless. Increase (e.g., 20–23) if file size is too large. Lower means higher quality.\n- `-preset slow`: Maximizes quality per bitrate, though takes more time (can use `medium` for faster encode if needed).\n- `-profile:v main`: Ensures broad compatibility; baseline if very old devices targeted.\n- `-pix_fmt yuv420p`: Essential for older device support.\n- `-movflags +faststart`: Enables playback before full file download.\n- No scaling is applied, preserving original resolution unless otherwise needed.\n\n**Assumptions:** Your sources are in good condition, and you want to keep as much detail as possible within constraints of mobile compatibility. If you need to resize for lower resolutions, add e.g., `-vf scale=-2:720` for 720p.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 607,
+    "output_tokens": 387,
+    "total_tokens": 994,
+    "cost": 0.00431
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "235739931655",
+  "created_at": "2025-07-24T20:27:21.583503",
+  "created_by": "scosman",
+  "input": "The audio and video are out of sync in my mp4 file. Please provide a way to fix this.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "255965294023",
+    "path": null,
+    "created_at": "2025-07-24T20:27:21.583381",
+    "created_by": "scosman",
+    "output": "When audio and video are out of sync in an MP4 file, it often means there is a timestamp or container-level issue. A common solution is to remux (remultiplex) the file without re-encoding, using ffmpeg to rewrite the container and fix timestamp issues. If the problem is deeper, re-encoding might be necessary, but first try this lossless approach:\n\n- The `-fflags +genpts` option forces ffmpeg to generate presentation timestamps, which helps correct sync issues.\n- Using `-async 1` or `-vsync 1` can help resynchronize audio and video streams.\n- Copying streams with `-c copy` means no quality loss, just container rewriting.\n\nIf audio delay or advance is consistent and known, `-itsoffset` can offset the audio stream by a specific time (positive or negative). Since the user hasn’t specified this, a general remux to fix timestamps is best.\n\nExample command to remux and regenerate timestamps:\n\n```bash\nffmpeg -fflags +genpts -i input.mp4 -c copy -avoid_negative_ts make_zero output_fixed.mp4\n```\n\nExplanation:\n- `-fflags +genpts`: regenerate timestamps.\n- `-avoid_negative_ts make_zero`: shifts timestamps so they do not go negative, which can help sync.\n- `-c copy`: copy audio and video streams without re-encoding.\n\nIf this doesn’t resolve the problem, re-encoding with audio delay adjustment might be required, but that requires exact delay information.\n\n---\n\n```bash\nffmpeg -fflags +genpts -i input.mp4 -c copy -avoid_negative_ts make_zero output_fixed.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 346,
+    "total_tokens": 942,
+    "cost": 0.000792
+  },
+  "model_type": "task_run"
+}

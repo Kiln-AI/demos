@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "210333199352",
+  "created_at": "2025-07-24T20:36:18.362171",
+  "created_by": "scosman",
+  "input": "Can you show me an ffmpeg command to downscale a 60fps 1080p video to 30fps 720p MP4?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Video Resolution and Scaling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "153174742774",
+    "path": null,
+    "created_at": "2025-07-24T20:36:18.362076",
+    "created_by": "scosman",
+    "output": "To downscale a 1080p 60fps video to 720p 30fps MP4, you can use the following ffmpeg options:\n\n- `-vf scale=-2:720` scales the video height to 720 pixels while preserving the aspect ratio. The width is automatically calculated and set to a multiple of 2 (required by many codecs) due to `-2`.\n- `-r 30` sets the output frame rate to 30fps, effectively downsampling from 60fps.\n- `-c:v libx264` selects H.264 video encoding, which is widely compatible.\n- `-preset slow` offers a good tradeoff between encoding speed and compression efficiency.\n- `-crf 23` controls quality (lower is better; 23 is a good default).\n- `-c:a aac -b:a 128k` encodes audio using AAC at 128 kbps.\n- `-pix_fmt yuv420p` ensures broad compatibility for color format.\n- `-movflags +faststart` enables streaming optimization by moving metadata to the beginning.\n\nHere’s the command assuming your input file is `input.mp4` and output is `output_720p30.mp4`:\n\n```bash\nffmpeg -i input.mp4 -vf scale=-2:720 -r 30 -c:v libx264 -preset slow -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output_720p30.mp4\n```\n\nThis will efficiently generate a 720p 30fps MP4 video suitable for streaming or playback on most devices.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 346,
+    "total_tokens": 950,
+    "cost": 0.0007952
+  },
+  "model_type": "task_run"
+}

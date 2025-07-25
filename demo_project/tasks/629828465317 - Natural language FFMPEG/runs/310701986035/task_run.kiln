@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "310701986035",
+  "created_at": "2025-07-24T18:11:33.640638",
+  "created_by": "scosman",
+  "input": "What's the ffmpeg command to transcode `sample.avi` into an MP4 format that will play seamlessly in both Firefox and Chrome at a resolution of 1280x720?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Optimizing Encoding for Browser Compatibility"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "315494044388",
+    "path": null,
+    "created_at": "2025-07-24T18:11:33.640610",
+    "created_by": "scosman",
+    "output": "To ensure optimal playback in both Firefox and Chrome, use the H.264 video codec and AAC audio codec, while setting the output resolution to 1280x720. Include `-movflags +faststart` to optimize playback start time by moving metadata to the beginning of the file, and use `-pix_fmt yuv420p` for maximum compatibility with browsers.\n\nHere’s how you’d do it:\n\n- `-vf scale=1280:720` resizes the video to 1280x720.\n- `-c:v libx264 -profile:v high -level 4.0` encodes using H.264 with a widely compatible profile and level.\n- `-crf 23 -preset fast` offers a good trade-off between quality and encoding speed.\n- `-c:a aac -b:a 128k` encodes AAC audio at 128 kbps, which is broadly compatible.\n- `-movflags +faststart` enables faster streaming in browsers.\n- `-pix_fmt yuv420p` ensures the pixel format is browser-compatible.\n\n```bash\nffmpeg -i sample.avi -vf scale=1280:720 -c:v libx264 -profile:v high -level 4.0 -preset fast -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart sample_720p.mp4\n```\n\nThis command will produce an MP4 file that should play seamlessly in both Firefox and Chrome at 1280x720 resolution.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 613,
+    "output_tokens": 322,
+    "total_tokens": 935,
+    "cost": 0.003802
+  },
+  "model_type": "task_run"
+}

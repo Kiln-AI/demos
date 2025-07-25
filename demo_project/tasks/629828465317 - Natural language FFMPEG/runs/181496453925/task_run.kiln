@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "181496453925",
+  "created_at": "2025-07-24T20:40:00.479477",
+  "created_by": "scosman",
+  "input": "I’m transcoding MOV to MP4, but want to preserve all original metadata (creation time, GPS, etc). FFmpeg drops it by default.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "297156851901",
+    "path": null,
+    "created_at": "2025-07-24T20:40:00.479374",
+    "created_by": "scosman",
+    "output": "FFmpeg by default does not copy all metadata such as creation time and GPS info when transcoding because it re-muxes or re-encodes streams without explicitly mapping metadata. To preserve all original metadata (including creation time, GPS tags, and others), you need to explicitly copy the metadata streams and global metadata.\n\nHere are key points and techniques:\n\n- Use `-map_metadata 0` to copy all metadata from the input (file-level, stream-level).\n- Use `-map 0` to copy all streams including subtitle or data streams carrying metadata (like GPS), assuming you want to keep them all.\n- If transcoding video/audio, you will need to re-encode streams. But to avoid loss of metadata, use the above mapping parameters.\n- Use `-c copy` if you want to preserve streams without transcoding. This will preserve all metadata but won't change codec.\n- Some container-level tags may require setting specific options (e.g., `-movflags use_metadata_tags`) but `-map_metadata 0` mostly suffices for MOV to MP4.\n\nExample command preserving metadata while transcoding video and audio streams:\n\n```bash\nffmpeg -i input.mov -map 0 -map_metadata 0 -c:v libx264 -c:a aac -movflags +faststart output.mp4\n```\n\nThis command:\n\n- `-map 0` maps all input streams (video, audio, subtitles, data).\n- `-map_metadata 0` copies all metadata from the input file and streams.\n- `-c:v libx264` and `-c:a aac` re-encode video/audio for MP4 compatibility.\n- `-movflags +faststart` allows streaming.\n\nIf you want to just remux without re-encoding (preserving streams exactly and metadata fully):\n\n```bash\nffmpeg -i input.mov -map 0 -map_metadata 0 -c copy -movflags +faststart output.mp4\n```\n\n*Note*: This works only if codecs in MOV are compatible with MP4 container.\n\nIf some metadata is still missing (e.g., GPS tags inside MOV-specific atoms), some specialized tools or metadata extraction/reattach might be needed, but usually `-map_metadata 0` is effective for common metadata.\n\n---\n\n```bash\nffmpeg -i input.mov -map 0 -map_metadata 0 -c:v libx264 -c:a aac -movflags +faststart output.mp4\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 605,
+    "output_tokens": 509,
+    "total_tokens": 1114,
+    "cost": 0.0010564
+  },
+  "model_type": "task_run"
+}

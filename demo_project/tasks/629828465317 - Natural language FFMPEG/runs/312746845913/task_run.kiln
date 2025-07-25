@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "312746845913",
+  "created_at": "2025-07-24T20:25:08.962746",
+  "created_by": "scosman",
+  "input": "I need to extract all audio streams from an .mp4 into separate .aac files without re-encoding.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Stream Copying and Remuxing"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "311599399432",
+    "path": null,
+    "created_at": "2025-07-24T20:25:08.962720",
+    "created_by": "scosman",
+    "output": "To extract all audio streams from an MP4 container into separate AAC files without re-encoding, you can use stream copy mode for the audio streams. This avoids quality loss and speeds up the process since the audio data is just demuxed and saved as-is.\n\nThe general strategy:\n- Use `-map` to select each audio stream individually.\n- Use `-c:a copy` to stream copy the audio (no re-encoding).\n- Save each audio stream to a separate `.aac` file.\n\nSince `ffmpeg` doesn’t support outputting multiple outputs in one command easily when using stream copy for individual streams, you can either run one command per audio stream or use a Bash loop to automate.\n\nAssuming you have multiple audio streams, here is a way to extract each audio stream separately by indexing the audio streams starting from 0.\n\nExample if you have 2 audio streams:\n\n```bash\nffmpeg -i input.mp4 -map 0:a:0 -c:a copy audio_0.aac\nffmpeg -i input.mp4 -map 0:a:1 -c:a copy audio_1.aac\n```\n\nAlternatively, you can get the number of audio streams from ffprobe and loop over them for automated extraction.\n\nIf you want a one-liner for a known number of audio streams (e.g., 2):\n\n```bash\nfor i in 0 1; do ffmpeg -i input.mp4 -map 0:a:$i -c:a copy audio_$i.aac; done\n```\n\nThis method avoids re-encoding and extracts raw AAC audio streams directly.\n\nIf the audio is in a different codec, the extension should match (e.g., `.ac3`, `.opus`, etc.). Here we assume AAC codec common in MP4 files.\n\nThis approach is best practice for stream copying and remuxing single streams without encoding overhead.\n\n```bash\n# Extract audio stream 0\nffmpeg -i input.mp4 -map 0:a:0 -c:a copy audio_0.aac\n\n# Extract audio stream 1 (if present)\nffmpeg -i input.mp4 -map 0:a:1 -c:a copy audio_1.aac\n```\n\nOr to automate with a Bash loop for N audio streams:\n\n```bash\n# Replace N with the number of audio streams in the file\nfor i in $(seq 0 $((N-1))); do\n  ffmpeg -i input.mp4 -map 0:a:$i -c:a copy audio_$i.aac\ndone\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 599,
+    "output_tokens": 525,
+    "total_tokens": 1124,
+    "cost": 0.0010796
+  },
+  "model_type": "task_run"
+}

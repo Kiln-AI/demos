@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "288756070043",
+  "created_at": "2025-07-24T20:35:18.072634",
+  "created_by": "scosman",
+  "input": "Combine two audio files, voice.mp3 and music.mp3, into a single stereo file with voice on the left and music on the right.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Audio Extraction and Manipulation"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "329907292526",
+    "path": null,
+    "created_at": "2025-07-24T20:35:18.072540",
+    "created_by": "scosman",
+    "output": "To combine two audio files into a single stereo file with one audio on the left channel and the other on the right, you can use the `amerge` filter to merge the two mono inputs into a two-channel stereo stream, then use `pan` to assign each input fully to one channel.\n\n- `-i voice.mp3 -i music.mp3` loads both files.\n- `-filter_complex` applies complex filtering.\n- `pan=stereo|c0<c0|c1<c1` keeps the left input on left channel and right input on right channel.\n- `-c:a aac -b:a 192k` encodes output in AAC at 192kbps, a good quality stereo format.\n- `-y` overwrites output without prompt.\n\nAssuming both inputs are mono or will be treated as mono. If inputs are stereo, you may want to downmix them before merging.\n\n```bash\nffmpeg -i voice.mp3 -i music.mp3 -filter_complex \"[0:a][1:a]amerge=inputs=2,pan=stereo|c0<c0|c1<c1[aout]\" -map \"[aout]\" -c:a aac -b:a 192k -ac 2 output_stereo.mp4\n```\n\nNote: The output container is `.mp4` for compatibility with AAC audio; you can choose `.m4a` or `.mp3` container depending on your needs. For pure audio, `.m4a` might be better:\n\n```bash\nffmpeg -i voice.mp3 -i music.mp3 -filter_complex \"[0:a][1:a]amerge=inputs=2,pan=stereo|c0<c0|c1<c1[aout]\" -map \"[aout]\" -c:a aac -b:a 192k -ac 2 output_stereo.m4a\n```",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 604,
+    "output_tokens": 392,
+    "total_tokens": 996,
+    "cost": 0.0008688
+  },
+  "model_type": "task_run"
+}

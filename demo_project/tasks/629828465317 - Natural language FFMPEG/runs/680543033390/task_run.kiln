@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "680543033390",
+  "created_at": "2025-07-24T18:11:53.881691",
+  "created_by": "scosman",
+  "input": "Can you convert my .mpg video to a .mp4 while keeping the audio and video in sync and ready for web playback?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4o",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Optimizing Encoding for Browser Compatibility"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "102035505430",
+    "path": null,
+    "created_at": "2025-07-24T18:11:53.881650",
+    "created_by": "scosman",
+    "output": "To convert your .mpg video to an .mp4 file optimized for browser compatibility and maintain audio/video sync, use the H.264 codec for video, AAC for audio, and enable faststart for quick playback. FFmpeg handles sync by default, but explicitly copying timestamps and re-muxing the streams helps prevent issues. Here’s a best-practices command:\n\n- c:v libx264: Encode video with H.264 for maximum compatibility.\n- c:a aac: Encode audio with AAC.\n- b:a 128k: Set AAC audio bitrate (128 kbps is standard for web).\n- pix_fmt yuv420p: Ensures output can be played by all browsers/devices.\n- movflags +faststart: Moves MP4 metadata to the start for instant playback.\n- vsync 1 and async 1: Help maintain sync between audio and video streams.\n\n```bash\nffmpeg -i input.mpg -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart -vsync 1 -async 1 output.mp4\n```\n\nAssumptions:\n- input.mpg is your source file.\n- Keeping video dimensions/quality as close to the original as possible.\n- Ensuring maximum browser compatibility and smooth synchronous playback.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_313121578435",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 603,
+    "output_tokens": 281,
+    "total_tokens": 884,
+    "cost": 0.003454
+  },
+  "model_type": "task_run"
+}

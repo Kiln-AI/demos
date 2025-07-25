@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "167354306614",
+  "created_at": "2025-07-24T20:28:03.464210",
+  "created_by": "scosman",
+  "input": "Is there a way to hardcode SRT subtitles onto a video with non-English (UTF-8) characters?",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Issues & Edge Cases"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "163221869886",
+    "path": null,
+    "created_at": "2025-07-24T20:28:03.464187",
+    "created_by": "scosman",
+    "output": "Yes, you can hardcode SRT subtitles containing non-English UTF-8 characters onto a video using ffmpeg by specifying the correct character encoding and using the subtitles filter. The subtitles filter can read SRT files and render them onto the video frames. To ensure proper rendering of UTF-8 characters, make sure to:\n\n- Use `-sub_charenc UTF-8` (for some ffmpeg builds) to explicitly specify subtitle file encoding if needed.\n- Ensure that the fonts used in rendering support the desired characters. You can specify a font with `force_style='Fontname=YourFont'` inside the subtitles filter.\n- If your subtitles contain special characters, it’s better to have them in UTF-8 encoding and declare it.\n\nHere is a command that hardcodes UTF-8 SRT subtitles onto a video:\n\n```bash\nffmpeg -i input.mp4 -vf \"subtitles=input.srt:charenc=UTF-8:force_style='FontName=Arial,Fontsize=24,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=1,Shadow=0'\" -c:a copy output.mp4\n```\n\nExplanation:\n\n- `-vf subtitles=input.srt:charenc=UTF-8` applies the subtitles filter with UTF-8 encoding.\n- `force_style` sets font parameters: font name (choose one that supports your characters, e.g., Arial, DejaVu Sans), font size, colors, outline for readability.\n- `-c:a copy` copies the audio without re-encoding to save time and preserve quality.\n- The video is re-encoded with subtitles burned in, using the default encoder (libx264 on most systems). You can specify `-c:v libx264` and other options if you want more control.\n  \nAssumptions:\n\n- Your input video is `input.mp4`.\n- Your subtitles file is `input.srt` encoded in UTF-8.\n- You have a font installed on your system that supports the required character set (Arial is usually good for many scripts; for more exotic languages, consider DejaVu Sans, Noto Sans, etc.).\n- You want video and audio output in MP4 container.\n\nIf you want to explicitly specify the video codec and quality, you could do:\n\n```bash\nffmpeg -i input.mp4 -vf \"subtitles=input.srt:charenc=UTF-8:force_style='FontName=DejaVu Sans,Fontsize=24,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=1'\" -c:v libx264 -preset medium -crf 23 -c:a copy output.mp4\n```\n\nThis gives you more control over video quality and encoding.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 597,
+    "output_tokens": 562,
+    "total_tokens": 1159,
+    "cost": 0.001138
+  },
+  "model_type": "task_run"
+}

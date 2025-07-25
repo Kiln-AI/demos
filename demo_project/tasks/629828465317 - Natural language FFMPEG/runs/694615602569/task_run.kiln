@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "694615602569",
+  "created_at": "2025-07-24T20:24:41.754772",
+  "created_by": "scosman",
+  "input": "Transcode surveillance camera footage (.265 raw) to .mp4 for easier archiving.",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Codec Selection and Adjustment"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "561256526235",
+    "path": null,
+    "created_at": "2025-07-24T20:24:41.754749",
+    "created_by": "scosman",
+    "output": "To transcode raw H.265 (.265) surveillance footage into an MP4 container for easier archiving, it's important to re-encode the video into a widely supported, efficient codec. Since the source is already H.265, you can either copy the stream if compatibility allows or re-encode to H.264 for wider device support. For archiving, I recommend re-encoding to H.264 using libx264, which ensures maximum compatibility while keeping good compression.\n\nKey points on the command:\n- `-i input.265` specifies the input raw H.265 file.\n- `-c:v libx264` transcodes video to H.264.\n- `-preset slow` prioritizes compression efficiency.\n- `-crf 20` balances quality and file size (lower values yield better quality).\n- `-c:a aac -b:a 128k` encodes audio if present (useful if the footage contains audio; if no audio, you can omit audio options or add `-an` to disable audio).\n- `-pix_fmt yuv420p` ensures compatibility.\n- `-movflags +faststart` enables the MP4 file to start playing before fully downloaded.\n- If the input is raw H.265 stream with no container, it's necessary to specify frame rate (`-framerate`) or input format if automatic detection fails.\n- For surveillance footage, maintaining original resolution and frame rate is usually preferable.\n\nAssuming the input file is called `input.265`, and the frame rate is e.g., 30 fps (adjust as needed). If audio is not present, the audio encoding flags can be omitted or audio disabled with `-an`.\n\n```bash\nffmpeg -framerate 30 -i input.265 -c:v libx264 -preset slow -crf 20 -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nIf audio exists and should be preserved/encoded:\n\n```bash\nffmpeg -framerate 30 -i input.265 -c:v libx264 -preset slow -crf 20 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output.mp4\n```\n\nThis approach produces an MP4 file suitable for archiving and playback on a wide range of devices with good quality and compression.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 592,
+    "output_tokens": 487,
+    "total_tokens": 1079,
+    "cost": 0.001016
+  },
+  "model_type": "task_run"
+}

@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "771014899831",
+  "created_at": "2025-07-24T20:08:26.600569",
+  "created_by": "scosman",
+  "dataset_id": "245834620919",
+  "task_run_config_id": "924722895400",
+  "eval_config_eval": false,
+  "input": "I have a video file with multiple audio tracks and I want to extract only the third audio stream and the first video stream into a new file. The input file is movie.mkv and I want the output as final.mp4",
+  "output": "To extract specific audio and video streams from a multi-track file, you'll use the `-map` option in `ffmpeg`. This option maps the input streams to output streams based on their index.\n\nThe general syntax for `-map` is `-map <stream_specifier>`. The specifier can be in the form `<stream_type(stream_index)>` (e.g., `-map 0:v:0` to select the first video stream from the input file with index 0).\n\nAssuming the input file is `movie.mkv`, the third audio stream is selected by `0:a:2` (ffmpeg counts from 0, so the third stream is index 2), and the first video stream is selected by `0:v:0`. The input file index is assumed to be 0.\n\nTo ensure widest compatibility, this example uses H.264 for video and AAC for audio, both widely supported in browsers and devices.\n\n```bash\nffmpeg -i movie.mkv -map 0:v:0 -map 0:a:2 -c:v libx264 -crf 23 -c:a aac -b:a 128k final.mp4\n```\nNote that not all encoders support the `-crf` quality option and a bitrate for the audio encoder (`-b:a`). `-crf` controls the video quality, while `-b:a` controls the audio bitrate.\n\nAlso note that the mapping may need adjustment if the input file layout differs. You can verify the layout by running a simple probe command, which dumps media information to the console:\n\n```bash\nffmpeg -i movie.mkv -hide_banner\n```\nThis command provides detailed information about the input streams, making it easier to determine their indices for proper mapping with `-map`.",
+  "intermediate_outputs": {
+    "chain_of_thought": "1) The model's output does not contain the issue described. The command it generated accurately reflects the user's request to extract only the third audio track and the first video stream from the provided MKV file, and it correctly maps these streams into the output MP4 file.\n\n2) The model's output is not similar to the provided example of a failing output. The command produced does not contain any incorrect or non-existent options. It uses valid options and syntax for the ffmpeg command as stipulated in the user input.\n\n3) The command produced by the model does not break any requirements dictated in the man page for ffmpeg. The use of `-map`, `-c:v`, and `-c:a` is appropriate and conforms to the expected syntax. The codecs chosen (libx264 for video and aac for audio) are standard and widely supported. The mapping of streams is correctly specified according to the indices provided.\n\n4) Based on the evaluation, the model's output does not contain the issue described, as the command produced accurately fulfills the user's request without any errors or unsupported options. Therefore, it passes this evaluation."
+  },
+  "scores": {
+    "correctness": 1.0
+  },
+  "task_run_usage": {
+    "input_tokens": 474,
+    "output_tokens": 358,
+    "total_tokens": 832,
+    "cost": 0.0007488
+  },
+  "model_type": "eval_run"
+}

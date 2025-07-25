@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "152534918350",
+  "created_at": "2025-07-23T11:54:28.466795",
+  "created_by": "scosman",
+  "dataset_id": "137388627865",
+  "task_run_config_id": null,
+  "eval_config_eval": true,
+  "input": "I have a file with 4 video streams and 6 audio streams. I need to select video stream 8 and audio stream 12 for my output file final.mp4",
+  "output": "To select specific streams from a multi-stream file, you use the `-map` parameter to specify which input streams to include in the output. This allows you to cherry-pick exactly which video and audio tracks you want.\n\nThe `-map` parameter uses the format `-map input_index:stream_type:stream_index` where stream indices start from 0. So to select video stream 8 and audio stream 12:\n\n```bash\nffmpeg -i input.mkv -map 0:v:8 -map 0:a:12 -c copy final.mp4\n```\n\nThis command:\n- `-map 0:v:8` selects video stream 8 from input 0\n- `-map 0:a:12` selects audio stream 12 from input 0  \n- `-c copy` copies the streams without re-encoding for faster processing\n\nI assumed your input file is named something like `input.mkv` since you didn't specify the filename, and used copy mode to preserve quality and speed up processing.",
+  "intermediate_outputs": {
+    "reasoning": "**My Assessment of the FFmpeg Command**\n\nOkay, so I'm trying to select specific video and audio streams from this file. I've got a file with four video streams and six audio streams. I *think* I want video stream number 8 and audio stream number 12, but something feels off.\n\nLet's see... I've been told the `-map` parameter is the way to go with `ffmpeg`. Makes sense, that lets me explicitly select the streams I need. The command generated is `ffmpeg -i input.mkv -map 0:v:8 -map 0:a:12 -c copy final.mp4`.  It's logically sound on the surface, using `-map 0:v:8` and `-map 0:a:12`. I see what it's trying to do, and that's good.\n\nBut hang on... I just said I have only 4 video streams and 6 audio streams.  `ffmpeg` uses zero-based indexing, so my video streams are numbered 0 to 3, and my audio streams are 0 to 5. How can I even *have* a stream 8 or stream 12? That's just not possible given the input file I described.\n\nThis command is going to fail. I'm going to get an error like \"Stream map '0:v:8' matches no streams\" and \"Stream map '0:a:12' matches no streams\" because those streams *don't exist* in my file! I need to go back and clarify which streams I *actually* want. Maybe I got my numbers mixed up, or there's something else I don't understand.  The command itself is correctly structured, the syntax is fine, but it's fundamentally flawed because it's based on an invalid request. My understanding of the input file and the requested outputs need refining."
+  },
+  "scores": {
+    "correctness": 0.0
+  },
+  "task_run_usage": {
+    "input_tokens": 1009,
+    "output_tokens": 233,
+    "total_tokens": 1242,
+    "cost": 0.006522
+  },
+  "model_type": "eval_run"
+}

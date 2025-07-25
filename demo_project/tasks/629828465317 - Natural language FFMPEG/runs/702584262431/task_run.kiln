@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "id": "702584262431",
+  "created_at": "2025-07-24T20:38:18.430986",
+  "created_by": "scosman",
+  "input": "Add Arabic subtitles (arabic.srt) to a film and ensure correct UTF-8 rendering (RTL direction).",
+  "input_source": {
+    "type": "synthetic",
+    "properties": {
+      "model_name": "gpt_4_1",
+      "model_provider": "openrouter",
+      "adapter_name": "kiln_data_gen",
+      "topic_path": "Subtitles Handling"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "123388310089",
+    "path": null,
+    "created_at": "2025-07-24T20:38:18.430935",
+    "created_by": "scosman",
+    "output": "To add Arabic subtitles from an SRT file to a video ensuring correct UTF-8 rendering and proper right-to-left (RTL) display with FFmpeg, you need to:\n\n- Make sure the subtitles file (`arabic.srt`) is saved in UTF-8 encoding.\n- Use `-vf subtitles=arabic.srt:charenc=UTF-8` filter. The `charenc=UTF-8` ensures the subtitles are interpreted as UTF-8.\n- Arabic text is right-to-left by design, and modern versions of FFmpeg with libass support will render RTL subtitles correctly if the fonts and encodings are correct.\n- To improve rendering, specify a font that supports Arabic characters (e.g., an Arabic font like \"Amiri\" or \"Arial\" if installed).\n- You can specify font configuration via `subtitles` filter options or by creating a style override ASS file if needed. But often just the font name and UTF-8 specification suffice.\n\nAssuming the input video is `input.mp4` and output `output.mp4`, here is a command embedding Arabic subtitles as burned-in subtitles:\n\n```bash\nffmpeg -i input.mp4 -vf \"subtitles=arabic.srt:charenc=UTF-8:force_style='FontName=Arial,Outline=1,Shadow=0'\" -c:a copy output.mp4\n```\n\nExplanation:\n\n- `-vf subtitles=arabic.srt:charenc=UTF-8` tells FFmpeg to burn the subtitles into the video using UTF-8 encoding.\n- `force_style` overrides font style options (choose a font available on your system with good Arabic support).\n- `-c:a copy` copies the audio stream without re-encoding.\n \nMake sure the font specified (e.g., Arial) supports Arabic; otherwise, substitute with an appropriate Arabic-supporting font installed on your machine. This method burns subtitles directly onto the video, ensuring correct rendering and compatibility across all players.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1_mini",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "synthetic",
+    "synthetic_session_732947559261",
+    "fine_tune_data"
+  ],
+  "usage": {
+    "input_tokens": 596,
+    "output_tokens": 399,
+    "total_tokens": 995,
+    "cost": 0.0008768
+  },
+  "model_type": "task_run"
+}

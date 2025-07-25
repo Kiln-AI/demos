@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "623414565273",
+  "created_at": "2025-07-23T13:13:19.206018",
+  "created_by": "scosman",
+  "dataset_id": "137388627865",
+  "task_run_config_id": null,
+  "eval_config_eval": true,
+  "input": "I have a file with 4 video streams and 6 audio streams. I need to select video stream 8 and audio stream 12 for my output file final.mp4",
+  "output": "To select specific streams from a multi-stream file, you use the `-map` parameter to specify which input streams to include in the output. This allows you to cherry-pick exactly which video and audio tracks you want.\n\nThe `-map` parameter uses the format `-map input_index:stream_type:stream_index` where stream indices start from 0. So to select video stream 8 and audio stream 12:\n\n```bash\nffmpeg -i input.mkv -map 0:v:8 -map 0:a:12 -c copy final.mp4\n```\n\nThis command:\n- `-map 0:v:8` selects video stream 8 from input 0\n- `-map 0:a:12` selects audio stream 12 from input 0  \n- `-c copy` copies the streams without re-encoding for faster processing\n\nI assumed your input file is named something like `input.mkv` since you didn't specify the filename, and used copy mode to preserve quality and speed up processing.",
+  "intermediate_outputs": {
+    "reasoning": "**Understanding the Limitations of the Input File**\n\nOkay, so I'm trying to figure out how to select specific streams from this file. I've got a file with 4 video streams and 6 audio streams. My initial thought was to use ffmpeg, and I asked for help selecting video stream 8 and audio stream 12.\n\nNow, looking deeper, I realize there's a problem. I *thought* I could simply ask for 'video 8' and 'audio 12', but it's not that straightforward. I needed to analyze the file's streams and their indexes.\n\nMy understanding of how ffmpeg handles streams is the key here. It uses 0-based indexing within each stream type (video and audio). So, the streams are numbered starting from 0. The file has video streams 0, 1, 2, and 3, and audio streams 0 through 5. When I asked for video 8 and audio 12, I failed to account for this indexing scheme. Those streams simply *don't exist* in the file as it's described.\n\nThe model gave me a command based on my flawed request. While the structure of the `ffmpeg` command *seemed* correct at first glance, it won't work. The instructions were to map streams using `-map`, but I now see that it's fundamentally flawed because the streams I asked for don't exist. The `ffmpeg` command would likely throw an error like \"Stream map '0:v:8' matches no streams.\"\n\nThe main issue is that the model didn't consider the context of the file. It didn't validate whether the streams I requested actually exist in the file. It blindly translated my request into a command that's destined to fail. A better approach would have been to flag the stream numbers as outside the valid range based on the user's description of the input file. I really needed the model to *think* critically about the file's stream structure."
+  },
+  "scores": {
+    "correctness": 0.0
+  },
+  "task_run_usage": {
+    "input_tokens": 1009,
+    "output_tokens": 233,
+    "total_tokens": 1242,
+    "cost": 0.006522
+  },
+  "model_type": "eval_run"
+}
