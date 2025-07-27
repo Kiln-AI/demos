@@ -1,0 +1,48 @@
+{
+  "v": 1,
+  "id": "308387075160",
+  "created_at": "2025-07-27T15:39:09.717168",
+  "created_by": "scosman",
+  "input": "I need a command to re-encode a video to a reasonable sized 1080p (source is 4k). Technically 1080 tall, with correct scaled width. prioritize final size/quality. The video is a screen cast.",
+  "input_source": {
+    "type": "human",
+    "properties": {
+      "created_by": "scosman"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "192837659364",
+    "path": null,
+    "created_at": "2025-07-27T15:39:09.717140",
+    "created_by": "scosman",
+    "output": "For resizing a 4K screencast to a high-quality but smaller 1080p, prioritize final file size and clarity: use x264 with tune for \"animation\" or \"zerolatency\" if it's strictly screen content (animation/text) for better efficiency, 2-pass encoding for best size/quality trade-off, and use -crf for perceptual quality control. Downscale while preserving aspect ratio by setting height to 1080 with width to -2.\n\nAssumptions:\n- Input: input.mp4\n- Output: output_1080p.mp4\n- Most screencasts benefit from --tune animation or, if needed, --tune zerolatency for computer graphics/screen content.\n- Two-pass encoding improves compression at the expense of more time.\n\n**Step 1: First pass (no audio, just analyis)**\n```bash\nffmpeg -i input.mp4 -vf scale=-2:1080 -c:v libx264 -preset slower -tune animation -crf 23 -pass 1 -an -f mp4 /dev/null\n```\n\n**Step 2: Second pass (actual encoding, with audio)**\n```bash\nffmpeg -i input.mp4 -vf scale=-2:1080 -c:v libx264 -preset slower -tune animation -crf 23 -pass 2 -c:a aac -b:a 96k -pix_fmt yuv420p -movflags +faststart output_1080p.mp4\n```\n\n- -preset slower and -crf 23 focus on good perceptual quality and smaller file size.\n- -tune animation for sharp edges/text (if the video is pure screencast).\n- -b:a 96k for efficient AAC audio.\n- movflags +faststart for better streaming playback.\n- -pix_fmt yuv420p for broad compatibility.\n\nYou can further reduce -crf (e.g., 25) for even smaller file at expense of some quality, or use -crf 18–20 for higher quality.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "manual_run"
+  ],
+  "usage": {
+    "input_tokens": 462,
+    "output_tokens": 430,
+    "total_tokens": 892,
+    "cost": 0.004364
+  },
+  "model_type": "task_run"
+}

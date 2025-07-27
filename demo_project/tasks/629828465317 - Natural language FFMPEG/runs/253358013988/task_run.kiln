@@ -1,0 +1,48 @@
+{
+  "v": 1,
+  "id": "253358013988",
+  "created_at": "2025-07-27T15:39:52.431388",
+  "created_by": "scosman",
+  "input": "I need a command to re-encode a video to a reasonable sized 1080p (source is 4k). Technically 1080 tall, with correct scaled width. prioritize final size/quality. The video is a screen cast with mostly text/UI of a saas app so if that impacts settings, pick the right ones.",
+  "input_source": {
+    "type": "human",
+    "properties": {
+      "created_by": "scosman"
+    }
+  },
+  "output": {
+    "v": 1,
+    "id": "182115912171",
+    "path": null,
+    "created_at": "2025-07-27T15:39:52.431358",
+    "created_by": "scosman",
+    "output": "Since your source is a 4K screen recording of a UI/saas app (i.e., mostly text and graphics), you want to optimize for clarity (sharp text/UI edges) while reducing file size. For this, use the H.264 codec with the \"veryfast\" or \"faster\" preset for speed, but to maximize quality (especially for static content), the \"slow\" or \"slower\" preset is better if you can tolerate slower encoding. Set a relatively high constant rate factor (CRF) for efficient compression (try CRF 23–28; lower values are higher quality). Use yuv420p for compatibility, and ensure scaling doesn't blur the UI with the lanczos scaler.\n\nHere's a command with explained settings:\n\n- `-vf scale=-2:1080:flags=lanczos` scales height to 1080 and width to the nearest even integer (to maintain aspect ratio), using the sharpest scaler for text.\n- `-c:v libx264 -preset slower` uses a slower preset for better compression.\n- `-crf 23` gives a good compromise between size and quality; increase towards 28 for smaller files, decrease for more quality.\n- `-c:a aac -b:a 128k` is typical for screen recordings.\n- `-pix_fmt yuv420p` maximizes compatibility.\n- `-movflags +faststart` ensures streaming is efficient for the web.\n\n```bash\nffmpeg -i input4k.mp4 -vf \"scale=-2:1080:flags=lanczos\" -c:v libx264 -preset slower -crf 23 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart output1080p.mp4\n```\n\n**Assumptions:** Input file is `input4k.mp4`, you want a good trade-off of file size and clear text/UI. Adjust the `-crf` higher (e.g., 26, 28) if file size is still too large, or lower if you need perfect visual quality.",
+    "source": {
+      "type": "synthetic",
+      "properties": {
+        "adapter_name": "kiln_openai_compatible_adapter",
+        "model_name": "gpt_4_1",
+        "model_provider": "openrouter",
+        "prompt_id": "simple_prompt_builder",
+        "structured_output_mode": "json_schema",
+        "temperature": 1.0,
+        "top_p": 1.0
+      }
+    },
+    "rating": null,
+    "model_type": "task_output"
+  },
+  "repair_instructions": null,
+  "repaired_output": null,
+  "intermediate_outputs": {},
+  "tags": [
+    "manual_run"
+  ],
+  "usage": {
+    "input_tokens": 481,
+    "output_tokens": 435,
+    "total_tokens": 916,
+    "cost": 0.004442
+  },
+  "model_type": "task_run"
+}
