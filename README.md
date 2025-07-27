@@ -23,5 +23,4 @@ This repositiory is for demos of Kiln AI projects. You can download it, import t
 
 ## Demo 1: End-to-end AI Demo - Building an AI system with evals, synthetic data, and fine-tuning
 
-In this project we create an AI tool which helps generate ffmpeg commands. See the [project README for details](/demo_project/tasks/README.md).
-
+In this project we create an AI tool which helps generate ffmpeg commands. See the [project README for details](/demo_project/tasks/629828465317%20-%20Natural%20language%20FFMPEG/README.md).
