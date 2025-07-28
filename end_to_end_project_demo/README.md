@@ -1,6 +1,6 @@
 # AI Boilerplate: Evals, Synthetic Data Gen, Fine-Tuning, and Git
 
-This is a boilerplate/demo for an AI project with integrated tools for evals, synthetic data, fine-tuning, and collaboration. It offers a systematic way to iterate on AI systems, moving past vibe-checks. We're using [Kiln](https://getkiln.ai), a free+open tool that runs locally. We cover:
+This is a boilerplate for an AI project with integrated tools for evals, synthetic data, fine-tuning, and collaboration. It offers a systematic way to iterate on AI systems, moving past vibe-checks. We're using [Kiln](https://getkiln.ai), a free+open tool that runs locally. We cover:
 
  - [Creating an eval](#creating-a-correctness-eval) including generating synthetic eval data, creating LLM-as-judge evals, and validating the eval with human ratings
  - [Finding the best way to run your task](#finding-the-best-way-to-run-your-task) by evaluating prompt/model pairs
@@ -12,7 +12,7 @@ This is a boilerplate/demo for an AI project with integrated tools for evals, sy
 
 <a href="https://www.youtube.com/watch?v=f1JU3wIxExE"><img width="404" height="263" alt="video screenshot" src="https://github.com/user-attachments/assets/d49a0830-3c69-49b4-bb9a-ced485c67daa" /></a>
 
-## Preview of Findings
+## Preview of Findings from Demo
 
  - Adding the `man` page of ffmpeg to the LLM-as-judge model produced the most effective eval
  - Fine-tuning could boost performance significantly (21% over the base model), but it didn't end up being needed because...
@@ -22,8 +22,8 @@ This is a boilerplate/demo for an AI project with integrated tools for evals, sy
 ## Walkthrough
 
 To use this boilerplate:
- - To try this demo project: download this repository, and import the `end_to_end_project_demo/project.kiln` file into the [Kiln app](https://getkiln.ai). 
- - To set up this stack for your own project/task: download the [Kiln tool](https://getkiln.ai) and follow along the guide steps below. 
+ - To set up the same stack (evals, synth data, tuning), but for your own project/task: download the [Kiln app](https://getkiln.ai), follow along the steps below, creating your own task in step 1
+ - To try the demo project from the video: download this repository, and import the `end_to_end_project_demo/project.kiln` file into the [Kiln app](https://getkiln.ai). 
 
 ### Creating our task
 
@@ -105,7 +105,6 @@ Details:
 
 We only used the Kiln app for this project, but in the video we briefly introduce the [Kiln python library](https://pypi.org/project/kiln-ai/) which you can use to work with Kiln project in code.
 
-
 ### Recap, Docs and Discord
 
  - [Walkthrough video of the recap: 18m24s](https://www.youtube.com/watch?v=f1JU3wIxExE&t=18m24s)
@@ -148,3 +147,5 @@ Our quick pass at fine-tuning has shown it can really improve the performance of
 ## Using the Project
 
 This was built as a demo project, but we actually used it to re-encode the video walkthrough before uploading it. You can see the [commit here](https://github.com/Kiln-AI/demos/commit/a26492e3607fb629c04121758ab8a4981164b093). It's kinda handy!
+
+If any ffmpeg wiz wants to take a stab at improving the performance with new evals/prompts/tunes, I'd be happy to take PRs.
