@@ -1,18 +1,23 @@
 # AI Boilerplate: Evals, Synthetic Data Gen, Fine-Tuning, and Git
 
-This is a boilerplate/demo project where I setup an AI project with the a stack of integrated tools for evals, synthetic data, fine-tuning, and collaboration. We're using [Kiln](https://getkiln.ai), a free+open tool that runs completely locally. We cover:
+This is a boilerplate/demo for an AI project with integrated tools for evals, synthetic data, fine-tuning, and collaboration. It offers a systematic way to iterate on AI systems, moving past vibe-checks. We're using [Kiln](https://getkiln.ai), a free+open tool that runs locally. We cover:
 
  - [Creating an eval](#creating-a-correctness-eval) including generating synthetic eval data, creating LLM-as-judge evals, and validating the eval with human ratings
  - [Finding the best way to run your task](#finding-the-best-way-to-run-your-task) by evaluating prompt/model pairs
  - [Fine-tuning models](#fine-tuning) including synthetic training data and evaluating models
  - [Iterating as project evolves](#iterating-as-project-evolves): new evals and prompts
- - [Set up collaboration with git/GitHub sync](#setting-up-git-collaboration)
+ - [Set up collaboration with git/GitHub](#setting-up-git-collaboration)
 
 ## Video Walkthrough
 
-The process of creating this project is captured in this video:
-
 <a href="https://vimeo.com/1104945621"><img width="404" height="263" alt="video screenshot" src="https://github.com/user-attachments/assets/d49a0830-3c69-49b4-bb9a-ced485c67daa" /></a>
+
+## Preview of Findings
+
+ - Adding the `man` page of ffmpeg to the LLM-as-judge model produced the most effective eval
+ - Fine-tuning could boost performance significantly (21% over the base model), but it didn't end up being needed because...
+ - GPT-4.1 outperformed all other models for this task, even Claude 3.5 Sonnet and fine-tunes. Don't use LMArena style evals to predict domain-specific performance.
+ - Initial high eval scores were tempered by bugs, e.g. the model would happily delete your entire hard drive. We needed to iterate on a set of "product"/"domain" evals to make it into a better product.
 
 ## Walkthrough
 
@@ -22,9 +27,9 @@ To use this boilerplate:
 
 ### Creating our task
 
-First we setup the task, by defining a title, initial prompt, and the input/output schema.
+First we set up the task, by defining a title, initial prompt, and the input/output schema.
 
-For the demo project we build a natural language to ffmpeg command builder. Inspired by other projects like [this one](https://github.com/scottvr/wtffmpeg).
+For the demo project we built a natural language to ffmpeg command builder. Inspired by other projects like [this one](https://github.com/scottvr/wtffmpeg).
 
 - [Video walkthrough of setting up task: 1m32s](todo)
 
@@ -32,15 +37,15 @@ For the demo project we build a natural language to ffmpeg command builder. Insp
 
 The most important feature of the system is that it generates the correct results, so we started by building a correctness eval. This process involved:
 
-- Creating a eval with a name and prompt
+- Creating an eval with a name and prompt
 - Generating synthetic eval data. 80% for the eval set, and 20% for a golden eval set.
-- I manually labeled the golden dataset, so we could check if the LLM-as-Judge evals in Kiln actually aligned to human judgement.
-- Iterated on judges, trying different prompts and models for the judge until I found one that worked well. I got a big jump in judge performance when I added the entire man page for ffmpeg to the judge prompt, and that ended up being the best judge.
+- I manually labeled the golden dataset, so we could check if the LLM-as-Judge evals in Kiln actually aligned with human judgement. This is used to calculate the correlation between LLM-as-judge systems and human evaluators using a range of correlation scores (Kendall Tau, Spearman, MSE)
+- I iterated on judges, trying different prompts and models for the judge until I found one that worked well. I got a big jump in judge performance when I added the entire man page for ffmpeg to the judge prompt, and that ended up being the best judge.
 
 See details:
  - [Video walkthrough of eval creation: 2m32s](todo)
  - [Docs and detailed demo of evals](https://docs.getkiln.ai/docs/evaluations)
- - [Ideas for next steps](#improve-the-exiting-eval)
+ - [Ideas for next steps](#improve-the-existing-eval)
 
 ### Finding the best way to run your task
 
@@ -49,7 +54,7 @@ With a correctness eval in hand, it was easy to try a variety of prompts and mod
 Some insights from the experimentation:
 
 - My one-shot prompt did better than the many-shot prompt from the WTFFmpeg project for most models, but their prompt was optimal for the Phi-3 5.6B
-- GPT-4o (full, mini and nano) really dominated from the start. I would have expected more from Claude 3.5 Sonnet, but GPT-4o models just seem better at this task.
+- GPT-4.1 (full, mini and nano) really dominated from the start. I would have expected more from Sonnet 4, but GPT-4.1 models just seem better at this task.
 
 Details:
  - [Video walkthrough of finding the best prompt + model: 6m20s]()
@@ -64,7 +69,7 @@ Next we tried fine-tuning 13 models for this task. This involved building a trai
  - Various fine-tuning providers: Fireworks, Together, OpenAI, Google Vertex. Note: we didn't do local, but that's also possible.
  - A range of parameters: we varied epochs, lora-rank, learning rate.
 
-There were some promising results in the batch (15%+ gains in evals over the base model), but I'd experiment more before picking a winner.
+There were some promising results in the batch (16% and 21% gains in evals over the base model), but I'd experiment more before picking a winner.
 
 Here's a quick glance at the fine-tuning loss from the demo project. When you fine-tune your own project with Kiln, metrics are logged into your Weights and Biases account:
 
@@ -142,4 +147,4 @@ Our quick pass at fine-tuning has shown it can really improve the performance of
 
 ## Using the Project
 
-This was build as a demo project, but we actually used it to re-encode the video walkthough before uploading it. You can see the [commit here](https://github.com/Kiln-AI/demos/commit/a26492e3607fb629c04121758ab8a4981164b093). It's kinda handy!
+This was built as a demo project, but we actually used it to re-encode the video walkthrough before uploading it. You can see the [commit here](https://github.com/Kiln-AI/demos/commit/a26492e3607fb629c04121758ab8a4981164b093). It's kinda handy!
