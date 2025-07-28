@@ -1,6 +1,6 @@
 # AI Project Boilerplate with Evals, Synthetic Data Gen, Fine-Tuning, and Git
 
-This is a boilerplate/demo project where I setup an AI project with the a full stack of integrated tools for evals, syntehtic data, fine-tuning, and collaboration. We're using [Kiln](https://getkiln.ai), a free+open tool that runs completley locally. We cover:
+This is a boilerplate/demo project where I setup an AI project with the a full stack of integrated tools for evals, synthetic data, fine-tuning, and collaboration. We're using [Kiln](https://getkiln.ai), a free+open tool that runs completely locally. We cover:
 
  - [Creating an eval](#creating-a-correctness-eval) including generating synthetic eval data, creating LLM-as-judge evals, and validating the eval with human ratings
  - [Finding the best way to run your task](#finding-the-best-way-to-run-your-task) by evaluating prompt/model pairs
@@ -35,7 +35,7 @@ For the demo project we build a natural language to ffmpeg command builder. Insp
 The most important feature of the system is that it generates the correct results, so we started by building a correctness eval. This process involved:
 
 - Creating a eval with a name and prompt
-- Generating synthetic eval data. 80% of the eval, and 20% for a golden eval set.
+- Generating synthetic eval data. 80% for the eval set, and 20% for a golden eval set.
 - I manually labeled the golden dataset, so we could check if the LLM-as-Judge evals in Kiln actually aligned to human judgement.
 - Iterated on judges, trying different prompts and models for the judge until I found one that worked well. I got a big jump in judge performance when I added the entire man page for ffmpeg to the judge prompt, and that ended up being the best judge.
 
@@ -50,8 +50,8 @@ With a correctness eval in hand, it was easy to try a variety of prompts and mod
 
 Some insights from the experimentation:
 
-- My one-shot prompt did better than the many-shot prompt from the WTFFmpeg project for most models, but their prompt was optimal for the Phi 4 5.6B
-- GPT 4.1 (full, mini and nano) really dominated from the start. I would have expected more from Sonnet 4, but GPT 4.1 models just seem better at this task.
+- My one-shot prompt did better than the many-shot prompt from the WTFFmpeg project for most models, but their prompt was optimal for the Phi-3 5.6B
+- GPT-4o (full, mini and nano) really dominated from the start. I would have expected more from Claude 3.5 Sonnet, but GPT-4o models just seem better at this task.
 
 Details:
  - [Video walkthrough of finding the best prompt + model: 6m20s]()
@@ -62,9 +62,9 @@ Details:
 
 Next we tried fine-tuning 13 models for this task. This involved building a training data set using synthetic data, then dispatching fine-tune jobs. We tried:
 
- - Various base models: Llama, Qwen, Gemini, GPT 4.1 
+ - Various base models: Llama, Qwen, Gemini, GPT-4.1
  - Various fine-tuning providers: Fireworks, Together, OpenAI, Google Vertex. Note: we didn't do local, but that's also possible.
- - A range of parameters: we varried epochs, lora-rank, learning rate.
+ - A range of parameters: we varied epochs, lora-rank, learning rate.
 
 There were some promising results in the batch (15%+ gains in evals over the base model), but I'd experiment more before picking a winner.
 
@@ -82,7 +82,7 @@ Details:
 Next we walk through some examples of iterating on the project:
 
  - A case of fixing a bug we discovered in the system: the model will delete every file on your hard drive if you ask it to. We create a new eval ensuring the generated commands are not destructive, and then iterate on prompts to prevent this from happening.
- - Using evals to find tradeoffs between concerns: instruction following going down when we're prescriptive about things like desctivtive edits
+ - Using evals to find tradeoffs between concerns. In this demo we found instruction following went down as we got more prescriptive about things like destructive edits. This makes sense, but we'd have to confirm we want that tradeoff.
  - Adding more evals representing product goals: don't recommend competitors, technical preferences (prefer mp4 container), etc
 
 Details:
@@ -92,13 +92,13 @@ Details:
 
 ### Setting Up Git Collaboration
 
-Next we sync the project to GitHub, allowing a team to collaborate with familiar syncronization tools and git history.
+Next we sync the project to GitHub, allowing a team to collaborate with familiar synchronization tools and git history.
 
 Details:
  - [Video walkthrough of Github/collaboration: 17m10s](todo)
  - [Collaboration Docs](https://docs.getkiln.ai/docs/collaboration)
 
-### Python Libary
+### Python Library
 
 We only used the Kiln app for this project, but in the video we briefly introduce the [Kiln python library](https://pypi.org/project/kiln-ai/) which you can use to work with Kiln project in code.
 
@@ -113,9 +113,9 @@ We only used the Kiln app for this project, but in the video we briefly introduc
 
 This was a quick demo of all the pieces working together. If I wanted to continue to iterate on quality, here’s where I’d focus next:
 
-### Improve the Exiting Eval
+### Improve the Existing Eval
 
-I’m really not sure my manual labels are correct in the golden dataset (I’m not much of a ffmpeg wiz as I thought). More eval data (golden and eval_set), and more iteration on the judge prompt, and better labels from an actual ffmpeg expert would be a good place to invest.
+I’m really not sure my manual labels are correct in the golden dataset (I’m not much of a ffmpeg wizard as I thought). More eval data (golden and eval_set), and more iteration on the judge prompt, and better labels from an actual ffmpeg expert would be a good place to invest.
 
 ### Iteration on model+prompt
 
@@ -126,7 +126,7 @@ I'd iterate more trying to find the best method of running the task, including:
 
 ### Iterate on product side with evals/prompts
 
-Each model has it's own style of output; they swap the order of the explanation/command and the formatting. I'd want to define the best version, and write some evals to confirm they follow it. 
+Each model has its own style of output; they swap the order of the explanation/command and the formatting. I'd want to define the best version, and write some evals to confirm they follow it. 
 
 ### More Fine-Tuning: only if local or cost optimization was the goal
 
@@ -138,7 +138,7 @@ If I wanted a system that could run locally or to really reduce price per token,
 
 Our quick pass at fine-tuning has shown it can really improve the performance of smaller models; in particular Llama 3B and Gemini Flash saw big jumps. To iterate I'd try:
 
-- Generate a larger training set. I started with 330 examples, then added 719 more and could see a benefit. To do this I'd probably manually build a list of all ffmpeg features and use that as top-level topics for synthetic data genl that would let me systematically ensure every feature was contained in the training dataset. I'd also look around for existing examples to include.
+- Generate a larger training set. I started with 330 examples, then added 719 more and could see a benefit. To do this I'd probably manually build a list of all ffmpeg features and use that as top-level topics for synthetic data generation that would let me systematically ensure every feature was contained in the training dataset. I'd also look around for existing examples to include.
 - I'd try more base models like Gemma, Llama 3.1, Qwen. We've already seen that there's a wide quality gap between models (likely from their pre-training data). The right base model could boost quality, although as the training set got better I'd imagine the gap closes.
 - I'd try smaller models. I'd bet with the right training data, even a 1B parameter model could do well given how constrained this problem is.
 
