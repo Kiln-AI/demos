@@ -1,22 +1,37 @@
 # AI Boilerplate: Evals, Synthetic Data Gen, Fine-Tuning, and Git
 
-This is a boilerplate for an AI project with integrated tools for evals, synthetic data, fine-tuning, and collaboration. It offers a systematic way to iterate on AI systems, moving past vibe-checks. We're using [Kiln](https://getkiln.ai), a free+open tool that runs locally. We cover:
+There are a ton of boilerplates out there for web development that integrate the tools you need to start a project (web framework, tests, CSS framework, auth, CI, etc). So why aren't there good boilerplates for AI projects with evals, synthetic data, routing, fine-tuning, etc?
+
+I've been building a boilerplate for an AI project with the tools most projects need: evals, synthetic data, fine-tuning, collaboration, and more. They all work together smoothly, and you can set up a new project in a few minutes. It offers a systematic way to iterate on AI systems, moving past vibe-checks. It's called [Kiln](https://github.com/Kiln-AI/Kiln), and it's a free+open tool that runs locally. This walkthrough covers:
 
  - [Creating an eval](#creating-a-correctness-eval) including generating synthetic eval data, creating LLM-as-judge evals, and validating the eval with human ratings
  - [Finding the best way to run your task](#finding-the-best-way-to-run-your-task) by evaluating prompt/model pairs
- - [Fine-tuning models](#fine-tuning) including synthetic training data and evaluating models
+ - [Fine-tuning models](#fine-tuning) including synthetic training data and evaluating tunes
  - [Iterating as project evolves](#iterating-as-project-evolves): new evals and prompts
- - [Set up collaboration with git/GitHub](#setting-up-git-collaboration)
+ - [Set up collaboration with git & GitHub](#setting-up-git-collaboration)
 
 ## Video Walkthrough
 
 <a href="https://www.youtube.com/watch?v=f1JU3wIxExE"><img width="404" height="263" alt="video screenshot" src="https://github.com/user-attachments/assets/d49a0830-3c69-49b4-bb9a-ced485c67daa" /></a>
 
-## Preview of Findings from Demo
+## About the Project
+
+ - [Kiln](https://github.com/Kiln-AI/Kiln) is the "boilerplate" which combines the tools most AI projects need in an easy to use package: evals, synthetic data, routing, and fine-tuning.
+ - Some of the tools are built into Kiln (evals, synthetic data), and some are integrations with other libraries/services (fine-tuning via Fireworks/Together/OpenAI/Unsloth) and routing (LiteLLM, OpenRouter).
+ - Kiln focuses on usability + integration. As an example, the synthetic data generation tool knows if you're generating data for an eval or fine-tuning, as those require very different data. The UI is designed to be easy to use.
+ - Kiln is extensible: our open source python library lets you run or extend Kiln from code. You can add tools/data any way you want.
+ - Kiln is local/private: it runs locally on your machine, and your project data is saved to local files. No one has access to your project files unless you share them. While designed for collaboration, you get to bring your own git server and keep things private.
+ - Kiln is still growing: we're working on adding tools like RAG, agents and multi-modal models.
+
+Learn more about Kiln on our [primary GitHub repo](https://github.com/Kiln-AI/Kiln) (this repo is for Kiln demo projects).
+
+## Preview of Findings from this Demo Project
+
+For the demo project we built a natural language to ffmpeg command builder. Inspired by other projects like [this one](https://github.com/scottvr/wtffmpeg). Some interesting findings were:
 
  - Adding the `man` page of ffmpeg to the LLM-as-judge model produced the most effective eval
  - Fine-tuning could boost performance significantly (21% over the base model), but it didn't end up being needed because...
- - GPT-4.1 outperformed all other models for this task, even Claude 3.5 Sonnet and fine-tunes. Don't use LMArena style evals to predict domain-specific performance.
+ - GPT-4.1 outperformed all other models for this task, even Sonnet 4 and fine-tunes. Don't use LMArena-style evals to predict domain-specific performance.
  - Initial high eval scores were tempered by bugs, e.g. the model would happily delete your entire hard drive. We needed to iterate on a set of "product"/"domain" evals to make it into a better product.
 
 ## Walkthrough
@@ -29,7 +44,6 @@ To use this boilerplate:
 
 First we set up the task, by defining a title, initial prompt, and the input/output schema.
 
-For the demo project we built a natural language to ffmpeg command builder. Inspired by other projects like [this one](https://github.com/scottvr/wtffmpeg).
 
 - [Video walkthrough of setting up task: 1m01s](https://www.youtube.com/watch?v=f1JU3wIxExE&t=1m01s)
 
@@ -146,6 +160,6 @@ Our quick pass at fine-tuning has shown it can really improve the performance of
 
 ## Using the Project
 
-This was built as a demo project, but we actually used it to re-encode the video walkthrough before uploading it. You can see the [commit here](https://github.com/Kiln-AI/demos/commit/a26492e3607fb629c04121758ab8a4981164b093). It's kinda handy!
+This was built as a demo project, not a real product. However I've actually found it handy. I used it to re-encode the video walkthrough before uploading it to Vimeo, and it did things I wouldn't have thought of like using a lanczos scaler to keep sharper text (since I told it that the content was a screencast). You can see the [commit here](https://github.com/Kiln-AI/demos/commit/a26492e3607fb629c04121758ab8a4981164b093). Kinda cool!
 
-If any ffmpeg wiz wants to take a stab at improving the performance with new evals/prompts/tunes, I'd be happy to take PRs.
+If any ffmpeg wizard wants to take a stab at improving the performance with new evals/prompts/tunes, I'd be happy to take PRs.
