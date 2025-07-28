@@ -5,8 +5,8 @@ This is a boilerplate/demo project where I setup an AI project with the a stack 
  - [Creating an eval](#creating-a-correctness-eval) including generating synthetic eval data, creating LLM-as-judge evals, and validating the eval with human ratings
  - [Finding the best way to run your task](#finding-the-best-way-to-run-your-task) by evaluating prompt/model pairs
  - [Fine-tuning models](#fine-tuning) including synthetic training data and evaluating models
- - Iterating as project evolves: new evals and prompts
- - Set up collaboration with git/GitHub sync
+ - [Iterating as project evolves](#iterating-as-project-evolves): new evals and prompts
+ - [Set up collaboration with git/GitHub sync](#setting-up-git-collaboration)
 
 ## Video Walkthrough
 
