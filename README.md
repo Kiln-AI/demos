@@ -21,6 +21,8 @@
 
 This repositiory is for demos of Kiln AI projects. You can download it, import the `demo_project/project.kiln` file into the [Kiln app](https://getkiln.ai/download), and explore the data/evals/etc.
 
-## Demo 1: End-to-end AI Demo - Building an AI system with evals, synthetic data, and fine-tuning
+## Demo #1 - AI Boilerplate: Evals, Synthetic Data Gen, Fine-Tuning, and Git with Kiln AI
 
-In this project we create an AI tool which helps generate ffmpeg commands. See the [project README for details](/demo_project/tasks/629828465317%20-%20Natural%20language%20FFMPEG/README.md).
+This is a boilerplate/demo project where I setup an AI project with the a stack of integrated tools for evals, synthetic data, fine-tuning, and collaboration.
+
+For the demo, we create an AI tool which helps generate ffmpeg commands. See the [project README for details](/end_to_end_project_demo/README.md).
