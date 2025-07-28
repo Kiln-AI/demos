@@ -10,7 +10,7 @@ This is a boilerplate/demo for an AI project with integrated tools for evals, sy
 
 ## Video Walkthrough
 
-<a href="https://vimeo.com/1104945621"><img width="404" height="263" alt="video screenshot" src="https://github.com/user-attachments/assets/d49a0830-3c69-49b4-bb9a-ced485c67daa" /></a>
+<a href="https://www.youtube.com/watch?v=f1JU3wIxExE"><img width="404" height="263" alt="video screenshot" src="https://github.com/user-attachments/assets/d49a0830-3c69-49b4-bb9a-ced485c67daa" /></a>
 
 ## Preview of Findings
 
@@ -31,7 +31,7 @@ First we set up the task, by defining a title, initial prompt, and the input/out
 
 For the demo project we built a natural language to ffmpeg command builder. Inspired by other projects like [this one](https://github.com/scottvr/wtffmpeg).
 
-- [Video walkthrough of setting up task: 1m32s](todo)
+- [Video walkthrough of setting up task: 1m01s](https://www.youtube.com/watch?v=f1JU3wIxExE&t=1m01s)
 
 ### Creating a “Correctness” eval
 
@@ -43,7 +43,7 @@ The most important feature of the system is that it generates the correct result
 - I iterated on judges, trying different prompts and models for the judge until I found one that worked well. I got a big jump in judge performance when I added the entire man page for ffmpeg to the judge prompt, and that ended up being the best judge.
 
 See details:
- - [Video walkthrough of eval creation: 2m32s](todo)
+ - [Video walkthrough of eval creation: 2m32s](https://www.youtube.com/watch?v=f1JU3wIxExE&t=2m32s)
  - [Docs and detailed demo of evals](https://docs.getkiln.ai/docs/evaluations)
  - [Ideas for next steps](#improve-the-existing-eval)
 
@@ -57,7 +57,7 @@ Some insights from the experimentation:
 - GPT-4.1 (full, mini and nano) really dominated from the start. I would have expected more from Sonnet 4, but GPT-4.1 models just seem better at this task.
 
 Details:
- - [Video walkthrough of finding the best prompt + model: 6m20s]()
+ - [Video walkthrough of finding the best prompt + model: 6m20s](https://www.youtube.com/watch?v=f1JU3wIxExE&t=6m20s)
  - [Docs for comparing run methods](https://docs.getkiln.ai/docs/evaluations#comparing-run-methods)
  - [Ideas for next steps](#iteration-on-modelprompt)
 
@@ -76,7 +76,7 @@ Here's a quick glance at the fine-tuning loss from the demo project. When you fi
 <img width="362" height="204" alt="train/loss of fine-tuning runs" src="https://github.com/user-attachments/assets/3e1dd557-a20d-4bf5-9884-f7d15f08908b" />
 
 Details:
- - [Video walkthrough of fine-tuning: 11m31s](todo)
+ - [Video walkthrough of fine-tuning: 11m31s](https://www.youtube.com/watch?v=f1JU3wIxExE&t=11m31s)
  - [Docs on fine-tuning](https://docs.getkiln.ai/docs/fine-tuning-guide)
  - [Ideas for next steps](#more-fine-tuning-only-if-local-or-cost-optimization-was-the-goal)
 
@@ -89,7 +89,7 @@ Next we walk through some examples of iterating on the project:
  - Adding more evals representing product goals: don't recommend competitors, technical preferences (prefer mp4 container), etc
 
 Details:
- - [Video walkthrough of iterating after v1: 14m9s](todo)
+ - [Video walkthrough of iterating after v1: 14m9s](https://www.youtube.com/watch?v=f1JU3wIxExE&t=14m9s)
  - [Blog Post: Many Small Evals Beat One Big Eval, Every Time](https://getkiln.ai/blog/you_need_many_small_evals_for_ai_products#setup-team-evals)
  - [Ideas for next steps](#iterate-on-product-side-with-evalsprompts)
 
@@ -98,7 +98,7 @@ Details:
 Next we sync the project to GitHub, allowing a team to collaborate with familiar synchronization tools and git history.
 
 Details:
- - [Video walkthrough of Github/collaboration: 17m10s](todo)
+ - [Video walkthrough of Github/collaboration: 17m10s](https://www.youtube.com/watch?v=f1JU3wIxExE&t=17m10s)
  - [Collaboration Docs](https://docs.getkiln.ai/docs/collaboration)
 
 ### Python Library
@@ -108,7 +108,7 @@ We only used the Kiln app for this project, but in the video we briefly introduc
 
 ### Recap, Docs and Discord
 
- - [Walkthrough video of the recap: 18m23s](todo)
+ - [Walkthrough video of the recap: 18m24s](https://www.youtube.com/watch?v=f1JU3wIxExE&t=18m24s)
  - [Kiln AI Docs](https://docs.getkiln.ai)
  - [Kiln AI Discord](https://getkiln.ai/discord)
 
