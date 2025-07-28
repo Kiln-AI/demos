@@ -140,6 +140,6 @@ Our quick pass at fine-tuning has shown it can really improve the performance of
 - I'd try more base models like Gemma, Llama 3.1, Qwen. We've already seen that there's a wide quality gap between models (likely from their pre-training data). The right base model could boost quality, although as the training set got better I'd imagine the gap closes.
 - I'd try smaller models. I'd bet with the right training data, even a 1B parameter model could do well given how constrained this problem is.
 
-## Final Note
+## Using the Project
 
-Yes, the video was re-encoded with a command from the project before uploading :) 
+This was build as a demo project, but we actually used it to re-encode the video walkthough before uploading it. You can see the [commit here](https://github.com/Kiln-AI/demos/commit/a26492e3607fb629c04121758ab8a4981164b093). It's kinda handy!
