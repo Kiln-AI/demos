@@ -1,6 +1,6 @@
-# AI Project Boilerplate with Evals, Synthetic Data Gen, Fine-Tuning, and Git
+# AI Boilerplate: Evals, Synthetic Data Gen, Fine-Tuning, and Git
 
-This is a boilerplate/demo project where I setup an AI project with the a full stack of integrated tools for evals, synthetic data, fine-tuning, and collaboration. We're using [Kiln](https://getkiln.ai), a free+open tool that runs completely locally. We cover:
+This is a boilerplate/demo project where I setup an AI project with the a stack of integrated tools for evals, synthetic data, fine-tuning, and collaboration. We're using [Kiln](https://getkiln.ai), a free+open tool that runs completely locally. We cover:
 
  - [Creating an eval](#creating-a-correctness-eval) including generating synthetic eval data, creating LLM-as-judge evals, and validating the eval with human ratings
  - [Finding the best way to run your task](#finding-the-best-way-to-run-your-task) by evaluating prompt/model pairs
@@ -8,19 +8,17 @@ This is a boilerplate/demo project where I setup an AI project with the a full s
  - Iterating as project evolves: new evals and prompts
  - Set up collaboration with git/GitHub sync
 
-To use this boilerplate:
- - To try this demo project: download this repository, and import the `end_to_end_project_demo/project.kiln` file into the [Kiln app](https://getkiln.ai). 
- - To set up this stack for your own project/task: download the [Kiln tool](https://getkiln.ai) and follow along the guide steps below. 
-
 ## Video Walkthrough
 
 The process of creating this project is captured in this video:
 
-[Set Up Your AI Project the Right Way: Evals, Synthetic Data and Fine Tuning](https://vimeo.com/1104945621)
-
-Yes, the video was re-encoded with a command from the project before uploading!
+<a href="https://vimeo.com/1104945621"><img width="404" height="263" alt="video screenshot" src="https://github.com/user-attachments/assets/d49a0830-3c69-49b4-bb9a-ced485c67daa" /></a>
 
 ## Walkthrough
+
+To use this boilerplate:
+ - To try this demo project: download this repository, and import the `end_to_end_project_demo/project.kiln` file into the [Kiln app](https://getkiln.ai). 
+ - To set up this stack for your own project/task: download the [Kiln tool](https://getkiln.ai) and follow along the guide steps below. 
 
 ### Creating our task
 
@@ -142,4 +140,6 @@ Our quick pass at fine-tuning has shown it can really improve the performance of
 - I'd try more base models like Gemma, Llama 3.1, Qwen. We've already seen that there's a wide quality gap between models (likely from their pre-training data). The right base model could boost quality, although as the training set got better I'd imagine the gap closes.
 - I'd try smaller models. I'd bet with the right training data, even a 1B parameter model could do well given how constrained this problem is.
 
+## Final Note
 
+Yes, the video was re-encoded with a command from the project before uploading :) 
