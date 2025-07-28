@@ -1,8 +1,8 @@
 # AI Boilerplate: Evals, Synthetic Data Gen, Fine-Tuning, and Git
 
-There are a ton of boilerplates out there for web development that integrate the tools you need to start a project (web framework, tests, CSS framework, auth, CI, etc). So why aren't there good boilerplates for AI projects with evals, synthetic data, routing, fine-tuning, etc?
+There are a ton of boilerplates out there for web development that integrate the tools you need to start a project (web framework, tests, CSS framework, auth, CI, etc). So why aren't there good boilerplates for starting AI projects?
 
-I've been building a boilerplate for an AI project with the tools most projects need: evals, synthetic data, fine-tuning, collaboration, and more. They all work together smoothly, and you can set up a new project in a few minutes. It offers a systematic way to iterate on AI systems, moving past vibe-checks. It's called [Kiln](https://github.com/Kiln-AI/Kiln), and it's a free+open tool that runs locally. This walkthrough covers:
+I've been building a boilerplate with the tools most AI projects need: evals, synthetic data, fine-tuning, collaboration, and more. They all work together smoothly, and you can set up a new project in a few minutes. It offers a systematic way to iterate on AI systems, moving past vibe-checks. It's called [Kiln](https://github.com/Kiln-AI/Kiln), and it's a free+open tool that runs locally. This walkthrough covers:
 
  - [Creating an eval](#creating-a-correctness-eval) including generating synthetic eval data, creating LLM-as-judge evals, and validating the eval with human ratings
  - [Finding the best way to run your task](#finding-the-best-way-to-run-your-task) by evaluating prompt/model pairs
